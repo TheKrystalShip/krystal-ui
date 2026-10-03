@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.1]
+
+### Fixed
+- `Chat`'s header names the assistant by `assistantName`, as the transcript does.
+
 ## [0.3.0]
 
 ### Added

@@ -1252,7 +1252,7 @@ function Chat({
           <div className="chat-id">
             <span className="chat-id__mark"><Icon name="bot" size={17} /></span>
             <div className="chat-id__text">
-              <span className="chat-id__title">Assistant</span>
+              <span className="chat-id__title">{assistantName}</span>
               {HostPicker && <HostPicker hosts={assistantHosts} current={assistantHost} onSelect={pickAssistantHost} />}
             </div>
           </div>
