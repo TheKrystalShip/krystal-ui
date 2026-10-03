@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.5.0]
+
+### Added
+- `ShowcaseCard`: a catalogue tile — key art with the name set on it, an optional caution chip and
+  badge on the art, a row of facts (an unstated one reads as a muted em-dash), and a foot with one
+  status line and the card's action, a button when it does something other than open the card. The
+  whole card opens the thing. Its status line is kept when empty, so cards in a row stay level.
+- `styles/showcase.css`. Its live dot animates with `kr-pulse`, which a site defines if it wants one.
+
 ## [0.4.0]
 
 ### Added

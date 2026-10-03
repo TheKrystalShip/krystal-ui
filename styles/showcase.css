@@ -1,0 +1,275 @@
+/* ============================================================================
+   showcase.css — <ShowcaseCard>: key art with the name on it, a row of facts,
+   and a foot with one status line and the action
+   ============================================================================ */
+.showcase-card {
+  background: var(--surface-1);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--d-base) var(--ease-out),
+    border-color var(--d-base) var(--ease-out),
+    box-shadow var(--d-base) var(--ease-out);
+}
+
+.showcase-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
+}
+
+.showcase-card:focus-visible {
+  box-shadow: var(--ring-focus);
+  border-color: var(--border-accent);
+}
+
+.showcase-card__art {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(160deg, var(--surface-2), var(--surface-1) 70%);
+  background-size: cover;
+  background-position: center;
+}
+
+.showcase-card__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, color-mix(in srgb, var(--canvas) 94%, transparent) 4%, color-mix(in srgb, var(--canvas) 25%, transparent) 46%, transparent 78%);
+}
+
+/* The art is dark under the veil in every theme, so the name on it is white in every theme. */
+.showcase-card__name {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 11px;
+  z-index: 1;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+}
+
+/* A caution about the thing, on the art's top-left: amber reads as "limited", not alarming. */
+.showcase-card__corner {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--canvas) 55%, transparent);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(245, 158, 11, 0.34);
+  color: var(--warning-fg);
+  font-size: 11px;
+  font-weight: 600;
+  max-width: calc(100% - 20px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.showcase-card__corner svg {
+  flex-shrink: 0;
+}
+
+.showcase-card__badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.showcase-card__badge--accent {
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px 0 9px;
+  border-radius: var(--r-pill);
+  background: var(--krystal-teal);
+  color: var(--on-accent);
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.showcase-card__badge--info {
+  height: 22px;
+  padding: 0 9px;
+  border-radius: var(--r-pill);
+  background: var(--info-bg);
+  color: var(--info-fg);
+  border: 1px solid rgba(56, 189, 248, 0.32);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.showcase-card__badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--canvas) 45%, transparent);
+}
+
+.showcase-card__badge-dot.is-live {
+  background: var(--success);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
+
+.showcase-card__specs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 12px 4px;
+}
+
+.showcase-spec {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 0 6px;
+  text-align: center;
+  min-width: 0;
+}
+
+.showcase-spec+.showcase-spec::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 1px;
+  background: var(--border-subtle);
+}
+
+.showcase-spec__val {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--fg-1);
+  white-space: nowrap;
+}
+
+.showcase-spec__val svg {
+  color: var(--fg-3);
+  flex-shrink: 0;
+}
+
+.showcase-spec__lbl {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* A fact nobody stated is an em-dash, muted rather than read as a measured figure. */
+.showcase-spec--unknown .showcase-spec__val {
+  color: var(--fg-4);
+}
+
+.showcase-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.showcase-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--fg-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.showcase-card__status--success svg {
+  color: var(--success-fg);
+}
+
+.showcase-card__status--warning {
+  color: var(--warning-fg);
+}
+
+.showcase-card__status--warning svg {
+  color: var(--warning-fg);
+}
+
+.showcase-card__status--notice svg {
+  color: var(--warning-fg);
+}
+
+.showcase-card__status--active {
+  color: var(--fg-2);
+}
+
+.showcase-card__livedot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--success);
+  flex-shrink: 0;
+  animation: kr-pulse 1.8s ease-in-out infinite;
+}
+
+.showcase-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--krystal-teal);
+  transition: gap var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
+}
+
+.showcase-card:hover .showcase-card__cta {
+  color: var(--krystal-teal-hover);
+  gap: 8px;
+}
+
+/* The action as a real button: the native chrome goes so it reads exactly as the cue does, and
+   only the chrome, so the size and weight above still apply. */
+.showcase-card__cta--act {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.showcase-card__cta--act:hover {
+  color: var(--krystal-teal-hover);
+  gap: 8px;
+}
+
+.showcase-card__cta--act:focus-visible {
+  outline: 2px solid var(--krystal-teal);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}

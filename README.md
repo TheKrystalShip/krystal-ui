@@ -40,7 +40,7 @@ lists them in the order they assume.
 | Banners | `Hero` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
 | The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatCommand`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
-| Cards and lists | `BriefCard`, `Rail`, `Pagination`, `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
+| Cards and lists | `BriefCard`, `ShowcaseCard` (key art, three facts, a status and an action), `Rail`, `Pagination`, `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `Toggle`, `ThemePicker` |
 | Overlays | `Modal`, `ReversablePortal`, `Select`, `usePortalPopover` |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
