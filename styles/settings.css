@@ -1,0 +1,11 @@
+/* ============================================================================
+   settings.css — the settings furniture (<SettingsSection>, <SettingsRow>).
+   A section is a briefing card (brief.css); a row is one of its items with a
+   right-hand slot for its controls.
+   ============================================================================ */
+.settings-row__controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}

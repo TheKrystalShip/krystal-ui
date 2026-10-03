@@ -1,0 +1,19 @@
+/* ============================================================================
+   motion.css — the keyframes the package's components animate with.
+   Global by name, so a site's own rules may use them too.
+   ============================================================================ */
+@keyframes k-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes k-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,10 @@
+/* ============================================================================
+   portal.css — <ReversablePortal>. The slot divs and the stable host are
+   display:contents, so the projected subtree participates in the slot parent's
+   layout exactly as if it were a direct child, and reparenting the host between
+   an inline slot and a modal reflows cleanly.
+   ============================================================================ */
+.rportal-slot,
+.rportal-host {
+  display: contents;
+}

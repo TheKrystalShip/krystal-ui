@@ -1,0 +1,104 @@
+/* ============================================================================
+   pagination.css — the page navigator under a paged list (<Pagination>).
+   ============================================================================ */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 18px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: var(--surface-1);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+}
+
+.pagination__summary {
+  font-size: 12px;
+  color: var(--fg-3);
+  white-space: nowrap;
+}
+
+.pagination__summary b {
+  color: var(--fg-1);
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.pagination__controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.pagination__btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg-2);
+  background: transparent;
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: color var(--d-fast) var(--ease-out),
+    border-color var(--d-fast) var(--ease-out),
+    background var(--d-fast) var(--ease-out);
+}
+
+.pagination__btn:hover:not(:disabled):not(.is-current) {
+  color: var(--fg-1);
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+}
+
+.pagination__btn.is-current {
+  background: var(--krystal-teal);
+  border-color: var(--krystal-teal);
+  color: var(--on-accent);
+  cursor: default;
+}
+
+.pagination__btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pagination__btn--nav {
+  color: var(--fg-3);
+  padding: 0;
+}
+
+.pagination__gap {
+  min-width: 22px;
+  text-align: center;
+  color: var(--fg-4);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  user-select: none;
+}
+
+@media (max-width: 560px) {
+  .pagination {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .pagination__summary {
+    text-align: center;
+  }
+
+  .pagination__controls {
+    margin-left: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
