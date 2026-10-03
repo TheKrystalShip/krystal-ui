@@ -33,7 +33,7 @@ export { ReversablePortal } from "./components/ReversablePortal.jsx";
 export { Select } from "./components/Select.jsx";
 export { SettingsRow, SettingsSection, Toggle } from "./components/settings-primitives.jsx";
 export { ShowcaseCard } from "./components/ShowcaseCard.jsx";
-export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarGroup, TabBar } from "./components/Shell.jsx";
+export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, TabBar } from "./components/Shell.jsx";
 export { SubTabs } from "./components/SubTabs.jsx";
 export { ThemePicker } from "./components/ThemePicker.jsx";
 export { Toasts } from "./components/Toasts.jsx";

@@ -35,7 +35,7 @@ lists them in the order they assume.
 
 | Kind | Exports |
 |---|---|
-| The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem`, `MobileNavToggle`, `TabBar`, `useStoredFlag`, `useEdgeSwipe` |
+| The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem`, `SidebarAccount`, `MobileNavToggle`, `TabBar`, `useStoredFlag`, `useEdgeSwipe` |
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
@@ -70,7 +70,12 @@ useEdgeSwipe(drawerOpen, setDrawerOpen, dock.open, dock.setOpen);
     <Sidebar mark="/mark.png" wordmark="Site" open={drawerOpen}
       collapsed={dock.desktop && collapsed} onToggleCollapse={() => setCollapsed(c => !c)}
       top={<label className="sidebar__search">…</label>}
-      foot={<NavItem icon="settings" label="Settings" onClick={…} />}>
+      closeNav
+      foot={<>
+        <NavItem icon="settings" label="Settings" onClick={…} />
+        <SidebarAccount user={user} sub="@name" collapsed={dock.desktop && collapsed}
+          items={[{ icon: "log-out", label: "Sign out", danger: true, onClick: … }]} />
+      </>}>
       <SidebarGroup>
         <NavItem icon="home" label="Home" active onClick={…} />
       </SidebarGroup>

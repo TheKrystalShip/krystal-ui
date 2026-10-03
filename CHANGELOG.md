@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.7.0]
+
+### Added
+- `SidebarAccount`: the signed-in person at the foot of the sidebar, an avatar with their name and a
+  `sub` line, opening a menu upward of `items` (`{ icon, label, onClick, danger }`) under a head with
+  the name and an optional `detail`. On the collapsed rail it is the avatar alone. Its styles, the
+  `sidebar__account*` classes, are in `styles/shell.css`; the menu head's second line is
+  `.sidebar__account-menu__detail`.
+- `Sidebar` takes `closeNav`, which rules off the last group as the groups are ruled off from each
+  other.
+
+### Changed
+- `Sidebar`'s `top` slot is wrapped in `.sidebar__top`, and the hairline under the brand moves under
+  it, so the brand and a search field under it read as one header.
+
 ## [0.6.0]
 
 ### Added

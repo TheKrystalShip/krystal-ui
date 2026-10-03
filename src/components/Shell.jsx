@@ -1,3 +1,5 @@
+import React from "react";
+import { AccountAvatar } from "./AccountAvatar.jsx";
 import { Icon } from "./Icon.jsx";
 
 // The application frame: a sidebar beside a scrolling main column, with whatever floats over both
@@ -52,8 +54,10 @@ function TabBar({ items, label = "Main" }) {
 
 // The sidebar: the brand row with its collapse toggle, an optional `top` slot under it (a search
 // field), the nav groups as children, and the `foot` pinned to the bottom. Only the nav scrolls, so
-// the foot stays reachable in a short window.
-function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, foot, children }) {
+// the foot stays reachable in a short window. The hairline under the brand moves under `top` when
+// there is one, so the header reads as one block. `closeNav` rules off the last group too, for a
+// site whose nav and foot are far apart.
+function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, closeNav, foot, children }) {
   return (
     <aside className={"sidebar" + (open ? " sidebar--open" : "") + (collapsed ? " sidebar--rail" : "")}>
       <div className="sidebar__brand">
@@ -68,10 +72,71 @@ function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, foot,
           <Icon name={collapsed ? "panel-left-open" : "panel-left-close"} size={16} />
         </button>
       </div>
-      {top}
-      <nav className="sidebar__nav">{children}</nav>
+      {top && <div className="sidebar__top">{top}</div>}
+      <nav className={"sidebar__nav" + (closeNav ? " sidebar__nav--closed" : "")}>{children}</nav>
       {foot && <div className="sidebar__foot">{foot}</div>}
     </aside>
+  );
+}
+
+// The signed-in person, at the bottom of the sidebar's foot: their avatar, their name and a `sub`
+// line under it, opening a menu upward of `items` — `{ icon, label, onClick, danger }`. `detail` is
+// what the menu's head says under the name. On the collapsed rail the row is the avatar alone.
+function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    if (!open) return undefined;
+    const away = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const escape = (e) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("mousedown", away);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("mousedown", away);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [open]);
+  const name = user.display || user.name;
+  return (
+    <div className="sidebar__account-wrap" ref={ref}>
+      {open && (
+        <div className="sidebar__account-menu" role="menu">
+          <div className="sidebar__account-menu__head">
+            <div className="sidebar__account-menu__name">{name}</div>
+            {detail && <div className="sidebar__account-menu__detail">{detail}</div>}
+          </div>
+          {items.map((item) => (
+            <button
+              key={item.label}
+              type="button"
+              role="menuitem"
+              className={"sidebar__account-menu__item" + (item.danger ? " sidebar__account-menu__item--danger" : "")}
+              onClick={() => { setOpen(false); item.onClick && item.onClick(); }}>
+              <Icon name={item.icon} size={14} />{item.label}
+            </button>
+          ))}
+        </div>
+      )}
+      <button
+        type="button"
+        className={"sidebar__account" + (open ? " sidebar__account--open" : "")}
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={name}
+        data-tip={collapsed && !open ? name : undefined}>
+        <AccountAvatar user={user} size={28} />
+        {!collapsed && (
+          <>
+            <span className="sidebar__account__text">
+              <span className="sidebar__account__name">{name}</span>
+              {sub && <span className="sidebar__account__sub">{sub}</span>}
+            </span>
+            <Icon name="chevrons-up-down" size={14} className="sidebar__account__caret" />
+          </>
+        )}
+      </button>
+    </div>
   );
 }
 
@@ -120,4 +185,4 @@ function MobileNavToggle({ onOpen }) {
   );
 }
 
-export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarGroup, TabBar };
+export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, TabBar };
