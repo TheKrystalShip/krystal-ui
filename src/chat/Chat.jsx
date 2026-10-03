@@ -1,0 +1,1459 @@
+import React from "react";
+import { Icon } from "../components/Icon.jsx";
+import { VoiceComposerBar, useVoiceRecorder } from "./VoiceNote.jsx";
+import { createSpokenReply, armAudio } from "./spokenReply.js";
+import {
+  NEW_CHAT_TITLE, conversationTitle,
+  loadConversations, saveConversations,
+  uid, reduceTurnFrame, promotePendingCards,
+  scaffoldHistory, scaffoldConversation,
+  scaffoldLiveTurn, latestUsage, mergeServerConversations, adoptServerConversation,
+} from "./conversation.js";
+import { ChatCommand } from "./ChatMessageParts.jsx";
+import { ChatCommandMenu } from "./ChatCommandMenu.jsx";
+import { MarkdownTextarea } from "./MarkdownTextarea.jsx";
+import { resolveCommand, suggestFor } from "./chatCommands.js";
+import { ChatContextMeter } from "./ChatContextMeter.jsx";
+import { ChatHistory } from "./ChatHistory.jsx";
+import { RecentConversations } from "./RecentConversations.jsx";
+import { ChatThread } from "./ChatThread.jsx";
+import { useConversationStream } from "./useConversationStream.js";
+
+// Chat renders a conversation with ONE assistant, over the assistant wire contract. Everything that
+// is true of the surface around it rather than of the conversation arrives as a prop, because the
+// surfaces that render it differ in exactly those things: one drives a cluster (several assistants,
+// a picker, per-host access, a review mode for other people's chats), another is one assistant with
+// none of that. Defaults describe the smaller surface, so the smallest passes almost nothing and
+// gets a chat.
+//
+// `assistantHost` is the identity of the assistant being addressed — `{ id, name, title }` — and
+// `clientFor(id)` answers its client (`createAssistantClient`, or a site's own with the same
+// methods). A conversation remembers the id it lives on, so one held by another assistant is still
+// addressed through its own client. `authed` says the site holds a session that assistant accepts.
+//
+// What a product shows of its own goes through `profile` and the render slots:
+//
+//   profile.adaptCard(result)      a tool result → a card for `renderCards`, or null
+//   profile.proposalLabel(verb)    what a proposed action is offered as, absent its own sentence
+//   profile.proposal(msg)          { meta: { label, icon, tone }, target, targetName, runnable,
+//                                    unavailable } for a proposed action's card and its outcome
+//   profile.verdict(msg, targetName, response)  { ok, headline, lines } for a confirmed action
+//   renderEntry(msg, key, api)     a product's own transcript roles; undefined falls through
+//   renderCards(msg, api)          the cards under an answer
+//   turnExtras()                   extra fields the next turn carries (a draft open for review)
+//
+// `api` is what those renderers may do to the conversation: `run(msg)` confirms a proposal,
+// `setMessages(updater)` patches the open transcript, `client()` is the open assistant's client.
+//
+// The frames that belong to a running TURN, as opposed to the state events about the chat list. They
+// carry no turn id of their own, so they apply to whichever turn last announced itself on the stream.
+const TURN_FRAMES = new Set([
+  "text.delta", "thinking.delta", "tool.start", "tool.result", "progress",
+  "command.proposed", "done", "error",
+  // One sentence of the reply, spoken. Handled as a side effect rather than through the message
+  // reducer: it is audio to play, not state to render, and nothing about the transcript changes.
+  "audio.delta",
+]);
+
+// An assistant's title reads mid-sentence ("hotrod\u2019s assistant", "the cinema\u2019s assistant"), which
+// is where most of them appear. This is the same phrase starting one.
+const sentence = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+
+// A proposed action this surface knows nothing about: named by its verb, aimed at its subject, and
+// redeemable — the assistant that proposed it is the one that performs it.
+const DEFAULT_PROFILE = {
+  adaptCard: () => null,
+  proposalLabel: (verb) => (verb || "Run").replace(/_/g, " "),
+  proposal: (msg) => ({
+    meta: { label: (msg.verb || "Run").replace(/_/g, " "), icon: "zap", tone: "info" },
+    target: msg.subjectId || "",
+    targetName: msg.subjectId || "",
+    runnable: true,
+  }),
+  // The assistant's own sentence, and `success` for which way it went.
+  verdict: (msg, targetName, resp) => (resp && resp.success
+    ? { ok: true, headline: resp.text || "Done.", lines: [] }
+    : { ok: false, headline: (resp && resp.text) || "That didn’t work.", lines: [] }),
+};
+
+// What the transcript says when a conversation's switch moves.
+const DEFAULT_TOGGLE_COPY = {
+  thinking: {
+    on:  "Thinking on — replies may take a little longer but tend to be more thorough and accurate.",
+    off: "Thinking off — the assistant answers directly, for quicker replies.",
+  },
+  actions: {
+    on:  "Auto-run on — the assistant will carry out actions immediately, without asking you to confirm each one.",
+    off: "Auto-run off — the assistant will propose actions and wait for you to confirm before anything runs.",
+  },
+};
+
+// Greetings for the empty-chat screen. One is drawn at random per conversation so opening a new chat
+// feels like being greeted rather than reading a label. Free of product names — the header and the
+// composer placeholder already say WHICH assistant is answering.
+const CHAT_GREETINGS = [
+  "Hello, what can I do for you?",
+  "Hi there — what can I help with?",
+  "What can I do for you today?",
+  "Hey — what are we working on?",
+  "Ready when you are. What do you need?",
+  "Hi! What would you like to do?",
+  "Good to see you. What can I help with?",
+  "What's on your mind?",
+];
+function pickGreeting() {
+  return CHAT_GREETINGS[Math.floor(Math.random() * CHAT_GREETINGS.length)];
+}
+
+// The standing disclosure on the fresh-conversation screen: conversations are stored by the assistant
+// (they are its memory AND the corpus its tuning is judged from), so nobody should discover after the
+// fact that a conversation can be read back.
+const CHAT_PRIVACY_NOTICE =
+  "Conversations are saved and may be reviewed to improve the assistant.";
+
+function Chat({
+  user, docked, seed, onClose, onExpand,
+  assistantHost, assistantHosts = [], onSelectAssistantHost,
+  showPin, pinned, pinDisabled, onTogglePin, review, onExitReview,
+  // ---- the assistant ----
+  clientFor, authed = false,
+  // ---- the environment ----
+  // `connection` is the header badge and the usable gate, already decided by the site.
+  connection,
+  // What the caller may do with THIS assistant: see proposed actions, and run them without
+  // confirming. The site asks the assistant it talks to.
+  canSeeActions = false, canUseActions = false,
+  // Review of someone else's conversation. Absent ⇒ the surface has no review mode.
+  loadTranscript = null,
+  // Chrome a site injects: a briefing on the empty screen, and a picker among several assistants.
+  BriefingPanel = null, HostPicker = null,
+  // An extra class on the page root, for a surface that lays the chat out differently — a chat that
+  // owns the whole viewport, or one in a content area inside a shell.
+  pageClass = "",
+  // The way to this surface's own settings, when the chat IS the app and so carries the only route
+  // to it.
+  onOpenSettings = null,
+  // ---- what the product says and draws ----
+  storageKey = "krystal:chat:conversations",
+  assistantName = "Assistant",
+  profile = DEFAULT_PROFILE,
+  toggleCopy = DEFAULT_TOGGLE_COPY,
+  // The empty screen's opening suggestions, and the sentence under the greeting saying what the
+  // assistant can do for this caller.
+  suggestions = [],
+  primer = "",
+  // What the empty screen says when there is no assistant to talk to.
+  noAssistant = "No assistant is available right now.",
+  // The auto-run toggle's tooltip in its three states: { on, off, locked }.
+  autorunHint = {
+    on: "Auto-run ON — the assistant carries out actions immediately, no confirmation. Click to turn off.",
+    off: "Auto-run OFF — the assistant proposes actions for you to confirm. Turn on to let it run them automatically.",
+    locked: "Auto-run is not available to you",
+  },
+  renderEntry, renderCards, turnExtras,
+}) {
+  const conn = connection || { tone: "muted", label: "No assistant", usable: false, message: null };
+  const assistantUsable = !!conn.usable;
+
+  // The assistant accepts the session this surface already holds, so there is nothing to sign in to
+  // here. A session that is not live is the site's own gate's business.
+  const assistantAuthed = !!assistantHost && !!authed;
+
+  const [convos, setConvos]     = React.useState(() => loadConversations(storageKey));
+  const [activeId, setActiveId] = React.useState(() => loadConversations(storageKey)[0]?.id || null);
+  const [input, setInput]       = React.useState("");
+  const [busy, setBusy]         = React.useState(false);
+
+
+  // Thinking and auto-run are the CONVERSATION's, held by the assistant and read by the turn — so these
+  // are a mirror of what the assistant last told us, never the value the turn runs on. Auto-run is
+  // deliberately per-conversation: it is the one switch that skips the confirmation gate, and a
+  // preference that followed the person around would arm chats they were not looking at.
+  const active = convos.find(c => c.id === activeId) || null;
+  const thinkOn = !!(active && active.think);
+  const actionsOn = !!(active && active.autorun);
+  const autoAcceptActive = actionsOn && canUseActions;
+  // Whether the open conversation's transcript is known to be behind — set when the assistant says its log
+  // grew somewhere else. Read as a scalar so the detail effect can depend on it without depending on
+  // the whole conversation list.
+  const activeStale = !!(active && active.stale);
+
+  // Reflect what the assistant answered, and say so in the transcript. The assistant's `state` is what lands —
+  // a toggle asked for is not a toggle granted, and showing the asked-for value would report a
+  // change that may not have happened.
+  const applySwitch = React.useCallback((convId, toggle, on) => {
+    const field = toggle === "thinking" ? "think" : "autorun";
+    const label = toggleCopy[toggle][on ? "on" : "off"];
+    setConvos(prev => prev.map(c => c.id !== convId ? c : {
+      ...c,
+      [field]: on,
+      messages: c.messages.length > 0
+        ? [...c.messages, { role: "toggle", toggle, on, label }]
+        : c.messages,
+    }));
+  }, [toggleCopy]);
+
+  // What this person may type at THIS assistant, in its own words. Already filtered to what they hold,
+  // so nothing here is a policy decision made in the browser — a command they cannot run never
+  // arrives, and there is no disabled row to explain. An unreachable or unauthenticated assistant
+  // leaves the catalog empty, which turns the whole surface off rather than offering something that
+  // would fail: a slash then just starts a message.
+  const [commandCatalog, setCommandCatalog] = React.useState([]);
+  React.useEffect(() => {
+    if (!assistantHost || !assistantUsable || !assistantAuthed) { setCommandCatalog([]); return; }
+    let live = true;
+    clientFor(assistantHost.id).commands()
+      .then((list) => { if (live) setCommandCatalog(Array.isArray(list) ? list : []); })
+      .catch(() => { if (live) setCommandCatalog([]); });
+    return () => { live = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
+  }, [assistantHost && assistantHost.id, assistantUsable, assistantAuthed]);
+
+  const scrollRef = React.useRef(null);
+  const abortRef  = React.useRef(null);
+
+  // Reading answers aloud. Off until asked: a page that starts talking is a surprise in a room with
+  // other people in it, and a browser refuses audio before a gesture anyway. Remembered per
+  // conversation, because whether you want to listen belongs to the conversation you are in.
+  const [speak, setSpeak] = React.useState(false);
+  // The browser refused to play audio at all. Shown on the toggle, which is the control that asked.
+  const [speakBlocked, setSpeakBlocked] = React.useState(false);
+  // What the assistant's speech engine can do — `{ hear, speak }`, or null until asked. `hear` is what
+  // decides who transcribes a voice note, so it is read before the microphone is offered rather than
+  // discovered by a recording nobody can read.
+  //
+  // An assistant that cannot be asked reads as neither. That is the honest answer and also the safe
+  // one: the microphone falls back to the browser's own recogniser, which is exactly what an assistant
+  // with no speech engine gets, so an unreachable one degrades to the same place as an absent one.
+  const [hostSpeech, setHostSpeech] = React.useState(null);
+  React.useEffect(() => {
+    if (!assistantHost || !assistantUsable || !assistantAuthed) { setHostSpeech(null); return; }
+    let live = true;
+    clientFor(assistantHost.id).speech()
+      .then((s) => { if (live) setHostSpeech(s && typeof s === "object" ? s : null); })
+      .catch(() => { if (live) setHostSpeech(null); });
+    return () => { live = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
+  }, [assistantHost && assistantHost.id, assistantUsable, assistantAuthed]);
+  // The player for the turn now running. One at a time — a new turn stops the last one's audio, which
+  // is what makes the stop button silence it as well.
+  const spokenRef = React.useRef(null);
+  const speakRef = React.useRef(false);
+  React.useEffect(() => { speakRef.current = speak; }, [speak]);
+  // Whether the in-flight turn's POST was let go because this surface came back from being frozen,
+  // as opposed to the person pressing Stop. The two look identical to the fetch (both are an
+  // AbortError) and mean opposite things in the transcript: one is "you stopped it", the other is
+  // "I lost sight of it and am about to re-read what actually happened".
+  const resumedRef = React.useRef(false);
+  const taRef     = React.useRef(null);
+  const pinnedRef = React.useRef(true);
+
+  React.useEffect(() => { saveConversations(storageKey, convos); }, [storageKey, convos]);
+
+  const [histLoading, setHistLoading] = React.useState(false);
+  const histReqRef = React.useRef(0);
+  const loadServerHistory = React.useCallback(() => {
+    if (!assistantHost || !assistantUsable || !assistantAuthed) return;
+    const reqId = ++histReqRef.current;
+    setHistLoading(true);
+    clientFor(assistantHost.id).conversations().then(
+      (list) => { if (histReqRef.current === reqId) setConvos(prev => mergeServerConversations(prev, list, assistantHost.id)); },
+      () => {})
+      .finally(() => { if (histReqRef.current === reqId) setHistLoading(false); });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
+  }, [assistantHost && assistantHost.id, assistantUsable, assistantAuthed]);
+
+  // The conversations the ASSISTANT holds are this list's other half — everything from another browser,
+  // another device, or this one before its localStorage was cleared. Fetched as soon as there is a
+  // session to fetch them with, so the rail is the whole history rather than only what this browser
+  // happens to remember. loadServerHistory is a no-op until authed and re-identifies when the
+  // addressed host changes, so this runs once per host per session.
+  React.useEffect(() => { loadServerHistory(); }, [loadServerHistory]);
+
+  // And again whenever this surface comes back to the foreground. The conversation's switches and the
+  // chat list both live at the assistant, and another surface — the site in another tab, the installed
+  // app on a phone — can move them while this one is backgrounded. Re-reading on the way back in is
+  // what makes the toggles show the conversation's state rather than this browser's memory of it.
+  React.useEffect(() => {
+    // One return to the foreground fires visibilitychange AND focus, and the two say the same thing —
+    // so the second is coalesced away rather than fetching the list twice every time.
+    let last = 0;
+    const refresh = () => {
+      if (document.visibilityState !== "visible" || Date.now() - last < 1000) return;
+      last = Date.now();
+      loadServerHistory();
+
+      // And let go of a turn POST that was open when this surface was backgrounded. A frozen page's
+      // fetch is dead whether or not its promise ever settles, and while this code believes it is open
+      // three things stay wrong at once: `busy` never clears, the transcript refetch is gated off
+      // behind it, and the event stream's frames keep being skipped as this surface's own. The result
+      // is a permanent "the assistant is typing" over a turn that finished minutes ago — which is
+      // exactly the state somebody returns to after acting on a push notification.
+      //
+      // Letting go costs nothing: a turn is a SESSION at the assistant, not this request, so one genuinely
+      // still running is restated by the stream's next attach, and one that finished is restated by
+      // the re-read.
+      if (abortRef.current) {
+        resumedRef.current = true;
+        abortRef.current.abort();
+      }
+    };
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, [loadServerHistory]);
+
+  // What the assistant pushes while this surface is open, so a conversation held in two places agrees with
+  // itself. Only changes made SOMEWHERE ELSE arrive here — the hook drops this surface's own echoes —
+  // so every branch below is reacting to another tab, another device, or Discord.
+  //
+  // The switches are applied from the frame, which carries them; everything else names a conversation
+  // and nothing more, and is answered by re-reading. That split is deliberate: a transcript has one
+  // way to be obtained, and a second streaming path for it could drift from the first.
+  // The turn running on the conversation this surface is looking at, whoever asked for it:
+  // { conversationId, turnId, state, queued: [{turnId, prompt}] }. It is the CONVERSATION's, not this
+  // browser's — which is why Stop is a call any surface can make and why the composer is busy for
+  // everyone while a turn runs, not only for whoever typed it.
+  const [liveTurn, setLiveTurn] = React.useState(null);
+  // The turn this surface is streaming over its own POST. Its frames arrive twice — once on that
+  // response and once on the event stream — so the event stream's copy is skipped until the POST is
+  // done, at which point the next attach takes over.
+  const ownTurnRef = React.useRef(null);
+
+  const applyTurnFrame = React.useCallback((convId, evt) => {
+    setConvos(prev => prev.map(c =>
+      c.id === convId ? { ...c, messages: reduceTurnFrame(c.messages, evt, profile) } : c));
+  }, [profile]);
+
+  const applyAssistantEvent = React.useCallback((evt) => {
+    const id = evt.conversationId;
+
+    // ---- the turn frames: a turn on the conversation this surface is attached to ----
+    if (evt.type === "turn.attach") {
+      // A turn announcing itself, or the assistant restating one after this stream fell behind. Either way
+      // the snapshot is the assistant's own account and replaces whatever was being rendered for it.
+      if (ownTurnRef.current === evt.turnId) return;
+      setLiveTurn({
+        conversationId: id, turnId: evt.turnId, state: evt.state, queued: evt.queued || [],
+      });
+      setConvos(prev => prev.map(c =>
+        c.id === id ? { ...c, messages: scaffoldLiveTurn(c.messages, evt, profile) } : c));
+      return;
+    }
+
+    if (evt.type === "turn.queue") {
+      setLiveTurn(prev => {
+        if (!evt.runningTurnId) return null;             // nothing is running here any more
+        if (!prev || prev.turnId !== evt.runningTurnId) return prev;
+        return { ...prev, queued: evt.queued || [] };
+      });
+      return;
+    }
+
+    if (TURN_FRAMES.has(evt.type)) {
+      // Frames carry no turn id of their own — they belong to whatever turn last announced itself on
+      // this stream, which is why an attach always precedes them.
+      if (!liveTurnRef.current || ownTurnRef.current === liveTurnRef.current.turnId) return;
+      applyTurnFrame(liveTurnRef.current.conversationId, evt);
+      if (evt.type === "done" || evt.type === "error") {
+        setConvos(prev => prev.map(c => c.id !== liveTurnRef.current.conversationId ? c : {
+          ...c,
+          messages: c.messages.map(m => (m.live ? { ...m, live: false } : m)),
+        }));
+        setLiveTurn(null);
+      }
+      return;
+    }
+
+    if (typeof id !== "string") return;
+
+    if (evt.type === "conversation.switches") {
+      // Say it in the transcript too, not only on the toggle. A switch moved elsewhere changes what
+      // the NEXT turn on this conversation does, and a toggle sliding over on its own reads as a
+      // glitch — the same line the surface that moved it wrote is what makes it an event that
+      // happened. Which switch moved is derived by diffing: the frame states where BOTH now stand
+      // (so a client applying it lands where a listing would), not which one was touched.
+      setConvos(prev => prev.map(c => {
+        if (c.id !== id) return c;
+        const next = { ...c, think: !!evt.think, autorun: !!evt.autorun };
+        // Only a conversation whose value this surface already knew can have seen it change; the
+        // first read of a switch is not somebody moving it.
+        const moved = [
+          ["thinking", "think", !!evt.think],
+          ["actions", "autorun", !!evt.autorun],
+        ].filter(([, field, on]) => typeof c[field] === "boolean" && c[field] !== on);
+        if (moved.length && c.messages.length > 0) {
+          next.messages = [...c.messages, ...moved.map(([toggle, , on]) => ({
+            role: "toggle", toggle, on, label: toggleCopy[toggle][on ? "on" : "off"],
+          }))];
+        }
+        return next;
+      }));
+      return;
+    }
+
+    // A thumb left on an answer somewhere else. Applied by turn id, which addresses one bubble
+    // wherever it is rendered, so this lands whether or not the conversation is the one on screen.
+    if (evt.type === "conversation.feedback") {
+      setConvos(prev => prev.map(c => c.id !== id ? c : {
+        ...c,
+        messages: c.messages.map(m => m.turnId !== evt.turnId ? m : {
+          ...m,
+          feedback: evt.rating ? { rating: evt.rating, note: evt.note || null } : null,
+        }),
+      }));
+      return;
+    }
+
+    if (evt.type === "conversation.deleted") {
+      setConvos(prev => {
+        const next = prev.filter(c => c.id !== id);
+        if (next.length === prev.length) return prev;
+        // Deleted out from under us: fall back to the next chat rather than leaving a dead selection.
+        setActiveId(current => (current === id ? (next[0]?.id || null) : current));
+        return next;
+      });
+      return;
+    }
+
+    if (evt.type === "conversation.started") { loadServerHistory(); return; }
+
+    if (evt.type === "conversation.activity") {
+      // The rail's title and order come from the listing. The transcript is marked behind only for a
+      // conversation this surface is NOT watching live — one it mirrored frame by frame already holds
+      // what the turn produced, and refetching would replace it with an identical copy mid-render.
+      setConvos(prev => prev.map(c => (c.id === id && !c.messages.some(m => m.live)
+        ? { ...c, stale: true } : c)));
+      loadServerHistory();
+    }
+    // liveTurn is absent from the deps on purpose: it is read through liveTurnRef so a frame
+    // handler is not rebuilt on every delta.
+  }, [loadServerHistory, applyTurnFrame, profile, toggleCopy]);
+
+  // Read inside the frame handler through a ref: the handler must not be rebuilt on every text delta,
+  // and it needs the CURRENT turn rather than the one captured when it was created.
+  const liveTurnRef = React.useRef(liveTurn);
+  liveTurnRef.current = liveTurn;
+
+  // A reconnected stream knows nothing about the gap it was down for, so the listing is re-read: it
+  // restates every conversation's switches, and its turn counts are what say whether a transcript
+  // actually moved on. Marking the open one behind unconditionally would refetch it on every
+  // reconnect — a proxy timeout is ordinary — and each refetch would drop the rows only this browser
+  // holds, so the merge decides that from the counts instead.
+  const resyncAfterGap = React.useCallback(() => { loadServerHistory(); }, [loadServerHistory]);
+
+  useConversationStream({
+    client: assistantHost ? clientFor(assistantHost.id) : null,
+    clientKey: assistantHost && assistantHost.id,
+    enabled: !!(assistantHost && assistantUsable && assistantAuthed),
+    // Turn frames arrive at token rate, so the assistant sends them only for the conversation on screen.
+    conversationId: activeId,
+    onEvent: applyAssistantEvent,
+    onResync: resyncAfterGap,
+  });
+
+  // Switching conversations abandons whatever was being rendered for the old one's turn: the attach
+  // that follows says what is happening on the new one, and the old turn goes on running without us.
+  React.useEffect(() => { setLiveTurn(null); }, [activeId]);
+
+  // Fetch the open conversation's detail when we are missing either half of it: its transcript (a
+  // chat this browser has never seen) or its switches (which the assistant owns, so the composer cannot
+  // know them until it asks). The response carries the switches already resolved against the host's
+  // configured default, so the toggles show what the next turn will actually do rather than a guess
+  // this browser made about an unset value.
+  React.useEffect(() => {
+    if (!assistantHost || !assistantAuthed) return;
+    const c = convos.find(x => x.id === activeId);
+    if (!c) return;
+    if (c.hostId && c.hostId !== assistantHost.id) return;
+
+    // `stale` is set by a conversation.activity event: the log grew somewhere else, so the transcript
+    // this browser holds is behind. Deferred while a turn is streaming HERE — replacing the messages
+    // mid-stream would tear out the bubble being written into — and picked up when it finishes, which
+    // is why `busy` is a dependency.
+    const wantsHistory = (c.remote && !c.loaded && !(c.messages && c.messages.length > 0))
+      || (c.stale && !busy);
+    const wantsSwitches = typeof c.think !== "boolean" || typeof c.autorun !== "boolean";
+    if (!wantsHistory && !wantsSwitches) return;
+
+    let cancelled = false;
+    clientFor(assistantHost.id).conversation(c.id).then(
+      (data) => {
+        if (cancelled) return;
+        setConvos(prev => prev.map((x) => {
+          if (x.id !== c.id) return x;
+          const next = { ...x, think: !!(data && data.think), autorun: !!(data && data.autorun) };
+          return wantsHistory
+            ? { ...next, messages: scaffoldConversation(data, profile), loaded: true, stale: false }
+            : next;
+        }));
+      },
+      () => {});
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (in deps); convos is intentionally excluded (depping it would refetch on every streamed message) in favour of the two scalars read off the open one
+  }, [activeId, assistantHost && assistantHost.id, assistantAuthed, activeStale, busy]);
+
+  // ===== Review mode =====
+  // Replaying someone ELSE's conversation, read-only. The review transcript DTO is deliberately the
+  // same shape as the caller's own history, so it goes through the very same scaffoldHistory →
+  // ChatThread path — a reviewer sees what that person saw, drawn by the same components, and there
+  // is no second renderer able to drift from this one.
+  const [reviewMessages, setReviewMessages] = React.useState(null);
+  const [reviewState, setReviewState] = React.useState("idle");
+
+  React.useEffect(() => {
+    if (!review || !review.conversation || !loadTranscript) { setReviewMessages(null); setReviewState("idle"); return undefined; }
+    let cancelled = false;
+    setReviewState("loading");
+    setReviewMessages(null);
+    loadTranscript(review.hostId, review.conversation.id).then(
+      (data) => {
+        if (cancelled) return;
+        setReviewMessages(scaffoldHistory(data && data.entries, profile));
+        setReviewState("ready");
+      },
+      () => { if (!cancelled) setReviewState("error"); },
+    );
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the review subject; loadTranscript is the surface's fixed capability, not state
+  }, [review]);
+
+  const prevUsableRef = React.useRef(assistantUsable);
+  const prevHostRef = React.useRef(assistantHost && assistantHost.id);
+  React.useEffect(() => {
+    const hostId = assistantHost && assistantHost.id;
+    if (prevHostRef.current === hostId && prevUsableRef.current !== assistantUsable && activeId) {
+      const others = (assistantHosts || []).filter(h => h.id !== hostId).map(h => h.name);
+      const note = assistantUsable
+        ? { role: "system", kind: "assistant-up", host: (assistantHost && assistantHost.name) || "The" }
+        : { role: "system", kind: "assistant-down", host: (assistantHost && assistantHost.name) || "This host", others: others, message: conn.message || null };
+      setConvos(prev => prev.map(c =>
+        (c.id === activeId && c.messages.length > 0) ? { ...c, messages: [...c.messages, note] } : c));
+    }
+    prevUsableRef.current = assistantUsable;
+    prevHostRef.current = hostId;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- ref-based edge detector on the usable-flip; the extra values are read once at the transition, minimal deps keep the edge correct
+  }, [assistantUsable, assistantHost && assistantHost.id, activeId]);
+
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (el && pinnedRef.current) el.scrollTop = el.scrollHeight;
+  }, [active?.messages, busy]);
+
+  React.useEffect(() => {
+    pinnedRef.current = true;
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [activeId]);
+
+  const onThreadScroll = React.useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    pinnedRef.current = distanceFromBottom <= 80;
+  }, []);
+
+  // A deliberate pick, which is a different act from the retarget below: this one is the person
+  // choosing which assistant they talk to, so the surface is told to keep it.
+  const pickAssistantHost = (id) => {
+    if (!onSelectAssistantHost) return;
+    const next = (assistantHosts || []).find(h => h.id === id);
+    onSelectAssistantHost(id, { chosen: true });
+    if (activeId && next) {
+      setConvos(prev => prev.map(c => (c.id === activeId && c.messages.length > 0)
+        ? { ...c, messages: [...c.messages, { role: "scope", label: "Now talking to " + next.title }] }
+        : c));
+    }
+  };
+
+  // A conversation lives on the assistant that holds it, so opening one targets that assistant — the
+  // subject decides where we're talking. A conversation whose assistant isn't among those offered is
+  // opened without retargeting; the history load below then declines it rather than asking the wrong
+  // one.
+  //
+  // Derived from what was opened, so it is NOT a choice and is not kept: reading yesterday's
+  // conversation should not silently move which assistant this account talks to.
+  const pickChat = (id) => {
+    const c = convos.find(x => x.id === id);
+    const want = c && c.hostId;
+    if (want && want !== (assistantHost && assistantHost.id)
+        && onSelectAssistantHost && (assistantHosts || []).some(h => h.id === want)) {
+      onSelectAssistantHost(want);
+    }
+    setActiveId(id);
+  };
+
+  const newChat = () => {
+    const hostId = assistantHost && assistantHost.id;
+    const id = uid();
+    // Opened at once, so pressing the button is never a wait. What it is CALLED is the assistant's, and
+    // the row below is replaced by the assistant's own the moment it answers — this is the one
+    // conversation the assistant has no opinion on yet, and it carries the name the wire contract
+    // states for exactly that window so nothing changes under the person when the answer lands.
+    setConvos(prev => [{ id, title: NEW_CHAT_TITLE, messages: [], created: Date.now(), hostId }, ...prev]);
+    setActiveId(id);
+    setInput("");
+    if (taRef.current) taRef.current.focus();
+
+    // The id is ours to pick, but the conversation is the assistant's to create — so a chat opened here
+    // exists, is named, and is resumable from another device before anything is said in it. The answer
+    // carries the whole row, which REPLACES what was put up above: adopting it is what makes this
+    // surface show the same conversation every other surface will read out of the listing, rather than
+    // its own idea of one. A failure leaves the local row standing — the first turn creates the
+    // conversation anyway, so what is lost is the early visibility, not the chat.
+    if (hostId && assistantUsable && assistantAuthed) {
+      clientFor(hostId).runCommand("new", { conversationId: id }).then(
+        (result) => {
+          if (!result || !result.conversation) return;
+          const adopted = adoptServerConversation(result.conversation, hostId);
+          setConvos(prev => prev.map(c => (c.id === adopted.id ? { ...c, ...adopted } : c)));
+        },
+        () => {});
+    }
+  };
+  const deleteChat = (id, e) => {
+    e.stopPropagation();
+    const chat = convos.find(c => c.id === id);
+    const hostId = (chat && chat.hostId) || (assistantHost && assistantHost.id);
+    if (hostId) clientFor(hostId).deleteConversation(id).catch(() => {});
+    setConvos(prev => {
+      const next = prev.filter(c => c.id !== id);
+      if (id === activeId) setActiveId(next[0]?.id || null);
+      return next;
+    });
+  };
+  // Record how the user judged one of their own answers. Applied to the bubble immediately and NOT
+  // rolled back on failure: the vote is a courtesy, and yanking a thumb back out from under someone
+  // mid-sentence is a worse outcome than a verdict that silently didn't reach the assistant. The next
+  // history load is authoritative either way, since the assistant is what the bubble is rebuilt from.
+  const rateTurn = (turnId, rating, note) => {
+    if (!turnId) return;
+    const chat = convos.find(c => c.id === activeId);
+    const hostId = (chat && chat.hostId) || (assistantHost && assistantHost.id);
+    if (!hostId) return;
+
+    setConvos(prev => prev.map(c => c.id !== activeId ? c : {
+      ...c,
+      messages: c.messages.map(m => m.turnId !== turnId ? m : {
+        ...m,
+        feedback: rating ? { rating, note: note || null } : null,
+      }),
+    }));
+
+    clientFor(hostId).feedback(activeId, turnId, { rating, note }).catch(() => {});
+  };
+
+  const setMessages = (updater) => {
+    setConvos(prev => prev.map(c => {
+      if (c.id !== activeId) return c;
+      const messages = typeof updater === "function" ? updater(c.messages) : updater;
+      return { ...c, messages };
+    }));
+  };
+
+  const sendLive = async (convId, text, userMsg) => {
+    // Deliberately does NOT name the conversation from the prompt. The assistant names it — first prompt,
+    // one line, capped at 80 with an ellipsis — and derives that ONCE for every surface. A copy of the
+    // rule here was capped at 40 with no ellipsis, so a first prompt longer than that read one way in
+    // the browser that typed it and another way everywhere else, permanently: the merge only ever
+    // filled an empty title, so the assistant's real name never replaced it. The name arrives with the next
+    // listing read, which the turn's own completion triggers.
+    setConvos(prev => prev.map(c => (c.id !== convId ? c : {
+      ...c, lastActivity: Date.now(),
+      messages: [...c.messages, { ...userMsg, live: true }, { role: "assistant", content: "", live: true }],
+    })));
+
+    setBusy(true);
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+
+    // One answer is read aloud at a time: a new turn silences the last one rather than talking over
+    // it. The player is opened before the request so the first frame has somewhere to land.
+    if (spokenRef.current) spokenRef.current.stop();
+    spokenRef.current = speakRef.current ? createSpokenReply() : null;
+
+    // This POST is the turn's first attach. Its frames are the same ones every other surface receives,
+    // so they are applied here directly and the event stream's copy of them is skipped — otherwise the
+    // surface that asked for the turn would render it twice.
+    const applyFrame = (ev) => {
+      if (ev.type === "turn.attach") {
+        ownTurnRef.current = ev.turnId;
+        if (ev.state === "queued") {
+          // Something else is still answering. This prompt waits its turn, and it waits as a chip on
+          // the composer rather than as a message half-rendered into the transcript — the optimistic
+          // bubbles put up a moment ago come back out until it actually starts.
+          setConvos(prev => prev.map(c =>
+            c.id === convId ? { ...c, messages: c.messages.filter(m => !m.live) } : c));
+          return;
+        }
+        setLiveTurn({ conversationId: convId, turnId: ev.turnId, state: ev.state, queued: ev.queued || [] });
+        setConvos(prev => prev.map(c =>
+          c.id === convId ? { ...c, messages: scaffoldLiveTurn(c.messages, ev, profile) } : c));
+        return;
+      }
+      // Audio is played, never rendered: it belongs to no message and changes no state, so it is
+      // handled here rather than in the reducer.
+      if (ev.type === "audio.delta") {
+        if (spokenRef.current) spokenRef.current.push(ev);
+        return;
+      }
+      if (ev.type === "turn.queue") {
+        setLiveTurn(prev => (prev && prev.turnId === ev.runningTurnId
+          ? { ...prev, queued: ev.queued || [] } : prev));
+        return;
+      }
+      setConvos(prev => prev.map(c =>
+        c.id === convId ? { ...c, messages: reduceTurnFrame(c.messages, ev, profile) } : c));
+    };
+
+    try {
+      const prompt = text || "[The user sent a voice note; transcription was unavailable.]";
+      // Whatever the product has open that the turn should see (a draft under review).
+      const extras = turnExtras ? turnExtras() : null;
+      // Thinking and auto-run are NOT sent: they are the conversation's, held by the assistant and
+      // read when the turn runs. Sending them would let this browser contradict what the conversation
+      // carries — and two surfaces on one conversation would then disagree about what it is set to.
+      await clientFor(assistantHost.id).turn(
+        { prompt, conversationId: convId, ...extras, speak: speakRef.current || undefined },
+        { onEvent: applyFrame, signal: ctrl.signal });
+    } catch (e) {
+      const aborted = e && e.name === "AbortError";
+      // Came back to the foreground and dropped a connection we could not have kept. Nothing is
+      // written into the transcript — this surface does not know what the turn did, and the assistant's
+      // own record is about to say. Marking it stale is what asks for that re-read.
+      if (aborted && resumedRef.current) {
+        resumedRef.current = false;
+        setConvos(prev => prev.map(c => c.id !== convId ? c : { ...c, stale: true }));
+        return;
+      }
+      const reason = e && e.code === 503 ? sentence(assistantHost.title) + " is currently unavailable."
+        : e && e.code === 502 ? "Couldn\u2019t reach " + assistantHost.title + " \u2014 try again, or check that it is running."
+        : e && e.code === 404 ? sentence(assistantHost.title) + " isn\u2019t answering right now."
+        : (e && e.userMessage) || (sentence(assistantHost.title) + " didn\u2019t respond.");
+      setConvos(prev => prev.map(c => {
+        if (c.id !== convId) return c;
+        const msgs = c.messages.slice();
+        const lastIdx = msgs.length - 1;
+        const bubble = msgs[lastIdx];
+        if (!bubble || bubble.role !== "assistant") return c;
+        const finalized = aborted
+          ? { ...bubble, content: bubble.content || "_Stopped._" }
+          : bubble.content
+            ? { ...bubble, content: bubble.content + "\n\n_\u26a0 Interrupted \u2014 the assistant connection dropped._" }
+            : { ...bubble, content: "\u26a0\ufe0f " + reason, error: true };
+        // The stream ended without a done frame — still surface any gathered evidence.
+        msgs[lastIdx] = promotePendingCards(finalized);
+        return { ...c, messages: msgs };
+      }));
+    } finally {
+      setBusy(false);
+      resumedRef.current = false;
+      abortRef.current = null;
+      // The queue outlives the request by design — the last sentences arrive with the terminal frame —
+      // so this releases the player rather than stopping it. Stopping is what `stop` and the next turn
+      // do, because those are the moments somebody decided not to listen.
+      spokenRef.current = null;
+      // Stop skipping the event stream's copy: from here the stream is this surface's only source, and
+      // the next attach on this conversation is what re-establishes it.
+      ownTurnRef.current = null;
+      setConvos(prev => prev.map(c => c.id !== convId ? c : {
+        ...c, messages: c.messages.map(m => (m.live ? { ...m, live: false } : m)),
+      }));
+      setLiveTurn(prev => (prev && prev.conversationId === convId ? null : prev));
+    }
+  };
+
+  const send = async (override, voiceMeta) => {
+    const text = (typeof override === "string" ? override : input).trim();
+    if (!text && !voiceMeta) return;
+
+    let convId = activeId;
+    if (!convId) {
+      convId = uid();
+      const c = { id: convId, title: NEW_CHAT_TITLE, messages: [], created: Date.now(), hostId: assistantHost && assistantHost.id };
+      setConvos(prev => [c, ...prev]);
+      setActiveId(convId);
+    }
+
+    // A recognised command runs and never reaches the model. Anything else that merely STARTS with a
+    // slash — a path, a fraction, a typo — is an ordinary message, so nothing a person types is
+    // silently swallowed. `resolveCommand` is the strict half of the surface: only an exact name
+    // with an argument the command offers counts.
+    const command = voiceMeta ? null : resolveCommand(text, commandCatalog);
+    if (command) {
+      setInput("");
+      setCommandMenu({ items: [], active: 0 });
+      if (taRef.current) taRef.current.style.height = "auto";
+      runCommand(command.command.name, command.argument, convId);
+      return;
+    }
+
+    const userMsg = voiceMeta
+      ? { role: "user", content: text, voice: voiceMeta, ts: Date.now() }
+      : { role: "user", content: text, ts: Date.now() };
+    setInput("");
+    if (taRef.current) taRef.current.style.height = "auto";
+
+    if (!assistantHost || !assistantUsable) {
+      const why = !assistantHost
+        ? "No assistant is available right now."
+        : conn.message || (conn.label || "This assistant is currently unavailable.");
+      // Unnamed on purpose: the turn never reached the assistant, so there is no recorded first prompt for
+      // it to be named after, and a name invented here would be one no other surface could arrive at.
+      setConvos(prev => prev.map(c => (c.id !== convId ? c : {
+        ...c, lastActivity: Date.now(),
+        messages: [...c.messages, userMsg, { role: "assistant", content: "\u26a0\ufe0f " + why, error: true }],
+      })));
+      return;
+    }
+
+    sendLive(convId, text, userMsg);
+  };
+
+  // Stop the conversation's turn, whoever started it. A call rather than an abort, because a surface
+  // that is only watching holds no connection to end — and ending it must end it for everyone, which a
+  // local abort could never do. Aborting our own POST as well just detaches this surface early.
+  // Turning it ON is the user gesture a browser needs before it will play anything, so the audio
+  // context is created and resumed HERE. Armed on the frame instead it would be created seconds later
+  // with no gesture behind it, and stay suspended — silence, with nothing to say why.
+  const toggleSpeak = async () => {
+    if (speak) {
+      if (spokenRef.current) spokenRef.current.stop();
+      setSpeak(false);
+      return;
+    }
+    const ready = await armAudio();
+    setSpeak(ready);
+    // Refused: the control says so itself rather than raising a toast. A toast is for a shell handler
+    // that owns no control to render into, and this button is right here.
+    setSpeakBlocked(!ready);
+  };
+
+  const stop = () => {
+    // The sound stops with the turn. A stop that left the queued sentences playing would go on reading
+    // out an answer the person just asked it to abandon.
+    if (spokenRef.current) spokenRef.current.stop();
+    const hostId = assistantHost && assistantHost.id;
+    const turnId = liveTurn && liveTurn.conversationId === activeId ? liveTurn.turnId : null;
+    if (hostId && turnId) clientFor(hostId).stopTurn(turnId).catch(() => {});
+    else if (abortRef.current) abortRef.current.abort();
+  };
+
+  // Discard a turn waiting behind the running one. Stopping the running turn deliberately leaves these
+  // standing, so throwing one away is its own act.
+  const cancelQueued = (turnId) => {
+    const hostId = assistantHost && assistantHost.id;
+    if (hostId && turnId) clientFor(hostId).stopTurn(turnId).catch(() => {});
+  };
+
+  // A turn is the CONVERSATION's, so the composer is busy while one runs on the open conversation
+  // whether or not this surface is the one that asked for it.
+  const turnRunning = busy || !!(liveTurn && liveTurn.conversationId === activeId);
+  const queuedHere = (liveTurn && liveTurn.conversationId === activeId && liveTurn.queued) || [];
+
+  // Run one command at the assistant and render what it answered. The assistant performs every command it
+  // lists, so there is no client-side branch on WHAT a command does — only on what its result
+  // carries. A failure is shown in the transcript rather than swallowed: the person typed something
+  // deliberate and is owed an answer either way.
+  const runCommand = React.useCallback(async (name, argument, convId) => {
+    const hostId = assistantHost && assistantHost.id;
+    if (!hostId || !convId) return;
+
+    const say = (msg) => setConvos(prev => prev.map(c =>
+      c.id !== convId ? c : { ...c, messages: [...c.messages, msg] }));
+
+    let result;
+    try {
+      result = await clientFor(hostId).runCommand(name, { conversationId: convId, argument });
+    } catch (err) {
+      say({
+        role: "assistant",
+        error: true,
+        content: "⚠️ " + ((err && err.userMessage) || "That command didn’t run — try again."),
+      });
+      return;
+    }
+
+    // A switch answers the state it now stands at — which is what lands, not what was asked for.
+    if (typeof result.state === "boolean" && (name === "think" || name === "autorun")) {
+      applySwitch(convId, name === "think" ? "thinking" : "actions", result.state);
+      return;
+    }
+
+    if (result.commands) { say({ role: "commandHelp", commands: result.commands, label: result.message }); return; }
+    if (result.tools)    { say({ role: "commandTools", tools: result.tools, label: result.message }); return; }
+
+    // A command that moved the conversation says so by naming the one that now stands — `/new` is the
+    // live case. The assistant decides which conversation that is (it takes up an offered id only while it
+    // holds nothing), so the surface follows it there rather than reporting into the chat left behind.
+    if (typeof result.conversationId === "string" && result.conversationId && result.conversationId !== convId) {
+      // Named by the assistant, which answers with the whole row. A title composed here would be this
+      // surface's word for a conversation every other surface reads a name for.
+      const started = result.conversation
+        ? adoptServerConversation(result.conversation, hostId)
+        : { id: result.conversationId, title: NEW_CHAT_TITLE, messages: [], created: Date.now(), hostId };
+      setConvos(prev => [started, ...prev.filter(c => c.id !== started.id)]);
+      setActiveId(started.id);
+      setInput("");
+      if (taRef.current) taRef.current.focus();
+      return;
+    }
+
+    say({ role: "checkpoint", label: result.message });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
+  }, [assistantHost && assistantHost.id, applySwitch]);
+
+  // The composer's two buttons are the same commands the popover offers, so a click and a typed
+  // `/think on` travel one path and cannot disagree about what the conversation is set to.
+  const toggleThinking = () => runCommand("think", thinkOn ? "off" : "on", activeId);
+  const toggleActions  = () => runCommand("autorun", actionsOn ? "off" : "on", activeId);
+
+  const compactActive = React.useCallback(async () => {
+    if (!assistantHost || !activeId) return { compacted: false };
+    const convId = activeId;
+    const res = await clientFor(assistantHost.id).compact(convId);
+    const compacted = !!(res && res.compacted);
+    const n = res && typeof res.messagesCompacted === "number" ? res.messagesCompacted : 0;
+    if (compacted) {
+      const label = "Conversation compacted to save context"
+        + (n ? " \u00b7 " + n + " message" + (n === 1 ? "" : "s") : "");
+      setConvos(prev => prev.map(c => c.id === convId
+        ? { ...c, messages: [...c.messages, { role: "checkpoint", label }] }
+        : c));
+    }
+    return { compacted, messagesCompacted: n };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
+  }, [assistantHost && assistantHost.id, activeId]);
+
+  // The assistant reads voice notes whenever it can — the same engine, primed with the same names,
+  // that hears a request spoken into a voice channel. Passing no transcriber is what leaves the
+  // browser's own recogniser in charge, and that is only the case for an assistant without one.
+  //
+  // Held in a ref-stable callback per assistant so the recorder is not rebuilt on every render.
+  const transcribeHere = React.useMemo(() => {
+    if (!hostSpeech || !hostSpeech.hear || !assistantHost) return undefined;
+    const hostId = assistantHost.id;
+    return async (pcm) => {
+      const answer = await clientFor(hostId).transcribe(pcm);
+      return (answer && answer.text) || "";
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
+  }, [hostSpeech && hostSpeech.hear, assistantHost && assistantHost.id]);
+
+  const voice = useVoiceRecorder({ transcribe: transcribeHere });
+  const sendVoice = async () => {
+    const payload = await voice.finish();
+    // Null is a cancelled recording or one whose transcription failed. The failure leaves the bar
+    // standing with its reason and the audio still held, so there is nothing to send and nothing to
+    // report here — the composer is already saying it.
+    if (!payload) return;
+    const { id, duration, peaks, transcript } = payload;
+    send(transcript || "", { id, duration, peaks });
+  };
+
+  const startBriefingChat = (item) => {
+    setInput(item.prompt);
+    setTimeout(() => {
+      const ta = taRef.current;
+      if (ta) { ta.focus(); ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 200) + "px"; }
+    }, 0);
+  };
+
+  React.useEffect(() => {
+    if (!seed || !seed.prompt) return;
+    startBriefingChat({ prompt: seed.prompt });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fire once per seed via seed.nonce; seed.prompt is read fresh at that edge
+  }, [seed && seed.nonce]);
+
+  // Confirm a proposed action by handing its token back to the assistant that proposed it. The
+  // assistant performs every kind itself, watches the ones with a postcondition until they reach it,
+  // and answers a verdict. There is no second execution path, so one proposed action has one way to
+  // happen, one authority gate, and one outcome shape.
+  const runLiveCommand = (card) => {
+    const proposal = profile.proposal(card);
+    if (!proposal.runnable) return;
+    // The name is for the copy only — the assistant resolves the target from the token it issued,
+    // never from anything sent back here.
+    const hostId = (assistantHost && assistantHost.id) || null;
+    const serverName = proposal.targetName;
+    const meta = proposal.meta;
+    const verifyId = uid();
+    setMessages(msgs => {
+      const marked = msgs.map(m =>
+        (m.role === "command" && m.cmdId === card.cmdId && m.state === "proposed")
+          ? { ...m, state: "confirmed" } : m);
+      return [...marked, { role: "verify", id: verifyId, action: { label: meta.label, verb: card.verb, serverName }, state: "pending" }];
+    });
+    const resolveVerify = (result) =>
+      setMessages(msgs => msgs.map(m => (m.role === "verify" && m.id === verifyId) ? { ...m, state: "done", result, progress: null } : m));
+    // The assistant's progress steps drive a live sub-label under the spinner, so a slow action
+    // reads as advancing.
+    const onProgress = (evt) =>
+      setMessages(msgs => msgs.map(m =>
+        (m.role === "verify" && m.id === verifyId) ? { ...m, progress: (evt && evt.label) || null } : m));
+
+    // The token is what authorizes and addresses the action; without it there is nothing to confirm.
+    if (!hostId || !card.token) {
+      resolveVerify({ ok: false, headline: "This action has expired \u2014 ask the assistant to propose it again.", lines: [] });
+      return;
+    }
+    clientFor(hostId).confirm({ token: card.token }, { onProgress }).then(
+      resp => resolveVerify(profile.verdict(card, serverName, resp)),
+      err => {
+        const expired = err && err.code === 401;
+        const noRoute = err && err.code === "ENOROUTE";
+        resolveVerify(expired
+          ? { ok: false, headline: ((assistantHost && assistantHost.name) || "This host") + "\u2019s assistant session expired \u2014 sign in again to run commands.", lines: [] }
+          : noRoute
+            ? { ok: false, headline: ((assistantHost && assistantHost.name) || "This host") + "\u2019s assistant has no address this browser can reach.", lines: [] }
+            : { ok: false, headline: "Couldn\u2019t run " + meta.label.toLowerCase() + " \u2014 " + ((err && err.userMessage) || "the command failed."), lines: [] });
+      });
+  };
+
+  // What a product's renderers may do to the conversation.
+  const api = {
+    run: runLiveCommand,
+    setMessages,
+    client: () => (assistantHost ? clientFor(assistantHost.id) : null),
+  };
+  // A transcript under review offers nothing to act on: every actionable affordance a live chat would
+  // offer is absent rather than present-and-inert.
+  const reviewApi = { readOnly: true, run: null, setMessages: () => {}, client: api.client };
+  const renderOwnEntry = renderEntry ? (m, i) => renderEntry(m, i, api) : undefined;
+  const renderOwnCards = renderCards ? (m) => renderCards(m, api) : undefined;
+  const renderCommand = (m, i) => {
+    const p = profile.proposal(m);
+    return <ChatCommand key={i} msg={m} onRun={runLiveCommand} meta={p.meta} target={p.target}
+      runnable={p.runnable} unavailable={p.unavailable} />;
+  };
+  // A proposal in someone else's transcript is shown as it stood, and confirming it does nothing.
+  const renderReviewCommand = (m, i) => {
+    const p = profile.proposal(m);
+    return <ChatCommand key={i} msg={m} onRun={() => {}} meta={p.meta} target={p.target}
+      runnable={p.runnable} unavailable={p.unavailable} />;
+  };
+
+
+  // The completion list, derived from the text on every keystroke rather than held open as a mode —
+  // so a backspace walks back out of it and Escape needs nothing to reset. `dismissed` is the one
+  // piece of state, because Escape has to survive the next keystroke or the list springs back.
+  const [commandMenu, setCommandMenu] = React.useState({ items: [], active: 0 });
+  const [menuDismissed, setMenuDismissed] = React.useState(false);
+  const composerRef = React.useRef(null);
+
+  const refreshMenu = React.useCallback((text, dismissed) => {
+    const items = dismissed ? [] : suggestFor(text, commandCatalog);
+    setCommandMenu(prev => ({
+      items,
+      // Hold the highlight where it was while the list only narrows, so typing another letter does
+      // not silently move which command Enter would run.
+      active: Math.min(prev.active, Math.max(0, items.length - 1)),
+    }));
+  }, [commandCatalog]);
+
+  // Put a completion into the composer. A command that still wants a value lands with a trailing
+  // space and re-opens on its values; one that is ready to run just sits there for Enter.
+  const applyCompletion = (item) => {
+    setInput(item.insert);
+    setMenuDismissed(false);
+    refreshMenu(item.insert, false);
+    if (taRef.current) taRef.current.focus();
+  };
+
+  const onKeyDown = (e) => {
+    const items = commandMenu.items;
+    if (items.length) {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        const delta = e.key === "ArrowDown" ? 1 : -1;
+        setCommandMenu(prev => ({
+          ...prev,
+          active: (prev.active + delta + prev.items.length) % prev.items.length,
+        }));
+        return;
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setMenuDismissed(true);
+        setCommandMenu({ items: [], active: 0 });
+        return;
+      }
+      if (e.key === "Tab") {
+        e.preventDefault();
+        applyCompletion(items[commandMenu.active] || items[0]);
+        return;
+      }
+      // Enter takes the highlighted row. A row that fully specifies a command (`/think on`) RUNS —
+      // there is nothing left to decide, and making someone press Enter twice to confirm a choice
+      // already under the cursor is friction with no question behind it. A row that still owes a
+      // value (`/think`) completes instead, opening its values. Either way Enter never runs a
+      // command while ignoring what is highlighted, which is the bug this shape exists to avoid.
+      if (e.key === "Enter" && !e.shiftKey) {
+        const picked = items[commandMenu.active] || items[0];
+        if (picked && picked.insert !== input) {
+          e.preventDefault();
+          if (picked.runnable) send(picked.insert);
+          else applyCompletion(picked);
+          return;
+        }
+      }
+    }
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+  };
+
+  const onInputChange = (e) => {
+    const value = e.target.value;
+    setInput(value);
+    // A composer emptied back out re-arms the list, so dismissing one slash does not mute the next.
+    const stillDismissed = menuDismissed && value.startsWith("/");
+    if (menuDismissed !== stillDismissed) setMenuDismissed(stillDismissed);
+    refreshMenu(value, stillDismissed);
+
+    const ta = e.target;
+    ta.style.height = "auto";
+    ta.style.height = Math.min(ta.scrollHeight, 200) + "px";
+  };
+
+  // A fresh greeting per conversation — drawn once and held, so a re-render (typing,
+  // a store tick) never swaps the wording out from under the reader.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- activeId is the POINT: it re-rolls the greeting per conversation, not a value read inside.
+  const greeting = React.useMemo(() => pickGreeting(), [activeId]);
+
+  const ChatBriefingPanel = BriefingPanel;
+
+  const [railOpen, setRailOpen] = React.useState(false);
+  const railWrapRef = React.useRef(null);
+  React.useEffect(() => {
+    if (!railOpen) return;
+    const h = (e) => { if (railWrapRef.current && !railWrapRef.current.contains(e.target)) setRailOpen(false); };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, [railOpen]);
+  React.useEffect(() => { setRailOpen(false); }, [activeId]);
+
+  // Review mode replaces the whole surface: no rail (there is no "your chats" here), no composer
+  // (there is no review write, and a disabled input would still invite typing), and a banner that
+  // cannot be scrolled away — a dock that is usually YOUR chat now holds someone else's, and that has
+  // to be unmissable for as long as it is true.
+  if (review && review.conversation) {
+    const who = review.conversation.user
+      ? (review.conversation.user.displayName || review.conversation.user.userId)
+      : null;
+    return (
+      <div className={"chat-page chat-page--review" + (docked ? " chat-page--docked" : "") + (pageClass ? " " + pageClass : "")}>
+        <div className="chat-main">
+          <div className="chat-review__banner">
+            <Icon name="lock" size={13} />
+            <span>
+              Reading{who ? <> <b>{who}</b>’s</> : " someone else’s"} conversation — read-only.
+            </span>
+            <button className="chat-review__exit" onClick={onExitReview}>
+              Back to your chat
+            </button>
+          </div>
+
+          <div className="chat-main__head">
+            <div className="chat-id">
+              <span className="chat-id__mark"><Icon name="message-square" size={17} /></span>
+              <div className="chat-id__text">
+                <span className="chat-id__title">{conversationTitle(review.conversation)}</span>
+                <span className="chat-id__sub">
+                  {review.conversation.turnCount} turn{review.conversation.turnCount === 1 ? "" : "s"}
+                  {review.conversation.deleted ? " · deleted by its owner" : ""}
+                </span>
+              </div>
+            </div>
+            <div className="chat-head__actions">
+              <div className="chat-head__win">
+                <button className="chat-headbtn" onClick={onExitReview} title="Close review" aria-label="Close review">
+                  <Icon name="x" size={16} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="chat-scroll">
+            {reviewState === "loading" && <div className="chat-empty"><p>Loading the transcript…</p></div>}
+            {reviewState === "error" && (
+              <div className="chat-empty">
+                <h2>Transcript unavailable</h2>
+                <p>This conversation could not be read. It may have been removed from the log.</p>
+              </div>
+            )}
+            {reviewState === "ready" && reviewMessages && reviewMessages.length === 0 && (
+              <div className="chat-empty"><p>This conversation has no turns.</p></div>
+            )}
+            {reviewState === "ready" && reviewMessages && reviewMessages.length > 0 && (
+              // Read-only: no onRun/onSaveBlueprint/onDraftEdit, so every actionable affordance a live
+              // chat would offer is simply absent rather than present-and-inert.
+              // readOnlyFeedback shows what the OWNER said about an answer without offering the reader
+              // a way to say anything: a reviewer's opinion of someone else's conversation is a
+              // different fact from that person's satisfaction, and this surface collects only the latter.
+              <ChatThread messages={reviewMessages} user={user} assistantName={assistantName}
+                renderEntry={renderEntry ? (m, i) => renderEntry(m, i, reviewApi) : undefined}
+                renderCommand={renderReviewCommand}
+                renderCards={renderCards ? (m) => renderCards(m, reviewApi) : undefined}
+                readOnlyFeedback />
+            )}
+          </div>
+
+          <div className="chat-review__foot">
+            You are reading a saved conversation. Replying, running actions and editing are not possible here.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={"chat-page" + (docked ? " chat-page--docked" : "") + (pageClass ? " " + pageClass : "")}>
+      <aside className="chat-rail">
+        <button className="chat-rail__new" onClick={newChat}>
+          <Icon name="plus" size={15} strokeWidth={2.2} /> New chat
+        </button>
+        <div className="chat-rail__list">
+          {convos.length === 0 && <div className="chat-rail__empty">No conversations yet.</div>}
+          {convos.map(c => (
+            <div key={c.id}
+              className={"chat-rail__item" + (c.id === activeId ? " chat-rail__item--active" : "")}
+              onClick={() => pickChat(c.id)}>
+              <Icon name="message-square" size={14} />
+              <span className="chat-rail__title">{conversationTitle(c)}</span>
+              <button className="chat-rail__del" onClick={(e) => deleteChat(c.id, e)} title="Delete">
+                <Icon name="trash-2" size={13} />
+              </button>
+            </div>
+          ))}
+        </div>
+        {/* Only when it has something to say. An assistant that is reachable and healthy is the
+            state the whole page already demonstrates, so a permanent "Connected" is decoration; a
+            degraded, unavailable or unchosen one names itself. */}
+        {conn.tone !== "online" && (
+          <div className="chat-rail__foot">
+            <span className={"chat-conn chat-conn--" + conn.tone}><span className="dot"></span>{conn.label}</span>
+          </div>
+        )}
+        {/* Foot of the rail, under the conversations — the settings page is about this surface
+            rather than about any one chat, so it sits below the list rather than in it. At phone
+            width the rail is display:none and the same route is the header's cog. */}
+        {onOpenSettings && (
+          <button type="button" className="chat-rail__settings" onClick={onOpenSettings}>
+            <Icon name="settings" size={15} className="chat-rail__settings-icon" />
+            <span>Settings</span>
+          </button>
+        )}
+      </aside>
+
+      <div className="chat-main">
+        <div className="chat-main__head">
+          <div className="chat-id">
+            <span className="chat-id__mark"><Icon name="bot" size={17} /></span>
+            <div className="chat-id__text">
+              <span className="chat-id__title">Assistant</span>
+              {HostPicker && <HostPicker hosts={assistantHosts} current={assistantHost} onSelect={pickAssistantHost} />}
+            </div>
+          </div>
+          <div className="chat-head__actions">
+            <div className="chat-head__nav">
+              <button className="chat-headbtn" onClick={newChat} title="New chat" aria-label="New chat">
+                <Icon name="square-pen" size={16} />
+              </button>
+              <ChatHistory convos={convos} activeId={activeId} onPick={pickChat} onDelete={deleteChat} onOpen={loadServerHistory} loading={histLoading} />
+              {/* This nav strip is the phone-width replacement for the rail (CSS decides, at the
+                  breakpoint that hides it), so the rail's foot travels here with it. */}
+              {onOpenSettings && (
+                <button className="chat-headbtn" onClick={onOpenSettings} title="Settings" aria-label="Settings">
+                  <Icon name="settings" size={16} />
+                </button>
+              )}
+            </div>
+            {docked && (
+              <div className="chat-head__win">
+                {showPin && (
+                  <button
+                    className={"chat-headbtn" + (pinned ? " chat-headbtn--pinned" : "")}
+                    onClick={onTogglePin}
+                    disabled={pinDisabled}
+                    title={pinDisabled ? "Not enough room to pin \u2014 floating over the page" : pinned ? "Unpin \u2014 float over the page" : "Pin \u2014 push the page aside"}
+                    aria-label="Toggle dock pin" aria-pressed={!!pinned}>
+                    <Icon name={pinned ? "pin" : "pin-off"} size={16} />
+                  </button>
+                )}
+                {onExpand && (
+                  <button className="chat-headbtn" onClick={onExpand} title="Expand to full screen" aria-label="Expand to full screen">
+                    <Icon name="maximize-2" size={16} />
+                  </button>
+                )}
+                <button className="chat-headbtn" onClick={onClose} title="Close assistant" aria-label="Close assistant">
+                  <Icon name="panel-right-close" size={16} />
+                </button>
+              </div>
+            )}
+            {!docked && onClose && (
+              <div className="chat-head__win">
+                <button className="chat-headbtn" onClick={onClose} title="Exit full screen (ESC)" aria-label="Exit full screen (ESC)">
+                  <Icon name="minimize-2" size={16} />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="chat-scroll" ref={scrollRef} onScroll={onThreadScroll}>
+          {(!active || active.messages.length === 0) ? (
+            <div className="chat-empty">
+              <span className="chat-empty__logo"><Icon name="bot" size={26} /></span>
+              <h2>{assistantHost ? greeting : "No assistant available"}</h2>
+              <p>{assistantHost ? primer : noAssistant}</p>
+              {/* On the fresh-conversation screen only — it opens every new chat, and the
+                  composer's own footprint stays exactly as it is without a pinned line. */}
+              {assistantHost && <p className="chat-empty__notice">{CHAT_PRIVACY_NOTICE}</p>}
+              {ChatBriefingPanel && <ChatBriefingPanel onPick={startBriefingChat} />}
+              <RecentConversations convos={convos} activeId={activeId} onPick={pickChat} />
+              <div className="chat-suggestions">
+                {suggestions.map((s, i) => (
+                  <button key={i} className="chat-suggestion" onClick={() => { setInput(s); if (taRef.current) taRef.current.focus(); }}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <ChatThread messages={active.messages} user={user} assistantName={assistantName}
+              renderEntry={renderOwnEntry} renderCommand={renderCommand} renderCards={renderOwnCards}
+              onRate={rateTurn} />
+          )}
+        </div>
+
+        <div className="chat-composer">
+          {voice.phase === "idle" ? (
+            <div className="chat-composer__box" ref={composerRef}>
+              {/* Name the assistant only where there is a choice of them. HostPicker is the
+                  surface saying it addresses several, so there this reads "Message hotrod's
+                  assistant\u2026" and stays useful; a surface with one assistant has nothing to
+                  disambiguate and would just be restating its own name back at itself. */}
+              <MarkdownTextarea
+                ref={taRef}
+                rows={1}
+                value={input}
+                placeholder={HostPicker && assistantHost
+                  ? "Message " + assistantHost.name + "\u2019s assistant\u2026"
+                  : "Message the assistant\u2026"}
+                onChange={onInputChange}
+                onKeyDown={onKeyDown} />
+              <ChatCommandMenu
+                items={commandMenu.items}
+                active={commandMenu.active}
+                anchorRef={composerRef}
+                onPick={applyCompletion} />
+              <div className="chat-composer__bar">
+                <ChatContextMeter
+                  usage={latestUsage(active && active.messages)}
+                  onCompact={(assistantUsable && active && active.messages.length > 0) ? compactActive : null} />
+                {assistantHost && (
+                  <button
+                    type="button"
+                    className={"chat-act-toggle chat-think-toggle" + (thinkOn ? " chat-think-toggle--on" : "")}
+                    onClick={toggleThinking}
+                    title={thinkOn
+                      ? "Thinking ON \u2014 the assistant reasons step by step before answering (shown collapsed in the reply). Click to turn off."
+                      : "Thinking OFF \u2014 the assistant answers directly. Turn on to have it reason first."}
+                    aria-pressed={thinkOn}>
+                    <Icon name="brain" size={13} />
+                    <span className="chat-act-toggle__label">Thinking</span>
+                    <span className="chat-act-toggle__state">{thinkOn ? "On" : "Off"}</span>
+                  </button>
+                )}
+                {assistantHost && (
+                  <button
+                    type="button"
+                    className={"chat-act-toggle chat-speak-toggle" + (speak ? " chat-speak-toggle--on" : "")}
+                    onClick={toggleSpeak}
+                    title={speakBlocked
+                      ? "This browser will not play audio on this page."
+                      : speak
+                        ? "Reading answers aloud \u2014 each sentence is spoken as it is written, so it starts before the answer is finished. Click to stop."
+                        : "Answers are silent. Turn on to have them read aloud as they are written."}
+                    aria-pressed={speak}>
+                    <Icon name={speakBlocked ? "volume-x" : speak ? "volume-2" : "volume-off"} size={13} />
+                    <span className="chat-act-toggle__label">Read aloud</span>
+                    <span className="chat-act-toggle__state">
+                      {speakBlocked ? "Unavailable" : speak ? "On" : "Off"}
+                    </span>
+                  </button>
+                )}
+                {canSeeActions && (
+                  <button
+                    type="button"
+                    className={"chat-act-toggle" + (autoAcceptActive ? " chat-act-toggle--on" : "")}
+                    onClick={canUseActions ? toggleActions : undefined}
+                    disabled={!canUseActions}
+                    title={!canUseActions
+                      ? autorunHint.locked
+                      : autoAcceptActive
+                        ? autorunHint.on
+                        : autorunHint.off}
+                    aria-pressed={autoAcceptActive}>
+                    <Icon name={autoAcceptActive ? "zap" : "zap-off"} size={13} />
+                    <span className="chat-act-toggle__label">Auto-run</span>
+                    <span className="chat-act-toggle__state">{autoAcceptActive ? "On" : "Off"}</span>
+                  </button>
+                )}
+                {queuedHere.length > 0 && (
+                  <span className="chat-queued" title="Waiting for the current answer to finish">
+                    <Icon name="clock" size={12} />
+                    {queuedHere.map(q => (
+                      <button
+                        key={q.turnId}
+                        type="button"
+                        className="chat-queued__item"
+                        onClick={() => cancelQueued(q.turnId)}
+                        title={"Queued: " + q.prompt + "\n\nClick to discard it."}>
+                        <span className="chat-queued__text">{q.prompt}</span>
+                        <Icon name="x" size={11} />
+                      </button>
+                    ))}
+                  </span>
+                )}
+                <span className="chat-composer__bar-spacer"></span>
+                {!busy && !input.trim() && assistantUsable && (
+                  <button className="chat-mic" onClick={voice.start} title="Record a voice note" aria-label="Record a voice note">
+                    <Icon name="mic" size={17} />
+                  </button>
+                )}
+                {turnRunning
+                  ? <button className="chat-send chat-send--stop" onClick={stop} title="Stop"><Icon name="square" size={15} /></button>
+                  : <button className="chat-send" onClick={send} disabled={!input.trim() || !assistantUsable} title={assistantUsable ? "Send" : "Assistant unavailable"}><Icon name="arrow-up" size={16} strokeWidth={2.4} /></button>}
+              </div>
+              {!assistantUsable && (
+                <div className="chat-composer__downhint">
+                  <span className="status-led status-led--down"></span>
+                  {assistantHost
+                    ? assistantHost.name + "\u2019s assistant is unavailable \u2014 your message will send once it\u2019s back."
+                    : assistantHosts.length
+                      ? "Pick which assistant to talk to \u2014 several can answer."
+                      : "Assistant unavailable \u2014 your message will send once it\u2019s back."}
+                </div>
+              )}
+            </div>
+          ) : (
+            <VoiceComposerBar rec={voice} onSend={sendVoice} onCancel={voice.cancel} />
+          )}
+          <div className="chat-composer__hint">
+            {voice.phase === "recording" || voice.phase === "requesting"
+              ? <span>Recording a voice note · I'll transcribe it and reply</span>
+              // The one place the command surface is advertised to somebody who has never typed a
+              // slash into a chat box. Shown only when this assistant actually offers commands, so it
+              // never points at something that would not open.
+              : <>Enter to send, Shift+Enter for newline{commandCatalog.length > 0 && <> · <code>/</code> for commands</>}</>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export { Chat, CHAT_PRIVACY_NOTICE, DEFAULT_PROFILE, DEFAULT_TOGGLE_COPY };

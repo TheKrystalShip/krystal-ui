@@ -1,6 +1,6 @@
 {
   "name": "@thekrystalship/krystal-ui",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "The Krystal design system as React components, stores and stylesheets, shared by every TheKrystalShip web surface.",
   "license": "GPL-3.0-only",
   "type": "module",
@@ -36,7 +36,9 @@
   ],
   "scripts": {
     "build": "vite build",
-    "prepack": "vite build"
+    "prepack": "vite build",
+    "lint": "eslint src scripts",
+    "check:markdown": "node scripts/check-markdown-highlight.mjs"
   },
   "peerDependencies": {
     "lucide-react": ">=0.460.0",
@@ -44,7 +46,13 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "@vitejs/plugin-react": "^4.3.4",
+    "esbuild": "^0.25.12",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^17.13.0",
     "lucide-react": "^0.460.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

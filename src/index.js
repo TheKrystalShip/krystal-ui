@@ -5,6 +5,22 @@
 export { AccountAvatar } from "./components/AccountAvatar.jsx";
 export { default as AssistantFabIcon } from "./components/AssistantFabIcon.jsx";
 export { BriefCard } from "./components/BriefCard.jsx";
+export { Chat, CHAT_PRIVACY_NOTICE, DEFAULT_PROFILE as CHAT_DEFAULT_PROFILE, DEFAULT_TOGGLE_COPY as CHAT_TOGGLE_COPY } from "./chat/Chat.jsx";
+export {
+  ChatCommand, ChatContextPill, ChatPending, ChatSteps, ChatThinking, ChatVerify,
+} from "./chat/ChatMessageParts.jsx";
+export { ChatMessage } from "./chat/ChatMessage.jsx";
+export { ChatThread } from "./chat/ChatThread.jsx";
+export { MarkdownTextarea } from "./chat/MarkdownTextarea.jsx";
+export { renderMarkdown } from "./chat/markdown.jsx";
+export { VoiceComposerBar, VoiceNoteBubble, useVoiceRecorder } from "./chat/VoiceNote.jsx";
+export { createAssistantClient } from "./chat/client.js";
+export { useConversationStream } from "./chat/useConversationStream.js";
+export {
+  NEW_CHAT_TITLE, conversationTitle, uid as chatUid, toolLabel, promotePendingCards, reduceTurnFrame,
+  proposalMessage, scaffoldHistory, scaffoldConversation, scaffoldLiveTurn, latestUsage,
+  adoptServerConversation, mergeServerConversations,
+} from "./chat/conversation.js";
 export { Dock, DockFab, useDock } from "./components/Dock.jsx";
 export { Hero } from "./components/Hero.jsx";
 export { Icon } from "./components/Icon.jsx";

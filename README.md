@@ -38,6 +38,7 @@ lists them in the order they assume.
 | The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem`, `MobileNavToggle`, `useStoredFlag`, `useEdgeSwipe` |
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` |
+| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatCommand`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
 | Cards and lists | `BriefCard`, `Rail`, `Pagination`, `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `Toggle`, `ThemePicker` |
 | Overlays | `Modal`, `ReversablePortal`, `Select`, `usePortalPopover` |
@@ -88,6 +89,36 @@ useEdgeSwipe(drawerOpen, setDrawerOpen, dock.open, dock.setOpen);
 Wide screens collapse the sidebar to an icon rail; phones get it as a drawer, opened by the
 left-edge handle or a swipe. A pinned dock pushes the page over while the page keeps
 `contentFloor` pixels (1000 by default) and floats over it otherwise.
+
+## The assistant chat
+
+`Chat` is a conversation with one assistant over the assistant wire contract
+(`kgsm-llm/docs/wire-contract.md`): turns streamed over Server-Sent Events, proposed actions
+confirmed by their token, the conversation list kept in step with the assistant's, voice notes, and
+a read-only review of somebody else's conversation. It holds no credential and knows no product:
+
+```jsx
+const client = createAssistantClient({ baseUrl: "/assistant", getToken: () => session.token() });
+
+<Chat
+  user={user}
+  docked
+  assistantHost={{ id: "cinema", name: "Cinema", title: "the cinema's assistant" }}
+  clientFor={() => client}
+  authed={signedIn}
+  connection={{ tone: "online", label: "Connected", usable: true }}
+  storageKey="cinema:chat:conversations"
+  suggestions={["What's leaving this week?", "Find me something like Heat"]}
+  primer="I can find films, put one on, and fetch what isn't here yet."
+  profile={cinemaProfile}
+  renderCards={(msg, api) => <FilmCards cards={msg.cards} />} />
+```
+
+`profile` is how the product reads what the assistant sends: `adaptCard(result)` turns a tool's
+structured result into a card for `renderCards`, `proposal(msg)` names a proposed action and says
+whether this surface can redeem it, and `verdict(msg, name, response)` words its outcome.
+`renderEntry` draws transcript roles of the product's own, and `turnExtras()` adds fields to the
+next turn. `clientFor` is called with the assistant's id, and must be stable across renders.
 
 ## Developing
 

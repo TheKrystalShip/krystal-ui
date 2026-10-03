@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.3.0]
+
+### Added
+- `Chat`: a conversation with one assistant over the assistant wire contract — turns streamed over
+  Server-Sent Events and mirrored to the caller's other open surfaces, proposed actions confirmed by
+  their token, the conversation list kept in step with the assistant's, slash commands, thinking and
+  auto-run switches, answers read aloud, voice notes, answer feedback, and a read-only review of
+  somebody else's conversation. It is given its client (`clientFor`), whether the site is signed in
+  (`authed`), and a `profile` saying how the product reads tool results and proposed actions.
+- `createAssistantClient({ baseUrl, getToken })`, a client of that contract for a site that holds its
+  own bearer; `useConversationStream`; and the parts the chat is drawn from (`ChatThread`,
+  `ChatMessage`, `ChatCommand`, `MarkdownTextarea`, `VoiceComposerBar`, `useVoiceRecorder`, …) with the
+  conversation functions beneath it (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …).
+- `styles/chat.css`, including the card shell under an answer (`.chat-evidence`, `.ev-card`) and the
+  chat's layout inside the dock.
+- `lib/sse`, the Server-Sent Events reader, addressable on its own.
+- `npm run lint` and `npm run check:markdown` (the composer's highlighter emits every character once).
+
 ## [0.2.0]
 
 ### Added

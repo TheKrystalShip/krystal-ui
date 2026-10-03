@@ -1,4 +1,3 @@
-import React from "react";
 import { Icon } from "./Icon.jsx";
 
 // The application frame: a sidebar beside a scrolling main column, with whatever floats over both

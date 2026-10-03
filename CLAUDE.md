@@ -19,6 +19,12 @@ row hands back through `onOpen`, the label a toolbar counts in.
 When a site's component needs to come here and it reaches into that site's data layer, cut the edge
 in the site first (take the value as a prop, split the module) and move the half that is only view.
 
+**The chat speaks a contract, and its words are that contract's.** `src/chat/` is a client of the
+assistant wire contract (`kgsm-llm/docs/wire-contract.md`), so the frame and field names that
+contract defines — `command.proposed`, a draft's `configValue`, a stepping tool's `progress` — are
+what it reads. What a product makes of them is the product's: its cards, its verbs and their
+verdicts arrive through `profile` and the render slots, never as a branch here.
+
 ## Styles
 
 Plain CSS, no preprocessor. `styles/tokens.css` is the source of truth for every token and every
@@ -38,6 +44,8 @@ Renaming one is a breaking change.
 
 ```bash
 npm install
+npm run lint      # no-undef and Rules of Hooks are errors; everything else warns
+npm run check:markdown   # the composer's highlighter emits every character exactly once
 npm run build     # vite library build → dist/, one ES module per source file
 npm publish       # prepack builds; a published version is permanent (a re-publish is refused)
 npm publish --tag dev   # a prerelease — npm refuses one without a tag, so `latest` stays a release
