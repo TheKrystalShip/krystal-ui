@@ -42,7 +42,9 @@ function ShowcaseCard({ name, art, onPick, corner, badge, specs = [], status, ac
         <div className="showcase-card__specs" style={{ gridTemplateColumns: `repeat(${specs.length}, 1fr)` }}>
           {specs.map(s => (
             <div key={s.label} className={"showcase-spec" + (s.value == null ? " showcase-spec--unknown" : "")}>
-              <span className="showcase-spec__val">{s.icon && <Icon name={s.icon} size={12} strokeWidth={2} />} {s.value ?? "—"}</span>
+              <span className="showcase-spec__val">
+                {s.icon && <span className="showcase-spec__ico"><Icon name={s.icon} size={12} strokeWidth={2} /></span>} {s.value ?? "—"}
+              </span>
               <span className="showcase-spec__lbl">{s.label}</span>
             </div>
           ))}

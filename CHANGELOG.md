@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.1]
+
+### Fixed
+- A toolbar's Filters and Sort popovers on a phone (600px and narrower) hang from the toolbar and span
+  it, instead of hanging their 300px off their button and past the screen's right edge.
+
+### Added
+- `ShowcaseCard` is a container named `showcase`, and a fact's icon sits in `.showcase-spec__ico`, so
+  a site can fit the facts to the card's own width — letting the icons go on a narrow card, say. The
+  icon's own inline display could not be overridden by a sheet.
+
 ## [0.5.0]
 
 ### Added

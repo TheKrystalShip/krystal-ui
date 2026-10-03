@@ -439,3 +439,23 @@
     flex: 0 0 100%;
   }
 }
+
+/* A phone: a popover opened from the second row would hang its full width off its button, past the
+   screen's edge, so it hangs from the toolbar instead and spans it. */
+@media (max-width: 600px) {
+  .toolbar {
+    position: relative;
+  }
+
+  .toolbar-filter {
+    position: static;
+  }
+
+  .toolbar-filter__menu {
+    left: 0;
+    right: 0;
+    width: auto;
+    max-width: none;
+    max-height: min(70vh, 520px);
+  }
+}

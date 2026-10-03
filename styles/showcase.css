@@ -2,7 +2,11 @@
    showcase.css — <ShowcaseCard>: key art with the name on it, a row of facts,
    and a foot with one status line and the action
    ============================================================================ */
+/* The card is a container (`showcase`), so a site can fit its facts to the card's own width — a site
+   whose values are long lets their icons (`.showcase-spec__ico`) go on a narrow card. */
 .showcase-card {
+  container-type: inline-size;
+  container-name: showcase;
   background: var(--surface-1);
   border: var(--edge);
   border-radius: var(--r-sm);
@@ -168,7 +172,8 @@
   white-space: nowrap;
 }
 
-.showcase-spec__val svg {
+.showcase-spec__ico {
+  display: inline-flex;
   color: var(--fg-3);
   flex-shrink: 0;
 }
