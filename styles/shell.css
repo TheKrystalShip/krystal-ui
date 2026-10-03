@@ -1,0 +1,503 @@
+/* ============================================================================
+   shell.css — the application frame: the sidebar beside a scrolling main
+   column, the sidebar's collapsed icon rail on wide screens, and its off-canvas
+   drawer on phones. Drawn by AppShell, Sidebar, SidebarGroup, NavItem and
+   MobileNavToggle.
+   ============================================================================ */
+
+/* ============= Frame ============= */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  height: 100vh;
+  background: var(--canvas);
+  box-sizing: border-box;
+  padding-right: var(--dock-push, 0px);
+  transition: grid-template-columns var(--d-base) var(--ease-out), padding-right var(--d-base) var(--ease-out);
+}
+
+.app__main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+  /* Size container: descendants collapse on THIS column's width rather than the viewport's, so
+     they respond to a pinned dock narrowing the page. */
+  container-type: inline-size;
+  container-name: appmain;
+}
+
+/* ============= Sidebar ============= */
+.sidebar {
+  background: var(--surface-0);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+  gap: 16px;
+  min-height: 0;
+}
+
+/* Its own block. With nothing between it and the first link, the wordmark reads as the top of the
+   nav rather than as the header above it — the same hairline the groups use says which it is. */
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  min-width: 0;
+
+  img {
+    border-radius: var(--r-sm);
+  }
+}
+
+/* The wordmark holds one line whatever --font-ui a theme sets: the tributes that swap the UI face
+   to a monospace one push a long wordmark past what the fixed sidebar width fits. A wordmark broken
+   across lines reads as a layout fault. */
+.sidebar__brand-wordmark {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--fg-1);
+  white-space: nowrap;
+}
+
+/* The nav is the ONLY part of the sidebar allowed to grow, so it is also the part that scrolls: the
+   foot below it has to stay reachable in a short window whatever the nav holds. `min-height: 0` is
+   what lets a flex child shrink below its content at all. */
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow-y: auto;
+  min-height: 0;
+  /* Room for the scrollbar so a row's trailing mark is not sitting under it. */
+  padding-right: 2px;
+  margin-right: -2px;
+}
+
+.sidebar__group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Between groups, never above the first or below the last: a rule with nothing on one side of it
+   reads as a section that failed to render. A group with nothing to show is absent from the DOM
+   rather than empty, which is what makes the adjacency selector enough. */
+.sidebar__group+.sidebar__group {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 12px;
+}
+
+/* A group's name, for a group whose links do not say what they share on their own. */
+.sidebar__group-label {
+  padding: 2px 10px 6px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-4);
+  font-weight: 600;
+}
+
+/* Search field, between the brand and the nav. */
+.sidebar__search {
+  background: var(--surface-3);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px 0 10px;
+  gap: 8px;
+  color: var(--fg-3);
+  font-size: 13px;
+  transition: border-color var(--d-fast) var(--ease-out), box-shadow var(--d-fast) var(--ease-out);
+}
+
+.sidebar__search:focus-within {
+  border-color: var(--border-accent);
+  box-shadow: var(--ring-input);
+}
+
+.sidebar__search>svg {
+  flex-shrink: 0;
+}
+
+.sidebar__search input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--fg-1);
+  font-family: var(--font-ui);
+  font-size: 13px;
+}
+
+.sidebar__search input::placeholder {
+  color: var(--fg-4);
+}
+
+.sidebar__search-clear {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-sm);
+  background: transparent;
+  border: none;
+  color: var(--fg-3);
+  cursor: pointer;
+}
+
+.sidebar__search-clear:hover {
+  background: var(--surface-2);
+  color: var(--fg-1);
+}
+
+.sidebar__foot {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 12px;
+  margin-top: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--r-sm);
+  color: var(--fg-2);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
+}
+
+.nav-item:hover {
+  background: var(--surface-2);
+  color: var(--fg-1);
+}
+
+.nav-item--active {
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal);
+  position: relative;
+}
+
+.nav-item--active::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: var(--krystal-teal);
+  border-radius: 0 2px 2px 0;
+}
+
+.nav-item__badge {
+  margin-left: auto;
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: var(--r-pill);
+  background: var(--veil-2);
+  color: var(--fg-2);
+  font-weight: 600;
+}
+
+.nav-item__badge--danger {
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+}
+
+.nav-item__badge--warn {
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+}
+
+.nav-item__badge--info {
+  background: var(--veil-2);
+  color: var(--fg-2);
+}
+
+/* ============= Collapsed rail (wide screens) =============
+   The rail is a desktop-only affordance: at or below 768px the sidebar is the off-canvas drawer, so
+   every rail rule is gated to wide viewports and the drawer always shows full labels. */
+
+/* Brand-row collapse toggle — compact icon button at the trailing edge, mirroring the dock's close
+   button so both sit on the same top band. */
+.sidebar__collapse {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--r-sm);
+  color: var(--fg-4);
+  cursor: pointer;
+  transition: background var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
+}
+
+.sidebar__collapse:hover {
+  background: var(--surface-2);
+  color: var(--fg-2);
+}
+
+.sidebar__collapse>svg {
+  flex-shrink: 0;
+}
+
+@media (min-width: 769px) {
+  .sidebar--rail {
+    padding-left: 8px;
+    padding-right: 8px;
+    position: relative;
+    z-index: 30;
+  }
+
+  /* Brand → mark stacked above the centred collapse toggle. */
+  .sidebar--rail .sidebar__brand {
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    padding: 4px 0 6px;
+  }
+
+  .sidebar--rail .sidebar__brand-wordmark,
+  .sidebar--rail .sidebar__group-label {
+    display: none;
+  }
+
+  .sidebar--rail .sidebar__collapse {
+    margin-left: 0;
+  }
+
+  .sidebar--rail .sidebar__nav {
+    gap: 10px;
+  }
+
+  .sidebar--rail .sidebar__group+.sidebar__group {
+    padding-top: 10px;
+  }
+
+  /* Nav items → centred icon, label hidden, count badge becomes a corner pip. */
+  .sidebar--rail .nav-item {
+    justify-content: center;
+    padding: 9px 0;
+    position: relative;
+  }
+
+  .sidebar--rail .nav-item__label {
+    display: none;
+  }
+
+  .sidebar--rail .nav-item--active::before {
+    left: -8px;
+    top: 6px;
+    bottom: 6px;
+  }
+
+  .sidebar--rail .nav-item__badge {
+    position: absolute;
+    top: 1px;
+    right: 2px;
+    margin: 0;
+    width: 14px;
+    min-width: 14px;
+    height: 14px;
+    padding: 0;
+    line-height: 14px;
+    border-radius: var(--r-pill);
+    font-size: 9px;
+    font-weight: 700;
+    text-align: center;
+    border: 1.5px solid var(--surface-0);
+  }
+
+  /* Solid fills so the tiny pip stays legible; the tone backgrounds are too faint at this size. */
+  .sidebar--rail .nav-item__badge--danger {
+    background: var(--danger);
+    color: var(--on-danger);
+  }
+
+  .sidebar--rail .nav-item__badge--warn {
+    background: var(--warning);
+    color: var(--on-warning);
+  }
+
+  .sidebar--rail .nav-item__badge--info {
+    background: var(--fg-3);
+    color: var(--surface-0);
+  }
+
+  /* ---- Tooltip (rail only): whatever carries `data-tip` names itself on hover and focus ---- */
+  .sidebar--rail [data-tip] {
+    position: relative;
+  }
+
+  .sidebar--rail [data-tip]:hover::after,
+  .sidebar--rail [data-tip]:focus-visible::after {
+    content: attr(data-tip);
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--surface-1);
+    color: var(--fg-1);
+    border: var(--edge-strong);
+    box-shadow: var(--shadow-2);
+    padding: 5px 9px;
+    border-radius: var(--r-sm);
+    font-size: 12.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 70;
+    pointer-events: none;
+    animation: k-fade var(--d-fast) var(--ease-out);
+  }
+}
+
+/* ============= Drawer (phones) ============= */
+
+/* Scrim behind the open drawer; a tap on it closes the drawer. */
+.sidebar-scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--scrim-base) 60%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 39;
+  animation: k-fade var(--d-base) var(--ease-out);
+}
+
+/* Standalone on iOS: pad for the status bar and the home indicator. */
+@supports (padding: max(0px)) {
+  .sidebar {
+    padding-top: max(16px, env(safe-area-inset-top, 0));
+    padding-bottom: max(16px, env(safe-area-inset-bottom, 0));
+  }
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-w: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* The frame turns into one column, and the sidebar into a drawer. */
+  .app {
+    display: block;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .app__main {
+    height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 280px;
+    z-index: 40;
+    transform: translateX(-100%);
+    transition: transform var(--d-base) var(--ease-out);
+    border-right: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-2);
+  }
+
+  .sidebar--open {
+    transform: translateX(0);
+  }
+
+  .sidebar-scrim--open {
+    display: block;
+  }
+
+  /* The drawer is always expanded; the brand row keeps just the mark and the wordmark. */
+  .sidebar__collapse {
+    display: none;
+  }
+}
+
+/* ---------- Mobile nav toggle ---------------------------------------------
+   The visible, tappable opener for the drawer on phones. The left-edge swipe is only a secondary
+   accelerator (browsers take the edge drag as "back"), so this is the reliable path. A slim handle
+   pinned to the middle of the left edge, exactly where the swipe lives, so it reads as "the drawer
+   pulls out from here". Hidden on wide screens. */
+.mnav {
+  display: none;
+}
+
+.mnav--edge {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 45;
+  align-items: center;
+  justify-content: center;
+  /* padding:0 + border-box keep the UA button padding from eating the narrow content box and
+     shrinking the chevron below its 16px. */
+  width: 24px;
+  height: 66px;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  background: color-mix(in srgb, var(--surface-1) 92%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: var(--edge);
+  border-left: none;
+  color: var(--fg-4);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 3px 0 14px rgba(0, 0, 0, 0.35);
+  transition: background var(--d-fast) var(--ease-out),
+    color var(--d-fast) var(--ease-out);
+}
+
+.mnav--edge:active {
+  background: var(--surface-2);
+  color: var(--fg-1);
+}
+
+.mnav--edge:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+.mnav--edge>svg {
+  flex: 0 0 auto;
+}
+
+/* After the base `.mnav { display: none }` so it wins the cascade: a media query adds no
+   specificity of its own. */
+@media (max-width: 768px) {
+  .mnav--edge {
+    display: inline-flex;
+  }
+}

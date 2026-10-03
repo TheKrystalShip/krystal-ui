@@ -5,6 +5,8 @@
 export { AccountAvatar } from "./components/AccountAvatar.jsx";
 export { default as AssistantFabIcon } from "./components/AssistantFabIcon.jsx";
 export { BriefCard } from "./components/BriefCard.jsx";
+export { Dock, DockFab, useDock } from "./components/Dock.jsx";
+export { Hero } from "./components/Hero.jsx";
 export { Icon } from "./components/Icon.jsx";
 export { Modal } from "./components/Modal.jsx";
 export { NotificationsPanel } from "./components/NotificationsPanel.jsx";
@@ -13,6 +15,7 @@ export { Rail } from "./components/Rail.jsx";
 export { ReversablePortal } from "./components/ReversablePortal.jsx";
 export { Select } from "./components/Select.jsx";
 export { SettingsRow, SettingsSection, Toggle } from "./components/settings-primitives.jsx";
+export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarGroup } from "./components/Shell.jsx";
 export { SubTabs } from "./components/SubTabs.jsx";
 export { ThemePicker } from "./components/ThemePicker.jsx";
 export { Toasts } from "./components/Toasts.jsx";
@@ -20,7 +23,9 @@ export {
   Toolbar, ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, useFilters,
 } from "./components/Toolbar.jsx";
 
+export { useEdgeSwipe } from "./hooks/useEdgeSwipe.js";
 export { usePortalPopover } from "./hooks/usePortalPopover.js";
+export { useStoredFlag } from "./hooks/useStoredFlag.js";
 
 export { copyText } from "./lib/clipboard.js";
 export * as pushBrowser from "./lib/pushBrowser.js";

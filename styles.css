@@ -2,7 +2,9 @@
    package's sheets with its own imports them individually from styles/ instead. */
 @import "./styles/tokens.css";
 @import "./styles/motion.css";
+@import "./styles/shell.css";
 @import "./styles/subtabs.css";
+@import "./styles/hero.css";
 @import "./styles/select.css";
 @import "./styles/portal.css";
 @import "./styles/toolbar.css";
@@ -12,4 +14,5 @@
 @import "./styles/toast.css";
 @import "./styles/settings.css";
 @import "./styles/assistant-icon.css";
+@import "./styles/dock.css";
 @import "./styles/theme-picker.css";

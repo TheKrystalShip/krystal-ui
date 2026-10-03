@@ -35,6 +35,9 @@ lists them in the order they assume.
 
 | Kind | Exports |
 |---|---|
+| The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem`, `MobileNavToggle`, `useStoredFlag`, `useEdgeSwipe` |
+| The dock | `Dock`, `DockFab`, `useDock` |
+| Banners | `Hero` |
 | Cards and lists | `BriefCard`, `Rail`, `Pagination`, `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `Toggle`, `ThemePicker` |
 | Overlays | `Modal`, `ReversablePortal`, `Select`, `usePortalPopover` |
@@ -45,6 +48,46 @@ lists them in the order they assume.
 Stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
 theme, and the Inter / JetBrains Mono faces), `styles/motion.css` (shared keyframes), and one sheet
 per component family. `assets/tks-mark.png` is the brand mark.
+
+## The frame
+
+A site is a sidebar beside a scrolling main column, with a dock that slides in from the right:
+
+```jsx
+const [collapsed, setCollapsed] = useStoredFlag("site:sidebar:collapsed");
+const [drawerOpen, setDrawerOpen] = React.useState(false);
+const dock = useDock({ storageKey: "site:dock" });
+useEdgeSwipe(drawerOpen, setDrawerOpen, dock.open, dock.setOpen);
+
+<AppShell
+  collapsed={collapsed}
+  drawerOpen={drawerOpen}
+  onDrawer={setDrawerOpen}
+  dockPush={dock.pushing ? dock.width : 0}
+  sidebar={
+    <Sidebar mark="/mark.png" wordmark="Site" open={drawerOpen}
+      collapsed={dock.desktop && collapsed} onToggleCollapse={() => setCollapsed(c => !c)}
+      top={<label className="sidebar__search">…</label>}
+      foot={<NavItem icon="settings" label="Settings" onClick={…} />}>
+      <SidebarGroup>
+        <NavItem icon="home" label="Home" active onClick={…} />
+      </SidebarGroup>
+      <SidebarGroup label="More">
+        <NavItem icon="clock" label="Leaving soon" badge={3} tone="warn" onClick={…} />
+      </SidebarGroup>
+    </Sidebar>
+  }
+  aside={<>
+    <Dock dock={dock}>{dock.open && <Chat />}</Dock>
+    {!dock.open && <DockFab onClick={() => dock.setOpen(true)} />}
+  </>}>
+  <Page />
+</AppShell>
+```
+
+Wide screens collapse the sidebar to an icon rail; phones get it as a drawer, opened by the
+left-edge handle or a swipe. A pinned dock pushes the page over while the page keeps
+`contentFloor` pixels (1000 by default) and floats over it otherwise.
 
 ## Developing
 

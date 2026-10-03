@@ -1,0 +1,101 @@
+/* ============================================================================
+   dock.css — the panel that slides in from the right edge over (or beside) the
+   page, its drag-to-resize handle, and the floating button that opens it. Drawn
+   by Dock and DockFab.
+   ============================================================================ */
+.assistant-dock {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 420px;
+  max-width: 100vw;
+  background: var(--canvas);
+  border-left: 1px solid var(--border-strong);
+  box-shadow: -16px 0 48px rgba(0, 0, 0, 0.4);
+  z-index: 60;
+  transform: translateX(100%);
+  transition: transform var(--d-base) var(--ease-out);
+  display: flex;
+  flex-direction: column;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+.assistant-dock.assistant-dock--open {
+  transform: translateX(0);
+}
+
+/* Push mode: the open dock reads as a layout column rather than a floating overlay. The frame
+   reserves its width through --dock-push, so the page reflows left, and the dock drops its heavy
+   shadow (the border-left is the divider). */
+.assistant-dock--push {
+  box-shadow: none;
+}
+
+/* Floating launcher, bottom-right: the same side the dock slides in from. */
+.assistant-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 55;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--krystal-teal);
+  color: var(--on-accent);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  transition: transform var(--d-fast) var(--ease-out), background var(--d-fast) var(--ease-out);
+}
+
+.assistant-fab:hover {
+  background: var(--krystal-teal-hover);
+  transform: translateY(-2px);
+}
+
+.assistant-fab:active {
+  transform: translateY(0);
+}
+
+/* Drag-to-resize handle on the dock's left edge. */
+.assistant-dock__resize {
+  position: absolute;
+  top: 0;
+  left: -3px;
+  bottom: 0;
+  width: 8px;
+  cursor: ew-resize;
+  z-index: 61;
+  touch-action: none;
+}
+
+.assistant-dock__resize::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  width: 3px;
+  height: 36px;
+  margin-top: -18px;
+  border-radius: var(--r-pill);
+  background: var(--border-strong);
+  transition: background var(--d-fast);
+}
+
+.assistant-dock__resize:hover::before,
+.assistant-dock__resize--active::before {
+  background: var(--krystal-teal);
+}
+
+/* On phones the dock takes the whole width. */
+@media (max-width: 768px) {
+  .assistant-dock {
+    width: 100vw;
+    border-left: none;
+  }
+}
