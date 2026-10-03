@@ -35,7 +35,7 @@ lists them in the order they assume.
 
 | Kind | Exports |
 |---|---|
-| The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem`, `MobileNavToggle`, `useStoredFlag`, `useEdgeSwipe` |
+| The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem`, `MobileNavToggle`, `TabBar`, `useStoredFlag`, `useEdgeSwipe` |
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
@@ -90,6 +90,25 @@ useEdgeSwipe(drawerOpen, setDrawerOpen, dock.open, dock.setOpen);
 Wide screens collapse the sidebar to an icon rail; phones get it as a drawer, opened by the
 left-edge handle or a swipe. A pinned dock pushes the page over while the page keeps
 `contentFloor` pixels (1000 by default) and floats over it otherwise.
+
+A site can give phones a row of tabs along the bottom edge instead of the drawer, by passing
+`tabBar`. On a phone the sidebar, its handle and the dock's launcher are then not drawn, the main
+column scrolls clear of the bar, and an open dock ends above it, so the bar stays the way out of
+it; the site opens the dock from a tab of its own. Wide screens keep the sidebar and draw no bar.
+
+```jsx
+<AppShell
+  …
+  tabBar={
+    <TabBar items={[
+      { id: "home", icon: "house", label: "Home", active: page === "home" && !dock.open, onClick: … },
+      { id: "assistant", icon: "bot", label: "Assistant", active: dock.open, onClick: () => dock.setOpen(true) },
+      { id: "me", icon: "user", label: "Me", badge: 2, tone: "warn", onClick: … },
+    ]} />
+  }>
+```
+
+`styles/tabbar.css` sits after `dock.css` and `footer.css`, whose phone rules it adjusts.
 
 ## The assistant chat
 

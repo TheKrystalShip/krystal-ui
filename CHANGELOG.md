@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.6.0]
+
+### Added
+- `TabBar`: the phone's row of tabs along the bottom edge, each an icon over its label with the
+  current one in the accent and an optional count on the icon, clearing the home indicator.
+- `AppShell` takes `tabBar`. Given one, a phone (768px and narrower) draws the bar instead of the
+  sidebar's drawer and its edge handle, scrolls the main column clear of it, ends an open dock above
+  it and hides the dock's floating launcher, which a tab stands in for. Wide screens are unchanged.
+- `styles/tabbar.css`, after `footer.css` in `styles.css`.
+
 ## [0.5.1]
 
 ### Fixed

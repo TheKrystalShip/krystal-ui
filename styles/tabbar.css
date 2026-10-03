@@ -1,0 +1,139 @@
+/* ============================================================================
+   tabbar.css — the phone's row of tabs along the bottom edge, and what the
+   frame does around it: the drawer and its handle give way to it, the main
+   column and the dock end above it, and the dock's launcher is left to the
+   site's own tab. Drawn by TabBar inside AppShell's `tabBar`. Sits after
+   dock.css and footer.css, whose phone rules it adjusts.
+   ============================================================================ */
+
+.tabbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .app--tabbed {
+    /* The row itself; the home indicator's inset is added beneath it. */
+    --tabbar-h: 56px;
+  }
+
+  .tabbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    padding: 6px 6px env(safe-area-inset-bottom, 0px);
+    box-sizing: border-box;
+    min-height: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+    background: color-mix(in srgb, var(--surface-0) 94%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: var(--edge);
+  }
+
+  .tabbar__tab {
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 0;
+    border: none;
+    border-radius: var(--r-sm);
+    background: none;
+    color: var(--fg-3);
+    font-family: var(--font-ui);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--d-fast) var(--ease-out);
+  }
+
+  .tabbar__tab--active {
+    color: var(--krystal-teal);
+  }
+
+  .tabbar__tab:active {
+    color: var(--fg-1);
+  }
+
+  .tabbar__tab:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-focus);
+  }
+
+  .tabbar__icon {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .tabbar__label {
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .tabbar__badge {
+    position: absolute;
+    top: -4px;
+    left: calc(50% + 6px);
+    min-width: 18px;
+    height: 16px;
+    padding: 0 5px;
+    box-sizing: border-box;
+    border-radius: var(--r-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .tabbar__badge--warn {
+    background: var(--warning);
+    color: var(--on-warning);
+  }
+
+  .tabbar__badge--danger {
+    background: var(--danger);
+    color: var(--on-danger);
+  }
+
+  .tabbar__badge--info {
+    background: var(--info);
+    color: var(--on-info);
+  }
+
+  /* The bar is the way around, so the drawer is never drawn. */
+  .app--tabbed .sidebar {
+    display: none;
+  }
+
+  /* The page scrolls clear of the bar, and its footer leaves the home indicator to the bar. */
+  .app--tabbed .app__main {
+    padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .app--tabbed .kfoot__bar {
+    padding-bottom: 16px;
+  }
+
+  /* The dock ends above the bar, which stays to leave it by; a site opens it from a tab. */
+  .app--tabbed .assistant-dock {
+    bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+    box-shadow: none;
+  }
+
+  .app--tabbed .assistant-fab {
+    display: none;
+  }
+
+  .app--tabbed:has(.assistant-fab) .kfoot__bar {
+    padding-right: 16px;
+  }
+}

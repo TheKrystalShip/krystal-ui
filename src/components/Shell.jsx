@@ -2,21 +2,51 @@ import { Icon } from "./Icon.jsx";
 
 // The application frame: a sidebar beside a scrolling main column, with whatever floats over both
 // (a dock, its launcher, the toasts) after them. On wide screens the sidebar collapses to an icon
-// rail; on phones it is an off-canvas drawer, opened by the edge handle or a swipe and closed by
-// the scrim behind it.
+// rail. On phones it is an off-canvas drawer, opened by the edge handle or a swipe and closed by
+// the scrim behind it, unless the site gives a `tabBar`: then the phone has the bar along its
+// bottom edge instead, and neither the drawer nor its handle.
 //
 // `dockPush` is the width a pinned dock takes from the page, in pixels; the frame pads its right
 // edge by it so the page reflows rather than sitting under the dock.
-function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, aside, mainRef, children }) {
+function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, aside, tabBar, mainRef, children }) {
   return (
-    <div className="app" style={{ "--dock-push": dockPush + "px", ...(collapsed ? { "--sidebar-w": "64px" } : {}) }}>
+    <div
+      className={"app" + (tabBar ? " app--tabbed" : "")}
+      style={{ "--dock-push": dockPush + "px", ...(collapsed ? { "--sidebar-w": "64px" } : {}) }}>
       {sidebar}
       {drawerOpen
         ? <div className="sidebar-scrim sidebar-scrim--open" onClick={() => onDrawer(false)} />
-        : <MobileNavToggle onOpen={() => onDrawer(true)} />}
+        : !tabBar && <MobileNavToggle onOpen={() => onDrawer(true)} />}
       <main className="app__main" ref={mainRef}>{children}</main>
       {aside}
+      {tabBar}
     </div>
+  );
+}
+
+// The phone's way around a site: a row of tabs along the bottom edge, each an icon over its label,
+// the current one in the accent. Drawn only on phones; on a wide screen the sidebar is the way
+// around. Each item is `{ id, icon, label, active, onClick, badge, tone }`, where `badge` is a count
+// drawn on the icon when it is above zero, in a `tone` of info, warn or danger. The bar clears the
+// home indicator of a phone that has one.
+function TabBar({ items, label = "Main" }) {
+  return (
+    <nav className="tabbar" aria-label={label}>
+      {items.map((item) => (
+        <button
+          key={item.id || item.label}
+          type="button"
+          className={"tabbar__tab" + (item.active ? " tabbar__tab--active" : "")}
+          aria-current={item.active ? "page" : undefined}
+          onClick={item.onClick}>
+          <span className="tabbar__icon">
+            <Icon name={item.icon} size={22} />
+            {item.badge > 0 && <span className={"tabbar__badge tabbar__badge--" + (item.tone || "warn")}>{item.badge}</span>}
+          </span>
+          <span className="tabbar__label">{item.label}</span>
+        </button>
+      ))}
+    </nav>
   );
 }
 
@@ -90,4 +120,4 @@ function MobileNavToggle({ onOpen }) {
   );
 }
 
-export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarGroup };
+export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarGroup, TabBar };
