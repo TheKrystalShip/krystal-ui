@@ -22,6 +22,7 @@ export {
   adoptServerConversation, mergeServerConversations,
 } from "./chat/conversation.js";
 export { Dock, DockFab, useDock } from "./components/Dock.jsx";
+export { Footer, GithubMark } from "./components/Footer.jsx";
 export { Hero } from "./components/Hero.jsx";
 export { Icon } from "./components/Icon.jsx";
 export { Modal } from "./components/Modal.jsx";

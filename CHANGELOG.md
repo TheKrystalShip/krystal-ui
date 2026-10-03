@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.4.0]
+
+### Added
+- `Footer`: the footer a page ends with, pinned to the bottom of the main column when the page is
+  short — the site's mark, wordmark, tagline and an optional note (with a pulsing dot when `live`),
+  link groups beside it laid out in their own number of columns, and a bar carrying `copy` and `end`.
+  A link the site handles itself takes `onClick` and keeps a modified click the browser's; any other
+  opens in a new tab. It collapses on the main column's width.
+- `GithubMark`, GitHub's mark for a link to github.com.
+- `styles/footer.css`.
+
 ## [0.3.1]
 
 ### Fixed

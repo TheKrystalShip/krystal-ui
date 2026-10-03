@@ -38,6 +38,7 @@ lists them in the order they assume.
 | The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem`, `MobileNavToggle`, `useStoredFlag`, `useEdgeSwipe` |
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` |
+| The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
 | The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatCommand`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
 | Cards and lists | `BriefCard`, `Rail`, `Pagination`, `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `Toggle`, `ThemePicker` |
