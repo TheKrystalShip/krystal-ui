@@ -9,6 +9,7 @@
 @import "./styles/portal.css";
 @import "./styles/toolbar.css";
 @import "./styles/pagination.css";
+@import "./styles/breadcrumbs.css";
 @import "./styles/brief.css";
 @import "./styles/chat.css";
 @import "./styles/rail.css";

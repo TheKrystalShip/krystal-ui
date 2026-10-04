@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.8.0]
+
+### Added
+- `Breadcrumbs`: a view-only trail, `items` of `{ label, href? }` with the current page last. Ancestors
+  with an `href` are links, the current page carries `aria-current="page"`, and separators are drawn
+  in CSS so a screen reader skips them. `onNavigate(href, event)` takes a plain left click; modified
+  clicks and other buttons stay with the browser. It stays on one line at every width, each crumb
+  ellipsizing, ancestors before the current page. Styles are `styles/breadcrumbs.css`, after
+  `pagination.css` in `styles.css`.
+
 ## [0.7.0]
 
 ### Added

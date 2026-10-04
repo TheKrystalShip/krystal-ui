@@ -4,6 +4,7 @@
 
 export { AccountAvatar } from "./components/AccountAvatar.jsx";
 export { default as AssistantFabIcon } from "./components/AssistantFabIcon.jsx";
+export { Breadcrumbs } from "./components/Breadcrumbs.jsx";
 export { BriefCard } from "./components/BriefCard.jsx";
 export { Chat, CHAT_PRIVACY_NOTICE, DEFAULT_PROFILE as CHAT_DEFAULT_PROFILE, DEFAULT_TOGGLE_COPY as CHAT_TOGGLE_COPY } from "./chat/Chat.jsx";
 export {
