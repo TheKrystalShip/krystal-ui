@@ -1,0 +1,91 @@
+/* ============================================================================
+   assistant-pages.css — the pages beside an assistant's chat (AssistantChatsPage,
+   AssistantMemoryPage, AssistantSkillsPage) and the memory editor's dialog
+   (AssistantMemoryEditor). The sections on them are settings furniture
+   (settings.css); only the page's measure and what is particular to a memory
+   are spelled out here.
+   ============================================================================ */
+
+/* A page beside the chat, at a reading measure rather than the full window: its rows are text, and
+   a row stretched across a desktop leaves its control a screen away from its label. */
+.assistant-page {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 28px 20px 40px;
+  padding-top: calc(28px + env(safe-area-inset-top));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .assistant-page {
+    padding: 16px 14px 24px;
+    padding-top: calc(16px + env(safe-area-inset-top));
+  }
+}
+
+/* ---- The memory editor --------------------------------------------------- */
+
+/* A field's length against the assistant's cap. */
+.mem-editor__count {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.mem-editor__count--over {
+  color: var(--danger-fg);
+}
+
+/* The key of a memory that already exists: shown as the identifier it is, at the height of the input
+   it replaces so the fields keep one rhythm. */
+.mem-editor__key {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  word-break: break-all;
+}
+
+/* The notes take what the fields above them leave, with a floor so a short viewport still shows
+   something to write in. A grid, so the editor's row is a definite track: an editor that renders a
+   `height: 100%` box collapses in Firefox against a height that is only flex-derived. */
+.mem-editor__notes {
+  flex: 1 1 auto;
+  min-height: 220px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.mem-editor__body {
+  display: flex;
+  min-height: 0;
+  background: var(--surface-0);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+
+.mem-editor__body>* {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The plain body: the box above is its frame, so the text area draws none of its own. */
+.mem-editor__textarea {
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  resize: none;
+}
+
+.mem-editor__dirty {
+  font-size: 12px;
+  color: var(--warning-fg);
+}
+
+.mem-editor__spacer {
+  flex: 1;
+}

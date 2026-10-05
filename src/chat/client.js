@@ -1,6 +1,7 @@
 // createAssistantClient — a browser client of one assistant, over the assistant wire contract
 // (`kgsm-llm/docs/wire-contract.md`): the turn stream, the confirm channel, the conversation event
-// stream, conversations and their feedback, the command surface, and speech.
+// stream, conversations and their feedback, the command surface and the tool list, memory, Web Push,
+// and speech.
 //
 //   const client = createAssistantClient({ baseUrl: "/assistant", getToken: () => session.token() });
 //
@@ -178,6 +179,21 @@ function createAssistantClient({ baseUrl, getToken }) {
     feedback: (id, turnId, body) => json("POST", "/conversations/" + enc(id) + "/turns/" + turnId + "/feedback", body),
     commands: (opts) => json("GET", "/commands", null, opts),
     runCommand: (name, body) => json("POST", "/commands/" + enc(name), body || {}),
+    // The tools the assistant may use on the caller's behalf, already filtered to what they hold:
+    // `[{ name, description, parameters }]`. The description is written for the model.
+    tools: (opts) => json("GET", "/tools", null, opts),
+    // What the assistant has written down about the caller, and what one memory may weigh. Writing
+    // one creates or corrects it, because a memory is revised by rewriting its key.
+    memories: (opts) => json("GET", "/memories", null, opts),
+    memoryLimits: (opts) => json("GET", "/memories/limits", null, opts),
+    writeMemory: (key, memory) => json("PUT", "/memories/" + enc(key), memory),
+    deleteMemory: (key) => json("DELETE", "/memories/" + enc(key)),
+    // Web Push: the key a browser subscribes against (and whether the assistant sends at all), this
+    // caller's registered endpoints, and registering or forgetting this browser.
+    pushKey: (opts) => json("GET", "/push/key", null, opts),
+    pushDevices: (opts) => json("GET", "/push/devices", null, opts),
+    pushSubscribe: (body) => json("POST", "/push/subscribe", body),
+    pushUnsubscribe: (body) => json("DELETE", "/push/subscribe", body),
     attach: (conversationId) => json("POST", "/events/attach", { conversationId: conversationId || null }),
     stopTurn: (turnId) => json("DELETE", "/turns/" + enc(turnId)),
     turn,

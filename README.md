@@ -47,6 +47,7 @@ lists them in the order they assume.
 | Overlays | `Dialog`, `Modal`, `ReversablePortal`, `usePortalPopover` |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
+| The assistant's pages | `AssistantChatsPage`, `AssistantMemoryPage`, `AssistantSkillsPage`, `AssistantNotifications`, `AssistantMemory`, `AssistantMemoryEditor`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
 | Marks | `Icon` (Lucide, by kebab-case name), `AccountAvatar`, `AssistantFabIcon` |
 | State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS`, `copyText`, `pushBrowser`, `fmtRelative` |
 
@@ -244,6 +245,38 @@ possible), and `onOpen` with `openLabel` for the way to the full context, or any
 body is the product's, and `ChatCardRows` / `ChatCardRow` give it the one row grammar every card
 shares: `label`, `value`, a `verdict` mark (ok, warn, danger, neutral) and an optional `action`;
 leaving out `label` makes a full-width row.
+
+## The assistant's pages
+
+What a person does around the conversation — reading what the assistant remembers, seeing what it
+can do, being told when it waits on them — is the same on every site that hosts an assistant, so the
+pages are here. Each takes the assistant client (`createAssistantClient`, stable across renders) and
+names no product:
+
+```jsx
+<AssistantChatsPage listRef={setListEl} />          // Chat's `listTarget`, as a page
+<AssistantMemoryPage client={client} />
+<AssistantSkillsPage client={client} onUse={(name) => seedComposer("/" + name + " ")} />
+<AssistantNotifications client={client}>
+  <Notice>Where everything else you are told about is switched.</Notice>
+</AssistantNotifications>
+```
+
+`AssistantMemory` is the Memory page's section on its own, for a site's own settings page: the list
+from `/memories` with its counts against `/memories/limits`, each memory editable in
+`AssistantMemoryEditor` (a `Dialog`) and forgettable in place. With no `client` it shows
+`unavailable`, the site's own words for why there is nothing to read; `whose` names the assistant in
+its line where a site talks to more than one; `BodyEditor` (a component taking
+`{ value, onChange, path, readOnly }`, lazy if it likes) draws a memory's body in place of the plain
+text area, and `keyPlaceholder` is a new memory's example name. `AssistantSkillsPage` lists
+`/commands` and `/tools`, already filtered to the caller, and offers a command through `onUse`.
+`AssistantNotifications` is this browser's push subscription to the assistant, on and off, over
+`lib/pushBrowser`; `offSub` is its sentence when the assistant sends nothing at all.
+`assistantPushStatus`, `assistantPushSubscribe` and `assistantPushUnsubscribe` are the same calls
+without the section.
+
+The pages sit at a reading measure (`.assistant-page`); `styles/assistant-pages.css` draws it and
+the memory editor, after `settings.css`.
 
 ## Developing
 

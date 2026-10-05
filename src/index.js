@@ -3,6 +3,11 @@
 // sheets under "@thekrystalship/krystal-ui/styles/" to place them in a cascade of your own.
 
 export { AccountAvatar } from "./components/AccountAvatar.jsx";
+export { AssistantMemory } from "./assistant/AssistantMemory.jsx";
+export { AssistantMemoryEditor } from "./assistant/AssistantMemoryEditor.jsx";
+export { AssistantNotifications } from "./assistant/AssistantNotifications.jsx";
+export { AssistantChatsPage, AssistantMemoryPage, AssistantSkillsPage } from "./assistant/AssistantPages.jsx";
+export { pushStatus as assistantPushStatus, pushSubscribe as assistantPushSubscribe, pushUnsubscribe as assistantPushUnsubscribe } from "./assistant/push.js";
 export { default as AssistantFabIcon } from "./components/AssistantFabIcon.jsx";
 export { Breadcrumbs } from "./components/Breadcrumbs.jsx";
 export { BriefCard } from "./components/BriefCard.jsx";

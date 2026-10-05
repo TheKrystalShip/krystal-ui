@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.15.0]
+
+### Added
+- **The assistant's pages**, each over the assistant client and naming no product:
+  `AssistantChatsPage` (the chat's `listTarget` as a page), `AssistantMemoryPage` and its section
+  `AssistantMemory` with `AssistantMemoryEditor` (the list, the counts against the assistant's
+  limits, writing, correcting and forgetting; `unavailable`, `whose`, `BodyEditor` and
+  `keyPlaceholder` are the site's), `AssistantSkillsPage` (commands offered through `onUse`, tools
+  listed) and `AssistantNotifications` (this browser's push subscription, on and off; `offSub` and
+  `children` are the site's). `assistantPushStatus`, `assistantPushSubscribe` and
+  `assistantPushUnsubscribe` are its calls on their own.
+- `createAssistantClient` gains `tools`, `memories`, `memoryLimits`, `writeMemory`, `deleteMemory`,
+  `pushKey`, `pushDevices`, `pushSubscribe` and `pushUnsubscribe`, on the routes the assistant
+  wire contract names.
+- `styles/assistant-pages.css`, after `settings.css` in `styles.css`: the pages' reading measure
+  (`.assistant-page`) and the memory editor (`.mem-editor__*`). A site importing sheets one by one
+  adds it. `settings.css` gains `.settings-value` and `.settings-value--mono`.
+
 ## [0.14.0]
 
 ### Changed
