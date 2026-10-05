@@ -11,9 +11,14 @@ import { Icon } from "./Icon.jsx";
 //   specs    [{ icon, value, label }]   a null value reads as an em-dash, muted
 //   status   { label, icon?, tone?: "success" | "warning" | "notice" | "active", live?, title? }
 //   action   { label, onClick?, title? }   a button when it has onClick, otherwise the card's cue
+//   tools    [{ icon, label, onClick, on?, tone?: "danger" }]   small round buttons on the art's
+//            top-right, under the badge: what is done to the thing besides opening it. `on` marks a
+//            switch that is on. Shown on hover or focus where there is a pointer that hovers, always
+//            on a touch screen
+//   progress a number from 0 to 1, drawn as a bar along the art's foot; 1 is complete
 //
 // A status left out still keeps its line, so a card with nothing to say is as tall as one that has.
-function ShowcaseCard({ name, art, onPick, corner, badge, specs = [], status, action, className }) {
+function ShowcaseCard({ name, art, onPick, corner, badge, specs = [], status, action, tools, progress, className }) {
   const open = () => { if (onPick) onPick(); };
   return (
     <article
@@ -34,8 +39,31 @@ function ShowcaseCard({ name, art, onPick, corner, badge, specs = [], status, ac
             {badge.label}
           </span>
         )}
+        {tools && tools.length > 0 && (
+          <div className={"showcase-card__tools" + (badge ? " showcase-card__tools--under" : "")}>
+            {tools.map(t => (
+              <button
+                key={t.label}
+                type="button"
+                className={"showcase-card__tool" + (t.on ? " is-on" : "") + (t.tone ? " showcase-card__tool--" + t.tone : "")}
+                aria-label={t.label}
+                aria-pressed={t.on === undefined ? undefined : t.on}
+                title={t.label}
+                onClick={e => { e.stopPropagation(); t.onClick(); }}
+                onKeyDown={e => e.stopPropagation()}
+              >
+                <Icon name={t.icon} size={15} strokeWidth={2} />
+              </button>
+            ))}
+          </div>
+        )}
         <div className="showcase-card__veil"></div>
         <h3 className="showcase-card__name">{name}</h3>
+        {progress != null && (
+          <span className={"showcase-card__progress" + (progress >= 1 ? " is-done" : "")} aria-hidden="true">
+            <span style={{ width: `${Math.round(100 * Math.min(1, Math.max(0, progress)))}%` }}></span>
+          </span>
+        )}
       </div>
 
       {specs.length > 0 && (

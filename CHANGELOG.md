@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.10.0]
+
+### Added
+- `ShowcaseCard` `tools`: `[{ icon, label, onClick, on?, tone?: "danger" }]`, small round buttons on
+  the art's top-right (under the badge when there is one) for what is done to the thing besides
+  opening it; `on` marks a switch that is on. A pointer that hovers finds them on the card it is over,
+  and a touch screen shows them always. `.showcase-card__tools`, `.showcase-card__tool`.
+- `ShowcaseCard` `progress`: a number from 0 to 1 drawn as a bar along the art's foot, the success
+  colour at 1. `.showcase-card__progress`.
+
 ## [0.9.0]
 
 ### Added
