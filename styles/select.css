@@ -1,7 +1,9 @@
 /* ============================================================================
    select.css — the one styled dropdown (<Select>). appearance:none + a custom
-   chevron so it reads identically everywhere. Two sizes: --field (full form
-   field) and --chip (compact picker in a card header).
+   chevron so it reads identically everywhere. Three variants: --field (a full
+   form field), --inline (sized to its options) and --chip (a compact picker in a
+   card header); --sm/--md/--lg set a field's or an inline select's height to
+   match the Input and Button beside it.
    ========================================================================== */
 .k-select {
   position: relative;
@@ -56,6 +58,30 @@
   height: 38px;
   padding: 0 34px 0 12px;
   font-size: 13.5px;
+}
+
+.k-select--inline .k-select__el {
+  height: 34px;
+  padding: 0 34px 0 12px;
+  font-size: 13.5px;
+}
+
+.k-select--sm .k-select__el {
+  height: 30px;
+  padding: 0 30px 0 10px;
+  font-size: 13px;
+}
+
+.k-select--md .k-select__el {
+  height: 34px;
+}
+
+.k-select--lg .k-select__el {
+  height: 38px;
+}
+
+.k-select--sm .k-select__chev {
+  right: 8px;
 }
 
 .k-select--chip .k-select__el {

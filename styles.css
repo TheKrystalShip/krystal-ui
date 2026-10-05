@@ -3,6 +3,7 @@
 @import "./styles/tokens.css";
 @import "./styles/motion.css";
 @import "./styles/scrollbar.css";
+@import "./styles/controls.css";
 @import "./styles/shell.css";
 @import "./styles/subtabs.css";
 @import "./styles/hero.css";

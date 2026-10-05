@@ -1,8 +1,8 @@
 import { BriefCard } from "./BriefCard.jsx";
 import { Icon } from "./Icon.jsx";
 
-// settings-primitives.jsx — the settings furniture: a titled section of rows, a row
-// with its controls on the right, and the switch.
+// settings-primitives.jsx — the settings furniture: a titled section of rows, and a row
+// with its controls on the right.
 
 // `tone` (success | warn | danger | info) tints the left rule + icon chip via the
 // shared brief-item modifiers — for a row that carries a verdict, not just a value.
@@ -20,30 +20,6 @@ function SettingsRow({ icon, title, sub, tone, children }) {
   );
 }
 
-// `disabled` renders the switch inert and faded — for a setting that exists but cannot be changed
-// from here (one turned off for everyone, say). It stays visible rather than being hidden,
-// because a missing row reads as "no such setting" when the truth is "not yours to change"; give the
-// row a `sub` saying which.
-function Toggle({ on, onChange, disabled = false, label }) {
-  return (
-    <button type="button" disabled={disabled} onClick={() => !disabled && onChange(!on)} style={{
-      width: 38, height: 22, borderRadius: 999,
-      background: on ? "var(--krystal-teal)" : "var(--surface-3)",
-      border: "1px solid " + (on ? "transparent" : "var(--border-subtle)"),
-      position: "relative", cursor: disabled ? "default" : "pointer", padding: 0,
-      opacity: disabled ? 0.45 : 1,
-      transition: "background 140ms, opacity 140ms",
-    }} aria-pressed={on} aria-label={label}>
-      <span style={{
-        position: "absolute", top: 2, left: on ? 18 : 2,
-        width: 16, height: 16, borderRadius: 999,
-        background: on ? "var(--fg-inverse)" : "var(--fg-2)",
-        transition: "left 140ms",
-      }}></span>
-    </button>
-  );
-}
-
 function SettingsSection({ icon, title, meta, action, className, children }) {
   return (
     <BriefCard icon={icon} title={title} meta={meta} action={action} className={className}>
@@ -52,4 +28,4 @@ function SettingsSection({ icon, title, meta, action, className, children }) {
   );
 }
 
-export { SettingsRow, SettingsSection, Toggle };
+export { SettingsRow, SettingsSection };

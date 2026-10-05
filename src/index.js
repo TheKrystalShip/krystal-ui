@@ -6,6 +6,8 @@ export { AccountAvatar } from "./components/AccountAvatar.jsx";
 export { default as AssistantFabIcon } from "./components/AssistantFabIcon.jsx";
 export { Breadcrumbs } from "./components/Breadcrumbs.jsx";
 export { BriefCard } from "./components/BriefCard.jsx";
+export { Button, IconButton } from "./components/Button.jsx";
+export { Checkbox, Field, Input, Textarea } from "./components/fields.jsx";
 export { Chat, CHAT_PRIVACY_NOTICE, DEFAULT_PROFILE as CHAT_DEFAULT_PROFILE, DEFAULT_TOGGLE_COPY as CHAT_TOGGLE_COPY } from "./chat/Chat.jsx";
 export {
   ChatCommand, ChatContextPill, ChatPending, ChatSteps, ChatThinking, ChatVerify,
@@ -32,13 +34,15 @@ export { Pagination, paginationWindow, useDebouncedValue } from "./components/Pa
 export { Rail } from "./components/Rail.jsx";
 export { ReversablePortal } from "./components/ReversablePortal.jsx";
 export { Select } from "./components/Select.jsx";
-export { SettingsRow, SettingsSection, Toggle } from "./components/settings-primitives.jsx";
+export { SettingsRow, SettingsSection } from "./components/settings-primitives.jsx";
 export { ShowcaseCard } from "./components/ShowcaseCard.jsx";
 export { Skeleton } from "./components/Skeleton.jsx";
+export { Spinner } from "./components/Spinner.jsx";
 export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, TabBar } from "./components/Shell.jsx";
 export { SubTabs } from "./components/SubTabs.jsx";
 export { ThemePicker } from "./components/ThemePicker.jsx";
 export { Toasts } from "./components/Toasts.jsx";
+export { Toggle } from "./components/Toggle.jsx";
 export {
   Toolbar, ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, useFilters,
 } from "./components/Toolbar.jsx";

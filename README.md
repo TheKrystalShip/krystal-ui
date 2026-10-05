@@ -41,8 +41,9 @@ lists them in the order they assume.
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
 | The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatCommand`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
 | Cards and lists | `BriefCard`, `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art and a `progress` bar along its foot), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
-| Settings furniture | `SettingsSection`, `SettingsRow`, `Toggle`, `ThemePicker` |
-| Overlays | `Modal`, `ReversablePortal`, `Select`, `usePortalPopover` |
+| Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `Textarea`, `Checkbox`, `Field`, `Select` |
+| Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
+| Overlays | `Modal`, `ReversablePortal`, `usePortalPopover` |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `AccountAvatar`, `AssistantFabIcon` |
@@ -50,8 +51,42 @@ lists them in the order they assume.
 
 Stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
 theme, and the Inter / JetBrains Mono faces), `styles/motion.css` (shared keyframes),
-`styles/scrollbar.css` (the scrollbar every scrollable surface draws), and one sheet per component
-family. `assets/tks-mark.png` is the brand mark.
+`styles/scrollbar.css` (the scrollbar every scrollable surface draws), `styles/controls.css` (the
+basic controls, below), and one sheet per component family. `assets/tks-mark.png` is the brand mark.
+
+## The controls
+
+Every push button, field, switch and spinner on a site is one of these, so a control looks and
+behaves the same wherever it is drawn. Buttons, fields and selects share one height ladder, so a field
+and the button beside it sit on one line:
+
+| Size | xs | sm | md | lg | xl |
+|---|---|---|---|---|---|
+| `Button`, `IconButton` | 26 | 30 | 34 | 38 | 46 |
+| `Input`, `Select` | | 30 | 34 | 38 | |
+
+`md` is the default, and a phone raises it to a 40px touch target.
+
+```jsx
+<Button variant="primary" icon="save" busy={saving} onClick={save}>{saving ? "Saving…" : "Save"}</Button>
+<Button variant="outline" onClick={close}>Cancel</Button>
+<Button href="/account" iconRight="external-link">Manage account</Button>
+<IconButton icon="trash-2" label="Delete" tone="danger" armed={armed} onClick={trigger} />
+
+<Field label="Port" aside="optional" hint="Players connect on this.">
+  <Input type="number" mono wide suffix="udp" value={port} onChange={(e) => setPort(e.target.value)} />
+</Field>
+<Checkbox checked={agree} onChange={setAgree}>I understand</Checkbox>
+<Toggle on={enabled} onChange={setEnabled} label="Enabled" />
+<Spinner label="Loading" />
+```
+
+`Button` variants say how loud an action is: `primary`, `secondary` (the default), `outline`, `ghost`,
+`accent`, `danger`, `warning` and `link`. `tone` (`danger`, `warning`, `success`) colours a neutral
+button's hover by the consequence of pressing it; `busy` swaps its icon for a spinner and holds it;
+`pressed` makes it a two-state button; `armed` marks a confirm-first button waiting for its second
+press; `href` renders a link that looks like one. `IconButton` is the square form, and its `label` is
+its accessible name and tooltip. `Input` takes `prefix` and `suffix` words inside its frame.
 
 ## The frame
 

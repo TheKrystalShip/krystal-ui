@@ -17,3 +17,15 @@
     transform: rotate(360deg);
   }
 }
+
+/* A ring breathing out from a control that is waiting for a second press. */
+@keyframes k-armed {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--fg-1) 45%, transparent);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--fg-1) 0%, transparent);
+  }
+}

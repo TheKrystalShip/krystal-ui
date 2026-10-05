@@ -3,6 +3,7 @@
 
 import React from "react";
 import { Icon } from "../components/Icon.jsx";
+import { Spinner } from "../components/Spinner.jsx";
 
 function ChatContextPill({ msg }) {
   const pending = msg.state === "pending";
@@ -183,7 +184,7 @@ function ChatVerify({ msg }) {
   if (msg.state === "pending") {
     return (
       <div className="chat-verify chat-verify--pending">
-        <span className="oauth-spinner"></span>
+        <Spinner />
         <span>{msg.progress || ("Verifying " + msg.action.label.toLowerCase() + "…")}</span>
       </div>
     );

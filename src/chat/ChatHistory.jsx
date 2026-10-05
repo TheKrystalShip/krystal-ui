@@ -4,6 +4,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "../components/Icon.jsx";
+import { Spinner } from "../components/Spinner.jsx";
 import { usePortalPopover } from "../hooks/usePortalPopover.js";
 import { conversationTitle } from "./conversation.js";
 
@@ -37,7 +38,7 @@ function ChatHistory({ convos, activeId, onPick, onDelete, onOpen, loading }) {
             ))}
             {loading && (
               <div className="chat-rail__empty" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                <span className="oauth-spinner"></span> Loading chat history…
+                <Spinner /> Loading chat history…
               </div>
             )}
           </div>

@@ -5,6 +5,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "../components/Icon.jsx";
+import { Spinner } from "../components/Spinner.jsx";
 import { usePortalPopover } from "../hooks/usePortalPopover.js";
 
 function ChatContextMeter({ usage, onCompact }) {
@@ -98,7 +99,7 @@ function ChatContextMeter({ usage, onCompact }) {
                 ? "Summarize the older messages to free up the context window"
                 : "Nothing to compact yet \u2014 send a message first"}>
               {compacting
-                ? <><span className="oauth-spinner" /> Compacting…</>
+                ? <><Spinner size={13} /> Compacting…</>
                 : <><Icon name="fold-vertical" size={13} strokeWidth={2.2} /> Compact</>}
             </button>
             {note && <span className="chat-ctx__pop-note">{note}</span>}

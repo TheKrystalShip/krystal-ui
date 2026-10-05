@@ -1,0 +1,555 @@
+/* ============================================================================
+   controls.css — the basic controls: <Button>, <IconButton>, <Spinner>,
+   <Toggle>, <Input>, <Textarea>, <Checkbox> and the <Field> frame.
+
+   One family of metrics: --r-sm corners, a 1px border on every control (clear
+   where it should not show, so variants never change a control's size),
+   semibold labels, and heights shared between buttons and fields so a field and
+   its button sit on one line — xs 26, sm 30, md 34, lg 38, xl 46.
+
+   Every box here states `box-sizing: border-box`: a site may have no global
+   reset, and a control told to fill its column must not hang out of it by its
+   own padding and border.
+   ============================================================================ */
+
+/* ---- Button ------------------------------------------------------------- */
+.k-btn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: var(--w-semibold);
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--d-fast) var(--ease-out),
+    color var(--d-fast) var(--ease-out),
+    border-color var(--d-fast) var(--ease-out),
+    filter var(--d-fast) var(--ease-out);
+}
+
+.k-btn > svg {
+  flex-shrink: 0;
+}
+
+.k-btn--xs { height: 26px; padding: 0 9px; gap: 5px; font-size: 11.5px; }
+.k-btn--sm { height: 30px; padding: 0 10px; gap: 6px; font-size: 12.5px; }
+.k-btn--md { height: 34px; padding: 0 14px; }
+.k-btn--lg { height: 38px; padding: 0 16px; }
+.k-btn--xl { height: 46px; padding: 0 18px; gap: 9px; font-size: 14px; }
+
+/* An icon with no words keeps the size's height and becomes square. */
+.k-btn--bare { padding: 0; aspect-ratio: 1; }
+
+.k-btn--wide {
+  display: flex;
+  width: 100%;
+}
+
+/* primary — the accent fill */
+.k-btn--primary {
+  background: var(--krystal-teal);
+  color: var(--on-accent);
+}
+
+.k-btn--primary:hover:not(:disabled) {
+  background: var(--krystal-teal-hover);
+}
+
+/* secondary — the raised neutral fill that lifts on hover */
+.k-btn--secondary {
+  background: var(--surface-2);
+  border-color: var(--border-subtle);
+  color: var(--fg-2);
+}
+
+.k-btn--secondary:hover:not(:disabled) {
+  background: var(--surface-3);
+  border-color: var(--border-strong);
+  color: var(--fg-1);
+}
+
+/* outline — no fill until hover */
+.k-btn--outline {
+  background: transparent;
+  border-color: var(--border-subtle);
+  color: var(--fg-2);
+}
+
+.k-btn--outline:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  color: var(--fg-1);
+}
+
+/* ghost — no fill and no border until hover, a muted label */
+.k-btn--ghost {
+  background: transparent;
+  color: var(--fg-3);
+}
+
+.k-btn--ghost:hover:not(:disabled) {
+  background: var(--veil-2);
+  color: var(--fg-2);
+}
+
+/* accent — a tint of the accent, for an action that is on or suggested */
+.k-btn--accent {
+  background: var(--krystal-teal-dim);
+  border-color: var(--border-accent);
+  color: var(--krystal-teal);
+}
+
+.k-btn--accent:hover:not(:disabled) {
+  color: var(--krystal-teal-hover);
+}
+
+/* danger — the danger fill */
+.k-btn--danger {
+  background: var(--danger);
+  color: var(--on-danger);
+}
+
+.k-btn--danger:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+/* warning — a primary action that overrides a caution; still the way through, in the colour that
+   says what its label says */
+.k-btn--warning {
+  background: var(--warning);
+  color: var(--on-warning);
+}
+
+.k-btn--warning:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+/* link — words that act */
+.k-btn--link {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--krystal-teal);
+}
+
+.k-btn--link:hover:not(:disabled) {
+  color: var(--krystal-teal-hover);
+}
+
+/* A neutral button whose action carries a consequence takes that consequence's colour only once
+   pointed at: danger destroys something, warning interrupts someone, success restores something. */
+.k-btn--tone-danger:hover:not(:disabled) {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger-fg);
+}
+
+.k-btn--tone-warning:hover:not(:disabled) {
+  background: var(--warning-bg);
+  border-color: var(--warning);
+  color: var(--warning-fg);
+}
+
+.k-btn--tone-success:hover:not(:disabled) {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--success-fg);
+}
+
+/* A two-state button that is on reads as the accent tint, whatever its variant. */
+.k-btn[aria-pressed="true"] {
+  background: var(--krystal-teal-dim);
+  border-color: var(--border-accent);
+  color: var(--krystal-teal);
+}
+
+.k-btn:disabled,
+.k-btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.k-btn[aria-disabled="true"] {
+  pointer-events: none;
+}
+
+/* Busy is disabled but still readable: its label is saying what is happening. */
+.k-btn[aria-busy="true"]:disabled {
+  opacity: 0.85;
+  cursor: progress;
+}
+
+/* Armed: a confirm-first button waiting for its second press. A different state, not a hover. */
+.k-btn.is-armed,
+.k-btn.is-armed:hover:not(:disabled) {
+  background: var(--fg-1);
+  border-color: transparent;
+  color: var(--fg-inverse);
+  filter: none;
+  animation: k-armed 1.1s ease-in-out infinite;
+}
+
+/* ---- IconButton --------------------------------------------------------- */
+.k-iconbtn {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--fg-2);
+  cursor: pointer;
+  transition: background var(--d-fast) var(--ease-out),
+    color var(--d-fast) var(--ease-out),
+    border-color var(--d-fast) var(--ease-out);
+}
+
+.k-iconbtn--xs { width: 26px; height: 26px; }
+.k-iconbtn--sm { width: 30px; height: 30px; }
+.k-iconbtn--md { width: 34px; height: 34px; }
+.k-iconbtn--lg { width: 38px; height: 38px; }
+
+.k-iconbtn--outline {
+  border-color: var(--border-subtle);
+}
+
+.k-iconbtn--secondary {
+  background: var(--surface-2);
+  border-color: var(--border-subtle);
+}
+
+.k-iconbtn--ghost {
+  color: var(--fg-3);
+}
+
+.k-iconbtn:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--fg-1);
+}
+
+.k-iconbtn--outline:hover:not(:disabled),
+.k-iconbtn--secondary:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+
+.k-iconbtn--secondary:hover:not(:disabled) {
+  background: var(--surface-3);
+}
+
+.k-iconbtn--tone-danger:hover:not(:disabled) {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger-fg);
+}
+
+.k-iconbtn--tone-warning:hover:not(:disabled) {
+  background: var(--warning-bg);
+  border-color: var(--warning);
+  color: var(--warning-fg);
+}
+
+.k-iconbtn--tone-success:hover:not(:disabled) {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--success-fg);
+}
+
+/* A trigger whose menu is open stays lit while the menu is up. */
+.k-iconbtn[aria-expanded="true"],
+.k-btn[aria-expanded="true"] {
+  background: var(--surface-2);
+  color: var(--fg-1);
+}
+
+.k-iconbtn[aria-pressed="true"] {
+  background: var(--krystal-teal-dim);
+  border-color: var(--border-accent);
+  color: var(--krystal-teal);
+}
+
+/* Armed, with no label to say so: the fill is most of what says the next press destroys something. */
+.k-iconbtn.is-armed,
+.k-iconbtn.is-armed:hover:not(:disabled) {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger-fg);
+}
+
+/* What a success-toned action commits is a good thing (lifting a ban), so its armed state says so. */
+.k-iconbtn--tone-success.is-armed,
+.k-iconbtn--tone-success.is-armed:hover:not(:disabled) {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--success-fg);
+}
+
+.k-iconbtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.k-iconbtn[aria-busy="true"]:disabled {
+  opacity: 0.85;
+  cursor: progress;
+}
+
+/* ---- Spinner ------------------------------------------------------------ */
+.k-spinner {
+  box-sizing: border-box;
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  border: 2px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-top-color: currentColor;
+  border-radius: var(--r-pill);
+  animation: k-spin 0.7s linear infinite;
+}
+
+/* ---- Toggle ------------------------------------------------------------- */
+.k-toggle {
+  box-sizing: border-box;
+  position: relative;
+  flex-shrink: 0;
+  width: 38px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  cursor: pointer;
+  transition: background 140ms, border-color 140ms, opacity 140ms;
+}
+
+.k-toggle__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--r-pill);
+  background: var(--fg-2);
+  transition: left 140ms, background 140ms;
+}
+
+.k-toggle[aria-checked="true"] {
+  background: var(--krystal-teal);
+  border-color: transparent;
+}
+
+.k-toggle[aria-checked="true"] .k-toggle__knob {
+  left: 18px;
+  background: var(--on-accent);
+}
+
+.k-toggle:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* ---- Input and Textarea ------------------------------------------------- */
+.k-input {
+  box-sizing: border-box;
+  min-width: 0;
+  height: 34px;
+  padding: 0 12px;
+  background: var(--surface-3);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  color: var(--fg-1);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color var(--d-fast) var(--ease-out), box-shadow var(--d-fast) var(--ease-out);
+}
+
+.k-input--sm { height: 30px; padding: 0 10px; font-size: 13px; }
+.k-input--md { height: 34px; padding: 0 12px; }
+.k-input--lg { height: 38px; padding: 0 12px; }
+
+.k-input--mono {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.k-input--sm.k-input--mono {
+  font-size: 12.5px;
+}
+
+.k-input--wide {
+  width: 100%;
+}
+
+.k-input[type="number"],
+.k-input__el[type="number"] {
+  font-variant-numeric: tabular-nums;
+}
+
+.k-input::placeholder,
+.k-input__el::placeholder {
+  color: var(--fg-4);
+}
+
+.k-input:focus,
+.k-input--affixed:focus-within {
+  border-color: var(--border-accent);
+  box-shadow: var(--ring-input);
+}
+
+.k-input[aria-invalid="true"],
+.k-input.is-invalid {
+  border-color: var(--danger);
+}
+
+/* A field with words inside its frame: the frame is the field, the input in it is bare. */
+.k-input--affixed {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: text;
+}
+
+.k-input--affixed.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.k-input__el {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  outline: none;
+}
+
+.k-input__el:disabled {
+  cursor: not-allowed;
+}
+
+.k-input__affix {
+  flex-shrink: 0;
+  color: var(--fg-3);
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+
+.k-input[readonly] {
+  color: var(--fg-2);
+}
+
+.k-input[readonly]:focus {
+  border-color: var(--border-subtle);
+  box-shadow: none;
+}
+
+.k-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.k-textarea {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 12px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+/* ---- Checkbox ----------------------------------------------------------- */
+.k-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--fg-2);
+  cursor: pointer;
+}
+
+.k-check__box {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--krystal-teal);
+  cursor: inherit;
+}
+
+.k-check--disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ---- Field -------------------------------------------------------------- */
+.k-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.k-field__label {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: var(--w-semibold);
+  line-height: 1.35;
+  color: var(--fg-2);
+}
+
+.k-field__aside {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fg-4);
+}
+
+.k-field__hint,
+.k-field__error {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--fg-3);
+}
+
+.k-field__error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--danger-fg);
+}
+
+/* ---- Touch -------------------------------------------------------------- */
+/* A phone raises the ordinary controls to a 40px target. The compact sizes keep theirs: they live
+   in dense rows whose height they would otherwise set. */
+@media (max-width: 768px) {
+  .k-btn--md:not(.k-btn--link),
+  .k-input--md {
+    height: 40px;
+  }
+
+  .k-iconbtn--md {
+    width: 40px;
+    height: 40px;
+  }
+}

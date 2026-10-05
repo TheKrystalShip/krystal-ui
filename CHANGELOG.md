@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.12.0]
+
+### Added
+- The basic controls, in `styles/controls.css` (after `scrollbar.css` in `styles.css`), extracted
+  from the Control Panel's button and field families and made one set:
+  - `Button`: variants `primary`, `secondary` (default), `outline`, `ghost`, `accent`, `danger`,
+    `warning`, `link`; sizes `xs` 26, `sm` 30, `md` 34 (default), `lg` 38, `xl` 46; `icon` and
+    `iconRight` (a Lucide name or a node), `tone` (`danger`, `warning`, `success` on hover), `busy`,
+    `pressed`, `armed`, `wide`, and `href` for a link drawn as a button. Forwards its ref.
+    `.k-btn`, `.k-btn--<variant>`, `.k-btn--<size>`, `.k-btn--tone-<tone>`, `.k-btn--wide`,
+    `.k-btn--bare`, `.is-armed`.
+  - `IconButton`: the square form, `label` as its accessible name and tooltip; variants `outline`
+    (default), `ghost`, `secondary`; sizes `xs`–`lg` on Button's heights; `tone`, `busy`, `pressed`,
+    `armed`. `.k-iconbtn`.
+  - `Spinner`: a ring in the current colour, `size` in pixels, announced as a status when given a
+    `label`. `.k-spinner`.
+  - `Input` and `Textarea`: sizes `sm`, `md`, `lg`; `mono`, `wide`, `invalid`; `prefix` and `suffix`
+    words inside the frame (`.k-input--affixed`, `.k-input__el`, `.k-input__affix`). Forward their
+    refs. `.k-input`, `.k-textarea`.
+  - `Checkbox`: a native checkbox in the accent colour with its words beside it; `onChange` receives
+    the checked state. `.k-check`, `.k-check__box`, `.k-check__label`.
+  - `Field`: a label, its control, and a hint or an error; `aside` beside the label; `group` for a
+    frame holding several controls. `.k-field`, `.k-field__label`, `.k-field__aside`,
+    `.k-field__hint`, `.k-field__error`.
+- `Select` `size` (`sm`, `md`, `lg`) and an `inline` variant sized to its options.
+- `k-armed`, the keyframe an armed control breathes with, in `styles/motion.css`.
+
+### Changed
+- `Toggle` is drawn by `.k-toggle` and `.k-toggle__knob` and is a `role="switch"` with
+  `aria-checked`; its knob takes `--on-accent` when on.
+- The chat's verifying, history-loading and compacting states draw `Spinner`, which is styled by
+  the package.
+
 ## [0.11.0]
 
 ### Added
