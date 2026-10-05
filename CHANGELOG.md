@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.9.0]
+
+### Added
+- `Skeleton`: one placeholder block, `w` and `h` any CSS length (a number is pixels) and `r` its
+  corner radius, shimmering while a surface loads and holding still under
+  `prefers-reduced-motion`. Styles are `styles/skeleton.css`, last in `styles.css`: `.skel` the
+  block, and `.skel-card`, `.skel-card__art`, `.skel-row` and `.skel-toolbar` the frames a site
+  arranges blocks in.
+
 ## [0.8.0]
 
 ### Added

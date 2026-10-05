@@ -1,0 +1,14 @@
+// Skeleton — one placeholder block, drawn where a piece of content will be while it is read.
+//
+// A page built from skeletons occupies the footprint the real content will, so it settles in place
+// when the data arrives: a site lays these out in its own containers, at the sizes its real text
+// and artwork take. `w` and `h` are any CSS length (a number is pixels), `r` the corner radius.
+// The block shimmers, and holds still under prefers-reduced-motion (styles/skeleton.css).
+export function Skeleton({ w = "100%", h = 12, r = 6, style, className }) {
+  return (
+    <span
+      className={"skel" + (className ? " " + className : "")}
+      aria-hidden="true"
+      style={{ width: w, height: h, borderRadius: r, ...style }} />
+  );
+}

@@ -1,0 +1,60 @@
+/* ============================================================================
+   skeleton.css — placeholders that hold a surface's footprint while it loads
+   (<Skeleton>). `.skel` is one shimmering block; `.skel-card`, `.skel-row` and
+   `.skel-toolbar` are the frames a site arranges blocks in when its own
+   containers are not the shape it needs.
+   ============================================================================ */
+.skel {
+  display: block;
+  background: var(--surface-2);
+  background-image: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--fg-4) 16%, transparent) 50%, transparent 100%);
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  animation: skel-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skel-shimmer {
+  0% {
+    background-position: 150% 0;
+  }
+
+  100% {
+    background-position: -50% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skel {
+    animation: none;
+    background-image: none;
+  }
+}
+
+.skel-card {
+  background: var(--surface-1);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+
+.skel-card__art {
+  background: var(--surface-2);
+  width: 100%;
+}
+
+.skel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.skel-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--surface-1);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  padding: 10px 12px;
+}
