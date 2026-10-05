@@ -39,7 +39,7 @@ lists them in the order they assume.
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
-| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatCommand`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
+| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatActivity`, `ChatCommand`, `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
 | Cards and lists | `BriefCard`, `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art and a `progress` bar along its foot), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `Textarea`, `Checkbox`, `Field`, `Select` |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
@@ -208,9 +208,24 @@ const client = createAssistantClient({ baseUrl: "/assistant", getToken: () => se
   renderCards={(msg, api) => <FilmCards cards={msg.cards} />} />
 ```
 
+The window is drawn in three shapes: text in the column, a card, and a one-line event row. Your
+messages are bubbles on the right; an answer is text on the left, its name shown once per run. The
+assistant's work — thinking, the tools it used, a long tool's own steps — is one Activity line above
+the answer (`ChatActivity`), live while it runs and a closed summary with its duration after. The
+answer's markdown covers headings, lists, tables, links, quotes and code blocks with a copy button.
+A proposed action is one card that changes in place, from proposed through the confirm step to
+verified, not verified or failed; a `write_file` proposal shows a line diff when the proposal carries
+the file's current content. Switches, scope changes, compaction and the assistant coming and going
+are event rows (`ChatEvent`), with a day row where the date changes. The composer's switches are
+labelled toggle buttons, and a single options menu where the composer is narrower than 560px (a
+dock, a phone).
+
 `profile` is how the product reads what the assistant sends: `adaptCard(result)` turns a tool's
 structured result into a card for `renderCards`, `proposal(msg)` names a proposed action and says
-whether this surface can redeem it, and `verdict(msg, name, response)` words its outcome.
+whether this surface can redeem it — with an optional `title` where its button label does not read
+ahead of the target — and `verdict(msg, name, response)` words its outcome; a verdict's `tone`
+(`"warn"` ran but its end state was not seen, `"danger"` failed) picks how a card that did not
+succeed reads.
 `renderEntry` draws transcript roles of the product's own, and `turnExtras()` adds fields to the
 next turn. `clientFor` is called with the assistant's id, and must be stable across renders.
 
@@ -223,9 +238,12 @@ only then. `listTarget` is a page of the site's own — a phone's tab of convers
 list is drawn full width, with New chat above it and the open conversation marked. A chat whose list
 a site draws elsewhere carries no history popover in its header.
 
-`ChatCard` is the card a product draws under an answer: an icon tile in a `tone`, a title with a
-monospace `sub` line, a `confidence` badge (confirmed, likely, possible), and `onOpen` with
-`openLabel` for the way to the full context, or any `action` node. The body is the product's.
+`ChatCard` is the card a product draws under an answer: an icon tile in a `tone` (neutral, accent,
+ok, warn, danger, muted), a title with a `sub` line, a `confidence` mark (confirmed, likely,
+possible), and `onOpen` with `openLabel` for the way to the full context, or any `action` node. Its
+body is the product's, and `ChatCardRows` / `ChatCardRow` give it the one row grammar every card
+shares: `label`, `value`, a `verdict` mark (ok, warn, danger, neutral) and an optional `action`;
+leaving out `label` makes a full-width row.
 
 ## Developing
 

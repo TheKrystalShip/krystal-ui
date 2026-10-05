@@ -16,6 +16,10 @@
 @import "./styles/breadcrumbs.css";
 @import "./styles/brief.css";
 @import "./styles/chat.css";
+@import "./styles/chat-chrome.css";
+@import "./styles/chat-turns.css";
+@import "./styles/chat-actions.css";
+@import "./styles/chat-composer.css";
 @import "./styles/rail.css";
 @import "./styles/toast.css";
 @import "./styles/settings.css";

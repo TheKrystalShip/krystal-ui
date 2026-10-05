@@ -4,6 +4,9 @@ import { Icon } from "../components/Icon.jsx";
 import { Button, IconButton } from "../components/Button.jsx";
 import { EmptyState } from "../components/EmptyState.jsx";
 import { NavItem } from "../components/Shell.jsx";
+import { Spinner } from "../components/Spinner.jsx";
+import { Toggle } from "../components/Toggle.jsx";
+import { usePortalPopover } from "../hooks/usePortalPopover.js";
 import { VoiceComposerBar, useVoiceRecorder } from "./VoiceNote.jsx";
 import { createSpokenReply, armAudio } from "./spokenReply.js";
 import {
@@ -17,7 +20,7 @@ import { ChatCommand } from "./ChatMessageParts.jsx";
 import { ChatCommandMenu } from "./ChatCommandMenu.jsx";
 import { MarkdownTextarea } from "./MarkdownTextarea.jsx";
 import { resolveCommand, suggestFor } from "./chatCommands.js";
-import { ChatContextMeter } from "./ChatContextMeter.jsx";
+import { ChatContextMeter, ContextRing, contextUsage, useCompact } from "./ChatContextMeter.jsx";
 import { ChatHistory } from "./ChatHistory.jsx";
 import { RecentConversations } from "./RecentConversations.jsx";
 import { ChatThread } from "./ChatThread.jsx";
@@ -40,7 +43,8 @@ import { useConversationStream } from "./useConversationStream.js";
 //   profile.adaptCard(result)      a tool result → a card for `renderCards`, or null
 //   profile.proposalLabel(verb)    what a proposed action is offered as, absent its own sentence
 //   profile.proposal(msg)          { meta: { label, icon, tone }, target, targetName, runnable,
-//                                    unavailable } for a proposed action's card and its outcome
+//                                    unavailable, title? } for a proposed action's card and its
+//                                    outcome; `title` names it when label + target does not read
 //   profile.verdict(msg, targetName, response)  { ok, headline, lines } for a confirmed action
 //   renderEntry(msg, key, api)     a product's own transcript roles; undefined falls through
 //   renderCards(msg, api)          the cards under an answer
@@ -63,6 +67,10 @@ const TURN_FRAMES = new Set([
 // is where most of them appear. This is the same phrase starting one.
 const sentence = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
+// How a sentence names an assistant: its title, else its name, else plainly "the assistant" — a site
+// with one assistant may give it no title.
+const titleOf = (host) => (host && (host.title || host.name)) || "the assistant";
+
 // A proposed action this surface knows nothing about: named by its verb, aimed at its subject, and
 // redeemable — the assistant that proposed it is the one that performs it.
 const DEFAULT_PROFILE = {
@@ -80,7 +88,8 @@ const DEFAULT_PROFILE = {
     : { ok: false, headline: (resp && resp.text) || "That didn’t work.", lines: [] }),
 };
 
-// What the transcript says when a conversation's switch moves.
+// What each of a conversation's switches means in the state it stands at: the composer's tooltip on
+// that switch, and what the transcript says when it moves.
 const DEFAULT_TOGGLE_COPY = {
   thinking: {
     on:  "Thinking on — replies may take a little longer but tend to be more thorough and accurate.",
@@ -114,6 +123,67 @@ function pickGreeting() {
 // fact that a conversation can be read back.
 const CHAT_PRIVACY_NOTICE =
   "Conversations are saved and may be reviewed to improve the assistant.";
+
+// A popover the chat's chrome opens from one of its buttons: placed against that button, closed by a
+// click outside or Escape, which hands focus back to the button. `align="start"` lines its left edge
+// up with the button's, held inside the window — for a button at the start of a row, whose menu
+// would otherwise hang off to the side away from what it belongs to.
+function ChatMenu({ open, setOpen, anchorRef, role = "menu", label, align, className = "", children }) {
+  const { pos: placed, menuRef } = usePortalPopover(open, setOpen, anchorRef);
+  const [left, setLeft] = React.useState(null);
+  React.useLayoutEffect(() => {
+    if (!open || !placed || align !== "start" || !anchorRef.current || !menuRef.current) { setLeft(null); return; }
+    const r = anchorRef.current.getBoundingClientRect();
+    const w = menuRef.current.offsetWidth;
+    setLeft(Math.round(Math.max(8, Math.min(r.left, window.innerWidth - w - 8))));
+  }, [open, placed, align, anchorRef, menuRef]);
+  const pos = placed && left != null ? { top: placed.top, bottom: placed.bottom, left } : placed;
+  React.useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (e) => {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      if (anchorRef.current) anchorRef.current.focus();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, setOpen, anchorRef]);
+  if (!open || !pos) return null;
+  return createPortal(
+    <div className={"chat-menu" + (className ? " " + className : "")} role={role} aria-label={label}
+      ref={menuRef} style={pos}>
+      {children}
+    </div>,
+    document.body);
+}
+
+// The header's menu for the open conversation. Deleting asks twice: the second press is on the same
+// row, which now says what it is about to do.
+function ConversationOptions({ onCompact, onDelete }) {
+  const [open, setOpen] = React.useState(false);
+  const [armed, setArmed] = React.useState(false);
+  const ref = React.useRef(null);
+  React.useEffect(() => { if (!open) setArmed(false); }, [open]);
+  return (
+    <>
+      <IconButton ref={ref} icon="ellipsis" label="Conversation options" variant="ghost" size="sm"
+        aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(o => !o)} />
+      <ChatMenu open={open} setOpen={setOpen} anchorRef={ref} label="Conversation options">
+        <Button variant="ghost" size="sm" wide icon="rotate-ccw" role="menuitem" className="chat-menu__item"
+          disabled={!onCompact}
+          onClick={() => { setOpen(false); Promise.resolve(onCompact()).catch(() => {}); }}>
+          Compact
+        </Button>
+        <div className="chat-menu__sep" role="separator" />
+        <Button variant={armed ? "danger" : "ghost"} size="sm" wide icon="trash-2" role="menuitem"
+          className="chat-menu__item chat-menu__item--danger"
+          onClick={() => { if (!armed) { setArmed(true); return; } setOpen(false); onDelete(); }}>
+          {armed ? "Delete for good" : "Delete conversation"}
+        </Button>
+      </ChatMenu>
+    </>
+  );
+}
 
 function Chat({
   user, docked, seed, onClose, onExpand,
@@ -156,12 +226,9 @@ function Chat({
   primer = "",
   // What the empty screen says when there is no assistant to talk to.
   noAssistant = "No assistant is available right now.",
-  // The auto-run toggle's tooltip in its three states: { on, off, locked }.
-  autorunHint = {
-    on: "Auto-run ON — the assistant carries out actions immediately, no confirmation. Click to turn off.",
-    off: "Auto-run OFF — the assistant proposes actions for you to confirm. Turn on to let it run them automatically.",
-    locked: "Auto-run is not available to you",
-  },
+  // The auto-run switch's tooltip: `locked` when this caller may not turn it on, and `on` / `off`
+  // where a product words them apart from `toggleCopy.actions`.
+  autorunHint = { locked: "Auto-run is not available to you" },
   renderEntry, renderCards, turnExtras,
 }) {
   const conn = connection || { tone: "muted", label: "No assistant", usable: false, message: null };
@@ -200,7 +267,7 @@ function Chat({
       ...c,
       [field]: on,
       messages: c.messages.length > 0
-        ? [...c.messages, { role: "toggle", toggle, on, label }]
+        ? [...c.messages, { role: "toggle", toggle, on, label, at: Date.now() }]
         : c.messages,
     }));
   }, [toggleCopy]);
@@ -399,7 +466,7 @@ function Chat({
         ].filter(([, field, on]) => typeof c[field] === "boolean" && c[field] !== on);
         if (moved.length && c.messages.length > 0) {
           next.messages = [...c.messages, ...moved.map(([toggle, , on]) => ({
-            role: "toggle", toggle, on, label: toggleCopy[toggle][on ? "on" : "off"],
+            role: "toggle", toggle, on, label: toggleCopy[toggle][on ? "on" : "off"], at: Date.now(),
           }))];
         }
         return next;
@@ -540,8 +607,8 @@ function Chat({
     if (prevHostRef.current === hostId && prevUsableRef.current !== assistantUsable && activeId) {
       const others = (assistantHosts || []).filter(h => h.id !== hostId).map(h => h.name);
       const note = assistantUsable
-        ? { role: "system", kind: "assistant-up", host: (assistantHost && assistantHost.name) || "The" }
-        : { role: "system", kind: "assistant-down", host: (assistantHost && assistantHost.name) || "This host", others: others, message: conn.message || null };
+        ? { role: "system", kind: "assistant-up", host: (assistantHost && assistantHost.name) || "The", at: Date.now() }
+        : { role: "system", kind: "assistant-down", host: (assistantHost && assistantHost.name) || "This host", others: others, message: conn.message || null, at: Date.now() };
       setConvos(prev => prev.map(c =>
         (c.id === activeId && c.messages.length > 0) ? { ...c, messages: [...c.messages, note] } : c));
     }
@@ -576,7 +643,7 @@ function Chat({
     onSelectAssistantHost(id, { chosen: true });
     if (activeId && next) {
       setConvos(prev => prev.map(c => (c.id === activeId && c.messages.length > 0)
-        ? { ...c, messages: [...c.messages, { role: "scope", label: "Now talking to " + next.title }] }
+        ? { ...c, messages: [...c.messages, { role: "scope", label: "Now talking to " + titleOf(next), name: titleOf(next), at: Date.now() }] }
         : c));
     }
   };
@@ -627,7 +694,7 @@ function Chat({
     }
   };
   const deleteChat = (id, e) => {
-    e.stopPropagation();
+    if (e) e.stopPropagation();
     const chat = convos.find(c => c.id === id);
     const hostId = (chat && chat.hostId) || (assistantHost && assistantHost.id);
     if (hostId) clientFor(hostId).deleteConversation(id).catch(() => {});
@@ -675,7 +742,7 @@ function Chat({
     // listing read, which the turn's own completion triggers.
     setConvos(prev => prev.map(c => (c.id !== convId ? c : {
       ...c, lastActivity: Date.now(),
-      messages: [...c.messages, { ...userMsg, live: true }, { role: "assistant", content: "", live: true }],
+      messages: [...c.messages, { ...userMsg, live: true }, { role: "assistant", content: "", live: true, startedAt: Date.now() }],
     })));
 
     setBusy(true);
@@ -741,10 +808,10 @@ function Chat({
         setConvos(prev => prev.map(c => c.id !== convId ? c : { ...c, stale: true }));
         return;
       }
-      const reason = e && e.code === 503 ? sentence(assistantHost.title) + " is currently unavailable."
-        : e && e.code === 502 ? "Couldn\u2019t reach " + assistantHost.title + " \u2014 try again, or check that it is running."
-        : e && e.code === 404 ? sentence(assistantHost.title) + " isn\u2019t answering right now."
-        : (e && e.userMessage) || (sentence(assistantHost.title) + " didn\u2019t respond.");
+      const reason = e && e.code === 503 ? sentence(titleOf(assistantHost)) + " is currently unavailable."
+        : e && e.code === 502 ? "Couldn\u2019t reach " + titleOf(assistantHost) + " \u2014 try again, or check that it is running."
+        : e && e.code === 404 ? sentence(titleOf(assistantHost)) + " isn\u2019t answering right now."
+        : (e && e.userMessage) || (sentence(titleOf(assistantHost)) + " didn\u2019t respond.");
       setConvos(prev => prev.map(c => {
         if (c.id !== convId) return c;
         const msgs = c.messages.slice();
@@ -754,8 +821,8 @@ function Chat({
         const finalized = aborted
           ? { ...bubble, content: bubble.content || "_Stopped._" }
           : bubble.content
-            ? { ...bubble, content: bubble.content + "\n\n_\u26a0 Interrupted \u2014 the assistant connection dropped._" }
-            : { ...bubble, content: "\u26a0\ufe0f " + reason, error: true };
+            ? { ...bubble, error: true, errorText: "Interrupted \u2014 the assistant connection dropped.", endedAt: Date.now() }
+            : { ...bubble, error: true, errorText: reason, endedAt: Date.now() };
         // The stream ended without a done frame — still surface any gathered evidence.
         msgs[lastIdx] = promotePendingCards(finalized);
         return { ...c, messages: msgs };
@@ -817,7 +884,7 @@ function Chat({
       // it to be named after, and a name invented here would be one no other surface could arrive at.
       setConvos(prev => prev.map(c => (c.id !== convId ? c : {
         ...c, lastActivity: Date.now(),
-        messages: [...c.messages, userMsg, { role: "assistant", content: "\u26a0\ufe0f " + why, error: true }],
+        messages: [...c.messages, userMsg, { role: "assistant", content: "", error: true, errorText: why }],
       })));
       return;
     }
@@ -884,7 +951,8 @@ function Chat({
       say({
         role: "assistant",
         error: true,
-        content: "⚠️ " + ((err && err.userMessage) || "That command didn’t run — try again."),
+        content: "",
+        errorText: (err && err.userMessage) || "That command didn’t run — try again.",
       });
       return;
     }
@@ -914,7 +982,11 @@ function Chat({
       return;
     }
 
-    say({ role: "checkpoint", label: result.message });
+    // What any other command answered. Compacting is the one that summarizes the conversation, so it
+    // is the one that reads as that event; the rest are the command's own words.
+    say(name === "compact"
+      ? { role: "checkpoint", label: result.message, at: Date.now() }
+      : { role: "assistant", content: result.message || "", ts: Date.now() });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
   }, [assistantHost && assistantHost.id, applySwitch]);
 
@@ -933,7 +1005,7 @@ function Chat({
       const label = "Conversation compacted to save context"
         + (n ? " \u00b7 " + n + " message" + (n === 1 ? "" : "s") : "");
       setConvos(prev => prev.map(c => c.id === convId
-        ? { ...c, messages: [...c.messages, { role: "checkpoint", label }] }
+        ? { ...c, messages: [...c.messages, { role: "checkpoint", label, at: Date.now() }] }
         : c));
     }
     return { compacted, messagesCompacted: n };
@@ -997,10 +1069,10 @@ function Chat({
       const marked = msgs.map(m =>
         (m.role === "command" && m.cmdId === card.cmdId && m.state === "proposed")
           ? { ...m, state: "confirmed" } : m);
-      return [...marked, { role: "verify", id: verifyId, action: { label: meta.label, verb: card.verb, serverName }, state: "pending" }];
+      return [...marked, { role: "verify", id: verifyId, cmdId: card.cmdId, action: { label: meta.label, verb: card.verb, serverName }, state: "pending" }];
     });
     const resolveVerify = (result) =>
-      setMessages(msgs => msgs.map(m => (m.role === "verify" && m.id === verifyId) ? { ...m, state: "done", result, progress: null } : m));
+      setMessages(msgs => msgs.map(m => (m.role === "verify" && m.id === verifyId) ? { ...m, state: "done", result, progress: null, at: Date.now() } : m));
     // The assistant's progress steps drive a live sub-label under the spinner, so a slow action
     // reads as advancing.
     const onProgress = (evt) =>
@@ -1038,13 +1110,13 @@ function Chat({
   const renderOwnCards = renderCards ? (m) => renderCards(m, api) : undefined;
   const renderCommand = (m, i) => {
     const p = profile.proposal(m);
-    return <ChatCommand key={i} msg={m} onRun={runLiveCommand} meta={p.meta} target={p.target}
+    return <ChatCommand key={i} msg={m} onRun={runLiveCommand} meta={p.meta} target={p.target} title={p.title}
       runnable={p.runnable} unavailable={p.unavailable} />;
   };
   // A proposal in someone else's transcript is shown as it stood, and confirming it does nothing.
   const renderReviewCommand = (m, i) => {
     const p = profile.proposal(m);
-    return <ChatCommand key={i} msg={m} onRun={() => {}} meta={p.meta} target={p.target}
+    return <ChatCommand key={i} msg={m} onRun={() => {}} meta={p.meta} target={p.target} title={p.title}
       runnable={p.runnable} unavailable={p.unavailable} />;
   };
 
@@ -1068,6 +1140,16 @@ function Chat({
 
   // Put a completion into the composer. A command that still wants a value lands with a trailing
   // space and re-opens on its values; one that is ready to run just sits there for Enter.
+  // A command offered from the transcript (the /help card's Use) lands in the composer to be
+  // finished and sent, with its values listed when it takes one.
+  const offerCommand = (name) => {
+    const text = "/" + name + " ";
+    setInput(text);
+    setMenuDismissed(false);
+    refreshMenu(text, false);
+    if (taRef.current) taRef.current.focus();
+  };
+
   const applyCompletion = (item) => {
     setInput(item.insert);
     setMenuDismissed(false);
@@ -1136,6 +1218,25 @@ function Chat({
 
   const ChatBriefingPanel = BriefingPanel;
 
+  // The composer's switches, gathered into one menu where the composer is too narrow to label them.
+  const [optsOpen, setOptsOpen] = React.useState(false);
+  const optsRef = React.useRef(null);
+  const ctxUsage = contextUsage(latestUsage(active && active.messages));
+  const compactHere = (assistantUsable && active && active.messages.length > 0) ? compactActive : null;
+  const optsCompact = useCompact(compactHere, () => setOptsOpen(false));
+  // What each switch does in the state it stands at, said where it is pointed at.
+  const thinkTip = toggleCopy.thinking[thinkOn ? "on" : "off"];
+  const speakTip = speakBlocked
+    ? "This browser will not play audio on this page."
+    : speak
+      ? "Reading answers aloud as they are written, so it starts before the answer is finished."
+      : "Answers are silent. Turn on to have them read aloud as they are written.";
+  const autorunTip = !canUseActions
+    ? autorunHint.locked
+    : autoAcceptActive
+      ? (autorunHint.on || toggleCopy.actions.on)
+      : (autorunHint.off || toggleCopy.actions.off);
+
   const [railOpen, setRailOpen] = React.useState(false);
   const railWrapRef = React.useRef(null);
   React.useEffect(() => {
@@ -1157,46 +1258,39 @@ function Chat({
     return (
       <div className={"chat-page chat-page--review" + (docked ? " chat-page--docked" : "") + (pageClass ? " " + pageClass : "")}>
         <div className="chat-main">
-          <div className="chat-review__banner">
-            <Icon name="lock" size={13} />
-            <span>
-              Reading{who ? <> <b>{who}</b>’s</> : " someone else’s"} conversation — read-only.
+          <div className="chat-main__head chat-head">
+            <span className="chat-head__title" title={conversationTitle(review.conversation)}>
+              {conversationTitle(review.conversation)}
             </span>
-            <button className="chat-review__exit" onClick={onExitReview}>
-              Back to your chat
-            </button>
+            <span className="chat-head__sub">
+              {review.conversation.turnCount} turn{review.conversation.turnCount === 1 ? "" : "s"}
+              {review.conversation.deleted ? " · deleted by its owner" : ""}
+            </span>
+            <div className="chat-head__actions">
+              <IconButton icon="x" label="Close review" variant="ghost" size="sm" onClick={onExitReview} />
+            </div>
           </div>
 
-          <div className="chat-main__head">
-            <div className="chat-id">
-              <span className="chat-id__mark"><Icon name="message-square" size={17} /></span>
-              <div className="chat-id__text">
-                <span className="chat-id__title">{conversationTitle(review.conversation)}</span>
-                <span className="chat-id__sub">
-                  {review.conversation.turnCount} turn{review.conversation.turnCount === 1 ? "" : "s"}
-                  {review.conversation.deleted ? " · deleted by its owner" : ""}
-                </span>
-              </div>
-            </div>
-            <div className="chat-head__actions">
-              <div className="chat-head__win">
-                <button className="chat-headbtn" onClick={onExitReview} title="Close review" aria-label="Close review">
-                  <Icon name="x" size={16} />
-                </button>
-              </div>
-            </div>
+          <div className="chat-review__banner" role="status">
+            <Icon name="lock" size={14} className="chat-review__lock" />
+            <span className="chat-review__text">
+              Reading{who ? <> <b>{who}</b>’s</> : " someone else’s"} conversation · read-only
+            </span>
+            <Button variant="outline" size="sm" onClick={onExitReview}>Back to your chat</Button>
           </div>
 
           <div className="chat-scroll">
-            {reviewState === "loading" && <div className="chat-empty"><p>Loading the transcript…</p></div>}
+            {reviewState === "loading" && (
+              <div className="chat-start chat-start--note"><Spinner size={16} /><p>Loading the transcript</p></div>
+            )}
             {reviewState === "error" && (
-              <div className="chat-empty">
-                <h2>Transcript unavailable</h2>
-                <p>This conversation could not be read. It may have been removed from the log.</p>
+              <div className="chat-start chat-start--note">
+                <h3 className="chat-start__greeting">Transcript unavailable</h3>
+                <p className="chat-start__primer">This conversation could not be read.</p>
               </div>
             )}
             {reviewState === "ready" && reviewMessages && reviewMessages.length === 0 && (
-              <div className="chat-empty"><p>This conversation has no turns.</p></div>
+              <div className="chat-start chat-start--note"><p className="chat-start__primer">No turns in this conversation</p></div>
             )}
             {reviewState === "ready" && reviewMessages && reviewMessages.length > 0 && (
               // Read-only: no onRun/onSaveBlueprint/onDraftEdit, so every actionable affordance a live
@@ -1210,10 +1304,6 @@ function Chat({
                 renderCards={renderCards ? (m) => renderCards(m, reviewApi) : undefined}
                 readOnlyFeedback />
             )}
-          </div>
-
-          <div className="chat-review__foot">
-            You are reading a saved conversation. Replying, running actions and editing are not possible here.
           </div>
         </div>
       </div>
@@ -1247,11 +1337,6 @@ function Chat({
               );
             })}
           </div>
-          {conn.tone !== "online" && (
-            <div className="chat-convos__conn">
-              <span className={"chat-conn chat-conn--" + conn.tone}><span className="dot"></span>{conn.label}</span>
-            </div>
-          )}
         </div>,
         railTarget)}
       {listTarget && createPortal(
@@ -1279,9 +1364,6 @@ function Chat({
                 })}
               </div>
             )}
-          {conn.tone !== "online" && (
-            <span className={"chat-conn chat-conn--" + conn.tone}><span className="dot"></span>{conn.label}</span>
-          )}
         </div>,
         listTarget)}
       {!railTarget && <aside className="chat-rail">
@@ -1302,14 +1384,6 @@ function Chat({
             </div>
           ))}
         </div>
-        {/* Only when it has something to say. An assistant that is reachable and healthy is the
-            state the whole page already demonstrates, so a permanent "Connected" is decoration; a
-            degraded, unavailable or unchosen one names itself. */}
-        {conn.tone !== "online" && (
-          <div className="chat-rail__foot">
-            <span className={"chat-conn chat-conn--" + conn.tone}><span className="dot"></span>{conn.label}</span>
-          </div>
-        )}
         {/* Foot of the rail, under the conversations — the settings page is about this surface
             rather than about any one chat, so it sits below the list rather than in it. At phone
             width the rail is display:none and the same route is the header's cog. */}
@@ -1322,102 +1396,137 @@ function Chat({
       </aside>}
 
       <div className="chat-main">
-        <div className="chat-main__head">
-          <div className="chat-id">
-            <span className="chat-id__mark"><Icon name="bot" size={17} /></span>
-            <div className="chat-id__text">
-              <span className="chat-id__title">{assistantName}</span>
-              {HostPicker && <HostPicker hosts={assistantHosts} current={assistantHost} onSelect={pickAssistantHost} />}
-            </div>
-          </div>
+        {/* The header names the conversation being read; which assistant answers is the surface's
+            to say. The connection shows here only when it is not fine \u2014 a healthy one is what the
+            whole page already demonstrates. */}
+        <div className={"chat-main__head chat-head" + (docked ? " chat-head--docked" : "")}>
+          <span className="chat-head__title" title={conversationTitle(active)}>{conversationTitle(active)}</span>
+          {conn.tone !== "online" && (
+            <span className={"chat-head__conn chat-head__conn--" + conn.tone} role="status">
+              <span className="chat-head__dot" aria-hidden="true"></span>
+              {conn.label}
+            </span>
+          )}
+          {HostPicker && (
+            <span className="chat-head__host">
+              <HostPicker hosts={assistantHosts} current={assistantHost} onSelect={pickAssistantHost} />
+            </span>
+          )}
           <div className="chat-head__actions">
+            {/* The phone-width and dock replacement for the rail (CSS decides, at the breakpoint
+                that hides it), so the rail's foot travels here with it. */}
             <div className="chat-head__nav">
-              <button className="chat-headbtn" onClick={newChat} title="New chat" aria-label="New chat">
-                <Icon name="square-pen" size={16} />
-              </button>
+              <IconButton icon="square-pen" label="New chat" variant="ghost" size="sm" onClick={newChat} />
               {!railTarget && !listTarget && (
                 <ChatHistory convos={convos} activeId={activeId} onPick={pickChat} onDelete={deleteChat} onOpen={loadServerHistory} loading={histLoading} />
               )}
-              {/* This nav strip is the phone-width replacement for the rail (CSS decides, at the
-                  breakpoint that hides it), so the rail's foot travels here with it. */}
               {onOpenSettings && (
-                <button className="chat-headbtn" onClick={onOpenSettings} title="Settings" aria-label="Settings">
-                  <Icon name="settings" size={16} />
-                </button>
+                <IconButton icon="settings" label="Settings" variant="ghost" size="sm" onClick={onOpenSettings} />
               )}
             </div>
+            {!docked && active && (
+              <ConversationOptions
+                onCompact={compactHere}
+                onDelete={() => deleteChat(active.id)} />
+            )}
+            {docked && showPin && (
+              <IconButton icon={pinned ? "pin" : "pin-off"} label={pinned ? "Unpin" : "Pin"} variant="ghost" size="sm"
+                pressed={!!pinned} disabled={pinDisabled} onClick={onTogglePin}
+                title={pinDisabled ? "Not enough room to pin" : pinned ? "Unpin \u00b7 float over the page" : "Pin \u00b7 push the page aside"} />
+            )}
+            {docked && onExpand && (
+              <IconButton icon="maximize-2" label="Expand to full screen" variant="ghost" size="sm" onClick={onExpand} />
+            )}
             {docked && (
-              <div className="chat-head__win">
-                {showPin && (
-                  <button
-                    className={"chat-headbtn" + (pinned ? " chat-headbtn--pinned" : "")}
-                    onClick={onTogglePin}
-                    disabled={pinDisabled}
-                    title={pinDisabled ? "Not enough room to pin \u2014 floating over the page" : pinned ? "Unpin \u2014 float over the page" : "Pin \u2014 push the page aside"}
-                    aria-label="Toggle dock pin" aria-pressed={!!pinned}>
-                    <Icon name={pinned ? "pin" : "pin-off"} size={16} />
-                  </button>
-                )}
-                {onExpand && (
-                  <button className="chat-headbtn" onClick={onExpand} title="Expand to full screen" aria-label="Expand to full screen">
-                    <Icon name="maximize-2" size={16} />
-                  </button>
-                )}
-                <button className="chat-headbtn" onClick={onClose} title="Close assistant" aria-label="Close assistant">
-                  <Icon name="panel-right-close" size={16} />
-                </button>
-              </div>
+              <IconButton icon="x" label="Close assistant" variant="ghost" size="sm" onClick={onClose} />
             )}
             {!docked && onClose && (
-              <div className="chat-head__win">
-                <button className="chat-headbtn" onClick={onClose} title="Exit full screen (ESC)" aria-label="Exit full screen (ESC)">
-                  <Icon name="minimize-2" size={16} />
-                </button>
-              </div>
+              <IconButton icon="minimize-2" label="Exit full screen" variant="ghost" size="sm" onClick={onClose}
+                title="Exit full screen (Esc)" />
             )}
           </div>
         </div>
 
         <div className="chat-scroll" ref={scrollRef} onScroll={onThreadScroll}>
           {(!active || active.messages.length === 0) ? (
-            <div className="chat-empty">
-              <span className="chat-empty__logo"><Icon name="bot" size={26} /></span>
-              <h2>{assistantHost ? greeting : "No assistant available"}</h2>
-              <p>{assistantHost ? primer : noAssistant}</p>
+            <div className="chat-start">
+              <span className="chat-start__disc"><Icon name="bot" size={24} /></span>
+              <h3 className="chat-start__greeting">{assistantHost ? greeting : "No assistant available"}</h3>
+              {(assistantHost ? primer : noAssistant) && (
+                <p className="chat-start__primer">{assistantHost ? primer : noAssistant}</p>
+              )}
+              {/* A suggestion is its words, or `{ text, icon }` for a product that marks each one. */}
+              {assistantHost && suggestions.length > 0 && (
+                <div className="chat-start__suggestions">
+                  {suggestions.map((s, i) => {
+                    const text = typeof s === "string" ? s : s.text;
+                    return (
+                      <button key={i} type="button" className="chat-start__suggestion"
+                        onClick={() => { setInput(text); if (taRef.current) taRef.current.focus(); }}>
+                        <Icon name={(s && s.icon) || "message-circle"} size={15} className="chat-start__suggestion-icon" />
+                        <span>{text}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+              {ChatBriefingPanel && (
+                <div className="chat-start__brief"><ChatBriefingPanel onPick={startBriefingChat} /></div>
+              )}
+              <RecentConversations convos={convos} activeId={activeId} onPick={pickChat} />
               {/* On the fresh-conversation screen only — it opens every new chat, and the
                   composer's own footprint stays exactly as it is without a pinned line. */}
-              {assistantHost && <p className="chat-empty__notice">{CHAT_PRIVACY_NOTICE}</p>}
-              {ChatBriefingPanel && <ChatBriefingPanel onPick={startBriefingChat} />}
-              <RecentConversations convos={convos} activeId={activeId} onPick={pickChat} />
-              <div className="chat-suggestions">
-                {suggestions.map((s, i) => (
-                  <button key={i} className="chat-suggestion" onClick={() => { setInput(s); if (taRef.current) taRef.current.focus(); }}>
-                    {s}
-                  </button>
-                ))}
-              </div>
+              {assistantHost && <p className="chat-start__privacy">{CHAT_PRIVACY_NOTICE}</p>}
             </div>
           ) : (
             <ChatThread messages={active.messages} user={user} assistantName={assistantName}
               renderEntry={renderOwnEntry} renderCommand={renderCommand} renderCards={renderOwnCards}
-              onRate={rateTurn} />
+              onRate={rateTurn} onUseCommand={offerCommand} />
           )}
         </div>
 
         <div className="chat-composer">
+          {!assistantUsable && (
+            <div className="chat-composer__downhint" role="status">
+              <Icon name="triangle-alert" size={14} />
+              <span>
+                {assistantHost
+                  ? (assistantHost.name ? assistantHost.name + "\u2019s assistant" : "The assistant") + " isn\u2019t answering right now"
+                  : assistantHosts.length
+                    ? "Pick which assistant to talk to"
+                    : "No assistant is answering right now"}
+              </span>
+            </div>
+          )}
+          {/* Prompts waiting behind the running turn. Stopping that turn leaves them standing, so
+              throwing one away is its own act. */}
+          {queuedHere.length > 0 && (
+            <div className="chat-queue">
+              {queuedHere.map(q => (
+                <div key={q.turnId} className="chat-queue__row">
+                  <Icon name="clock" size={14} className="chat-queue__icon" />
+                  <span className="chat-queue__text" title={q.prompt}>Queued: {q.prompt}</span>
+                  <IconButton icon="x" label="Discard queued message" variant="ghost" size="xs"
+                    onClick={() => cancelQueued(q.turnId)} />
+                </div>
+              ))}
+            </div>
+          )}
           {voice.phase === "idle" ? (
             <div className="chat-composer__box" ref={composerRef}>
               {/* Name the assistant only where there is a choice of them. HostPicker is the
                   surface saying it addresses several, so there this reads "Message hotrod's
-                  assistant\u2026" and stays useful; a surface with one assistant has nothing to
-                  disambiguate and would just be restating its own name back at itself. */}
+                  assistant" and stays useful; a surface with one assistant has nothing to
+                  disambiguate and would just be restating its own name back at itself. The command
+                  surface is advertised only when this assistant offers one. */}
               <MarkdownTextarea
                 ref={taRef}
                 rows={1}
                 value={input}
-                placeholder={HostPicker && assistantHost
-                  ? "Message " + assistantHost.name + "\u2019s assistant\u2026"
-                  : "Message the assistant\u2026"}
+                placeholder={(HostPicker && assistantHost
+                  ? "Message " + assistantHost.name + "\u2019s assistant"
+                  : "Message the assistant")
+                  + (commandCatalog.length > 0 ? " \u00b7 / for commands" : "")}
                 onChange={onInputChange}
                 onKeyDown={onKeyDown} />
               <ChatCommandMenu
@@ -1425,107 +1534,96 @@ function Chat({
                 active={commandMenu.active}
                 anchorRef={composerRef}
                 onPick={applyCompletion} />
+              {/* The switches are labelled buttons where the composer has the room, and one menu of
+                  them where it does not \u2014 both are drawn and the composer's width decides which shows
+                  (chat-composer.css), so a dock dragged narrow changes over without a re-render. */}
               <div className="chat-composer__bar">
-                <ChatContextMeter
-                  usage={latestUsage(active && active.messages)}
-                  onCompact={(assistantUsable && active && active.messages.length > 0) ? compactActive : null} />
                 {assistantHost && (
-                  <button
-                    type="button"
-                    className={"chat-act-toggle chat-think-toggle" + (thinkOn ? " chat-think-toggle--on" : "")}
-                    onClick={toggleThinking}
-                    title={thinkOn
-                      ? "Thinking ON \u2014 the assistant reasons step by step before answering (shown collapsed in the reply). Click to turn off."
-                      : "Thinking OFF \u2014 the assistant answers directly. Turn on to have it reason first."}
-                    aria-pressed={thinkOn}>
-                    <Icon name="brain" size={13} />
-                    <span className="chat-act-toggle__label">Thinking</span>
-                    <span className="chat-act-toggle__state">{thinkOn ? "On" : "Off"}</span>
-                  </button>
+                  <div className="chat-composer__switches">
+                    <Button variant="outline" size="xs" icon="lightbulb" pressed={thinkOn}
+                      onClick={toggleThinking} title={thinkTip}>
+                      Thinking
+                    </Button>
+                    <Button variant="outline" size="xs" icon={speakBlocked ? "volume-x" : "volume-2"} pressed={speak}
+                      onClick={toggleSpeak} title={speakTip}>
+                      Read aloud
+                    </Button>
+                    {canSeeActions && (
+                      <Button variant="outline" size="xs" icon="zap" pressed={autoAcceptActive}
+                        className="chat-switch--warn" disabled={!canUseActions}
+                        onClick={toggleActions} title={autorunTip}>
+                        Auto-run
+                      </Button>
+                    )}
+                  </div>
                 )}
                 {assistantHost && (
-                  <button
-                    type="button"
-                    className={"chat-act-toggle chat-speak-toggle" + (speak ? " chat-speak-toggle--on" : "")}
-                    onClick={toggleSpeak}
-                    title={speakBlocked
-                      ? "This browser will not play audio on this page."
-                      : speak
-                        ? "Reading answers aloud \u2014 each sentence is spoken as it is written, so it starts before the answer is finished. Click to stop."
-                        : "Answers are silent. Turn on to have them read aloud as they are written."}
-                    aria-pressed={speak}>
-                    <Icon name={speakBlocked ? "volume-x" : speak ? "volume-2" : "volume-off"} size={13} />
-                    <span className="chat-act-toggle__label">Read aloud</span>
-                    <span className="chat-act-toggle__state">
-                      {speakBlocked ? "Unavailable" : speak ? "On" : "Off"}
+                  <div className="chat-composer__opts">
+                    <IconButton ref={optsRef} icon="sliders-horizontal" variant="ghost" size="sm"
+                      label={"Chat options" + ([thinkOn && "Thinking on", speak && "Read aloud on", autoAcceptActive && "Auto-run on"]
+                        .filter(Boolean).map((s, i) => (i ? ", " : ": ") + s).join(""))}
+                      title="Chat options"
+                      aria-haspopup="dialog" aria-expanded={optsOpen} onClick={() => setOptsOpen(o => !o)} />
+                    <span className="chat-composer__dots" aria-hidden="true">
+                      {thinkOn && <i className="chat-composer__dot" />}
+                      {speak && <i className="chat-composer__dot" />}
+                      {autoAcceptActive && <i className="chat-composer__dot chat-composer__dot--warn" />}
                     </span>
-                  </button>
-                )}
-                {canSeeActions && (
-                  <button
-                    type="button"
-                    className={"chat-act-toggle" + (autoAcceptActive ? " chat-act-toggle--on" : "")}
-                    onClick={canUseActions ? toggleActions : undefined}
-                    disabled={!canUseActions}
-                    title={!canUseActions
-                      ? autorunHint.locked
-                      : autoAcceptActive
-                        ? autorunHint.on
-                        : autorunHint.off}
-                    aria-pressed={autoAcceptActive}>
-                    <Icon name={autoAcceptActive ? "zap" : "zap-off"} size={13} />
-                    <span className="chat-act-toggle__label">Auto-run</span>
-                    <span className="chat-act-toggle__state">{autoAcceptActive ? "On" : "Off"}</span>
-                  </button>
-                )}
-                {queuedHere.length > 0 && (
-                  <span className="chat-queued" title="Waiting for the current answer to finish">
-                    <Icon name="clock" size={12} />
-                    {queuedHere.map(q => (
-                      <button
-                        key={q.turnId}
-                        type="button"
-                        className="chat-queued__item"
-                        onClick={() => cancelQueued(q.turnId)}
-                        title={"Queued: " + q.prompt + "\n\nClick to discard it."}>
-                        <span className="chat-queued__text">{q.prompt}</span>
-                        <Icon name="x" size={11} />
-                      </button>
-                    ))}
-                  </span>
+                  </div>
                 )}
                 <span className="chat-composer__bar-spacer"></span>
+                <span className="chat-composer__ctx">
+                  <ChatContextMeter usage={latestUsage(active && active.messages)} onCompact={compactHere} />
+                </span>
                 {!busy && !input.trim() && assistantUsable && (
-                  <button className="chat-mic" onClick={voice.start} title="Record a voice note" aria-label="Record a voice note">
-                    <Icon name="mic" size={17} />
-                  </button>
+                  <IconButton icon="mic" label="Record a voice note" variant="ghost" size="sm" onClick={voice.start} />
                 )}
                 {turnRunning
-                  ? <button className="chat-send chat-send--stop" onClick={stop} title="Stop"><Icon name="square" size={15} /></button>
-                  : <button className="chat-send" onClick={send} disabled={!input.trim() || !assistantUsable} title={assistantUsable ? "Send" : "Assistant unavailable"}><Icon name="arrow-up" size={16} strokeWidth={2.4} /></button>}
+                  ? <IconButton icon="square" label="Stop the answer" variant="outline" size="sm" onClick={stop} />
+                  : <Button variant="primary" size="sm" icon="arrow-up" onClick={() => send()}
+                      disabled={!input.trim() || !assistantUsable}
+                      aria-label="Send" title={assistantUsable ? "Send" : "Assistant unavailable"} />}
               </div>
-              {!assistantUsable && (
-                <div className="chat-composer__downhint">
-                  <span className="status-led status-led--down"></span>
-                  {assistantHost
-                    ? assistantHost.name + "\u2019s assistant is unavailable \u2014 your message will send once it\u2019s back."
-                    : assistantHosts.length
-                      ? "Pick which assistant to talk to \u2014 several can answer."
-                      : "Assistant unavailable \u2014 your message will send once it\u2019s back."}
-                </div>
-              )}
             </div>
           ) : (
-            <VoiceComposerBar rec={voice} onSend={sendVoice} onCancel={voice.cancel} />
+            <div className="chat-composer__box chat-composer__box--voice">
+              <VoiceComposerBar rec={voice} onSend={sendVoice} onCancel={voice.cancel} />
+            </div>
           )}
-          <div className="chat-composer__hint">
-            {voice.phase === "recording" || voice.phase === "requesting"
-              ? <span>Recording a voice note · I'll transcribe it and reply</span>
-              // The one place the command surface is advertised to somebody who has never typed a
-              // slash into a chat box. Shown only when this assistant actually offers commands, so it
-              // never points at something that would not open.
-              : <>Enter to send, Shift+Enter for newline{commandCatalog.length > 0 && <> · <code>/</code> for commands</>}</>}
-          </div>
+          <ChatMenu open={optsOpen} setOpen={setOptsOpen} anchorRef={optsRef} role="dialog" label="Chat options" align="start"
+            className="chat-menu--options">
+            <div className="chat-menu__row" title={thinkTip}>
+              <Icon name="lightbulb" size={14} className="chat-menu__icon" />
+              <span className="chat-menu__label">Thinking</span>
+              <Toggle on={thinkOn} label="Thinking" onChange={toggleThinking} />
+            </div>
+            <div className="chat-menu__row" title={speakTip}>
+              <Icon name={speakBlocked ? "volume-x" : "volume-2"} size={14} className="chat-menu__icon" />
+              <span className="chat-menu__label">Read aloud</span>
+              <Toggle on={speak} label="Read aloud" onChange={toggleSpeak} />
+            </div>
+            {canSeeActions && (
+              <div className="chat-menu__row chat-menu__row--warn" title={autorunTip}>
+                <Icon name="zap" size={14} className="chat-menu__icon" />
+                <span className="chat-menu__label">Auto-run</span>
+                <Toggle on={autoAcceptActive} label="Auto-run" disabled={!canUseActions} onChange={toggleActions} />
+              </div>
+            )}
+            {ctxUsage && (
+              <>
+                <div className="chat-menu__sep" role="separator" />
+                <div className={"chat-menu__row" + (ctxUsage.warn ? " chat-menu__row--ctxwarn" : "")}>
+                  <ContextRing pct={ctxUsage.pct} />
+                  <span className="chat-menu__label">Context {ctxUsage.pct}% used</span>
+                  <Button variant="outline" size="xs" busy={optsCompact.compacting} disabled={!compactHere}
+                    onClick={optsCompact.run}>
+                    Compact
+                  </Button>
+                </div>
+                {optsCompact.note && <div className="chat-menu__note">{optsCompact.note}</div>}
+              </>
+            )}
+          </ChatMenu>
         </div>
       </div>
     </div>

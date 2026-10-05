@@ -1,5 +1,57 @@
 # Changelog
 
+## [0.14.0]
+
+### Changed
+- **The chat window is redrawn in the design system's language**, on every surface that renders
+  `Chat`. Three shapes only: text in the column, a card, a one-line event row. The look moves into
+  four new sheets after `chat.css` in `styles.css`: `chat-chrome.css` (header, review bar, empty
+  conversation, history), `chat-turns.css` (messages, markdown, feedback, the Activity line),
+  `chat-actions.css` (the action card, diff, events, command cards, card rows) and
+  `chat-composer.css` (the composer, its switches and menus, the slash menu, voice). A site that
+  imports sheets one by one adds the four.
+- Your message is a bubble with its time on hover; an answer is text, its mark and name only on the
+  first answer of a run (`ChatMessage` `lead`), with copy, the thumbs and the time under it on hover.
+  Classes `.chat-turn*`; the `user` prop is no longer read.
+- `renderMarkdown` draws headings, lists (one level of nesting), tables, links (http and https only),
+  italic, quotes, rules and fenced code in a card with a language bar and a copy button. `.chat-md__*`.
+- The assistant's work is one Activity line (`ChatActivity`, `.chat-activity*`): working with the
+  current step, then "Thought and used 3 tools · 6s", opening to the list of steps. An answer
+  carries `startedAt` and `endedAt`, live and from history.
+- A failed or interrupted turn is `error: true` with `errorText`, drawn as a quiet warning line under
+  what the answer did say.
+- A proposed action is one card (`ChatCommand`, `.chat-actcard`) that changes in place: proposed, the
+  confirm step, running, then verified, not verified or failed; a `verify` entry carrying the
+  command's `cmdId` folds into it. A `write_file` proposal with `file.currentContent` shows a line
+  diff (`ChatFileChange`, `.chat-diff*`). `profile.proposal` may return `title`; a verdict may carry
+  `tone` ("warn", "danger").
+- Toggles, scope changes, compaction and the assistant going and coming back are event rows
+  (`ChatEvent`, `ChatEventRow`, `.chat-event*`), worded from what they record and timed by their
+  entry's `at`. A day row (`ChatDaySeparator`) marks a change of date.
+- `/help` and `/tools` are `ChatCard`s (`.chat-cmds*`); a command row's Use puts it in the composer
+  (`ChatThread` `onUseCommand`).
+- `ChatCard`: tones neutral, accent, ok, warn, danger, muted; confidence as a dot and a word; the open
+  action a ghost button; the head wraps in a narrow column. `ChatCardRows` / `ChatCardRow` (label,
+  value, verdict ok/warn/danger/neutral, action; no label = full width) are the row every card body
+  uses.
+- The header names the conversation, carries a Conversation options menu (Compact, Delete) on a full
+  page and the host picker and window buttons in a dock, and shows the connection only when it is
+  not online. The review bar is one line.
+- The empty conversation is a greeting, suggestion cards (`suggestions` items may be
+  `{ text, icon }`), recent conversations and the privacy line (`.chat-start*`, `.chat-recent*`).
+- The composer's switches are labelled toggle buttons, and one options menu of switches below 560px
+  of composer width; the context meter is a ring that opens its numbers and Compact; queued
+  messages and the unavailable line sit above the box; recording takes the box over. The keyboard
+  hint is gone; the placeholder mentions `/` when the assistant offers commands.
+
+### Removed
+- `ChatThinking`, `ChatContextPill`, `ChatSteps` and `ChatPending` (the Activity line draws all four),
+  and the rules of the old chat parts in `chat.css`: `.chat-msg*`, `.chat-code*`, `.chat-disc*`,
+  `.chat-context*`, `.chat-steps*`, `.chat-actions*`, `.chat-action*`, `.chat-verify*`,
+  `.chat-scope-notice`, `.chat-toggle-notice*`, `.chat-cmdcard*`, `.chat-id*`, `.chat-headbtn*`,
+  `.chat-act-toggle*`, `.chat-ctx*`, `.chat-send*`, `.chat-empty*`, `.chat-suggestion*`, `.voice-bar*`,
+  `.voice-note*`, `.chat-railbar*`, `.chat-page--solo` and their companions.
+
 ## [0.13.1]
 
 ### Added

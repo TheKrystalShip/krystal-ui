@@ -12,10 +12,11 @@ export { Dialog } from "./components/Dialog.jsx";
 export { EmptyState } from "./components/EmptyState.jsx";
 export { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 export { Chat, CHAT_PRIVACY_NOTICE, DEFAULT_PROFILE as CHAT_DEFAULT_PROFILE, DEFAULT_TOGGLE_COPY as CHAT_TOGGLE_COPY } from "./chat/Chat.jsx";
+export { ChatActivity } from "./chat/ChatActivity.jsx";
 export {
-  ChatCommand, ChatContextPill, ChatPending, ChatSteps, ChatThinking, ChatVerify,
+  ChatCommand, ChatDaySeparator, ChatEvent, ChatEventRow, ChatFileChange, ChatVerify,
 } from "./chat/ChatMessageParts.jsx";
-export { ChatCard, ConfidenceBadge } from "./chat/ChatCard.jsx";
+export { ChatCard, ChatCardRow, ChatCardRows, ConfidenceBadge } from "./chat/ChatCard.jsx";
 export { ChatMessage } from "./chat/ChatMessage.jsx";
 export { ChatThread } from "./chat/ChatThread.jsx";
 export { MarkdownTextarea } from "./chat/MarkdownTextarea.jsx";

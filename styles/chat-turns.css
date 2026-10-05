@@ -1,0 +1,517 @@
+/* ============================================================================
+   chat-turns.css — the two sides of a conversation and what an answer is made of.
+
+   A person's message is a bubble on the right (.chat-turn--user); the assistant's
+   answer is text in the column (.chat-turn--assistant), headed by its mark and
+   name only on the first answer of a run (.chat-turn__head). Above an answer sits
+   its Activity line (.chat-activity); inside it, the rendered markdown (.chat-md__*);
+   under it, the meta row (.chat-turn__meta) holding copy, the thumbs (.chat-fb)
+   and the time. Colour carries state only: the accent for what is running or
+   pressed, success/warning/danger for an outcome. Code, notes and steps are neutral.
+   ============================================================================ */
+
+/* ---- a turn ---- */
+/* A turn sizes itself by the column it sits in, not the window: the same thread is a full page, a
+   phone, and a side dock a few hundred pixels wide. */
+.chat-turn {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  container-type: inline-size;
+  container-name: chatturn;
+}
+
+.chat-turn--assistant {
+  gap: 12px;
+}
+
+.chat-turn--user {
+  align-items: flex-end;
+  gap: 4px;
+}
+
+/* ---- your message ---- */
+.chat-turn__bubble {
+  max-width: 72%;
+  min-width: 0;
+  padding: 10px 14px;
+  border-radius: var(--r-lg) var(--r-lg) var(--r-sm) var(--r-lg);
+  background: var(--surface-3);
+  color: var(--fg-1);
+  font-size: 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.chat-turn__bubble--voice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: min(300px, 100%);
+}
+
+.chat-turn__said > * + * {
+  margin-top: 8px;
+}
+
+.chat-turn__time {
+  font-size: 11.5px;
+  color: var(--fg-4);
+  white-space: nowrap;
+}
+
+/* The time under your message is there when you look for it. */
+.chat-turn--user .chat-turn__time {
+  opacity: 0;
+  transition: opacity var(--d-fast) var(--ease-out);
+}
+
+.chat-turn--user:hover .chat-turn__time,
+.chat-turn--user:focus-within .chat-turn__time {
+  opacity: 1;
+}
+
+/* ---- the assistant's answer ---- */
+.chat-turn__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat-turn__tile {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal);
+}
+
+.chat-turn__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg-2);
+}
+
+.chat-turn__answer {
+  min-width: 0;
+  color: var(--fg-1);
+  font-size: 14.5px;
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+
+.chat-turn__answer > * + * {
+  margin-top: 10px;
+}
+
+.chat-turn__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--fg-2);
+}
+
+.chat-turn__warning svg {
+  margin-top: 2px;
+  color: var(--warning-fg);
+}
+
+/* ---- the meta row under a finished answer ---- */
+.chat-turn__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: -4px;
+}
+
+/* The thumbs flow into this row beside copy and the time; the note form wraps below them. */
+.chat-turn__meta > .chat-fb {
+  display: contents;
+}
+
+.chat-turn__meta > .chat-turn__time {
+  margin-left: 6px;
+}
+
+/* Quiet until the answer is pointed at or focused; a recorded verdict stays visible. */
+.chat-turn__meta > .k-iconbtn,
+.chat-turn__meta > .chat-turn__time,
+.chat-turn__meta .chat-fb__thumb:not([aria-pressed="true"]) {
+  opacity: 0;
+  transition: opacity var(--d-fast) var(--ease-out);
+}
+
+.chat-turn:hover .chat-turn__meta > .k-iconbtn,
+.chat-turn:hover .chat-turn__meta > .chat-turn__time,
+.chat-turn:hover .chat-turn__meta .chat-fb__thumb,
+.chat-turn__meta:focus-within > .k-iconbtn,
+.chat-turn__meta:focus-within > .chat-turn__time,
+.chat-turn__meta:focus-within .chat-fb__thumb {
+  opacity: 1;
+}
+
+/* ---- the thumbs ---- */
+.chat-fb {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: 0;
+}
+
+.chat-fb__thumb[aria-pressed="true"],
+.chat-fb__thumb[aria-pressed="true"]:hover:not(:disabled) {
+  border-color: transparent;
+}
+
+.chat-fb__thumb--down[aria-pressed="true"],
+.chat-fb__thumb--down[aria-pressed="true"]:hover:not(:disabled) {
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+}
+
+.chat-fb__note {
+  margin-left: 6px;
+}
+
+.chat-fb__ask {
+  margin-left: 6px;
+  color: var(--fg-3);
+}
+
+.chat-fb__note-form {
+  order: 1;
+  flex: 1 0 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.chat-fb__note-form .k-input {
+  flex: 0 1 420px;
+  min-width: 0;
+}
+
+/* Read-only: what the person the answer was for said about it. */
+.chat-fb__verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--fg-3);
+}
+
+.chat-fb__verdict--up svg {
+  color: var(--krystal-teal);
+}
+
+.chat-fb__verdict--down svg {
+  color: var(--danger-fg);
+}
+
+/* ---- the Activity line ---- */
+.chat-activity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.chat-activity__toggle {
+  max-width: 100%;
+  margin-left: -4px;
+  padding-left: 4px;
+  color: var(--fg-3);
+  font-size: 12.5px;
+  font-weight: 400;
+}
+
+.chat-activity__toggle--static {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+}
+
+.chat-activity--working .chat-activity__toggle,
+.chat-activity--open .chat-activity__toggle {
+  color: var(--fg-2);
+}
+
+.chat-activity .k-spinner {
+  color: var(--krystal-teal);
+}
+
+.chat-activity__text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-activity__aside {
+  flex-shrink: 0;
+  color: var(--fg-4);
+}
+
+.chat-activity__list {
+  list-style: none;
+  margin: 4px 0 0 9px;
+  padding: 0 0 0 14px;
+  border-left: 1px solid var(--border-strong);
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  min-width: 0;
+}
+
+.chat-activity__row {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.chat-activity__mark {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-3);
+  color: var(--fg-3);
+}
+
+.chat-activity__row.is-done .chat-activity__mark {
+  background: var(--success-bg);
+  color: var(--success-fg);
+}
+
+.chat-activity__row.is-active .chat-activity__mark {
+  background: var(--krystal-teal-dim);
+}
+
+.chat-activity__row-body {
+  min-width: 0;
+}
+
+.chat-activity__label {
+  color: var(--fg-2);
+}
+
+.chat-activity__row.is-active .chat-activity__label {
+  color: var(--fg-1);
+}
+
+.chat-activity__detail {
+  color: var(--fg-3);
+  font-size: 12px;
+}
+
+.chat-activity__thought {
+  margin: 2px 0 0;
+  color: var(--fg-3);
+  font-size: 12.5px;
+  font-style: italic;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.chat-activity__block {
+  margin: 6px 0 0;
+  padding: 8px 10px;
+  max-height: 240px;
+  overflow: auto;
+  background: var(--surface-1);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  color: var(--fg-2);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+/* ---- answer text ----
+   Blocks reset their own margins at zero specificity, so the column's spacing between siblings
+   (`.chat-turn__answer > * + *`) is what separates them. */
+:where(.chat-md__p, .chat-md__h, .chat-md__list, .chat-md__quote, .chat-md__rule) {
+  margin: 0;
+}
+
+.chat-md__h {
+  padding-top: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--fg-1);
+}
+
+.chat-md__list {
+  padding-left: 20px;
+}
+
+.chat-md__list > li + li,
+.chat-md__list > li > .chat-md__list {
+  margin-top: 4px;
+}
+
+.chat-md__list > li::marker {
+  color: var(--fg-3);
+}
+
+.chat-md__code {
+  padding: 1px 5px;
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  background: var(--surface-3);
+  color: var(--fg-1);
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  overflow-wrap: anywhere;
+}
+
+.chat-md__link {
+  color: var(--krystal-teal);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+.chat-md__link:hover {
+  text-decoration: underline;
+}
+
+.chat-md__link:focus-visible {
+  outline: none;
+  border-radius: var(--r-sm);
+  box-shadow: var(--ring-focus);
+}
+
+.chat-md__quote {
+  padding-left: 12px;
+  border-left: 2px solid var(--border-strong);
+  color: var(--fg-2);
+}
+
+.chat-md__quote > * + * {
+  margin-top: 8px;
+}
+
+.chat-md__rule {
+  border: 0;
+  border-top: var(--edge);
+}
+
+/* A fenced block: a card with its language and a copy button in a bar above the code. */
+.chat-md__pre {
+  min-width: 0;
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  background: var(--surface-0);
+  overflow: hidden;
+}
+
+.chat-md__pre-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 4px 2px 12px;
+  border-bottom: var(--edge);
+}
+
+.chat-md__pre-lang {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-3);
+}
+
+.chat-md__pre-body {
+  margin: 0;
+  padding: 12px;
+  overflow-x: auto;
+  color: var(--fg-1);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+.chat-md__pre-body code {
+  font: inherit;
+}
+
+/* A table: a card frame, its header row quieter than its cells. */
+.chat-md__table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  background: var(--surface-1);
+}
+
+.chat-md__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.chat-md__table th,
+.chat-md__table td {
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.chat-md__table th {
+  color: var(--fg-3);
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: var(--edge);
+}
+
+.chat-md__table tbody tr + tr td {
+  border-top: var(--edge);
+}
+
+/* ---- touch and narrow ---- */
+@media (hover: none) {
+  .chat-turn__meta > .k-iconbtn,
+  .chat-turn__meta > .chat-turn__time,
+  .chat-turn .chat-turn__meta .chat-fb__thumb {
+    opacity: 1;
+  }
+
+  .chat-turn__meta .k-iconbtn--xs {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@container chatturn (max-width: 560px) {
+  .chat-turn__bubble {
+    max-width: 85%;
+  }
+
+  .chat-md__table th,
+  .chat-md__table td {
+    padding: 6px 10px;
+  }
+}

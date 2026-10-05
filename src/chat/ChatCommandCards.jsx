@@ -5,38 +5,39 @@
 // They stay in the conversation rather than opening a panel because looking something up is part of
 // what happened: scrolling back to what you were told is the point.
 
-import { Icon } from "../components/Icon.jsx";
-
+import { Button } from "../components/Button.jsx";
+import { ChatCard, ChatCardRow, ChatCardRows } from "./ChatCard.jsx";
 import { usageOf } from "./chatCommands.js";
+import { toolLabel } from "./conversation.js";
 
 // Split into what reads and what changes something. It is the question someone opens a command
-// list with.
-function ChatCommandHelp({ msg }) {
+// list with. `onUseCommand(name)` puts the command in the composer; without it a row has no Use.
+function ChatCommandHelp({ msg, onUseCommand }) {
   const commands = msg.commands || [];
   const reads = commands.filter(c => !c.mutates);
   const acts = commands.filter(c => c.mutates);
+  const groups = [["Reference", reads], ["Changes something", acts]].filter(([, g]) => g.length > 0);
 
   return (
-    <div className="chat-cmdcard">
-      <div className="chat-cmdcard__head">
-        <Icon name="terminal" size={13} strokeWidth={2.2} />
-        <span>{msg.label || "What you can type here"}</span>
-      </div>
-      {[["Reference", reads], ["Changes something", acts]].map(([title, group]) => group.length > 0 && (
-        <div key={title} className="chat-cmdcard__group">
-          <div className="chat-cmdcard__grouphead">{title}</div>
-          {group.map(c => (
-            <div key={c.name} className="chat-cmdcard__row">
-              <code className="chat-cmdcard__name">{usageOf(c)}</code>
-              <span className="chat-cmdcard__desc">{c.description}</span>
-            </div>
-          ))}
-        </div>
-      ))}
-      {commands.length === 0 && (
-        <div className="chat-cmdcard__row"><span className="chat-cmdcard__desc">No commands here.</span></div>
-      )}
-    </div>
+    <ChatCard icon="square-slash" title="Commands you can type" className="chat-cmds">
+      <ChatCardRows>
+        {groups.map(([title, group]) => (
+          <div key={title} className="chat-cmds__group">
+            {groups.length > 1 && <div className="chat-cmds__grouphead">{title}</div>}
+            {group.map(c => (
+              <ChatCardRow key={c.name} mono label={usageOf(c)} value={c.description}
+                action={onUseCommand && (
+                  <Button variant="outline" size="xs" className="chat-cmds__use"
+                    aria-label={"Use /" + c.name} onClick={() => onUseCommand(c.name)}>
+                    Use
+                  </Button>
+                )} />
+            ))}
+          </div>
+        ))}
+        {commands.length === 0 && <ChatCardRow value="No commands here." />}
+      </ChatCardRows>
+    </ChatCard>
   );
 }
 
@@ -51,21 +52,14 @@ function firstSentence(text) {
 function ChatCommandTools({ msg }) {
   const tools = msg.tools || [];
   return (
-    <div className="chat-cmdcard">
-      <div className="chat-cmdcard__head">
-        <Icon name="wrench" size={13} strokeWidth={2.2} />
-        <span>{msg.label || "What I can do for you"}</span>
-      </div>
-      {tools.map(t => (
-        <div key={t.name} className="chat-cmdcard__row">
-          <code className="chat-cmdcard__name">{t.name}</code>
-          <span className="chat-cmdcard__desc">{firstSentence(t.description)}</span>
-        </div>
-      ))}
-      {tools.length === 0 && (
-        <div className="chat-cmdcard__row"><span className="chat-cmdcard__desc">No tools available.</span></div>
-      )}
-    </div>
+    <ChatCard icon="wrench" title="What I can do for you" className="chat-cmds chat-cmds--tools">
+      <ChatCardRows>
+        {tools.map(t => (
+          <ChatCardRow key={t.name} label={toolLabel(t.name)} value={firstSentence(t.description)} />
+        ))}
+        {tools.length === 0 && <ChatCardRow value="No tools available." />}
+      </ChatCardRows>
+    </ChatCard>
   );
 }
 

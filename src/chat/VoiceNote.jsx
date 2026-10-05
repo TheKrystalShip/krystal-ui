@@ -1,5 +1,7 @@
 import React from "react";
 import { Icon } from "../components/Icon.jsx";
+import { Button, IconButton } from "../components/Button.jsx";
+import { Spinner } from "../components/Spinner.jsx";
 import { toPcm16k, MAX_SECONDS } from "./voicePcm.js";
 
 // VoiceNote — voice-message capture + playback for the assistant composer.
@@ -13,9 +15,10 @@ import { toPcm16k, MAX_SECONDS } from "./voicePcm.js";
 //                         words. Degrades gracefully when any piece is missing
 //                         (no mic permission, no recogniser at all).
 //   VoiceComposerBar    — the in-composer recording UI: pulsing dot, timer,
-//                         live waveform, rolling transcript, cancel / send.
-//   VoiceNoteBubble     — playback in the thread: play/scrub waveform + the
-//                         transcript the assistant replied to.
+//                         live waveform, cancel / send.
+//   VoiceNoteBubble     — playback inside the user's bubble: play, waveform,
+//                         duration. The transcript under it is the message's
+//                         own text, drawn by the message.
 //
 // WHO TRANSCRIBES: the assistant's own recogniser, whenever it has one. A
 // `transcribe` function passed to the hook sends the recording there — the same
@@ -276,24 +279,21 @@ function useVoiceRecorder({ transcribe } = {}) {
 }
 
 // ---------- composer recording bar ----------
+// It is the composer box's whole content while it shows: the box keeps its frame and its place, and
+// what is inside says what the microphone is doing.
 function VoiceComposerBar({ rec, onSend, onCancel }) {
-  const { phase, seconds, levels, transcript, interim, error, held } = rec;
-  const live = (transcript + " " + interim).trim();
+  const { phase, seconds, levels, error, held } = rec;
 
   if (phase === "error") {
     return (
-      <div className="voice-bar voice-bar--error">
-        <Icon name="mic-off" size={16} />
-        <span className="voice-bar__msg">{error || "Couldn't start recording."}</span>
+      <div className="chat-voice chat-voice--error" role="alert">
+        <Icon name="mic-off" size={15} className="chat-voice__icon" />
+        <span className="chat-voice__msg">{error || "Couldn’t start recording."}</span>
         {/* A recording that failed to transcribe is still here, so the way out is to try again —
             not to say the whole thing over because a request failed. */}
-        {held && (
-          <button className="voice-bar__retry" onClick={onSend} title="Try transcribing again">
-            <Icon name="rotate-ccw" size={14} /> Try again
-          </button>
-        )}
-        <button className="voice-bar__x" onClick={onCancel}
-          title={held ? "Discard this recording" : "Dismiss"}><Icon name="x" size={15} /></button>
+        {held && <Button variant="outline" size="sm" icon="rotate-ccw" onClick={onSend}>Try again</Button>}
+        <IconButton icon="x" label={held ? "Discard this recording" : "Dismiss"} variant="ghost" size="sm"
+          onClick={onCancel} />
       </div>
     );
   }
@@ -303,41 +303,29 @@ function VoiceComposerBar({ rec, onSend, onCancel }) {
   // that was about to arrive.
   if (phase === "transcribing") {
     return (
-      <div className="voice-bar voice-bar--working">
-        <Icon name="audio-lines" size={16} />
-        <span className="voice-bar__msg">Transcribing your note…</span>
+      <div className="chat-voice chat-voice--working" role="status">
+        <Spinner size={14} />
+        <span className="chat-voice__msg">Transcribing</span>
       </div>
     );
   }
 
   const requesting = phase === "requesting";
-  // Pad the waveform so it fills from the right as you speak.
+  // Padded so the waveform fills from the right as you speak.
   const bars = levels.length < 56 ? [...new Array(56 - levels.length).fill(0.06), ...levels] : levels;
 
   return (
-    <div className="voice-bar">
-      <button className="voice-bar__cancel" onClick={onCancel} title="Discard voice note" aria-label="Discard">
-        <Icon name="trash-2" size={16} />
-      </button>
-
-      <div className="voice-bar__meter">
-        <span className="voice-bar__dot"></span>
-        <span className="voice-bar__time">{requesting ? "0:00" : fmtClock(seconds)}</span>
-        <div className="voice-bar__wave" aria-hidden="true">
-          {requesting
-            ? <span className="voice-bar__hint">Listening…</span>
-            : bars.map((v, i) => (
-                <span key={i} className="voice-bar__bar" style={{ height: (10 + v * 26).toFixed(1) + "px" }}></span>
-              ))}
-        </div>
-        {live
-          ? <span className="voice-bar__transcript" title={live}>{live}</span>
-          : !requesting && <span className="voice-bar__transcript voice-bar__transcript--idle">Speak now — I'm listening</span>}
+    <div className="chat-voice">
+      <span className="chat-voice__dot" aria-hidden="true"></span>
+      <span className="chat-voice__time" role="timer">{requesting ? "0:00" : fmtClock(seconds)}</span>
+      <div className="chat-voice__wave" aria-hidden="true">
+        {bars.map((v, i) => (
+          <span key={i} className="chat-voice__bar" style={{ height: (3 + v * 21).toFixed(1) + "px" }}></span>
+        ))}
       </div>
-
-      <button className="voice-bar__send" onClick={onSend} disabled={requesting} title="Send voice note" aria-label="Send voice note">
-        <Icon name="arrow-up" size={16} strokeWidth={2.4} />
-      </button>
+      <Button variant="ghost" size="sm" onClick={onCancel}>Cancel</Button>
+      <Button variant="primary" size="sm" icon="arrow-up" onClick={onSend} disabled={requesting}
+        aria-label="Send voice note" title="Send voice note" />
     </div>
   );
 }
@@ -373,20 +361,19 @@ function VoiceNoteBubble({ voice }) {
   const filled = Math.round(pos * peaks.length);
 
   return (
-    <div className={"voice-note" + (available ? "" : " voice-note--expired")}>
-      <button className="voice-note__play" onClick={toggle} disabled={!available}
-        title={available ? (playing ? "Pause" : "Play voice note") : "Audio from a previous session isn't available"}
-        aria-label={playing ? "Pause" : "Play"}>
-        <Icon name={playing ? "pause" : "play"} size={14} strokeWidth={2.2} />
-      </button>
-      <div className="voice-note__wave" aria-hidden="true">
+    <div className={"chat-voicenote" + (available ? "" : " chat-voicenote--expired")}>
+      <IconButton icon={playing ? "pause" : "play"} variant="ghost" size="xs" className="chat-voicenote__play"
+        label={playing ? "Pause voice note" : "Play voice note"}
+        title={available ? undefined : "Audio from a previous session isn’t available"}
+        disabled={!available} onClick={toggle} />
+      <div className="chat-voicenote__wave" aria-hidden="true">
         {peaks.map((v, i) => (
           <span key={i}
-            className={"voice-note__bar" + (i < filled ? " voice-note__bar--on" : "")}
-            style={{ height: (4 + v * 20).toFixed(1) + "px" }}></span>
+            className={"chat-voicenote__bar" + (i < filled ? " chat-voicenote__bar--played" : "")}
+            style={{ height: (3 + v * 19).toFixed(1) + "px" }}></span>
         ))}
       </div>
-      <span className="voice-note__dur">{fmtClock(voice.duration)}</span>
+      <span className="chat-voicenote__dur">{fmtClock(voice.duration)}</span>
     </div>
   );
 }

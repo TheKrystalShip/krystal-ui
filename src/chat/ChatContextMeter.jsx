@@ -1,114 +1,108 @@
-// ChatContextMeter — the compact context-window gauge in the composer toolbar.
-// Shows token occupancy as a percentage bar; click opens a popover with exact
-// figures and a "Compact" CTA.
+// ChatContextMeter — how full the conversation's context window is: a ring and a percentage in the
+// composer's bar, opening a popover with the figures and the way to compact. Nothing is drawn before
+// the assistant has reported a window, because a ring at 0% says nothing a fresh chat does not.
 
 import React from "react";
 import { createPortal } from "react-dom";
-import { Icon } from "../components/Icon.jsx";
-import { Spinner } from "../components/Spinner.jsx";
+import { Button } from "../components/Button.jsx";
 import { usePortalPopover } from "../hooks/usePortalPopover.js";
 
-function ChatContextMeter({ usage, onCompact }) {
+// The point past which the window is worth watching: the ring and the figures take the warning ink.
+const WARN_AT = 75;
+
+// The window's figures from a turn's `usage`, or null when there is no window to speak of.
+function contextUsage(usage) {
   const win = usage && usage.contextWindow > 0 ? usage.contextWindow : 0;
-  const used = win && usage.usedTokens >= 0 ? usage.usedTokens : 0;
-  const pct = win ? Math.min(100, Math.round((used / win) * 100)) : 0;
-  const tone = pct >= 90 ? "danger" : pct >= 70 ? "warn" : "ok";
-  const fmt = (n) => (typeof n === "number" ? n.toLocaleString() : "\u2014");
-  const fmtTokens = (n) => {
-    if (typeof n !== "number") return "\u2014";
-    if (n < 1000) return String(n);
-    const big = n >= 1000000;
-    const div = big ? 1000000 : 1000;
-    const rounded = big ? Math.round(n / 100000) / 10 : Math.round(n / 1000);
-    const approx = rounded * div !== n;
-    return (approx ? "~" : "") + rounded + (big ? "M" : "k");
-  };
-  const remaining = win
-    ? (typeof usage.remainingTokens === "number" ? usage.remainingTokens : Math.max(0, win - used))
-    : 0;
-  const title = win
-    ? "Context window \u00b7 " + fmt(used) + " / " + fmt(win) + " tokens used (" + fmt(remaining) + " left)"
-    : "Context window \u00b7 empty \u2014 fills as the conversation grows";
+  if (!win) return null;
+  const used = usage.usedTokens >= 0 ? usage.usedTokens : 0;
+  const pct = Math.min(100, Math.round((used / win) * 100));
+  return { win, used, pct, warn: pct >= WARN_AT };
+}
 
-  const [open, setOpen] = React.useState(false);
-  const ref = React.useRef(null);
-  const { pos, menuRef } = usePortalPopover(open, setOpen, ref);
+// A 16px ring that fills clockwise from the top.
+const RING_R = 7;
+const RING_C = 2 * Math.PI * RING_R;
+function ContextRing({ pct }) {
+  return (
+    <svg className="chat-ctxring" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
+      <circle className="chat-ctxring__track" cx="10" cy="10" r={RING_R} />
+      <circle className="chat-ctxring__fill" cx="10" cy="10" r={RING_R}
+        strokeDasharray={((pct / 100) * RING_C).toFixed(2) + " " + RING_C.toFixed(2)}
+        transform="rotate(-90 10 10)" />
+    </svg>
+  );
+}
 
+// Compacting through `onCompact`, with the answer it gave: closed when it compacted, a note when it
+// had nothing to summarize or failed.
+function useCompact(onCompact, onDone) {
   const [compacting, setCompacting] = React.useState(false);
   const [note, setNote] = React.useState(null);
-  React.useEffect(() => { if (!open) setNote(null); }, [open]);
-  const runCompact = async () => {
+  const run = async () => {
     if (!onCompact || compacting) return;
     setCompacting(true);
     setNote(null);
     try {
       const r = await onCompact();
-      if (r && r.compacted) setOpen(false);
-      else setNote("Already compact \u2014 nothing to summarize yet.");
+      if (r && r.compacted) onDone();
+      else setNote("Nothing to summarize yet.");
     } catch (e) {
-      setNote(e && e.code === 401
-        ? "Session expired \u2014 sign in again to compact."
-        : "Couldn\u2019t compact \u2014 try again.");
+      setNote(e && e.code === 401 ? "Session expired · sign in again to compact." : "Couldn’t compact · try again.");
     } finally {
       setCompacting(false);
     }
   };
+  return { compacting, note, setNote, run };
+}
+
+function ChatContextMeter({ usage, onCompact }) {
+  const ctx = contextUsage(usage);
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+  const { pos, menuRef } = usePortalPopover(open, setOpen, ref);
+  const compact = useCompact(onCompact, () => setOpen(false));
+  const { setNote } = compact;
+  React.useEffect(() => { if (!open) setNote(null); }, [open, setNote]);
+
+  if (!ctx) return null;
+  const fmt = (n) => n.toLocaleString();
 
   return (
     <>
-      <button
-        type="button"
-        ref={ref}
-        className={"chat-act-toggle chat-ctx chat-ctx--" + tone + (open ? " chat-ctx--open" : "")}
+      <Button ref={ref} variant="ghost" size="xs"
+        className={"chat-ctx-btn" + (ctx.warn ? " chat-ctx-btn--warn" : "")}
+        icon={<ContextRing pct={ctx.pct} />}
         onClick={() => setOpen(o => !o)}
-        title={title}
+        aria-label={"Context used: " + ctx.pct + "%"}
+        title={"Context window · " + fmt(ctx.used) + " of " + fmt(ctx.win) + " tokens"}
         aria-haspopup="dialog"
         aria-expanded={open}>
-        <Icon name="gauge" size={13} className="chat-ctx__icon" />
-        <span className="chat-ctx__track"><i style={{ width: pct + "%" }} /></span>
-        <span className="chat-ctx__val">{pct}%</span>
-      </button>
+        <span className="chat-ctx-btn__pct">{ctx.pct}%</span>
+      </Button>
       {open && pos && createPortal(
-        <div className={"chat-ctx__pop chat-ctx__pop--" + tone} ref={menuRef} style={pos} role="dialog" aria-label="Context window usage">
-          <div className="chat-ctx__pop-head">
-            <Icon name="gauge" size={13} />
-            <span>Context window</span>
+        <div className={"chat-ctxpop" + (ctx.warn ? " chat-ctxpop--warn" : "")} ref={menuRef} style={pos}
+          role="dialog" aria-label="Context window">
+          <div className="chat-ctxpop__head">
+            <span className="chat-ctxpop__pct">{ctx.pct}%</span>
+            <span className="chat-ctxpop__cap">of the context window used</span>
           </div>
-          <div className="chat-ctx__pop-row">
-            <span className="chat-ctx__pop-pct">{pct}%</span>
-            <span className="chat-ctx__pop-cap">{win ? "of the window used" : "used \u2014 no turns yet"}</span>
-          </div>
-          <div className="chat-ctx__pop-track"><i style={{ width: pct + "%" }} /></div>
-          <div className="chat-ctx__pop-nums">
-            {win ? (
-              <>
-                <span><b>{fmtTokens(used)}</b> / {fmtTokens(win)} tokens</span>
-                <span>{fmtTokens(remaining)} left</span>
-              </>
-            ) : (
-              <span className="chat-ctx__pop-empty">The window fills as the conversation grows.</span>
-            )}
-          </div>
-          <div className="chat-ctx__pop-foot">
-            <button
-              type="button"
-              className="chat-ctx__compact"
-              onClick={onCompact ? runCompact : undefined}
-              disabled={!onCompact || compacting}
-              title={onCompact
-                ? "Summarize the older messages to free up the context window"
-                : "Nothing to compact yet \u2014 send a message first"}>
-              {compacting
-                ? <><Spinner size={13} /> Compacting…</>
-                : <><Icon name="fold-vertical" size={13} strokeWidth={2.2} /> Compact</>}
-            </button>
-            {note && <span className="chat-ctx__pop-note">{note}</span>}
+          <div className="chat-ctxpop__bar"><i style={{ width: ctx.pct + "%" }} /></div>
+          <dl className="chat-ctxpop__nums">
+            <dt>Used</dt><dd>{fmt(ctx.used)}</dd>
+            <dt>Window</dt><dd>{fmt(ctx.win)}</dd>
+          </dl>
+          <div className="chat-ctxpop__foot">
+            <Button variant="outline" size="sm" icon="rotate-ccw" busy={compact.compacting}
+              disabled={!onCompact} onClick={compact.run}>
+              Compact
+            </Button>
+            {compact.note && <span className="chat-ctxpop__note">{compact.note}</span>}
           </div>
         </div>,
-        document.body
+        document.body,
       )}
     </>
   );
 }
 
-export { ChatContextMeter };
+export { ChatContextMeter, ContextRing, contextUsage, useCompact };

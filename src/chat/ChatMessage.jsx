@@ -1,51 +1,110 @@
-// ChatMessage — one bubble: a person's message, or the assistant's answer with its thinking, its tool
-// pills and steps, and whatever cards the product draws under it (`renderCards(msg)`, given the
-// message when it carries `cards`).
+// ChatMessage — one turn of the conversation. A person's message is a bubble on the right, its time
+// shown under it on hover. The assistant's answer is text in the column: its Activity line, the answer,
+// whatever cards the product draws under it (`renderCards(msg)`, given the message when it carries
+// `cards`), and once it is finished a meta row to copy it, rate it and read its time.
+//
+// `lead` marks the first assistant entry of a run — consecutive assistant-side entries with no message
+// from the person between them — and only that one carries the assistant's mark and name. A turn that
+// failed (`error`) says so in a warning line under whatever it had already written; `errorText` is the
+// reason, and without one the content is the reason.
 
-import { AccountAvatar } from "../components/AccountAvatar.jsx";
+import React from "react";
+
+import { IconButton } from "../components/Button.jsx";
 import { Icon } from "../components/Icon.jsx";
+import { copyText } from "../lib/clipboard.js";
 import { VoiceNoteBubble } from "./VoiceNote.jsx";
 import { renderMarkdown } from "./markdown.jsx";
-import { ChatThinking, ChatContextPill, ChatSteps, ChatPending } from "./ChatMessageParts.jsx";
+import { ChatActivity } from "./ChatActivity.jsx";
 import { ChatFeedback } from "./ChatFeedback.jsx";
 
-function ChatMessage({ msg, user, assistantName = "Assistant", renderCards, onRate, readOnlyFeedback }) {
-  const isUser = msg.role === "user";
+const FAILED = "This turn didn’t complete.";
+
+function TurnTime({ ts }) {
+  if (!ts) return null;
+  const d = new Date(ts);
   return (
-    <div className={"chat-msg" + (isUser ? " chat-msg--user" : " chat-msg--assistant")}>
-      <div className="chat-msg__avatar">
-        {isUser
-          ? <AccountAvatar user={user} size={28} />
-          : <span className="chat-msg__bot"><Icon name="bot" size={16} /></span>}
-      </div>
-      <div className="chat-msg__body">
-        <div className="chat-msg__name">
-          {isUser ? (user.display || user.name) : assistantName}
-          {msg.voice && <span className="chat-msg__voicetag"><Icon name="mic" size={11} strokeWidth={2.2} /> Voice note</span>}
-        </div>
-        {msg.ts && <span className="chat-msg__ts" title={new Date(msg.ts).toLocaleString()}>{new Date(msg.ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</span>}
+    <time className="chat-turn__time" dateTime={d.toISOString()} title={d.toLocaleString()}>
+      {d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+    </time>
+  );
+}
+
+function CopyAnswer({ text }) {
+  const [copied, setCopied] = React.useState(null);
+  React.useEffect(() => {
+    if (copied === null) return undefined;
+    const t = setTimeout(() => setCopied(null), 1600);
+    return () => clearTimeout(t);
+  }, [copied]);
+  return (
+    <IconButton variant="ghost" size="xs" className="chat-turn__copy"
+      icon={copied === true ? "check" : "copy"}
+      label={copied === true ? "Copied" : copied === false ? "Couldn’t copy" : "Copy answer"}
+      onClick={() => copyText(text).then(setCopied)} />
+  );
+}
+
+function UserTurn({ msg }) {
+  return (
+    <div className="chat-turn chat-turn--user">
+      <div className={"chat-turn__bubble" + (msg.voice ? " chat-turn__bubble--voice" : "")}>
         {msg.voice && <VoiceNoteBubble voice={msg.voice} />}
-        {!isUser && msg.thinking && <ChatThinking text={msg.thinking} streaming={!msg.content} />}
-        {!isUser && msg.tools && msg.tools.map((t, i) => <ChatContextPill key={(t.id || "t") + ":" + i} msg={t} />)}
-        {!isUser && msg.steps && msg.steps.length > 0 && <ChatSteps steps={msg.steps} />}
-        <div className="chat-msg__content">
-          {msg.content
-            ? renderMarkdown(msg.content)
-            : (msg.thinking || (msg.tools && msg.tools.length))
-              ? null
-              : <ChatPending />}
-        </div>
-        {!isUser && msg.cards && msg.cards.length > 0 && renderCards && renderCards(msg)}
-        {/* Only a finished answer can be judged: a bubble still streaming has nothing to rate yet. */}
-        {!isUser && msg.content && (onRate || readOnlyFeedback) && (
-          <ChatFeedback
-            turnId={msg.turnId}
-            feedback={msg.feedback}
-            readOnly={readOnlyFeedback}
-            onRate={(rating, note) => onRate && onRate(msg.turnId, rating, note)} />
-        )}
+        {msg.content && <div className="chat-turn__said">{renderMarkdown(msg.content)}</div>}
       </div>
+      <TurnTime ts={msg.ts} />
     </div>
+  );
+}
+
+function AssistantTurn({ msg, assistantName, lead, renderCards, onRate, readOnlyFeedback }) {
+  // Content written by an older surface as the failure itself, with no separate reason.
+  const errorOnly = msg.error && !msg.errorText;
+  const answer = errorOnly ? "" : msg.content;
+  const errorText = msg.error ? (msg.errorText || msg.content || FAILED) : null;
+  const finished = !msg.live && !!answer;
+
+  return (
+    <div className={"chat-turn chat-turn--assistant" + (lead ? " chat-turn--lead" : "") + (msg.error ? " chat-turn--error" : "")}>
+      {lead && (
+        <div className="chat-turn__head">
+          <span className="chat-turn__tile" aria-hidden="true"><Icon name="bot" size={13} strokeWidth={2} /></span>
+          <span className="chat-turn__name">{assistantName}</span>
+        </div>
+      )}
+      <ChatActivity msg={msg} />
+      {answer && <div className="chat-turn__answer">{renderMarkdown(answer)}</div>}
+      {errorText && (
+        <div className="chat-turn__warning" role="alert">
+          <Icon name="alert-triangle" size={14} strokeWidth={2} />
+          <span>{errorText}</span>
+        </div>
+      )}
+      {msg.cards && msg.cards.length > 0 && renderCards && renderCards(msg)}
+      {/* Only a finished answer can be copied or judged: a turn still streaming has nothing to rate yet. */}
+      {finished && (
+        <div className="chat-turn__meta">
+          <CopyAnswer text={answer} />
+          {/* Only an answer the assistant recorded as a turn can be rated; a command's reply has none. */}
+          {(onRate || readOnlyFeedback) && msg.turnId != null && (
+            <ChatFeedback
+              turnId={msg.turnId}
+              feedback={msg.feedback}
+              readOnly={readOnlyFeedback}
+              onRate={(rating, note) => onRate && onRate(msg.turnId, rating, note)} />
+          )}
+          <TurnTime ts={msg.ts} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ChatMessage({ msg, assistantName = "Assistant", lead = true, renderCards, onRate, readOnlyFeedback }) {
+  if (msg.role === "user") return <UserTurn msg={msg} />;
+  return (
+    <AssistantTurn msg={msg} assistantName={assistantName} lead={lead}
+      renderCards={renderCards} onRate={onRate} readOnlyFeedback={readOnlyFeedback} />
   );
 }
 

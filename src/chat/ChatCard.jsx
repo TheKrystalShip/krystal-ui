@@ -1,18 +1,20 @@
 import { Button } from "../components/Button.jsx";
 import { Icon } from "../components/Icon.jsx";
 
-// The card a product draws under an answer: an icon tile, a title with a `sub` line under it in
-// monospace, and on the right how sure the assistant is and the way to the full context. The body is
-// the product's own, as children.
+// The card a product draws under an answer: an icon tile, a title with a `sub` line under it, and on
+// the right how sure the assistant is and the way to the full context. The body is the product's own,
+// as children; `ChatCardRow` is the row grammar a body is written in.
 //
-// `tone` colours the icon tile — neutral (the default), ok, danger or muted; a muted card is one the
-// conversation has moved past, and dims. `confidence` is confirmed (measured), likely (inferred from
-// correlation) or possible (cannot be measured), drawn as a badge. `onOpen` with `openLabel` is the
-// way to the full context; `action` is any other node for the head's right end, and wins over it.
+// `tone` colours the icon tile — neutral (the default), accent, ok, warn, danger or muted; a muted
+// card is one the conversation has moved past, and dims. `icon` is a Lucide name or a node (a spinner).
+// `sub` is monospace, a figure or a path; `subMono={false}` sets it as prose. `confidence` is
+// confirmed (measured), likely (inferred from correlation) or possible (cannot be measured), drawn as
+// a dot and a word. `onOpen` with `openLabel` is the way to the full context; `action` is any other
+// node for the head's right end, and wins over it.
 const CONFIDENCE = {
-  confirmed: { label: "Confirmed", icon: "badge-check", title: "Directly measured" },
-  likely: { label: "Likely", icon: "trending-up", title: "Inferred from correlation" },
-  possible: { label: "Possible", icon: "help-circle", title: "Can’t be measured directly" },
+  confirmed: { label: "Confirmed", title: "Directly measured" },
+  likely: { label: "Likely", title: "Inferred from correlation" },
+  possible: { label: "Possible", title: "Can’t be measured directly" },
 };
 
 function ConfidenceBadge({ level }) {
@@ -20,35 +22,80 @@ function ConfidenceBadge({ level }) {
   if (!meta) return null;
   return (
     <span className={"ev-conf ev-conf--" + level} title={meta.title}>
-      <Icon name={meta.icon} size={10} strokeWidth={2.4} />
       {meta.label}
     </span>
   );
 }
 
-function ChatCard({ icon, tone = "neutral", title, sub, confidence, onOpen, openLabel = "Open", action, className, children }) {
+function ChatCard({
+  icon, tone = "neutral", title, sub, subMono = true, confidence, onOpen, openLabel = "Open", action,
+  className, children,
+}) {
   const right = action !== undefined
     ? action
     : onOpen && (
-      <Button variant="outline" size="xs" iconRight="arrow-right" className="ev-card__open" onClick={onOpen}>
+      <Button variant="ghost" size="xs" iconRight="arrow-right" className="ev-card__open" onClick={onOpen}>
         {openLabel}
       </Button>
     );
   return (
     <div className={"ev-card ev-card--" + tone + (className ? " " + className : "")}>
       <div className="ev-card__head">
-        {icon && <span className="ev-card__icon"><Icon name={icon} size={13} /></span>}
+        {icon && (
+          <span className="ev-card__icon">
+            {typeof icon === "string" ? <Icon name={icon} size={14} strokeWidth={2} /> : icon}
+          </span>
+        )}
         <div className="ev-card__titles">
           <span className="ev-card__title">{title}</span>
-          {sub && <span className="ev-card__sub">{sub}</span>}
+          {sub && <span className={"ev-card__sub" + (subMono ? "" : " ev-card__sub--prose")}>{sub}</span>}
         </div>
-        {CONFIDENCE[confidence] && <span className="ev-card__conf-label">Confidence:</span>}
-        <ConfidenceBadge level={confidence} />
-        {right}
+        {(CONFIDENCE[confidence] || right) && (
+          <div className="ev-card__end">
+            <ConfidenceBadge level={confidence} />
+            {right}
+          </div>
+        )}
       </div>
       {children}
     </div>
   );
 }
 
-export { ChatCard, ConfidenceBadge };
+// One line of a card's body: what was looked at, what it reads, and whether that is good. `verdict`
+// is ok, warn, danger or neutral (`skip` is the same) and draws the mark at the end; neutral is a dash
+// for a reading that judges neither way. A danger reading is set in the danger colour too, because it
+// is the line the card exists to point at. `verdictLabel` is the mark's accessible name and tooltip,
+// defaulting to the verdict's word. A row without a `label` is one sentence across both columns.
+// `mono` sets the label as code, `valueMono` the value; `action` is a node at the row's end.
+const VERDICTS = {
+  ok: { icon: "check", label: "Passed" },
+  warn: { icon: "alert-triangle", label: "Warning" },
+  danger: { icon: "x", label: "Failed" },
+  neutral: { icon: "minus", label: "Skipped" },
+};
+
+function ChatCardRow({ label, value, verdict, verdictLabel, mono = false, valueMono = false, action }) {
+  const tone = verdict === "skip" ? "neutral" : verdict;
+  const v = VERDICTS[tone];
+  const bare = label == null || label === "";
+  return (
+    <div className={"chat-card-row" + (v ? " chat-card-row--" + tone : "") + (bare ? " chat-card-row--bare" : "")}>
+      {!bare && <span className={"chat-card-row__label" + (mono ? " chat-card-row__label--mono" : "")}>{label}</span>}
+      <span className={"chat-card-row__value" + (valueMono ? " chat-card-row__value--mono" : "")}>{value}</span>
+      {v && (
+        <span className="chat-card-row__verdict" role="img" aria-label={verdictLabel || v.label} title={verdictLabel || v.label}>
+          <Icon name={v.icon} size={14} strokeWidth={2.2} />
+        </span>
+      )}
+      {action}
+    </div>
+  );
+}
+
+// The rows' frame under the card's head.
+function ChatCardRows({ children }) {
+  return <div className="chat-card-rows">{children}</div>;
+}
+
+export { ChatCard, ChatCardRow, ChatCardRows, ConfidenceBadge };

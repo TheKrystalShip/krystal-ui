@@ -117,16 +117,16 @@ function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
       break;
     }
     case "error": {
-      const note = "⚠️ " + (ev.message || "The assistant failed.");
       // A turn-ending error strands any still-active progress steps — check them off so the stepper
-      // doesn't sit spinning forever.
+      // doesn't sit spinning forever. Whatever the answer had already said stays; the reason is
+      // carried beside it, for the answer to state under that text.
       let base = bubble;
       if (bubble.steps && bubble.steps.some(s => s.status === "active")) {
         base = { ...base, steps: bubble.steps.map(s => s.status === "active" ? { ...s, status: "done" } : s) };
       }
-      const errored = base.content
-        ? { ...base, content: base.content + "\n\n_" + note + "_" }
-        : { ...base, content: note, error: true };
+      const errored = {
+        ...base, error: true, errorText: ev.message || "The assistant failed.", endedAt: Date.now(),
+      };
       msgs[lastIdx] = promotePendingCards(errored);
       break;
     }
@@ -144,7 +144,7 @@ function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
       msgs.splice(lastIdx, 0, proposalMessage(ev, profile));
       break;
     case "done": {
-      let done = bubble;
+      let done = { ...bubble, endedAt: Date.now() };
       // The turn ended without every progress step's owning tool.result arriving in band (a dropped
       // frame) — check off whatever is still active.
       if (bubble.steps && bubble.steps.some(s => s.status === "active")) {
@@ -226,6 +226,10 @@ function scaffoldHistory(entries, profile = NO_PROFILE) {
     if (e.startedAt) userMsg.ts = Date.parse(e.startedAt) || undefined;
     out.push(userMsg);
     const bubble = { role: "assistant", content: t.final || "", ts: Date.parse(e.createdAt) || undefined };
+    // How long the answer took, as the assistant recorded it: from the prompt arriving to the entry
+    // being written.
+    const started = Date.parse(e.startedAt);
+    if (started && bubble.ts) { bubble.startedAt = started; bubble.endedAt = bubble.ts; }
     // The turn's durable id and the verdict already on it. History is the bulk of any corpus, so
     // without these a replayed answer could never be rated — only the newest one could.
     if (e.turnId) bubble.turnId = e.turnId;
@@ -242,7 +246,7 @@ function scaffoldHistory(entries, profile = NO_PROFILE) {
       ? t.tools.map(tl => (tl && tl.result ? profile.adaptCard(tl.result) : null)).filter(Boolean)
       : [];
     if (cards.length) bubble.cards = cards;
-    if (!t.final && t.outcome && t.outcome !== "ok") { bubble.content = "⚠️ This turn didn’t complete."; bubble.error = true; }
+    if (!t.final && t.outcome && t.outcome !== "ok") { bubble.error = true; bubble.errorText = "This turn didn’t complete."; }
     out.push(bubble);
   });
   return out;
@@ -278,6 +282,12 @@ function latestUsage(messages) {
 // duplicated tool row or a doubled sentence gets in. Everything before the live turn is untouched.
 function scaffoldLiveTurn(messages, attach, profile = NO_PROFILE) {
   const settled = messages.filter(m => !m.live);
+  // When the turn began. The bubble this surface put up as it sent the prompt holds the moment it was
+  // sent; a running snapshot with nothing in it yet is a turn starting now; any other snapshot joins a
+  // turn part-way or one still queued, and its start is not known here.
+  const prior = messages.find(m => m.live && m.role === "assistant");
+  const empty = !attach.text && !attach.thinking && !(attach.tools && attach.tools.length);
+  const startedAt = (prior && prior.startedAt) || (empty && attach.state === "running" ? Date.now() : undefined);
   const tools = (attach.tools || []).map(t => ({
     id: t.id,
     label: toolLabel(t.name, t.label),
@@ -291,6 +301,7 @@ function scaffoldLiveTurn(messages, attach, profile = NO_PROFILE) {
   const bubble = {
     role: "assistant",
     live: true,
+    startedAt,
     content: attach.text || "",
     thinking: attach.thinking || undefined,
     tools: tools.length ? tools : undefined,

@@ -10,8 +10,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
 
-import { Icon } from "../components/Icon.jsx";
-
 function ChatCommandMenu({ items, active, onPick, anchorRef }) {
   const menuRef = React.useRef(null);
   const [pos, setPos] = React.useState(null);
@@ -64,16 +62,12 @@ function ChatCommandMenu({ items, active, onPick, anchorRef }) {
           // closing the menu out from under the press.
           onMouseDown={(e) => { e.preventDefault(); onPick(item); }}>
           <code className="chat-cmdmenu__name">{item.label}</code>
-          {item.detail && <span className="chat-cmdmenu__desc">{item.detail}</span>}
-          {item.command && item.command.mutates && (
-            <span className="chat-cmdmenu__tag" title="This command changes something">
-              <Icon name="triangle-alert" size={10} strokeWidth={2.2} />
-            </span>
-          )}
+          <span className="chat-cmdmenu__desc">{item.detail || ""}</span>
+          {item.command && item.command.mutates && <span className="chat-cmdmenu__tag">changes it</span>}
         </button>
       ))}
       <div className="chat-cmdmenu__hint">
-        <kbd>↑</kbd><kbd>↓</kbd> to move · <kbd>Tab</kbd> to complete · <kbd>Esc</kbd> to dismiss
+        <span>↑↓ choose</span><span>↵ insert</span><span>esc close</span>
       </div>
     </div>,
     document.body,

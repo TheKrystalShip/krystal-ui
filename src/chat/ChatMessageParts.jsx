@@ -2,245 +2,285 @@
 // No parent state awareness, no conversation coupling.
 
 import React from "react";
+import { Button } from "../components/Button.jsx";
 import { Icon } from "../components/Icon.jsx";
 import { Spinner } from "../components/Spinner.jsx";
+import { ChatCard, ChatCardRow, ChatCardRows } from "./ChatCard.jsx";
+import { diffHunks, diffLines } from "./diffLines.js";
 
-function ChatContextPill({ msg }) {
-  const pending = msg.state === "pending";
-  const label = msg.label || "Working";
-  const summary = msg.summary || "";
-  const verbose = !pending && (summary.length > 120 || summary.includes("\n"));
-  const [open, setOpen] = React.useState(false);
+// ---------- time ----------
+// An entry's moment is `ts` (epoch ms) or `at` (epoch ms or an ISO string, as a stored entry carries
+// it); null when it has neither or it does not parse.
+function entryTime(msg) {
+  const v = msg && (msg.ts != null ? msg.ts : msg.at);
+  if (v == null) return null;
+  const t = typeof v === "number" ? v : Date.parse(v);
+  return Number.isFinite(t) ? t : null;
+}
 
-  if (verbose) {
+function clockOf(t) {
+  return t == null ? null : new Date(t).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+// The local calendar day a moment falls on, as a key two moments compare equal on.
+function dayKeyOf(t) {
+  const d = new Date(t);
+  return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
+}
+
+function dayLabel(t, now = Date.now()) {
+  const key = dayKeyOf(t);
+  if (key === dayKeyOf(now)) return "Today";
+  const y = new Date(now);
+  y.setDate(y.getDate() - 1);
+  if (key === dayKeyOf(y.getTime())) return "Yesterday";
+  const d = new Date(t);
+  const sameYear = d.getFullYear() === new Date(now).getFullYear();
+  return d.toLocaleDateString([], sameYear
+    ? { weekday: "long", month: "long", day: "numeric" }
+    : { month: "long", day: "numeric", year: "numeric" });
+}
+
+// ---------- the action card ----------
+// One card per proposed action, changing in place as it goes: proposed, armed for the second press,
+// running while the assistant performs and watches it, then what it came to. The outcome is drawn
+// where the question was asked, so scrolling back finds both together.
+
+// A verdict line's `status` as the row's mark.
+const LINE_VERDICT = { pass: "ok", ok: "ok", success: "ok", warn: "warn", fail: "danger", danger: "danger" };
+
+// A sentence used as a title loses its full stop; an ellipsis stays.
+function asTitle(text) {
+  return typeof text === "string" && /[^.]\.$/.test(text) ? text.slice(0, -1) : text;
+}
+
+function baseName(path) {
+  const s = String(path || "");
+  return s.slice(s.lastIndexOf("/") + 1) || s;
+}
+
+// What a confirmed action came to, as the card's state. A pending outcome shows the assistant's
+// latest progress step, so a multi-minute action reads as advancing rather than as a spinner that
+// might have died. `result` is the product's verdict, `{ ok, headline, lines, tone? }`: ok is
+// verified; otherwise `tone` says warn (it ran, the end state was not seen) or danger (it did not
+// run), and without one a warn line marks it as the former. `auto` is an action that ran without
+// being asked, so the card does not say somebody confirmed it.
+function ChatVerify({ msg, title, auto }) {
+  const action = msg.action || {};
+  const running = title || [action.label, action.serverName].filter(Boolean).join(" ");
+  if (msg.state === "pending") {
     return (
-      <div className={"chat-disc chat-disc--tool" + (open ? " chat-disc--open" : "")}>
-        <button
-          type="button"
-          className="chat-disc__toggle"
-          aria-expanded={open}
-          onClick={() => setOpen(o => !o)}
-        >
-          <Icon name="database" size={13} className="chat-disc__icon" />
-          <span className="chat-disc__label">{label}</span>
-          <Icon name="chevron-down" size={13} strokeWidth={2.2} className="chat-disc__chev" />
-        </button>
-        {open && <div className="chat-disc__body">{summary}</div>}
-      </div>
+      <ChatCard className="chat-actcard" tone="accent" icon={<Spinner size={14} />}
+        title={running} sub={msg.progress || "Waiting for the result"} subMono={false} />
     );
   }
-
+  const r = msg.result || { ok: true, headline: "Done.", lines: [] };
+  const lines = r.lines || [];
+  const tone = r.ok ? "ok"
+    : (r.tone === "warn" || r.tone === "danger") ? r.tone
+      : lines.some(l => LINE_VERDICT[l.status] === "warn") ? "warn" : "danger";
+  const at = clockOf(entryTime(msg) ?? (r.at != null ? entryTime({ at: r.at }) : null));
+  const who = (auto || msg.auto) ? "Auto-run" : "You confirmed";
+  const sub = who + (at ? " · " + (tone === "ok" ? "verified " : tone === "warn" ? "checked " : "") + at : "");
   return (
-    <div className={"chat-context" + (pending ? " chat-context--pending" : "")}>
-      <span className="chat-context__icon">
-        {pending
-          ? <span className="chat-context__spinner"></span>
-          : <Icon name="database" size={12} />}
-      </span>
-      <span className="chat-context__label">
-        {pending ? label + "…" : label}
-        {!pending && summary && <span className="chat-context__detail"> · {summary}</span>}
-      </span>
-      {!pending && <Icon name="check" size={12} strokeWidth={2.6} className="chat-context__check" />}
-    </div>
+    <ChatCard className="chat-actcard" tone={tone}
+      icon={tone === "ok" ? "circle-check" : tone === "warn" ? "alert-triangle" : "circle-x"}
+      title={asTitle(r.headline)} sub={sub} subMono={false}>
+      {lines.length > 0 && (
+        <ChatCardRows>
+          {lines.map((l, i) => (
+            <ChatCardRow key={i} label={l.label} value={l.detail} verdict={LINE_VERDICT[l.status]} />
+          ))}
+        </ChatCardRows>
+      )}
+    </ChatCard>
   );
 }
 
-// Live progress stepper for a long-running tool call: a check-them-off list built from `progress`
-// frames (see reduceTurnFrame's "progress" case). Renders inline in the assistant bubble, next to the
-// tool pills — it is NOT held back with the cards, so it updates live while the tool is still running.
-function ChatSteps({ steps }) {
-  if (!steps || !steps.length) return null;
-  return (
-    <div className="chat-steps">
-      {steps.map((s, i) => (
-        <div key={s.id + ":" + s.key + ":" + i} className={"chat-steps__step chat-steps__step--" + s.status}>
-          <span className="chat-steps__mark">
-            {s.status === "active"
-              ? <span className="chat-steps__spinner"></span>
-              : <Icon name="check" size={11} strokeWidth={2.6} />}
-          </span>
-          <span className="chat-steps__label">{s.label}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
+// The file a write_file proposal would save: a line diff against the file as it stands when the
+// assistant sent `currentContent`, else the proposed content whole.
+// Why there is no "before" to compare with, by the proposal's `currentOmitted`.
+const OMITTED = {
+  too_large: "Too large to compare",
+  binary: "Not a text file",
+  unavailable: "Couldn’t read what the file holds now",
+};
 
-function ChatThinking({ text, streaming }) {
-  const [open, setOpen] = React.useState(false);
+// The proposal's change. With the file's current text it is a line diff; a file that does not exist
+// yet (`currentContent` null, nothing omitted) is every line added; a "before" the assistant held back
+// says why, over the proposed text.
+function ChatFileChange({ file }) {
+  const omitted = file.currentOmitted ? (OMITTED[file.currentOmitted] || OMITTED.unavailable) : null;
+  const before = typeof file.currentContent === "string" ? file.currentContent
+    : file.currentContent === null && !omitted ? "" : null;
+  const rows = React.useMemo(
+    () => (before != null ? diffHunks(diffLines(before, file.proposedContent || "")) : null),
+    [before, file.proposedContent]);
+  if (!rows) {
+    return (
+      <>
+        {omitted && <div className="chat-diff__line chat-diff__line--skip">{omitted}</div>}
+        <pre className="chat-actcard__file">{file.proposedContent}</pre>
+      </>
+    );
+  }
   return (
-    <div className={"chat-disc chat-disc--think" + (open ? " chat-disc--open" : "")}>
-      <button
-        type="button"
-        className="chat-disc__toggle"
-        aria-expanded={open}
-        onClick={() => setOpen(o => !o)}
-      >
-        <Icon name="brain" size={13} className="chat-disc__icon" />
-        <span className="chat-disc__label">{streaming ? "Thinking…" : "Thinking"}</span>
-        <Icon name="chevron-down" size={13} strokeWidth={2.2} className="chat-disc__chev" />
-      </button>
-      {open && <div className="chat-disc__body">{text}</div>}
+    <div className="chat-diff" role="group" aria-label={"Changes to " + baseName(file.path)}>
+      {rows.map((r, i) => r.type === "skip"
+        ? <div key={i} className="chat-diff__line chat-diff__line--skip">{r.count + " unchanged line" + (r.count === 1 ? "" : "s")}</div>
+        : (
+          <div key={i} className={"chat-diff__line chat-diff__line--" + r.type}>
+            <span className="chat-diff__mark" aria-label={r.type === "add" ? "added" : r.type === "del" ? "removed" : undefined}>
+              {r.type === "add" ? "+" : r.type === "del" ? "-" : " "}
+            </span>
+            <span className="chat-diff__text">{r.text}</span>
+          </div>
+        ))}
     </div>
   );
 }
 
 // A proposed action, waiting on the person. `meta` is what the product calls the action —
 // `{ label, icon, tone }` — and `target` what it acts on; `runnable` is false for an action this
-// surface cannot redeem, which renders as a proposal with `unavailable` as its reason and no Run.
-// Running it is two presses, Run then Confirm, and `onRun(msg)` is called on the second.
-function ChatCommand({ msg, onRun, meta, target, runnable = true, unavailable = "Not available here yet" }) {
+// surface cannot redeem, which renders with `unavailable` as its reason and its button disabled.
+// Running it is two presses, the verb then Confirm, and `onRun(msg)` is called on the second.
+// `verify` (or `msg.verify`, as the thread folds it in) is the outcome entry the confirmation
+// produced; with it the card shows that outcome instead of the question.
+// `title` is what the card calls the action when the verb's button label does not read as one ahead
+// of its target ("Notify me" is a button; "Get notified about Dune" is a title); without it the title
+// is the label followed by the target.
+function ChatCommand({
+  msg, onRun, meta, target, title: named, runnable = true, unavailable = "Not available here yet", verify,
+}) {
   const [armed, setArmed] = React.useState(false);
+  const cancelRef = React.useRef(null);
+  React.useEffect(() => {
+    if (armed && cancelRef.current) cancelRef.current.focus({ preventScroll: true });
+  }, [armed]);
+
+  const outcome = verify || msg.verify;
+  const file = msg.file;
+  const creates = !!file && file.currentContent === null && !file.currentOmitted;
+  const title = file ? (creates ? "Create " : "Edit ") + baseName(file.path)
+    : named || (meta.label + " " + (target || "")).trim();
+  const word = file ? "save" : meta.label.toLowerCase();
+
+  if (outcome) return <ChatVerify msg={outcome} title={title} auto={msg.auto} />;
 
   if (msg.state === "confirmed") {
+    return <ChatCard className="chat-actcard" icon="check" title={title} sub="You confirmed" subMono={false} />;
+  }
+
+  const body = file && <ChatFileChange file={file} />;
+  const sub = file ? file.path : null;
+
+  if (!runnable) {
     return (
-      <div className="chat-actions">
-        <div className="chat-actions__done">
-          <Icon name="check" size={13} strokeWidth={2.6} />
-          <span>Confirmed <b>{meta.label}</b> on {target}</span>
-        </div>
-      </div>
+      <ChatCard className="chat-actcard" icon={file ? "file-pen" : meta.icon} title={title}
+        sub={file ? sub : unavailable} subMono={!!file}
+        action={<Button size="sm" disabled title={unavailable}>{file ? "Save the file" : meta.label}</Button>}>
+        {body}
+      </ChatCard>
     );
   }
-  return (
-    <div className="chat-actions">
-      <div className="chat-actions__label">
-        <Icon name="zap" size={12} /> Suggested action
-      </div>
-      {msg.file && (
-        <div className="chat-filepreview">
-          <div className="chat-filepreview__path">
-            <Icon name="file-pen" size={11} strokeWidth={2.2} />
-            <code>{msg.file.path}</code>
-          </div>
-          <pre className="chat-filepreview__body">{msg.file.proposedContent}</pre>
-        </div>
-      )}
-      <div className="chat-actions__row">
-        {!runnable ? (
-          <button className="chat-action chat-action--disabled" disabled title={unavailable + "."}>
-            <Icon name={meta.icon} size={13} strokeWidth={2.2} />
-            <span>{meta.label} {target}</span>
-            <span className="chat-action__reason">{unavailable}</span>
-          </button>
-        ) : armed ? (
-          <div className="chat-action chat-action--armed">
-            <span className="chat-action__confirm-q">{msg.confirm}</span>
-            <div className="chat-action__confirm-btns">
-              <button className={"chat-action__go chat-action__go--" + meta.tone} onClick={() => { setArmed(false); onRun(msg); }}>
-                <Icon name="check" size={13} strokeWidth={2.4} /> Confirm
-              </button>
-              <button className="chat-action__cancel" onClick={() => setArmed(false)}>Cancel</button>
-            </div>
-          </div>
-        ) : (
-          <button className={"chat-action chat-action--" + meta.tone} onClick={() => setArmed(true)}>
-            <Icon name={meta.icon} size={13} strokeWidth={2.2} />
-            <span>{meta.label} {target}</span>
-            {msg.reason && <span className="chat-action__reason">{msg.reason}</span>}
-          </button>
-        )}
-      </div>
-    </div>
-  );
-}
 
-function ChatScopeNotice({ msg }) {
-  return (
-    <div className="chat-scope-notice">
-      <Icon name="crosshair" size={12} />
-      <span>{msg.label}</span>
-    </div>
-  );
-}
-
-function ChatCheckpointNotice({ msg }) {
-  return (
-    <div className="chat-scope-notice" style={{ opacity: 0.65 }}>
-      <Icon name="history" size={12} />
-      <span>{msg.label || "Conversation compacted"}</span>
-    </div>
-  );
-}
-
-function ChatToggleNotice({ msg }) {
-  const isThink = msg.toggle === "thinking";
-  const icon = isThink ? "brain" : (msg.on ? "zap" : "zap-off");
-  const cls = "chat-toggle-notice"
-    + (msg.on ? " chat-toggle-notice--on" : "")
-    + (isThink ? " chat-toggle-notice--think" : " chat-toggle-notice--actions");
-  return (
-    <div className={cls}>
-      <Icon name={icon} size={12} className="chat-toggle-notice__icon" />
-      <span className="chat-toggle-notice__text">{msg.label}</span>
-    </div>
-  );
-}
-
-// What a confirmed action came to. Pending shows the assistant's latest progress step, so a
-// multi-minute action reads as advancing rather than as a spinner that might have died.
-function ChatVerify({ msg }) {
-  if (msg.state === "pending") {
+  if (armed) {
+    // A confirm question that only restates the verb says nothing the title does not.
+    const question = msg.confirm && msg.confirm !== title + "?" && msg.confirm !== meta.label + "?" ? msg.confirm : null;
     return (
-      <div className="chat-verify chat-verify--pending">
-        <Spinner />
-        <span>{msg.progress || ("Verifying " + msg.action.label.toLowerCase() + "…")}</span>
-      </div>
+      <ChatCard className="chat-actcard" tone="warn" icon={file ? "file-pen" : meta.icon}
+        title={title + "?"} sub={question} subMono={false}
+        action={(
+          <div className="chat-actcard__btns">
+            <Button ref={cancelRef} variant="ghost" size="sm" onClick={() => setArmed(false)}>Cancel</Button>
+            <Button variant={meta.tone === "danger" ? "danger" : "primary"} size="sm" armed
+              onClick={() => { setArmed(false); onRun(msg); }}>
+              {"Confirm " + word}
+            </Button>
+          </div>
+        )}>
+        {body}
+      </ChatCard>
     );
   }
-  const r = msg.result || { ok: true, headline: "Done.", lines: [] };
+
   return (
-    <div className={"chat-verify chat-verify--" + (r.ok ? "ok" : "warn")}>
-      <div className="chat-verify__head">
-        <Icon name={r.ok ? "circle-check-big" : "alert-triangle"} size={14} />
-        <span>{r.headline}</span>
-      </div>
-      {r.lines && r.lines.length > 0 && (
-        <div className="chat-verify__lines">
-          {r.lines.map((l, i) => (
-            <span key={i} className={"chat-verify__chip chat-verify__chip--" + l.status}>
-              {l.label}: <b>{l.detail}</b>
-            </span>
-          ))}
-        </div>
-      )}
-    </div>
+    <ChatCard className="chat-actcard" tone="accent" icon={file ? "file-pen" : meta.icon} title={title}
+      sub={file ? sub : msg.reason} subMono={!!file}
+      action={(
+        <Button variant="primary" size="sm" onClick={() => setArmed(true)}>
+          {file ? "Save the file" : meta.label}
+        </Button>
+      )}>
+      {body}
+    </ChatCard>
   );
 }
 
-// The assistant went away or came back while a conversation was open. `others` names the other
-// assistants a picker offers, which hold their own conversations and so cannot carry this one on.
-function ChatSystemNotice({ msg }) {
-  const down = msg.kind === "assistant-down";
+// ---------- events ----------
+// Something that happened to the conversation rather than in it: one quiet centred line, an icon, a
+// few words, the time. Colour is on the icon only, and only for a mode or an outcome — `tone` accent,
+// warning or success; `alert` sets the whole line in the warning colour, for the one event that
+// changes what the person can do next. `icon` is a Lucide name or a node.
+function ChatEventRow({ icon, tone, alert = false, at, className, children }) {
+  const time = clockOf(entryTime({ at }));
   return (
-    <div className={"chat-system chat-system--" + (down ? "down" : "up")}>
-      <span className={"status-led status-led--" + (down ? "down" : "live")}></span>
-      <div className="chat-system__body">
-        <span className="chat-system__title">
-          {down ? msg.host + "’s assistant is unavailable" : msg.host + "’s assistant reconnected"}
+    <div className={"chat-event" + (alert ? " chat-event--alert" : "") + (className ? " " + className : "")}>
+      {icon && (
+        <span className={"chat-event__icon" + (tone ? " chat-event__icon--" + tone : "")}>
+          {typeof icon === "string" ? <Icon name={icon} size={14} strokeWidth={2} /> : icon}
         </span>
-        {down && (
-          <span className="chat-system__detail">
-            {(msg.message || "The connection to this host’s assistant dropped.") + " Your messages will send once it’s back."}
-            {msg.others && msg.others.length > 0 &&
-              " Other assistants are online (" + msg.others.join(", ") + "), but they run on different hosts and can’t see this host’s data — so they can’t pick up where this one left off."}
-          </span>
-        )}
-      </div>
+      )}
+      <span className="chat-event__text">{children}</span>
+      {time && <span className="chat-event__time">{"· " + time}</span>}
     </div>
   );
 }
 
-function ChatPending() {
-  return (
-    <div className="chat-typing" role="status" aria-label="The assistant is typing">
-      <span></span><span></span><span></span>
-    </div>
-  );
+// Where a conversation crosses into another day.
+function ChatDaySeparator({ at }) {
+  const t = entryTime({ at });
+  if (t == null) return null;
+  return <div className="chat-event chat-event--day" role="separator">{dayLabel(t)}</div>;
+}
+
+// An event entry in the transcript, worded from what it records — which switch moved and where it
+// stands, which assistant is now spoken to, which host's assistant left or came back.
+function ChatEvent({ msg }) {
+  const at = entryTime(msg);
+  switch (msg.role) {
+    case "toggle":
+      if (msg.toggle === "thinking") {
+        return (
+          <ChatEventRow icon="lightbulb" tone={msg.on ? "accent" : undefined} at={at}>
+            {msg.on ? "Thinking turned on" : "Thinking turned off"}
+          </ChatEventRow>
+        );
+      }
+      return (
+        <ChatEventRow icon={msg.on ? "zap" : "zap-off"} tone={msg.on ? "warning" : undefined} at={at}>
+          {msg.on ? "Auto-run turned on: actions run without asking" : "Auto-run turned off"}
+        </ChatEventRow>
+      );
+    case "scope":
+      return <ChatEventRow icon="target" at={at}>{msg.name ? "Talking to " + msg.name : msg.label}</ChatEventRow>;
+    case "checkpoint":
+      return <ChatEventRow icon="history" at={at}>Earlier messages summarized</ChatEventRow>;
+    case "system":
+      return msg.kind === "assistant-down"
+        ? (
+          <ChatEventRow icon="alert-triangle" alert at={at}>
+            {(msg.host || "This host") + "’s assistant stopped answering · messages wait until it’s back"}
+          </ChatEventRow>
+        )
+        : <ChatEventRow icon={<span className="chat-event__dot" />} at={at}>Reconnected</ChatEventRow>;
+    case "day":
+      return <ChatDaySeparator at={at} />;
+    default:
+      return msg.label ? <ChatEventRow at={at}>{msg.label}</ChatEventRow> : null;
+  }
 }
 
 export {
-  ChatContextPill, ChatSteps, ChatThinking, ChatCommand, ChatScopeNotice,
-  ChatCheckpointNotice, ChatToggleNotice, ChatVerify, ChatPending, ChatSystemNotice,
+  ChatCommand, ChatVerify, ChatEvent, ChatEventRow, ChatDaySeparator, ChatFileChange, entryTime, dayKeyOf,
 };
