@@ -1,6 +1,8 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "../components/Icon.jsx";
+import { Button, IconButton } from "../components/Button.jsx";
+import { EmptyState } from "../components/EmptyState.jsx";
 import { NavItem } from "../components/Shell.jsx";
 import { VoiceComposerBar, useVoiceRecorder } from "./VoiceNote.jsx";
 import { createSpokenReply, armAudio } from "./spokenReply.js";
@@ -139,8 +141,10 @@ function Chat({
   // `railTarget` is the element it is drawn into, and the chat takes the whole width. The list
   // stays the chat's — a site that shows something other than the chat while the list is in view
   // learns through `onShowConversation` that the person opened or started one, and says through
-  // `conversationShown` whether the chat is what is on screen, so the open one is lit only then.
-  railTarget = null, onShowConversation = null, conversationShown = true,
+  // `conversationShown` whether the chat is what is on screen, so the sidebar lights the open one only then.
+  // `listTarget` is a page of the site's own that shows the same list full width — a phone's tab of
+  // conversations. A chat whose list a site draws elsewhere carries no history popover in its header.
+  railTarget = null, listTarget = null, onShowConversation = null, conversationShown = true,
   // ---- what the product says and draws ----
   storageKey = "krystal:chat:conversations",
   assistantName = "Assistant",
@@ -1250,6 +1254,36 @@ function Chat({
           )}
         </div>,
         railTarget)}
+      {listTarget && createPortal(
+        <div className="chat-list">
+          <Button variant="primary" size="lg" icon="square-pen" wide onClick={shown(newChat)}>New chat</Button>
+          {convos.length === 0
+            ? <EmptyState icon="messages-square" title="No conversations yet" />
+            : (
+              <div className="chat-list__rows">
+                {convos.map(c => {
+                  // The open one is marked on the page whatever is on screen: it is a list of conversations, and
+                  // which one you are in is part of what it says.
+                  const lit = c.id === activeId;
+                  return (
+                    <div key={c.id} className={"chat-list__item" + (lit ? " chat-list__item--active" : "")}>
+                      <button type="button" className="chat-list__open" aria-current={lit ? "page" : undefined}
+                        onClick={shown(() => pickChat(c.id))}>
+                        <Icon name="message-square" size={16} />
+                        <span className="chat-list__title">{conversationTitle(c)}</span>
+                      </button>
+                      <IconButton icon="trash-2" label={"Delete " + conversationTitle(c)} variant="ghost"
+                        tone="danger" onClick={(e) => deleteChat(c.id, e)} />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          {conn.tone !== "online" && (
+            <span className={"chat-conn chat-conn--" + conn.tone}><span className="dot"></span>{conn.label}</span>
+          )}
+        </div>,
+        listTarget)}
       {!railTarget && <aside className="chat-rail">
         <button className="chat-rail__new" onClick={newChat}>
           <Icon name="plus" size={15} strokeWidth={2.2} /> New chat
@@ -1301,7 +1335,9 @@ function Chat({
               <button className="chat-headbtn" onClick={newChat} title="New chat" aria-label="New chat">
                 <Icon name="square-pen" size={16} />
               </button>
-              <ChatHistory convos={convos} activeId={activeId} onPick={pickChat} onDelete={deleteChat} onOpen={loadServerHistory} loading={histLoading} />
+              {!railTarget && !listTarget && (
+                <ChatHistory convos={convos} activeId={activeId} onPick={pickChat} onDelete={deleteChat} onOpen={loadServerHistory} loading={histLoading} />
+              )}
               {/* This nav strip is the phone-width replacement for the rail (CSS decides, at the
                   breakpoint that hides it), so the rail's foot travels here with it. */}
               {onOpenSettings && (

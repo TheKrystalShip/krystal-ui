@@ -218,7 +218,10 @@ A site whose frame has a sidebar can keep the conversation list there: `railTarg
 the list is drawn into, and the chat takes the whole width. `pageClass="chat-page--framed"` makes the
 chat fill an `AppShell`'s main column. When the site shows something other than the chat while the
 list stays in view, `onShowConversation` tells it the person opened or started a conversation, and
-`conversationShown` says whether the chat is what is on screen, so the open one is lit only then.
+`conversationShown` says whether the chat is what is on screen, so the sidebar lights the open one
+only then. `listTarget` is a page of the site's own — a phone's tab of conversations — where the same
+list is drawn full width, with New chat above it and the open conversation marked. A chat whose list
+a site draws elsewhere carries no history popover in its header.
 
 `ChatCard` is the card a product draws under an answer: an icon tile in a `tone`, a title with a
 monospace `sub` line, a `confidence` badge (confirmed, likely, possible), and `onOpen` with

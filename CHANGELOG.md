@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.13.1]
+
+### Added
+- `Chat` `listTarget`: a page of the site's own where the conversation list is drawn full width —
+  New chat as a primary button, a row per conversation with its delete, the open one marked, and an
+  `EmptyState` when there are none. `.chat-list`, `.chat-list__rows`, `.chat-list__item`,
+  `.chat-list__item--active`, `.chat-list__open`, `.chat-list__title`.
+
+### Changed
+- A chat whose conversation list a site draws itself (`railTarget` or `listTarget`) carries no
+  history popover in its header.
+
 ## [0.13.0]
 
 ### Added
