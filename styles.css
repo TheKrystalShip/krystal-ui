@@ -2,6 +2,7 @@
    package's sheets with its own imports them individually from styles/ instead. */
 @import "./styles/tokens.css";
 @import "./styles/motion.css";
+@import "./styles/scrollbar.css";
 @import "./styles/shell.css";
 @import "./styles/subtabs.css";
 @import "./styles/hero.css";

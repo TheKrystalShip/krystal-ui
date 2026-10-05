@@ -49,8 +49,9 @@ lists them in the order they assume.
 | State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS`, `copyText`, `pushBrowser`, `fmtRelative` |
 
 Stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
-theme, and the Inter / JetBrains Mono faces), `styles/motion.css` (shared keyframes), and one sheet
-per component family. `assets/tks-mark.png` is the brand mark.
+theme, and the Inter / JetBrains Mono faces), `styles/motion.css` (shared keyframes),
+`styles/scrollbar.css` (the scrollbar every scrollable surface draws), and one sheet per component
+family. `assets/tks-mark.png` is the brand mark.
 
 ## The frame
 

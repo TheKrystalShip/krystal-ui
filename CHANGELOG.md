@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0]
+
+### Added
+- `styles/scrollbar.css`: every scrollable surface's scrollbar, a thin track-less thumb inset from
+  its edge in the theme's `--scrollbar-thumb` and `--scrollbar-thumb-hover`, with `scrollbar-width`
+  and `scrollbar-color` for the browsers that draw the standard properties. It sits after
+  `motion.css` in `styles.css`.
+
 ## [0.10.0]
 
 ### Added
