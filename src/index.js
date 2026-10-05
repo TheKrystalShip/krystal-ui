@@ -8,10 +8,14 @@ export { Breadcrumbs } from "./components/Breadcrumbs.jsx";
 export { BriefCard } from "./components/BriefCard.jsx";
 export { Button, IconButton } from "./components/Button.jsx";
 export { Checkbox, Field, Input, Textarea } from "./components/fields.jsx";
+export { Dialog } from "./components/Dialog.jsx";
+export { EmptyState } from "./components/EmptyState.jsx";
+export { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 export { Chat, CHAT_PRIVACY_NOTICE, DEFAULT_PROFILE as CHAT_DEFAULT_PROFILE, DEFAULT_TOGGLE_COPY as CHAT_TOGGLE_COPY } from "./chat/Chat.jsx";
 export {
   ChatCommand, ChatContextPill, ChatPending, ChatSteps, ChatThinking, ChatVerify,
 } from "./chat/ChatMessageParts.jsx";
+export { ChatCard, ConfidenceBadge } from "./chat/ChatCard.jsx";
 export { ChatMessage } from "./chat/ChatMessage.jsx";
 export { ChatThread } from "./chat/ChatThread.jsx";
 export { MarkdownTextarea } from "./chat/MarkdownTextarea.jsx";
@@ -29,7 +33,9 @@ export { Footer, GithubMark } from "./components/Footer.jsx";
 export { Hero } from "./components/Hero.jsx";
 export { Icon } from "./components/Icon.jsx";
 export { Modal } from "./components/Modal.jsx";
+export { Notice } from "./components/Notice.jsx";
 export { NotificationsPanel } from "./components/NotificationsPanel.jsx";
+export { PageHeader } from "./components/PageHeader.jsx";
 export { Pagination, paginationWindow, useDebouncedValue } from "./components/Pagination.jsx";
 export { Rail } from "./components/Rail.jsx";
 export { ReversablePortal } from "./components/ReversablePortal.jsx";

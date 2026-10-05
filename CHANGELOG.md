@@ -1,6 +1,39 @@
 # Changelog
 
-## [0.12.0]
+## [0.13.0]
+
+### Added
+- The page furniture, in `styles/page.css` (after `controls.css` in `styles.css`):
+  - `PageHeader`: a page's title, an optional `sub` line and its `actions`. `.k-pagehead`,
+    `.k-pagehead__titles`, `__title`, `__sub`, `__actions`.
+  - `Notice`: a line a page says about itself, in a `tone` of `info` (default), `ok`, `warn` or
+    `danger`, with an icon; a danger notice is an alert. `.k-notice`, `.k-notice--<tone>`.
+  - `EmptyState`: an icon in a disc, a title, a line or two, a monospace `detail` and `actions`;
+    `tone` `neutral`, `accent`, `warn` or `danger`; `page` for the whole screen on a card.
+    `.k-empty`, `.k-empty--<tone>`, `.k-empty--card`, `.k-empty-page`, `.k-empty__*`.
+  - `ErrorBoundary`: catches what throws while its children render; `fallback` (a node or
+    `(reset, error) => node`), `resetKey`, `onError`; without a fallback, a whole-screen crash with
+    the error and a reload.
+- `Dialog`, in `styles/dialog.css` (after `portal.css`): a framed sheet on `Modal` with a head
+  (`icon`, `title`, close), `sub`, a scrolling body and a `foot`; `size` `md` (520px), `lg` (720px),
+  `xl` (960px); `fill` for a definite height, full screen on a phone; `art` for a banner; `as="form"`
+  with `onSubmit`. `.k-backdrop`, `.k-modal`, `.k-modal--<size>`, `.k-modal--fill`, `.k-modal__art`,
+  `__head`, `__icon`, `__title`, `__sub`, `__close`, `__body`, `__foot`.
+- `ChatCard` and `ConfidenceBadge`: the card a product draws under an answer, drawing the `.ev-card`
+  family chat.css already styled. `tone` `neutral`, `ok`, `danger` or `muted` (`.ev-card--<tone>`);
+  `confidence` `confirmed`, `likely` or `possible`; `onOpen` with `openLabel`, or an `action` node. Its
+  way to the full context is an outline `Button`.
+- `Chat` `railTarget`: the element a site's sidebar gives the conversation list, which is drawn
+  there as nav items (`.chat-convos`, `.chat-convos__item`, `.chat-convos__del`) while the chat takes
+  the whole width (`.chat-page--railless`). `onShowConversation` and `conversationShown` for a site
+  that shows other pages beside the list. `.chat-page--framed` fills an `AppShell`'s main column.
+- `k-rise`, the keyframe a sheet arrives with, in `styles/motion.css`. The chat's pop-out already
+  named it.
+
+### Fixed
+- On a phone with a tab bar, the main column ends above the bar. Its padding was added to a full
+  screen's height, so the last of every page sat under the bar.
+- A `ChatCard` whose sub line is longer than the card wraps instead of being cut off.
 
 ### Added
 - The basic controls, in `styles/controls.css` (after `scrollbar.css` in `styles.css`), extracted

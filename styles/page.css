@@ -1,0 +1,202 @@
+/* ============================================================================
+   page.css — the furniture a page is built from rather than anything it is
+   about: its heading, a notice inside its content, and the screen it shows
+   when it has nothing else to. Drawn by PageHeader, Notice and EmptyState.
+   ============================================================================ */
+
+/* ============= Page heading ============= */
+.k-pagehead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.k-pagehead__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.k-pagehead__title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--fg-1);
+}
+
+.k-pagehead__sub {
+  font-size: 14px;
+  color: var(--fg-3);
+}
+
+.k-pagehead__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ============= Notice ============= */
+.k-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.k-notice__icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.k-notice__text {
+  min-width: 0;
+}
+
+.k-notice--ok {
+  color: var(--success-fg);
+}
+
+.k-notice--warn {
+  color: var(--warning-fg);
+}
+
+.k-notice--danger {
+  color: var(--danger-fg);
+}
+
+/* ============= Empty state ============= */
+.k-empty {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 32px 20px;
+  max-width: 460px;
+  margin: auto;
+}
+
+.k-empty__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 6px;
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  color: var(--fg-2);
+}
+
+.k-empty--accent .k-empty__icon {
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal);
+}
+
+.k-empty--warn .k-empty__icon {
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+}
+
+.k-empty--danger .k-empty__icon {
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+}
+
+.k-empty__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--fg-1);
+}
+
+.k-empty__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--fg-3);
+}
+
+.k-empty__body p {
+  margin: 0;
+}
+
+.k-empty__detail {
+  box-sizing: border-box;
+  width: 100%;
+  max-height: 120px;
+  overflow: auto;
+  margin: 4px 0 0;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--danger-fg);
+  background: var(--surface-2);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+}
+
+.k-empty__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* The whole screen: centred on the canvas, on a card. */
+.k-empty-page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  padding-top: calc(24px + env(safe-area-inset-top));
+  background: var(--canvas);
+}
+
+.k-empty--card {
+  width: 100%;
+  padding: 40px 36px 32px;
+  background: var(--surface-1);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-2);
+}
+
+.k-empty--card .k-empty__icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 10px;
+}
+
+.k-empty--card .k-empty__title {
+  font-size: 22px;
+}
+
+@media (max-width: 768px) {
+  .k-pagehead__title {
+    font-size: 22px;
+  }
+
+  .k-empty--card {
+    padding: 32px 20px 24px;
+  }
+}

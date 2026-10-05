@@ -1,0 +1,159 @@
+/* ============================================================================
+   dialog.css — a framed sheet over a blurred scrim: the scrim, the sheet in its
+   three widths, its banner art, head, sub line, scrolling body and foot. Drawn
+   by Dialog; a site that builds a sheet by hand uses the same classes.
+   ============================================================================ */
+
+.k-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  box-sizing: border-box;
+  background: color-mix(in srgb, var(--scrim-base) 70%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  animation: k-fade var(--d-base) var(--ease-out);
+}
+
+.k-modal {
+  box-sizing: border-box;
+  background: var(--surface-1);
+  border: var(--edge-strong);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-pop);
+  width: 100%;
+  max-width: 520px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: k-rise var(--d-base) var(--ease-out);
+}
+
+.k-modal--lg {
+  max-width: 720px;
+}
+
+.k-modal--xl {
+  max-width: 960px;
+}
+
+/* A definite height, for a body that sizes itself to its container. */
+.k-modal--fill {
+  height: min(680px, 92vh);
+}
+
+.k-modal__art {
+  flex-shrink: 0;
+  height: 110px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.k-modal__art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, var(--surface-1) 100%);
+}
+
+.k-modal__head {
+  flex-shrink: 0;
+  padding: 16px 22px 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.k-modal__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: var(--r-sm);
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal);
+}
+
+.k-modal__title {
+  min-width: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--fg-1);
+  letter-spacing: -0.005em;
+}
+
+.k-modal__sub {
+  flex-shrink: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--fg-3);
+  padding: 0 22px 16px;
+}
+
+.k-modal__close {
+  margin-left: auto;
+}
+
+.k-modal__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 4px 22px 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.k-modal__foot {
+  flex-shrink: 0;
+  padding: 16px 22px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .k-backdrop {
+    padding: 12px;
+  }
+
+  .k-modal__head {
+    padding: 14px 16px 6px;
+  }
+
+  .k-modal__sub {
+    padding: 0 16px 12px;
+  }
+
+  .k-modal__body {
+    padding: 4px 16px 14px;
+  }
+
+  .k-modal__foot {
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    flex-wrap: wrap;
+  }
+
+  /* A sheet that holds an editor takes the whole screen: a phone has no room for a frame of scrim
+     around the one thing it is showing. */
+  .k-backdrop:has(> .k-modal--fill) {
+    padding: 0;
+  }
+
+  .k-modal--fill {
+    height: 100%;
+    max-height: none;
+    border: none;
+    border-radius: 0;
+    padding-top: env(safe-area-inset-top);
+  }
+}

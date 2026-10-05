@@ -39,11 +39,12 @@ lists them in the order they assume.
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
-| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatCommand`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
+| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatCommand`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
 | Cards and lists | `BriefCard`, `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art and a `progress` bar along its foot), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `Textarea`, `Checkbox`, `Field`, `Select` |
+| Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
-| Overlays | `Modal`, `ReversablePortal`, `usePortalPopover` |
+| Overlays | `Dialog`, `Modal`, `ReversablePortal`, `usePortalPopover` |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `AccountAvatar`, `AssistantFabIcon` |
@@ -52,7 +53,8 @@ lists them in the order they assume.
 Stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
 theme, and the Inter / JetBrains Mono faces), `styles/motion.css` (shared keyframes),
 `styles/scrollbar.css` (the scrollbar every scrollable surface draws), `styles/controls.css` (the
-basic controls, below), and one sheet per component family. `assets/tks-mark.png` is the brand mark.
+basic controls, below), `styles/page.css` (the page furniture), `styles/dialog.css`, and one sheet
+per component family. `assets/tks-mark.png` is the brand mark.
 
 ## The controls
 
@@ -87,6 +89,36 @@ button's hover by the consequence of pressing it; `busy` swaps its icon for a sp
 `pressed` makes it a two-state button; `armed` marks a confirm-first button waiting for its second
 press; `href` renders a link that looks like one. `IconButton` is the square form, and its `label` is
 its accessible name and tooltip. `Input` takes `prefix` and `suffix` words inside its frame.
+
+## Pages and dialogs
+
+```jsx
+<PageHeader title="Settings" actions={<Button icon="plus">New</Button>} />
+<Notice tone="danger">{error}</Notice>
+
+<EmptyState page tone="warn" icon="user-x" title="No access"
+  actions={<Button variant="outline" icon="log-out" onClick={signOut}>Sign out</Button>}>
+  <p>This account holds nothing here.</p>
+</EmptyState>
+
+<ErrorBoundary>
+  <App />
+</ErrorBoundary>
+
+<Dialog title="Edit this memory" icon="brain" sub="You wrote this one." size="xl" fill
+  onClose={close} canClose={!saving}
+  foot={<><Button variant="outline" onClick={close}>Cancel</Button><Button variant="primary" onClick={save}>Save</Button></>}>
+  <Field label="Summary"><Input wide value={summary} onChange={…} /></Field>
+</Dialog>
+```
+
+`Notice` is a line a page says about itself, in a `tone` of info, ok, warn or danger. `EmptyState`
+is what a place shows when it has nothing else to; with `page` it is the whole screen, on a card,
+for a site with nothing else to draw. `ErrorBoundary` catches what throws while its children
+render and shows `fallback` (a node, or `(reset, error) => node`), or without one a whole-screen
+crash with a reload. `Dialog` is a framed sheet on `Modal`: `size` is md (520px), lg (720px) or xl
+(960px), `fill` gives it a definite height for a body that sizes itself to its container, `as="form"`
+with `onSubmit` makes the sheet a form, and `art` draws a banner above the head.
 
 ## The frame
 
@@ -181,6 +213,16 @@ structured result into a card for `renderCards`, `proposal(msg)` names a propose
 whether this surface can redeem it, and `verdict(msg, name, response)` words its outcome.
 `renderEntry` draws transcript roles of the product's own, and `turnExtras()` adds fields to the
 next turn. `clientFor` is called with the assistant's id, and must be stable across renders.
+
+A site whose frame has a sidebar can keep the conversation list there: `railTarget` is the element
+the list is drawn into, and the chat takes the whole width. `pageClass="chat-page--framed"` makes the
+chat fill an `AppShell`'s main column. When the site shows something other than the chat while the
+list stays in view, `onShowConversation` tells it the person opened or started a conversation, and
+`conversationShown` says whether the chat is what is on screen, so the open one is lit only then.
+
+`ChatCard` is the card a product draws under an answer: an icon tile in a `tone`, a title with a
+monospace `sub` line, a `confidence` badge (confirmed, likely, possible), and `onOpen` with
+`openLabel` for the way to the full context, or any `action` node. The body is the product's.
 
 ## Developing
 

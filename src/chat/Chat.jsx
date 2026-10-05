@@ -1,5 +1,7 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { Icon } from "../components/Icon.jsx";
+import { NavItem } from "../components/Shell.jsx";
 import { VoiceComposerBar, useVoiceRecorder } from "./VoiceNote.jsx";
 import { createSpokenReply, armAudio } from "./spokenReply.js";
 import {
@@ -133,6 +135,12 @@ function Chat({
   // The way to this surface's own settings, when the chat IS the app and so carries the only route
   // to it.
   onOpenSettings = null,
+  // A site whose frame has a sidebar keeps the conversation list there instead of beside the chat:
+  // `railTarget` is the element it is drawn into, and the chat takes the whole width. The list
+  // stays the chat's — a site that shows something other than the chat while the list is in view
+  // learns through `onShowConversation` that the person opened or started one, and says through
+  // `conversationShown` whether the chat is what is on screen, so the open one is lit only then.
+  railTarget = null, onShowConversation = null, conversationShown = true,
   // ---- what the product says and draws ----
   storageKey = "krystal:chat:conversations",
   assistantName = "Assistant",
@@ -1208,9 +1216,41 @@ function Chat({
     );
   }
 
+  const shown = (fn) => (...args) => { fn(...args); if (onShowConversation) onShowConversation(); };
+
   return (
-    <div className={"chat-page" + (docked ? " chat-page--docked" : "") + (pageClass ? " " + pageClass : "")}>
-      <aside className="chat-rail">
+    <div className={"chat-page" + (docked ? " chat-page--docked" : "") + (railTarget ? " chat-page--railless" : "")
+      + (pageClass ? " " + pageClass : "")}>
+      {railTarget && createPortal(
+        <div className="chat-convos">
+          <NavItem icon="square-pen" label="New chat" onClick={shown(newChat)} />
+          {convos.length > 0 && <div className="sidebar__group-label chat-convos__label">Recent</div>}
+          <div className="chat-convos__list">
+            {convos.map(c => {
+              const lit = conversationShown && c.id === activeId;
+              return (
+                <div key={c.id}
+                  className={"nav-item chat-convos__item" + (lit ? " nav-item--active" : "")}
+                  role="link" tabIndex={0} aria-current={lit ? "page" : undefined}
+                  onClick={shown(() => pickChat(c.id))}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); shown(() => pickChat(c.id))(); } }}>
+                  <span className="nav-item__label">{conversationTitle(c)}</span>
+                  <button type="button" className="chat-convos__del" onClick={(e) => deleteChat(c.id, e)}
+                    title="Delete" aria-label={"Delete " + conversationTitle(c)}>
+                    <Icon name="trash-2" size={13} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+          {conn.tone !== "online" && (
+            <div className="chat-convos__conn">
+              <span className={"chat-conn chat-conn--" + conn.tone}><span className="dot"></span>{conn.label}</span>
+            </div>
+          )}
+        </div>,
+        railTarget)}
+      {!railTarget && <aside className="chat-rail">
         <button className="chat-rail__new" onClick={newChat}>
           <Icon name="plus" size={15} strokeWidth={2.2} /> New chat
         </button>
@@ -1245,7 +1285,7 @@ function Chat({
             <span>Settings</span>
           </button>
         )}
-      </aside>
+      </aside>}
 
       <div className="chat-main">
         <div className="chat-main__head">

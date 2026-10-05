@@ -114,8 +114,10 @@
     display: none;
   }
 
-  /* The page scrolls clear of the bar, and its footer leaves the home indicator to the bar. */
+  /* The page scrolls clear of the bar, and its footer leaves the home indicator to the bar. The
+     padding is inside the column's screen height, so what ends the column ends above the bar. */
   .app--tabbed .app__main {
+    box-sizing: border-box;
     padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
   }
 

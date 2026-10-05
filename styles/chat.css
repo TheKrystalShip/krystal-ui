@@ -42,6 +42,103 @@
   border: none;
 }
 
+/* The conversation list is in the site's sidebar, so the chat is one column. */
+.chat-page--railless {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* A chat that is a page inside an AppShell: it fills the main column, edge to edge, and the column's
+   own scroll never moves — the thread scrolls inside it. */
+.chat-page--framed {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  gap: 0;
+}
+
+.chat-page--framed .chat-main {
+  border: none;
+}
+
+/* ---- the conversation list, drawn into a sidebar ---- */
+.chat-convos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+}
+
+.chat-convos__label {
+  padding-top: 12px;
+}
+
+.chat-convos__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chat-convos__item {
+  padding-right: 4px;
+}
+
+.chat-convos__item .nav-item__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-convos__del {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--fg-4);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
+}
+
+.chat-convos__item:hover .chat-convos__del,
+.chat-convos__item:focus-within .chat-convos__del,
+.chat-convos__del:focus-visible {
+  opacity: 1;
+}
+
+.chat-convos__del:hover {
+  color: var(--danger-fg);
+}
+
+.chat-convos__del:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+.chat-convos__conn {
+  padding: 8px 10px 0;
+}
+
+/* The collapsed rail keeps the way to a new chat; a column of identical icons names no conversation. */
+.sidebar--rail .chat-convos__label,
+.sidebar--rail .chat-convos__list,
+.sidebar--rail .chat-convos__conn {
+  display: none;
+}
+
+@media (hover: none) {
+  .chat-convos__del {
+    opacity: 1;
+  }
+}
+
 /* ---- conversation rail ---- */
 .chat-rail {
   display: flex;
@@ -1046,6 +1143,11 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
+/* A card that is only its head has nothing to rule off. */
+.ev-card__head:last-child {
+  border-bottom: none;
+}
+
 .ev-card__icon {
   width: 26px;
   height: 26px;
@@ -1077,32 +1179,33 @@
 
 .ev-card__sub {
   font-size: 11px;
+  line-height: 1.45;
   color: var(--fg-3);
   font-family: var(--font-mono);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .ev-card__open {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: transparent;
-  border: var(--edge);
-  color: var(--krystal-teal);
-  cursor: pointer;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 5px 10px;
-  border-radius: var(--r-sm);
   flex-shrink: 0;
-  white-space: nowrap;
 }
 
-.ev-card__open:hover {
-  background: var(--krystal-teal-dim);
-  border-color: var(--border-accent);
+.ev-card--ok .ev-card__icon {
+  background: var(--success-bg);
+  color: var(--success-fg);
+}
+
+.ev-card--danger .ev-card__icon {
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+}
+
+/* A card the conversation has moved past. */
+.ev-card--muted {
+  opacity: 0.7;
+}
+
+.ev-card--muted .ev-card__icon {
+  color: var(--fg-4);
 }
 
 /* confidence badge */
@@ -3157,4 +3260,12 @@
 
 .assistant-dock .chat-page--docked .chat-railbar__menu .chat-rail__item {
   padding: 10px;
+}
+
+/* After the phone rule that sizes .chat-page to the viewport, which is the same specificity: a framed
+   chat is sized by the column it fills, whatever the width. */
+@media (max-width: 768px) {
+  .chat-page--framed {
+    height: auto;
+  }
 }
