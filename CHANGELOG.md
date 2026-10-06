@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.2]
+
+### Fixed
+- **A television page whose cards all step back at once no longer stalls.** A `TvCard` changes
+  opacity without a transition, and one off the screen is skipped until it nears it: entering Home's
+  rows on a Fire TV restyled every card on every frame of 73 transitions.
+
 ## [0.17.1]
 
 ### Fixed

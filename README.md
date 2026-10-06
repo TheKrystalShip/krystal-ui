@@ -189,7 +189,7 @@ it; the site opens the dock from a tab of its own. Wide screens keep the sidebar
 
 A site drawn on a television, driven by a remote, sets `data-tv` on its root element. Focus then
 lifts what it is on: a card grows and rises on `--shadow-lift` with a hairline and `--glow-accent`
-while the other cards in its row dim, and a `Button`, a place in the bar or anything marked `tv-pill`
+while the other cards in its row dim, at once rather than over a transition, and a `Button`, a place in the bar or anything marked `tv-pill`
 turns into a light pill with dark ink. Anything else focusable takes the hairline and the light. A
 primary button's ink is dark on the accent, and `Rail` draws no scroll arrows, since a row scrolls to
 whatever takes focus in it.
@@ -206,7 +206,8 @@ The parts a television page is built from, in `components/Tv.jsx`:
 - `TvRow` — a heading with `icon`, `title` and `count`, then its cards and `end`, running past the
   right margin; it is a `data-tv-row`, which a site's navigator can place on a line.
 - `TvCard` — a picture that is a link, `poster` or `wide`, with `progress` and a `badge`; every
-  other prop reaches the link. `TvTile` ends a row: an icon over a few words, the cards' size.
+  other prop reaches the link. A card off the screen is skipped (`content-visibility: auto`) until it
+  nears it, so a page of rows styles and paints only what shows. `TvTile` ends a row: an icon over a few words, the cards' size.
 
 `--tv-margin-x` and `--tv-margin-y` are the margins a television may crop, and the card sizes are
 tokens beside them. Moving focus with the remote's arrows is the site's. `styles/tv.css` is the last

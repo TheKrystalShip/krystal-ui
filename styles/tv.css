@@ -340,18 +340,24 @@
   background: var(--surface-2);
   color: var(--fg-1);
   text-decoration: none;
-  transition: transform var(--d-base) var(--ease-out), opacity var(--d-base) var(--ease-out),
-    box-shadow var(--d-base) var(--ease-out);
+  /* Opacity changes at once: a page whose cards all step back together would otherwise run a
+     transition on every card, each one styled again on every frame of it. A card past the screen's
+     edge is skipped until it nears it, at its own size; what it paints outside its box, the lift and
+     the glow, is its own and is not clipped. */
+  transition: transform var(--d-base) var(--ease-out), box-shadow var(--d-base) var(--ease-out);
+  content-visibility: auto;
 }
 
 .tv-card--poster {
   width: var(--tv-poster-w);
   height: var(--tv-poster-h);
+  contain-intrinsic-size: var(--tv-poster-w) var(--tv-poster-h);
 }
 
 .tv-card--wide {
   width: var(--tv-wide-w);
   height: var(--tv-wide-h);
+  contain-intrinsic-size: var(--tv-wide-w) var(--tv-wide-h);
 }
 
 .tv-card__art {
