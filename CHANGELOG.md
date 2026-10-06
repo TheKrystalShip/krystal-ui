@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.17.1]
+
+### Fixed
+- `TvBackdrop` decodes a new picture before fading it in, and no longer animates its height between
+  sizes: on a Fire TV both stalled the frame the artwork changed in.
+
 ## [0.17.0]
 
 ### Added

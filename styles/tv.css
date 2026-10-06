@@ -169,7 +169,6 @@
   height: 420px;
   z-index: 0;
   pointer-events: none;
-  transition: height var(--d-slow) var(--ease-out);
 }
 
 .tv-backdrop--short {
@@ -189,6 +188,7 @@
   object-fit: cover;
   object-position: center 28%;
   animation: tv-fade-in 400ms var(--ease-out);
+  will-change: opacity;
 }
 
 .tv-backdrop__shade {

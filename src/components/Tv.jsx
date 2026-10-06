@@ -49,15 +49,15 @@ function TvBackdrop({ src, size = "tall" }) {
     if (!src) return undefined;
     let live = true;
     const image = new Image();
+    image.src = src;
+    // Decoded before it is put on the page, so the fade never waits on a decode mid-way.
     const show = () => {
       if (!live) return;
       setLayers((prev) => (prev.length > 0 && prev[prev.length - 1].src === src
         ? prev
         : [...prev.slice(-1), { src, key: next.current++ }]));
     };
-    image.onload = show;
-    image.onerror = show;
-    image.src = src;
+    image.decode().then(show, show);
     return () => { live = false; };
   }, [src]);
   return (
