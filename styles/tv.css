@@ -1,0 +1,17 @@
+/* ---- Television ------------------------------------------------------------------------------
+   A site drawn on a television marks its root `data-tv`. It is driven by a remote and read from
+   across a room, so the focused element is the one thing the eye follows: an opaque ring with a gap
+   that keeps it apart from a filled control of the accent's own colour, and a halo outside it.
+
+   A row scrolls to whatever takes focus in it, so its arrows are not drawn: on a remote they would
+   only be two more stops on the way along the row. */
+
+:root[data-tv] :focus-visible {
+  outline: 3px solid var(--fg-1);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 8px var(--krystal-teal);
+}
+
+:root[data-tv] .rail__arrow {
+  display: none;
+}

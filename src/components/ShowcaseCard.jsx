@@ -50,7 +50,6 @@ function ShowcaseCard({ name, art, onPick, corner, badge, specs = [], status, ac
                 aria-pressed={t.on === undefined ? undefined : t.on}
                 title={t.label}
                 onClick={e => { e.stopPropagation(); t.onClick(); }}
-                onKeyDown={e => e.stopPropagation()}
               >
                 <Icon name={t.icon} size={15} strokeWidth={2} />
               </button>

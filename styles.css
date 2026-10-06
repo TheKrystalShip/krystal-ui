@@ -24,7 +24,6 @@
 @import "./styles/toast.css";
 @import "./styles/settings.css";
 @import "./styles/assistant-pages.css";
-@import "./styles/assistant-pages.css";
 @import "./styles/assistant-icon.css";
 @import "./styles/dock.css";
 @import "./styles/theme-picker.css";
@@ -32,3 +31,4 @@
 @import "./styles/showcase.css";
 @import "./styles/tabbar.css";
 @import "./styles/skeleton.css";
+@import "./styles/tv.css";

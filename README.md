@@ -185,6 +185,14 @@ it; the site opens the dock from a tab of its own. Wide screens keep the sidebar
 
 `styles/tabbar.css` sits after `dock.css` and `footer.css`, whose phone rules it adjusts.
 
+## On a television
+
+A site drawn on a television, driven by a remote, sets `data-tv` on its root element. The focused
+element then carries a ring that reads from across a room, an opaque outline with a gap and the
+accent outside it, and `Rail` draws no scroll arrows, since a row scrolls to whatever takes focus in
+it. Moving focus with the remote's arrows is the site's. `styles/tv.css` is the last sheet, after
+everything whose focus it overrides.
+
 ## The assistant chat
 
 `Chat` is a conversation with one assistant over the assistant wire contract

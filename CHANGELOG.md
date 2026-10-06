@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.16.0]
+
+### Added
+- **A site on a television**: with `data-tv` on the root element, the focused element carries a ring
+  that reads from across a room (an opaque outline with a gap, and the accent outside it), and
+  `Rail` draws no scroll arrows, since a row scrolls to whatever takes focus in it. `styles/tv.css`,
+  last in `styles.css`; a site importing sheets one by one adds it after everything else.
+
+### Fixed
+- A key pressed on one of `ShowcaseCard`'s `tools` goes on to the document, so a site's own keys
+  (Escape, the arrows) answer while a tool has focus. The card's Enter still opens the card only from
+  the card itself.
+- `styles.css` imports `styles/assistant-pages.css` once.
+
 ## [0.15.0]
 
 ### Added
