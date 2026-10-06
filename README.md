@@ -187,11 +187,30 @@ it; the site opens the dock from a tab of its own. Wide screens keep the sidebar
 
 ## On a television
 
-A site drawn on a television, driven by a remote, sets `data-tv` on its root element. The focused
-element then carries a ring that reads from across a room, an opaque outline with a gap and the
-accent outside it, and `Rail` draws no scroll arrows, since a row scrolls to whatever takes focus in
-it. Moving focus with the remote's arrows is the site's. `styles/tv.css` is the last sheet, after
-everything whose focus it overrides.
+A site drawn on a television, driven by a remote, sets `data-tv` on its root element. Focus then
+lifts what it is on: a card grows and rises on `--shadow-lift` with a hairline and `--glow-accent`
+while the other cards in its row dim, and a `Button`, a place in the bar or anything marked `tv-pill`
+turns into a light pill with dark ink. Anything else focusable takes the hairline and the light. A
+primary button's ink is dark on the accent, and `Rail` draws no scroll arrows, since a row scrolls to
+whatever takes focus in it.
+
+The parts a television page is built from, in `components/Tv.jsx`:
+
+- `TvBar` — the strip across the top: `mark`, `name`, `items` (`{id, label, active, href, onClick}`,
+  the active one `aria-current`) and `actions` at its right, among them `TvBarButton`s (an icon, or
+  `children` such as an avatar, and a `dot`). `hidden` slides it away.
+- `TvBackdrop` — artwork behind the page, at its right, fading into the canvas; a new `src` is loaded
+  before it fades in over the last. `size` is `tall`, `short` or `page`.
+- `TvSpotlight` — `eyebrow`, `title`, `meta` and `children`; `size` `lg` opens a page and `md` sits
+  above a row, its name on one line. `tv-spot__overview` and `tv-spot__actions` place a story and buttons.
+- `TvRow` — a heading with `icon`, `title` and `count`, then its cards and `end`, running past the
+  right margin; it is a `data-tv-row`, which a site's navigator can place on a line.
+- `TvCard` — a picture that is a link, `poster` or `wide`, with `progress` and a `badge`; every
+  other prop reaches the link. `TvTile` ends a row: an icon over a few words, the cards' size.
+
+`--tv-margin-x` and `--tv-margin-y` are the margins a television may crop, and the card sizes are
+tokens beside them. Moving focus with the remote's arrows is the site's. `styles/tv.css` is the last
+sheet, after everything whose focus it overrides.
 
 ## The assistant chat
 

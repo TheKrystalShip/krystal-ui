@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.17.0]
+
+### Added
+- **The parts a television page is built from**: `TvBar` and `TvBarButton`, `TvBackdrop`,
+  `TvSpotlight`, `TvRow`, `TvCard` and `TvTile`, drawn by `styles/tv.css`, with the margins and card
+  sizes as `--tv-*` tokens on `:root[data-tv]`.
+- `--shadow-lift` and `--glow-accent` tokens.
+
+### Changed
+- **Focus on a television lifts what it is on** instead of drawing an outline and a halo: a card grows
+  and rises with a hairline and the accent's light while the rest of its row dims, a button or a place
+  in the bar turns into a light pill, and anything else takes the hairline and the light. A primary
+  button's ink is dark there.
+
 ## [0.16.0]
 
 ### Added

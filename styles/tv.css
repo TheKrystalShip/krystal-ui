@@ -1,17 +1,440 @@
 /* ---- Television ------------------------------------------------------------------------------
    A site drawn on a television marks its root `data-tv`. It is driven by a remote and read from
-   across a room, so the focused element is the one thing the eye follows: an opaque ring with a gap
-   that keeps it apart from a filled control of the accent's own colour, and a halo outside it.
+   across a room, so the focused element is the one thing the eye follows. Focus lifts: a card grows
+   and rises on a deep shadow with a hairline edge and the accent's light behind it, and the cards
+   around it dim; a button or a place in the bar turns into a light pill with dark ink. Nothing draws
+   an outline.
 
-   A row scrolls to whatever takes focus in it, so its arrows are not drawn: on a remote they would
-   only be two more stops on the way along the row. */
+   Every page keeps the margins a television may crop, `--tv-margin-x` and `--tv-margin-y` (5% of a
+   960 by 540 page). A row's cards run past the right margin, so there is always something to the
+   right. A row scrolls to whatever takes focus in it, so its arrows are not drawn: on a remote they
+   would only be two more stops on the way along the row. */
 
-:root[data-tv] :focus-visible {
-  outline: 3px solid var(--fg-1);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 8px var(--krystal-teal);
+:root[data-tv] {
+  --tv-margin-x: 48px;
+  --tv-margin-y: 27px;
+  --tv-poster-w: 116px;
+  --tv-poster-h: 174px;
+  --tv-wide-w: 224px;
+  --tv-wide-h: 126px;
+  --tv-gap: 14px;
+  --tv-lift: 1.15;
+  --tv-dim: 0.55;
 }
 
 :root[data-tv] .rail__arrow {
   display: none;
+}
+
+/* Anything focusable that no rule below draws: the hairline and the light, with no lift. */
+:root[data-tv] :focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 1px var(--fg-1), var(--glow-accent);
+}
+
+/* A control turns into a light pill: a button, a place in the bar, a round button among its actions. */
+:root[data-tv] :is(.k-btn, .tv-bar__item, .tv-bar__button, .tv-pill):focus-visible {
+  background: var(--fg-1);
+  color: var(--canvas);
+  border-color: transparent;
+  box-shadow: var(--glow-accent), var(--shadow-lift);
+  transform: scale(1.06);
+}
+
+:root[data-tv] :is(.k-btn, .tv-bar__item, .tv-bar__button, .tv-pill) {
+  transition: transform var(--d-base) var(--ease-out), background var(--d-base) var(--ease-out),
+    color var(--d-base) var(--ease-out);
+}
+
+/* The accent's fill holds dark ink here: light ink on it does not read from a sofa. */
+:root[data-tv] .k-btn--primary {
+  color: var(--fg-inverse);
+}
+
+/* ---- The bar ---------------------------------------------------------------------------------- */
+
+.tv-bar {
+  position: fixed;
+  top: var(--tv-margin-y);
+  left: var(--tv-margin-x);
+  right: var(--tv-margin-x);
+  z-index: 20;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  transition: transform var(--d-slow) var(--ease-out), opacity var(--d-slow) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tv-bar {
+    transition: none;
+  }
+}
+
+.tv-bar[data-hidden] {
+  transform: translateY(-80px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tv-bar__mark {
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-sm);
+}
+
+.tv-bar__nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.tv-bar__item {
+  position: relative;
+  padding: 7px 13px;
+  border-radius: var(--r-pill);
+  font-size: var(--text-base);
+  font-weight: var(--w-medium);
+  color: var(--fg-2);
+  text-decoration: none;
+}
+
+.tv-bar__item[aria-current="page"] {
+  color: var(--fg-1);
+  font-weight: var(--w-semibold);
+}
+
+.tv-bar__item[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  bottom: 1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--krystal-teal);
+}
+
+.tv-bar__item[aria-current="page"]:focus-visible::after {
+  display: none;
+}
+
+.tv-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tv-bar__button {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--fg-1) 8%, transparent);
+  color: var(--fg-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.tv-bar__button > img,
+.tv-bar__button > .k-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--r-pill);
+}
+
+.tv-bar__dot {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--krystal-teal);
+}
+
+/* ---- The backdrop ----------------------------------------------------------------------------- */
+
+.tv-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 75%;
+  height: 420px;
+  z-index: 0;
+  pointer-events: none;
+  transition: height var(--d-slow) var(--ease-out);
+}
+
+.tv-backdrop--short {
+  height: 330px;
+}
+
+.tv-backdrop--page {
+  width: 80%;
+  height: 470px;
+}
+
+.tv-backdrop__art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 28%;
+  animation: tv-fade-in 400ms var(--ease-out);
+}
+
+.tv-backdrop__shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, var(--canvas) 0%, color-mix(in srgb, var(--canvas) 82%, transparent) 28%, transparent 70%),
+    linear-gradient(to top, var(--canvas) 0%, transparent 42%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--canvas) 70%, transparent) 0%, transparent 22%);
+}
+
+@keyframes tv-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ---- The spotlight ---------------------------------------------------------------------------- */
+
+.tv-spot {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 460px;
+  color: var(--fg-1);
+}
+
+.tv-spot__eyebrow {
+  font-size: 11.5px;
+  font-weight: var(--w-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--krystal-teal);
+}
+
+.tv-spot__title {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.05;
+  font-weight: var(--w-bold);
+  letter-spacing: -0.01em;
+}
+
+/* Above a row the spotlight has a fixed height to fit in: its name takes one line, as wide as the
+   page, and its story stays narrow. */
+.tv-spot--md {
+  gap: 9px;
+  max-width: none;
+}
+
+.tv-spot--md .tv-spot__title {
+  font-size: var(--text-4xl);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tv-spot--md > :not(.tv-spot__title) {
+  max-width: 460px;
+}
+
+.tv-spot__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  font-size: var(--text-sm);
+  color: var(--fg-2);
+}
+
+.tv-spot__overview {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: var(--lh-normal);
+  color: var(--fg-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tv-spot--md .tv-spot__overview {
+  -webkit-line-clamp: 2;
+}
+
+.tv-spot__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* ---- Rows and cards --------------------------------------------------------------------------- */
+
+.tv-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.tv-row__head {
+  margin: 0;
+  padding: 0 var(--tv-margin-x);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-xs);
+  font-weight: var(--w-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-2);
+}
+
+.tv-row:focus-within .tv-row__head {
+  color: var(--fg-1);
+}
+
+.tv-row__count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: var(--w-medium);
+  letter-spacing: 0;
+  color: var(--fg-3);
+  background: color-mix(in srgb, var(--fg-1) 6%, transparent);
+  border-radius: var(--r-pill);
+  padding: 1px 7px;
+}
+
+/* The track's own padding is the room a lifted card grows into, top and bottom and at the start. */
+.tv-row__track {
+  display: flex;
+  gap: var(--tv-gap);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 16px var(--tv-margin-x) 24px;
+  scrollbar-width: none;
+  /* What has scrolled past the start stays out of the margin, all but the room a lifted card takes. */
+  clip-path: inset(0 0 0 calc(var(--tv-margin-x) * 0.6));
+}
+
+.tv-row__track::-webkit-scrollbar {
+  display: none;
+}
+
+.tv-card {
+  position: relative;
+  flex: none;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  color: var(--fg-1);
+  text-decoration: none;
+  transition: transform var(--d-base) var(--ease-out), opacity var(--d-base) var(--ease-out),
+    box-shadow var(--d-base) var(--ease-out);
+}
+
+.tv-card--poster {
+  width: var(--tv-poster-w);
+  height: var(--tv-poster-h);
+}
+
+.tv-card--wide {
+  width: var(--tv-wide-w);
+  height: var(--tv-wide-h);
+}
+
+.tv-card__art {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tv-card__name {
+  position: absolute;
+  inset: 0;
+  padding: 12px;
+  display: flex;
+  align-items: flex-end;
+  font-size: var(--text-sm);
+  font-weight: var(--w-semibold);
+}
+
+.tv-card__badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--canvas) 80%, transparent);
+  font-size: 11.5px;
+  font-weight: var(--w-semibold);
+}
+
+.tv-card__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: color-mix(in srgb, var(--fg-1) 18%, transparent);
+}
+
+.tv-card__progress > span {
+  display: block;
+  height: 100%;
+  background: var(--krystal-teal);
+}
+
+/* The hairline is drawn over the picture, which a box-shadow on the card itself would sit under. */
+.tv-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--fg-1);
+  opacity: 0;
+  transition: opacity var(--d-base) var(--ease-out);
+  pointer-events: none;
+}
+
+:root[data-tv] .tv-card:focus-visible {
+  transform: scale(var(--tv-lift));
+  box-shadow: var(--glow-accent), var(--shadow-lift);
+  z-index: 1;
+}
+
+.tv-card:focus-visible::after {
+  opacity: 1;
+}
+
+/* With focus in a row its other cards step back; `.tv-dim` does the same for a whole page. */
+.tv-row__track:focus-within .tv-card:not(:focus-visible),
+.tv-dim .tv-card:not(:focus-visible) {
+  opacity: var(--tv-dim);
+}
+
+.tv-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--surface-3);
+  font-size: var(--text-base);
+  font-weight: var(--w-semibold);
 }
