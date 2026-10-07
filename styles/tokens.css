@@ -4467,7 +4467,8 @@ a,
     border-color var(--d-fast) var(--ease-out);
 }
 
-a:hover,
+/* A button drawn as a link keeps its variant's colours: hover is the button's own. */
+a:not(.k-btn, .k-iconbtn):hover,
 .k-link:hover {
   color: var(--krystal-teal-hover);
   border-bottom-color: var(--krystal-teal-hover);

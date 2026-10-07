@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.1]
+
+### Fixed
+- **A `Button` with `href` keeps its label on hover.** The link hover colour no longer reaches a
+  button or icon button drawn as a link, so a primary one's words and icon stop turning the colour
+  of its own hover fill, and no variant grows an underline.
+
 ## [0.18.0]
 
 ### Added
