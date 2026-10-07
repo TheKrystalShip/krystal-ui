@@ -41,7 +41,7 @@ lists them in the order they assume.
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
 | The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatActivity`, `ChatCommand`, `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
 | Cards and lists | `BriefCard`, `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art and a `progress` bar along its foot), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
-| Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `Textarea`, `Checkbox`, `Field`, `Select` |
+| Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `Textarea`, `Checkbox`, `Field`, `Select`, `OptionList`, `Meter` |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Modal`, `ReversablePortal`, `usePortalPopover` |
@@ -90,6 +90,44 @@ button's hover by the consequence of pressing it; `busy` swaps its icon for a sp
 `pressed` makes it a two-state button; `armed` marks a confirm-first button waiting for its second
 press; `href` renders a link that looks like one. `IconButton` is the square form, and its `label` is
 its accessible name and tooltip. `Input` takes `prefix` and `suffix` words inside its frame.
+
+### Choosing from a list, and how full something is
+
+```jsx
+<OptionList label="Quality" value={quality} onChange={setQuality}
+  options={[
+    { value: "1080p", label: "1080p", aside: "1.04 GB" },
+    { value: "720p", label: "720p", aside: "512 MB" },
+    { value: "480p", label: "480p", aside: "236 MB" },
+  ]} />
+
+<OptionList multiple label="Subtitles" value={subs} onChange={setSubs}
+  options={languages.map((l) => ({ value: l.code, label: l.name, detail: l.kind, aside: l.size }))}
+  collapsedAfter={2} moreLabel={(n) => n + " more languages"} />
+
+<OptionList variant="segmented" label="Quality" value={quality} onChange={setQuality} options={…} />
+
+<Meter label="Storage" segments={[
+  { value: used, tone: "neutral", label: "Used" },
+  { value: incoming, tone: "accent", label: "This download" },
+]} max={capacity} start="This device" end="23.4 GB free" />
+<Meter label="Downloaded" value={34} />
+```
+
+`OptionList` is a group of full-width rows, each a real radio or checkbox inside its label, so the
+whole row is the target and a radio group moves with the arrow keys. Without `multiple` it is a
+single choice (`value` is the chosen value, the chosen row tinted with the accent); with it,
+checkboxes (`value` and what `onChange` receives are the array of chosen values, in `options`
+order). An option is `{ value, label, detail, aside, disabled }`: `detail` follows the label in a
+quieter tone, `aside` ends the row in monospace. `size` is `md` (52px rows) or `sm` (44px, raised to
+48px on a phone). `collapsedAfter` shows that many rows and ends the group with a row revealing the
+rest, worded by `moreLabel(hiddenCount)`; a chosen option past the cut stays shown. `variant="segmented"`
+lays a short single choice side by side, each label over its `aside`.
+
+`Meter` is a 6px bar. `value` (of `max`, 100 by default) is one accent fill and a progressbar;
+`segments` (`{ value, tone, label }`, `tone` one of neutral, accent, success, warn, danger) are parts
+laid end to end, a meter whose spoken value names each part unless `valueText` gives one, and a part
+above zero is never drawn narrower than a sliver. `start` and `end` are a monospace caption under it.
 
 ## Pages and dialogs
 

@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.18.0]
+
+### Added
+- **`OptionList`**: a choice drawn as full-width rows in one bordered group, each row a real radio or
+  checkbox inside its label (`multiple`), with a `detail` after the label and a monospace `aside` at
+  its end. The chosen row of a single choice is tinted with the accent; `size` is `md` (52px rows) or
+  `sm` (44px, 48px on a phone); `collapsedAfter` with `moreLabel` ends a long list with a row that
+  reveals the rest; `variant="segmented"` lays a short single choice side by side, label over aside.
+- **`Meter`**: a 6px bar holding one `value` (a progressbar) or several `segments` in tones laid end
+  to end (a meter), with a monospace caption from `start` and `end`.
+- Both are drawn by `styles/controls.css` (`.k-optlist*`, `.k-meter*`).
+
 ## [0.17.2]
 
 ### Fixed
