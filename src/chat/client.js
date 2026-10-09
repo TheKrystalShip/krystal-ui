@@ -157,14 +157,19 @@ function createAssistantClient({ baseUrl, getToken }) {
     return result;
   };
 
-  // POST /transcribe — 16kHz mono signed 16-bit PCM, answered with the words in it.
+  // POST /speech/transcribe — 16kHz mono signed 16-bit PCM, answered with the words in it.
   const transcribe = async (pcm, opts) => {
     const headers = await headersFor({ "Content-Type": "application/octet-stream", Accept: "application/json" });
-    const res = await request("POST", "/transcribe", { headers, body: pcm, signal: opts && opts.signal });
+    const res = await request("POST", "/speech/transcribe", { headers, body: pcm, signal: opts && opts.signal });
     let payload = null;
     try { payload = await res.json(); } catch { payload = null; }
     if (!res.ok) throw failure(res.status, payload);
     return payload;
+  };
+
+  // POST /speech/wake — speech is about to be wanted (a microphone opening, a voice channel joined).
+  const wakeSpeech = async (opts) => {
+    return json("POST", "/speech/wake", null, opts);
   };
 
   const enc = encodeURIComponent;
@@ -172,6 +177,7 @@ function createAssistantClient({ baseUrl, getToken }) {
     me: (opts) => json("GET", "/me", null, opts),
     speech: (opts) => json("GET", "/speech", null, opts),
     transcribe,
+    wakeSpeech,
     conversations: (opts) => json("GET", "/conversations", null, opts),
     conversation: (id, opts) => json("GET", "/conversations/" + enc(id), null, opts),
     deleteConversation: (id) => json("DELETE", "/conversations/" + enc(id)),

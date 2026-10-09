@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.20.2]
+
+### Fixed
+- Speech endpoints use the correct harness routes: `POST /speech/transcribe` for transcription and `POST /speech/wake`
+  to signal an opening microphone or voice channel.
+
 ## [0.20.1]
 
 ### Changed
