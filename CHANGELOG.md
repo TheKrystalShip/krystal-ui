@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.20.1]
+
+### Changed
+- The assistant has no name: the composer placeholder, the "isn't answering" hint, the stopped-answering
+  row and the command verdicts say "the assistant" whatever the host is called.
+- Bursts of `conversation.activity` and `conversation.updated` events read the conversation listing
+  once, after the burst has been quiet for 500 ms.
+
 ## [0.20.0]
 
 ### Added

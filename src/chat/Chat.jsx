@@ -56,6 +56,9 @@ import { useConversationStream } from "./useConversationStream.js";
 //
 // The frames that belong to a running TURN, as opposed to the state events about the chat list. They
 // carry no turn id of their own, so they apply to whichever turn last announced itself on the stream.
+// How long the activity events stay quiet before the conversation listing is read again.
+const HISTORY_REFETCH_DEBOUNCE_MS = 500;
+
 const TURN_FRAMES = new Set([
   "text.delta", "thinking.delta", "tool.start", "tool.result", "progress",
   "command.proposed", "proposal", "question", "context.compacting", "done", "error",
@@ -345,6 +348,15 @@ function Chat({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
   }, [assistantHost && assistantHost.id, assistantUsable, assistantAuthed]);
 
+  // A burst of activity events (several conversations moving at once, or one turn's many updates) asks
+  // for one listing: a trailing debounce, the listing read once the burst has been quiet for a moment.
+  const historyTimerRef = React.useRef(null);
+  const loadServerHistoryLater = React.useCallback(() => {
+    clearTimeout(historyTimerRef.current);
+    historyTimerRef.current = setTimeout(loadServerHistory, HISTORY_REFETCH_DEBOUNCE_MS);
+  }, [loadServerHistory]);
+  React.useEffect(() => () => clearTimeout(historyTimerRef.current), []);
+
   // The conversations the ASSISTANT holds are this list's other half — everything from another browser,
   // another device, or this one before its localStorage was cleared. Fetched as soon as there is a
   // session to fetch them with, so the rail is the whole history rather than only what this browser
@@ -565,14 +577,14 @@ function Chat({
       // The rail's title and order come from the listing. The transcript is marked behind only for a
       // conversation this surface is NOT watching live — one it mirrored frame by frame already holds
       // what the turn produced, and refetching would replace it with an identical copy mid-render.
-      if (ownActivity(id)) { loadServerHistory(); return; }
+      if (ownActivity(id)) { loadServerHistoryLater(); return; }
       setConvos(prev => prev.map(c => (c.id === id && !c.messages.some(m => m.live)
         ? { ...c, stale: true } : c)));
-      loadServerHistory();
+      loadServerHistoryLater();
     }
     // liveTurn is absent from the deps on purpose: it is read through liveTurnRef so a frame
     // handler is not rebuilt on every delta.
-  }, [loadServerHistory, applyTurnFrame, profile, toggleCopy, noteTurnStarted, noteTurnEnded]);
+  }, [loadServerHistory, loadServerHistoryLater, applyTurnFrame, profile, toggleCopy, noteTurnStarted, noteTurnEnded]);
 
   // Read inside the frame handler through a ref: the handler must not be rebuilt on every text delta,
   // and it needs the CURRENT turn rather than the one captured when it was created.
@@ -1277,9 +1289,9 @@ function Chat({
           return;
         }
         resolveVerify(expired
-          ? { ok: false, headline: ((assistantHost && assistantHost.name) || "This host") + "\u2019s assistant session expired \u2014 sign in again to run commands.", lines: [] }
+          ? { ok: false, headline: "The assistant session expired \u2014 sign in again to run commands.", lines: [] }
           : noRoute
-            ? { ok: false, headline: ((assistantHost && assistantHost.name) || "This host") + "\u2019s assistant has no address this browser can reach.", lines: [] }
+            ? { ok: false, headline: "The assistant has no address this browser can reach.", lines: [] }
             : { ok: false, headline: "Couldn\u2019t run " + meta.label.toLowerCase() + " \u2014 " + ((err && err.userMessage) || "the command failed."), lines: [] });
       });
   };
@@ -1703,7 +1715,7 @@ function Chat({
               <Icon name="triangle-alert" size={14} />
               <span>
                 {assistantHost
-                  ? (assistantHost.name ? assistantHost.name + "\u2019s assistant" : "The assistant") + " isn\u2019t answering right now"
+                  ? "The assistant isn\u2019t answering right now"
                   : assistantHosts.length
                     ? "Pick which assistant to talk to"
                     : "No assistant is answering right now"}
@@ -1737,9 +1749,7 @@ function Chat({
                 ref={taRef}
                 rows={1}
                 value={input}
-                placeholder={(HostPicker && assistantHost
-                  ? "Message " + assistantHost.name + "\u2019s assistant"
-                  : "Message the assistant")
+                placeholder={"Message the assistant"
                   + (commandCatalog.length > 0 ? " \u00b7 / for commands" : "")}
                 onChange={onInputChange}
                 onKeyDown={onKeyDown} />

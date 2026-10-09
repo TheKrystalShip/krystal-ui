@@ -297,7 +297,7 @@ function ChatEvent({ msg }) {
       return msg.kind === "assistant-down"
         ? (
           <ChatEventRow icon="alert-triangle" alert at={at}>
-            {(msg.host || "This host") + "’s assistant stopped answering · messages wait until it’s back"}
+            The assistant stopped answering · messages wait until it’s back
           </ChatEventRow>
         )
         : <ChatEventRow icon={<span className="chat-event__dot" />} at={at}>Reconnected</ChatEventRow>;
