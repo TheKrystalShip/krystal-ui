@@ -149,14 +149,32 @@ function ChatFileChange({ file }) {
 // `title` is what the card calls the action when the verb's button label does not read as one ahead
 // of its target ("Notify me" is a button; "Get notified about Dune" is a title); without it the title
 // is the label followed by the target.
+// Whether a proposal's window has closed. The window ends at `expiresAt`, so a card left open past it
+// changes where it stands without anything arriving.
+function useLapsed(expiresAt) {
+  const end = expiresAt ? Date.parse(expiresAt) : NaN;
+  const [lapsed, setLapsed] = React.useState(Number.isFinite(end) && end <= Date.now());
+  React.useEffect(() => {
+    if (!Number.isFinite(end)) { setLapsed(false); return undefined; }
+    const wait = end - Date.now();
+    if (wait <= 0) { setLapsed(true); return undefined; }
+    setLapsed(false);
+    // A timer past 24 days overflows; the card is re-examined at the next render long before.
+    const t = setTimeout(() => setLapsed(true), Math.min(wait, 2 ** 31 - 1));
+    return () => clearTimeout(t);
+  }, [end]);
+  return lapsed;
+}
+
 function ChatCommand({
-  msg, onRun, meta, target, title: named, runnable = true, unavailable = "Not available here yet", verify,
+  msg, onRun, onDecline, meta, target, title: named, runnable = true, unavailable = "Not available here yet", verify,
 }) {
   const [armed, setArmed] = React.useState(false);
   const cancelRef = React.useRef(null);
   React.useEffect(() => {
     if (armed && cancelRef.current) cancelRef.current.focus({ preventScroll: true });
   }, [armed]);
+  const lapsed = useLapsed(msg.state === "proposed" ? msg.expiresAt : null);
 
   const outcome = verify || msg.verify;
   const file = msg.file;
@@ -169,6 +187,12 @@ function ChatCommand({
 
   if (msg.state === "confirmed") {
     return <ChatCard className="chat-actcard" icon="check" title={title} sub="You confirmed" subMono={false} />;
+  }
+  if (msg.state === "declined") {
+    return <ChatCard className="chat-actcard" tone="muted" icon="x" title={title} sub="Declined" subMono={false} />;
+  }
+  if (msg.state === "expired" || lapsed) {
+    return <ChatCard className="chat-actcard" tone="muted" icon="clock" title={title} sub="Expired" subMono={false} />;
   }
 
   const body = file && <ChatFileChange file={file} />;
@@ -205,12 +229,15 @@ function ChatCommand({
   }
 
   return (
-    <ChatCard className="chat-actcard" tone="accent" icon={file ? "file-pen" : meta.icon} title={title}
-      sub={file ? sub : msg.reason} subMono={!!file}
+    <ChatCard className="chat-actcard" tone={msg.error ? "warn" : "accent"} icon={file ? "file-pen" : meta.icon} title={title}
+      sub={file ? sub : msg.error || msg.summary || msg.reason} subMono={!!file}
       action={(
-        <Button variant="primary" size="sm" onClick={() => setArmed(true)}>
-          {file ? "Save the file" : meta.label}
-        </Button>
+        <div className="chat-actcard__btns">
+          {onDecline && <Button variant="ghost" size="sm" onClick={() => onDecline(msg)}>Decline</Button>}
+          <Button variant="primary" size="sm" onClick={() => setArmed(true)}>
+            {file ? "Save the file" : meta.label}
+          </Button>
+        </div>
       )}>
       {body}
     </ChatCard>

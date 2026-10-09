@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.19.0]
+
+### Added
+- **The chat reads the assistant wire contract's own frames.** A `proposal` frame draws the same
+  action card a stored turn's `confirmation` restates, with the proposal's sentence, an `expiresAt`
+  that turns the card to Expired when it passes, and a Decline button for a client that sets
+  `declines: true` (the confirm channel then takes `{ token, decision: "decline" }`). A stored turn's
+  proposal is rebuilt with what became of it, and `proposal.staged`, `proposal.running` and
+  `proposal.resolved` on the event stream move the card on every surface. `turn.started` addresses
+  the turn Stop reaches; `context.compacting` shows as the wait it is; `conversation.updated` and
+  `log.gap` re-read the list; a `progress` frame with no `key` is keyed by its call and words.
+- **Questions.** A `question` frame is drawn as `ChatQuestions`: each question with its options as
+  choices (a single pick, or toggles for `multiple`), a field for the person's own words when
+  `custom` is true, and one press to send. The answers go out as the next turn with an empty prompt;
+  a question the person has moved past, and one in a stored conversation, is plain text.
+- `Chat` calls `wakeSpeech()` on a client that has it when the microphone opens.
+- A stored turn's `card` and `recordId` are read beside the older `result` and `turnId`; memory
+  rows tagged `plugin`, `source: "person"` and `maxPerPerson` are read beside `you` and `maxPerOwner`.
+
+### Changed
+- `useConversationStream` works with a client that has no `attach` or `streamId`.
+
+### Fixed
+- The composer no longer passes React an `onCompositionCancel`, which is not an event it has (a
+  cancelled composition ends with `compositionend`), so mounting the chat stops logging a warning.
+
 ## [0.18.1]
 
 ### Fixed

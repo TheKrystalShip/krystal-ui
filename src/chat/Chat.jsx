@@ -15,6 +15,7 @@ import {
   uid, reduceTurnFrame, promotePendingCards,
   scaffoldHistory, scaffoldConversation,
   scaffoldLiveTurn, latestUsage, mergeServerConversations, adoptServerConversation,
+  settleProposal, answersText,
 } from "./conversation.js";
 import { ChatCommand } from "./ChatMessageParts.jsx";
 import { ChatCommandMenu } from "./ChatCommandMenu.jsx";
@@ -57,7 +58,7 @@ import { useConversationStream } from "./useConversationStream.js";
 // carry no turn id of their own, so they apply to whichever turn last announced itself on the stream.
 const TURN_FRAMES = new Set([
   "text.delta", "thinking.delta", "tool.start", "tool.result", "progress",
-  "command.proposed", "done", "error",
+  "command.proposed", "proposal", "question", "context.compacting", "done", "error",
   // One sentence of the reply, spoken. Handled as a side effect rather than through the message
   // reducer: it is audio to play, not state to render, and nothing about the transcript changes.
   "audio.delta",
@@ -78,8 +79,8 @@ const DEFAULT_PROFILE = {
   proposalLabel: (verb) => (verb || "Run").replace(/_/g, " "),
   proposal: (msg) => ({
     meta: { label: (msg.verb || "Run").replace(/_/g, " "), icon: "zap", tone: "info" },
-    target: msg.subjectId || "",
-    targetName: msg.subjectId || "",
+    target: msg.target || msg.subject || msg.subjectId || "",
+    targetName: msg.target || msg.subject || msg.subjectId || "",
     runnable: true,
   }),
   // The assistant's own sentence, and `success` for which way it went.
@@ -401,6 +402,14 @@ function Chat({
   // response and once on the event stream — so the event stream's copy is skipped until the POST is
   // done, at which point the next attach takes over.
   const ownTurnRef = React.useRef(null);
+  // The conversation this surface last sent a turn on, and when that turn ended (null while it runs).
+  // The changes a turn announces on the event stream are not stamped with who caused them, so this is
+  // how a surface tells its own turn from somebody else's.
+  const ownActivityRef = React.useRef({ convId: null, endedAt: 0 });
+  const ownActivity = (convId) => {
+    const own = ownActivityRef.current;
+    return own.convId === convId && (own.endedAt === null || Date.now() - own.endedAt < 4000);
+  };
 
   const applyTurnFrame = React.useCallback((convId, evt) => {
     setConvos(prev => prev.map(c =>
@@ -447,7 +456,32 @@ function Chat({
       return;
     }
 
+    // The stream no longer holds what this surface missed, so the listing is the only account left.
+    if (evt.type === "log.gap") { loadServerHistory(); return; }
+
     if (typeof id !== "string") return;
+
+    // A proposal somebody else's surface is deciding, or decided: the card follows it. One that is not
+    // on this surface's screen is restated by the conversation's next read.
+    if (evt.type === "proposal.staged") {
+      if (ownActivity(id)) return;
+      setConvos(prev => prev.map(c => (c.id === id && !c.messages.some(m => m.live) ? { ...c, stale: true } : c)));
+      return;
+    }
+    if (evt.type === "proposal.running") {
+      setConvos(prev => prev.map(c => c.id !== id ? c : {
+        ...c,
+        messages: c.messages.map(m => (m.role === "command" && m.token === evt.handle && m.state === "proposed")
+          ? { ...m, state: "confirmed" } : m),
+      }));
+      return;
+    }
+    if (evt.type === "proposal.resolved") {
+      setConvos(prev => prev.map(c => c.id !== id ? c : {
+        ...c, messages: settleProposal(c.messages, evt.handle, evt, profile),
+      }));
+      return;
+    }
 
     if (evt.type === "conversation.switches") {
       // Say it in the transcript too, not only on the toggle. A switch moved elsewhere changes what
@@ -500,10 +534,11 @@ function Chat({
 
     if (evt.type === "conversation.started") { loadServerHistory(); return; }
 
-    if (evt.type === "conversation.activity") {
+    if (evt.type === "conversation.activity" || evt.type === "conversation.updated") {
       // The rail's title and order come from the listing. The transcript is marked behind only for a
       // conversation this surface is NOT watching live — one it mirrored frame by frame already holds
       // what the turn produced, and refetching would replace it with an identical copy mid-render.
+      if (ownActivity(id)) { loadServerHistory(); return; }
       setConvos(prev => prev.map(c => (c.id === id && !c.messages.some(m => m.live)
         ? { ...c, stale: true } : c)));
       loadServerHistory();
@@ -733,7 +768,8 @@ function Chat({
     }));
   };
 
-  const sendLive = async (convId, text, userMsg) => {
+  const sendLive = async (convId, text, userMsg, answers) => {
+    ownActivityRef.current = { convId, endedAt: null };
     // Deliberately does NOT name the conversation from the prompt. The assistant names it — first prompt,
     // one line, capped at 80 with an ellipsis — and derives that ONCE for every surface. A copy of the
     // rule here was capped at 40 with no ellipsis, so a first prompt longer than that read one way in
@@ -758,6 +794,12 @@ function Chat({
     // so they are applied here directly and the event stream's copy of them is skipped — otherwise the
     // surface that asked for the turn would render it twice.
     const applyFrame = (ev) => {
+      // The turn is addressed from here on: Stop reaches it by this id.
+      if (ev.type === "turn.started") {
+        ownTurnRef.current = ev.turnId;
+        setLiveTurn({ conversationId: convId, turnId: ev.turnId, state: "running", queued: [] });
+        return;
+      }
       if (ev.type === "turn.attach") {
         ownTurnRef.current = ev.turnId;
         if (ev.state === "queued") {
@@ -789,14 +831,15 @@ function Chat({
     };
 
     try {
-      const prompt = text || "[The user sent a voice note; transcription was unavailable.]";
+      // Answers to the questions just asked are a turn of their own, and need no words beside them.
+      const prompt = answers ? text : (text || "[The user sent a voice note; transcription was unavailable.]");
       // Whatever the product has open that the turn should see (a draft under review).
       const extras = turnExtras ? turnExtras() : null;
       // Thinking and auto-run are NOT sent: they are the conversation's, held by the assistant and
       // read when the turn runs. Sending them would let this browser contradict what the conversation
       // carries — and two surfaces on one conversation would then disagree about what it is set to.
       await clientFor(assistantHost.id).turn(
-        { prompt, conversationId: convId, ...extras, speak: speakRef.current || undefined },
+        { prompt, answers, conversationId: convId, ...extras, speak: speakRef.current || undefined },
         { onEvent: applyFrame, signal: ctrl.signal });
     } catch (e) {
       const aborted = e && e.name === "AbortError";
@@ -838,8 +881,13 @@ function Chat({
       // Stop skipping the event stream's copy: from here the stream is this surface's only source, and
       // the next attach on this conversation is what re-establishes it.
       ownTurnRef.current = null;
+      // What this surface just watched is already in its transcript, so the turn is counted here and
+      // the changes that announce it are not read as news from elsewhere.
+      ownActivityRef.current = { convId, endedAt: Date.now() };
       setConvos(prev => prev.map(c => c.id !== convId ? c : {
-        ...c, messages: c.messages.map(m => (m.live ? { ...m, live: false } : m)),
+        ...c,
+        turns: typeof c.turns === "number" ? c.turns + 1 : c.turns,
+        messages: c.messages.map(m => (m.live ? { ...m, live: false } : m)),
       }));
       setLiveTurn(prev => (prev && prev.conversationId === convId ? null : prev));
     }
@@ -1028,6 +1076,15 @@ function Chat({
   }, [hostSpeech && hostSpeech.hear, assistantHost && assistantHost.id]);
 
   const voice = useVoiceRecorder({ transcribe: transcribeHere });
+  // Opening the microphone says speech is about to be wanted, so an assistant that loads its models on
+  // demand has them ready by the time the recording ends. Best effort: a recording is made either way.
+  const startVoice = () => {
+    if (transcribeHere && assistantHost) {
+      const client = clientFor(assistantHost.id);
+      if (typeof client.wakeSpeech === "function") Promise.resolve(client.wakeSpeech()).catch(() => {});
+    }
+    voice.start();
+  };
   const sendVoice = async () => {
     const payload = await voice.finish();
     // Null is a cancelled recording or one whose transcription failed. The failure leaves the bar
@@ -1089,12 +1146,47 @@ function Chat({
       err => {
         const expired = err && err.code === 401;
         const noRoute = err && err.code === "ENOROUTE";
+        const refusal = err && err.envCode;
+        // The action lapsed before anyone decided: the card says so, and nothing ran.
+        if (refusal === "confirmation-expired") {
+          setMessages(msgs => msgs
+            .filter(m => !(m.role === "verify" && m.id === verifyId))
+            .map(m => (m.role === "command" && m.cmdId === card.cmdId ? { ...m, state: "expired" } : m)));
+          return;
+        }
+        // Refusals the assistant words for the person: decided elsewhere, waiting on somebody else, gone.
+        if (refusal === "confirmation-handled" || refusal === "confirmation-unknown" || refusal === "forbidden") {
+          resolveVerify({ ok: false, tone: "warn", headline: err.userMessage, lines: [] });
+          return;
+        }
         resolveVerify(expired
           ? { ok: false, headline: ((assistantHost && assistantHost.name) || "This host") + "\u2019s assistant session expired \u2014 sign in again to run commands.", lines: [] }
           : noRoute
             ? { ok: false, headline: ((assistantHost && assistantHost.name) || "This host") + "\u2019s assistant has no address this browser can reach.", lines: [] }
             : { ok: false, headline: "Couldn\u2019t run " + meta.label.toLowerCase() + " \u2014 " + ((err && err.userMessage) || "the command failed."), lines: [] });
       });
+  };
+
+  // Decline a proposed action: it can never run, and the card says so. A refusal (it was decided
+  // elsewhere, or lapsed) is the assistant's sentence, shown on the card that is still standing.
+  const declineLiveCommand = (card) => {
+    const hostId = (assistantHost && assistantHost.id) || null;
+    const patch = (fields) => setMessages(msgs =>
+      msgs.map(m => (m.role === "command" && m.cmdId === card.cmdId ? { ...m, ...fields } : m)));
+    if (!hostId || !card.token) { patch({ state: "expired" }); return; }
+    clientFor(hostId).confirm({ token: card.token, decision: "decline" }).then(
+      () => patch({ state: "declined", error: null }),
+      err => {
+        const refusal = err && err.envCode;
+        if (refusal === "confirmation-expired") patch({ state: "expired", error: null });
+        else patch({ error: (err && err.userMessage) || "That didn’t go through." });
+      });
+  };
+
+  // Send the person's answers to the questions just asked, as the next turn of the conversation.
+  const answerQuestions = (_msg, answers) => {
+    if (!activeId || !assistantHost || !assistantUsable) return;
+    sendLive(activeId, "", { role: "user", content: answersText(answers), ts: Date.now() }, answers);
   };
 
   // What a product's renderers may do to the conversation.
@@ -1110,8 +1202,11 @@ function Chat({
   const renderOwnCards = renderCards ? (m) => renderCards(m, api) : undefined;
   const renderCommand = (m, i) => {
     const p = profile.proposal(m);
-    return <ChatCommand key={i} msg={m} onRun={runLiveCommand} meta={p.meta} target={p.target} title={p.title}
-      runnable={p.runnable} unavailable={p.unavailable} />;
+    // Declining is a decision the confirm channel takes; a client whose assistant does not take one
+    // leaves it off, because its confirm route would read the same request as a confirmation.
+    const declines = assistantHost && clientFor(assistantHost.id).declines === true;
+    return <ChatCommand key={i} msg={m} onRun={runLiveCommand} onDecline={declines ? declineLiveCommand : undefined}
+      meta={p.meta} target={p.target} title={p.title} runnable={p.runnable} unavailable={p.unavailable} />;
   };
   // A proposal in someone else's transcript is shown as it stood, and confirming it does nothing.
   const renderReviewCommand = (m, i) => {
@@ -1481,7 +1576,7 @@ function Chat({
           ) : (
             <ChatThread messages={active.messages} user={user} assistantName={assistantName}
               renderEntry={renderOwnEntry} renderCommand={renderCommand} renderCards={renderOwnCards}
-              onRate={rateTurn} onUseCommand={offerCommand} />
+              onRate={rateTurn} onUseCommand={offerCommand} onAnswer={answerQuestions} />
           )}
         </div>
 
@@ -1576,7 +1671,7 @@ function Chat({
                   <ChatContextMeter usage={latestUsage(active && active.messages)} onCompact={compactHere} />
                 </span>
                 {!busy && !input.trim() && assistantUsable && (
-                  <IconButton icon="mic" label="Record a voice note" variant="ghost" size="sm" onClick={voice.start} />
+                  <IconButton icon="mic" label="Record a voice note" variant="ghost" size="sm" onClick={startVoice} />
                 )}
                 {turnRunning
                   ? <IconButton icon="square" label="Stop the answer" variant="outline" size="sm" onClick={stop} />

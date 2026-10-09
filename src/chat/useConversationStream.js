@@ -41,6 +41,9 @@ function useConversationStream({ client, clientKey, enabled, conversationId, onE
   React.useEffect(() => {
     watchingRef.current = conversationId;
     if (!clientKey || !enabled || !clientRef.current) return;
+    // A stream that carries every conversation's changes needs no pointing; only an assistant whose
+    // stream sends one conversation's turn frames has an `attach`.
+    if (typeof clientRef.current.attach !== "function") return;
     // Only an OPEN stream can be re-pointed: an attach names a stream, and this surface has no name
     // until the assistant's `hello` frame has arrived. With no stream there is nothing to say — the
     // open handler below attaches to whatever this ref holds, so a conversation selected before the
@@ -73,13 +76,13 @@ function useConversationStream({ client, clientKey, enabled, conversationId, onE
                 attempt = 0;                       // a stream that spoke is a stream that works
                 // A stream carries turn frames only for the conversation it is pointed at, so say
                 // which one before anything can be missed. The assistant answers on the stream itself.
-                c.attach(watchingRef.current).catch(() => {});
+                if (typeof c.attach === "function") c.attach(watchingRef.current).catch(() => {});
                 if (connected && resyncRef.current) resyncRef.current();
                 connected = true;
               }
               // The opening frame is plumbing; the client has already recorded the id from it.
               if (evt.type === "hello") return;
-              if (evt.origin && evt.origin === c.streamId()) return;
+              if (evt.origin && typeof c.streamId === "function" && evt.origin === c.streamId()) return;
               if (eventRef.current) eventRef.current(evt);
             },
           });

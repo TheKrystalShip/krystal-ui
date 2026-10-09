@@ -14,12 +14,18 @@
 import { ChatEvent, ChatVerify, ChatDaySeparator, entryTime, dayKeyOf } from "./ChatMessageParts.jsx";
 import { ChatMessage } from "./ChatMessage.jsx";
 import { ChatCommandHelp, ChatCommandTools } from "./ChatCommandCards.jsx";
+import { ChatQuestions } from "./ChatQuestions.jsx";
 
 const EVENT_ROLES = new Set(["system", "scope", "checkpoint", "toggle"]);
 
 function ChatThread({
   messages, user, assistantName, renderEntry, renderCommand, renderCards, onRate, readOnlyFeedback, onUseCommand,
+  onAnswer,
 }) {
+  // Questions are answerable while they are the last thing said: once the person has written
+  // something else beneath them, they stay on the page as plain text.
+  let lastUser = -1;
+  messages.forEach((m, i) => { if (m.role === "user") lastUser = i; });
   const outcomes = new Map();
   for (const m of messages) {
     if (m.role === "verify" && m.cmdId != null) outcomes.set(m.cmdId, m);
@@ -70,6 +76,10 @@ function ChatThread({
           ? <ChatCommandTools key={i} msg={m} />
         : m.role === "command"
           ? commandEntry(m, i)
+        : m.role === "question"
+          ? <ChatQuestions key={i} msg={m} onAnswer={onAnswer}
+              open={!!onAnswer && m.state === "open" && i > lastUser} />
+
         : m.role === "verify"
           ? <ChatVerify key={i} msg={m} />
           : turn(m, i),

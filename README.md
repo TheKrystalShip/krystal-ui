@@ -254,9 +254,10 @@ sheet, after everything whose focus it overrides.
 ## The assistant chat
 
 `Chat` is a conversation with one assistant over the assistant wire contract
-(`kgsm-llm/docs/wire-contract.md`): turns streamed over Server-Sent Events, proposed actions
-confirmed by their token, the conversation list kept in step with the assistant's, voice notes, and
-a read-only review of somebody else's conversation. It holds no credential and knows no product:
+(`tks-assistant/docs/wire-contract.md`): turns streamed over Server-Sent Events, proposed actions
+confirmed or declined by their handle, questions the assistant asks answered as the next turn, the
+conversation list kept in step with the assistant's, voice notes, and a read-only review of
+somebody else's conversation. It holds no credential and knows no product:
 
 ```jsx
 const client = createAssistantClient({ baseUrl: "/assistant", getToken: () => session.token() });
@@ -295,6 +296,12 @@ ahead of the target — and `verdict(msg, name, response)` words its outcome; a 
 succeed reads.
 `renderEntry` draws transcript roles of the product's own, and `turnExtras()` adds fields to the
 next turn. `clientFor` is called with the assistant's id, and must be stable across renders.
+
+A client is `createAssistantClient`'s shape, and these members are optional: `attach` and `streamId`
+(an assistant whose event stream sends one conversation's turn frames), `declines: true` (the confirm
+channel takes `{ token, decision: "decline" }`, which gives a proposal card a Decline button), and
+`wakeSpeech()` (called when the microphone opens). A `question` frame is drawn as choices and a
+field for the person's own words, and the answers go out as the next turn's `answers`.
 
 A site whose frame has a sidebar can keep the conversation list there: `railTarget` is the element
 the list is drawn into, and the chat takes the whole width. `pageClass="chat-page--framed"` makes the

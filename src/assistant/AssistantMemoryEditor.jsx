@@ -40,6 +40,8 @@ function AssistantMemoryEditor({
   memory, limits, onSave, onClose, BodyEditor = PlainBody, keyPlaceholder = "preferred-name",
 }) {
   const isNew = !memory;
+  // `person` on the wire contract, `you` on an assistant that predates it.
+  const byPerson = !!memory && (memory.source === "person" || memory.source === "you");
   const [key, setKey] = React.useState(memory ? memory.key : "");
   const [summary, setSummary] = React.useState(memory ? memory.summary || "" : "");
   const [body, setBody] = React.useState(memory ? memory.body || "" : "");
@@ -76,11 +78,11 @@ function AssistantMemoryEditor({
       size="xl"
       fill
       className="mem-editor"
-      icon={isNew || memory.source === "you" ? "user-pen" : "brain"}
+      icon={isNew || byPerson ? "user-pen" : "brain"}
       title={isNew ? "Write a memory" : "Edit this memory"}
       sub={isNew
         ? "The assistant reads the summary back at the start of every later conversation."
-        : memory.source === "you"
+        : byPerson
           ? "You wrote this one."
           : "The assistant wrote this one down during a conversation. Correcting it makes it yours."}
       onClose={onClose}

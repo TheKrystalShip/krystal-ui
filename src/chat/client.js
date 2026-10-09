@@ -1,5 +1,5 @@
 // createAssistantClient — a browser client of one assistant, over the assistant wire contract
-// (`kgsm-llm/docs/wire-contract.md`): the turn stream, the confirm channel, the conversation event
+// (`tks-assistant/docs/wire-contract.md`): the turn stream, the confirm channel, the conversation event
 // stream, conversations and their feedback, the command surface and the tool list, memory, Web Push,
 // and speech.
 //

@@ -59,7 +59,6 @@ const MarkdownTextarea = React.forwardRef(function MarkdownTextarea(
         onScroll={syncScroll}
         onCompositionStart={() => setComposing(true)}
         onCompositionEnd={() => setComposing(false)}
-        onCompositionCancel={() => setComposing(false)}
         className={composing ? "is-composing" : undefined}
       />
     </div>

@@ -31,7 +31,8 @@ export { createAssistantClient } from "./chat/client.js";
 export { useConversationStream } from "./chat/useConversationStream.js";
 export {
   NEW_CHAT_TITLE, conversationTitle, uid as chatUid, toolLabel, promotePendingCards, reduceTurnFrame,
-  proposalMessage, scaffoldHistory, scaffoldConversation, scaffoldLiveTurn, latestUsage,
+  proposalMessage, waitingProposal, settleProposal, questionMessage, answersText,
+  scaffoldHistory, scaffoldConversation, scaffoldLiveTurn, latestUsage,
   adoptServerConversation, mergeServerConversations,
 } from "./chat/conversation.js";
 export { Dock, DockFab, useDock } from "./components/Dock.jsx";

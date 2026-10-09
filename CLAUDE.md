@@ -20,9 +20,8 @@ When a site's component needs to come here and it reaches into that site's data 
 in the site first (take the value as a prop, split the module) and move the half that is only view.
 
 **The chat speaks a contract, and its words are that contract's.** `src/chat/` is a client of the
-assistant wire contract (`kgsm-llm/docs/wire-contract.md`), so the frame and field names that
-contract defines — `command.proposed`, a draft's `configValue`, a stepping tool's `progress` — are
-what it reads. What a product makes of them is the product's: its cards, its verbs and their
+assistant wire contract (`tks-assistant/docs/wire-contract.md`), so the frame and field names that
+contract defines — `proposal`, `question`, `done`, a stepping tool's `progress` — are what it reads. What a product makes of them is the product's: its cards, its verbs and their
 verdicts arrive through `profile` and the render slots, never as a branch here.
 
 ## Styles

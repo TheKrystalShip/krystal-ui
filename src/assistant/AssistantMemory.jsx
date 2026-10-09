@@ -22,6 +22,10 @@ import { AssistantMemoryEditor } from "./AssistantMemoryEditor.jsx";
 
 const WHEN = { hour: "2-digit", minute: "2-digit", hour12: false };
 
+// A memory the person wrote or rewrote by hand is `person` on the wire contract and `you` on an
+// assistant that predates it.
+const byPerson = (m) => m.source === "person" || m.source === "you";
+
 function written(ts) {
   const d = ts ? new Date(String(ts).replace(" ", "T")) : null;
   if (!d || isNaN(d.getTime())) return "— (—)";
@@ -93,9 +97,10 @@ function AssistantMemory({
     );
   }
 
-  const full = limits && memories.length >= limits.maxPerOwner;
+  const cap = limits ? (limits.maxPerPerson ?? limits.maxPerOwner) : null;
+  const full = cap != null && memories.length >= cap;
   const lead = `What ${whose} has written down about you, across your conversations.`;
-  const meta = limits ? `${lead} ${memories.length} of ${limits.maxPerOwner} kept.` : lead;
+  const meta = cap != null ? `${lead} ${memories.length} of ${cap} kept.` : lead;
 
   return (
     <>
@@ -120,12 +125,13 @@ function AssistantMemory({
         {!loading && memories.map((m) => (
           <SettingsRow
             key={m.key}
-            icon={m.source === "you" ? "user-pen" : "brain"}
+            icon={byPerson(m) ? "user-pen" : "brain"}
             title={m.summary || m.key}
             sub={(
               <>
                 <span className="settings-value settings-value--mono">{m.key}</span>
-                {" · " + (m.source === "you" ? "Written by you" : "Learned in a conversation")}
+                {" · " + (byPerson(m) ? "Written by you" : "Learned in a conversation")}
+                {m.plugin ? " · " + m.plugin : ""}
                 {" " + written(m.writtenAt)}
                 {m.body ? " · has a longer note" : ""}
               </>

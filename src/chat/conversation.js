@@ -2,16 +2,27 @@
 // how a stored conversation is rebuilt into one, and how this browser's list of conversations is
 // reconciled with the assistant's. Pure functions, no React.
 //
-// The vocabulary is the assistant wire contract's (`kgsm-llm/docs/wire-contract.md`): `text.delta`,
-// `tool.start`, `tool.result`, `command.proposed`, `done` and the rest. What a product shows for a
-// tool's result or names a proposed action is the product's, passed in as a `profile`:
+// The vocabulary is the assistant wire contract's (`tks-assistant/docs/wire-contract.md`): `text.delta`,
+// `tool.start`, `tool.result`, `proposal`, `question`, `done` and the rest. An assistant that
+// proposes through `command.proposed` is read as well. What a product shows for a tool's result or
+// names a proposed action is the product's, passed in as a `profile`:
 //
 //   adaptCard(result)    → a card to show under the answer, or null. `tool.result` frames and stored
 //                          turns carry a structured `result`; a product that renders none returns null.
 //   proposalLabel(verb)  → the words a proposed action is offered with, when the frame carries no
 //                          `confirm` sentence of its own.
 
-const NO_PROFILE = { adaptCard: () => null, proposalLabel: (verb) => (verb || "Run").replace(/_/g, " ") };
+const NO_PROFILE = {
+  adaptCard: () => null,
+  proposalLabel: (verb) => (verb || "Run").replace(/_/g, " "),
+  proposal: (msg) => ({
+    meta: { label: (msg.verb || "Run").replace(/_/g, " ") },
+    targetName: msg.target || msg.subject || msg.subjectId || "",
+  }),
+  verdict: (msg, targetName, resp) => ({
+    ok: !!(resp && resp.success), headline: (resp && resp.text) || "", lines: [],
+  }),
+};
 
 // What a conversation with nothing said in it is called.
 //
@@ -62,6 +73,95 @@ function promotePendingCards(bubble) {
   return { ...rest, cards: (bubble.cards || []).concat(pendingCards) };
 }
 
+// The wait the context's compaction puts the answer in ends with the next frame of any other kind.
+function withoutCompacting(bubble) {
+  if (!bubble.compacting) return bubble;
+  const { compacting, ...rest } = bubble;
+  return rest;
+}
+
+// ---------- proposals ----------
+// An action a tool proposed and left waiting on the person: the `proposal` frame of a live turn, and
+// the `confirmation` a stored turn's tool carries. Both name the action the same way — `verb`,
+// `subject`, `target`, `summary`, `expiresAt` — and the `handle` that redeems it, held as `token`.
+function waitingProposal(ev) {
+  return {
+    role: "command",
+    cmdId: uid(),
+    verb: ev.verb,
+    subject: ev.subject || "",
+    target: ev.target || "",
+    summary: ev.summary || "",
+    confirm: ev.summary || null,
+    token: ev.handle || null,
+    expiresAt: ev.expiresAt || null,
+    state: "proposed",
+  };
+}
+
+// Where a proposal stands once it has ended, as the transcript shows it: declined and expired are
+// states of the card itself, and an action that ran (or tried to) is the card plus its outcome. The
+// outcome is the product's `verdict` over `{ success, status, text }`.
+function settleProposal(messages, handle, resolution, profile = NO_PROFILE) {
+  const at = messages.findIndex(m => m.role === "command" && m.token === handle);
+  if (at < 0 || !resolution) return messages;
+  const card = messages[at];
+  const status = resolution.status;
+  const out = messages.slice();
+  if (status === "declined" || status === "expired") {
+    out[at] = { ...card, state: status };
+    return out;
+  }
+  out[at] = { ...card, state: "confirmed" };
+  if (messages.some(m => m.role === "verify" && m.cmdId === card.cmdId)) return out;
+  const p = profile.proposal(card);
+  out.splice(at + 1, 0, {
+    role: "verify",
+    id: uid(),
+    cmdId: card.cmdId,
+    action: { label: p.meta.label, verb: card.verb, serverName: p.targetName },
+    state: "done",
+    result: profile.verdict(card, p.targetName, {
+      success: status === "confirmed", status, text: resolution.result || "",
+    }),
+    at: resolution.at,
+  });
+  return out;
+}
+
+// ---------- questions ----------
+// The assistant's own tool for asking, by the name its turns record it under.
+const ASK_QUESTION = "ask_question";
+
+// Questions the assistant put to the person. `state` is `open` while the person may still answer, and
+// `answered` once they have; the thread draws one that is no longer the last word as plain text.
+function questionMessage(ev, state = "open") {
+  return {
+    role: "question",
+    id: ev.id != null ? ev.id : uid(),
+    state,
+    questions: (Array.isArray(ev.questions) ? ev.questions : []).map(q => ({
+      question: q.question || "",
+      header: q.header || null,
+      options: (Array.isArray(q.options) ? q.options : []).map(o => ({
+        label: o.label || "", description: o.description || null,
+      })),
+      multiple: q.multiple === true,
+      custom: q.custom !== false,
+    })),
+  };
+}
+
+// The answers as the assistant reads them in the person's message: one line, the question's header
+// (else its text), then what was picked and what was written.
+function answersText(answers) {
+  const parts = (answers || []).map(a => {
+    const said = [...(a.labels || []), a.text].filter(s => s && String(s).trim()).map(s => String(s).replace(/\s+/g, " ").trim());
+    return (a.header || a.question) + ": " + said.join(", ");
+  });
+  return parts.length ? "Answers: " + parts.join("; ") : "";
+}
+
 // ---------- the turn stream ----------
 function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
   const msgs = messages.slice();
@@ -70,26 +170,32 @@ function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
   if (!bubble || bubble.role !== "assistant") return messages;
   switch (ev.type) {
     case "text.delta":
-      msgs[lastIdx] = { ...bubble, content: (bubble.content || "") + (ev.text || "") };
+      msgs[lastIdx] = { ...withoutCompacting(bubble), content: (bubble.content || "") + (ev.text || "") };
       break;
     case "thinking.delta":
-      msgs[lastIdx] = { ...bubble, thinking: (bubble.thinking || "") + (ev.text || "") };
+      msgs[lastIdx] = { ...withoutCompacting(bubble), thinking: (bubble.thinking || "") + (ev.text || "") };
+      break;
+    case "context.compacting":
+      // The context is being reduced to fit the window; `summarizing` is the stage that can take
+      // seconds. The next frame of any other kind ends the wait.
+      msgs[lastIdx] = { ...bubble, compacting: ev.stage === "summarizing" ? "summarizing" : "clearing" };
       break;
     case "tool.start": {
       const startTools = (bubble.tools || []).concat({ id: ev.id, label: toolLabel(ev.tool, ev.label), state: "pending" });
-      msgs[lastIdx] = { ...bubble, tools: startTools };
+      msgs[lastIdx] = { ...withoutCompacting(bubble), tools: startTools };
       break;
     }
     case "progress": {
-      // A long-running tool narrates its own sub-steps before its tool.result lands. A progress frame
-      // carries no tool-call id, so steps are keyed by `key` alone, which holds because a turn runs
-      // such a tool at most once. A fresh key is appended as "active" after every OTHER active step is
-      // checked off "done", which is what gives the live check-them-off effect. A repeat of the same
-      // key (a repair loop re-entering a step) re-activates it in place rather than duplicating the row.
+      // A long-running tool narrates its own sub-steps before its tool.result lands. A step is keyed by
+      // `key` when the frame carries one, else by the call and the words, since a frame names no step
+      // otherwise. A fresh key is appended as "active" after every OTHER active step is checked off
+      // "done", which is what gives the live check-them-off effect. A repeat of the same key (a repair
+      // loop re-entering a step) re-activates it in place rather than duplicating the row.
+      const key = ev.key != null ? ev.key : (ev.id != null ? ev.id + ":" : "") + (ev.label || "");
       const prevSteps = bubble.steps || [];
       const steps = prevSteps.map(s => s.status === "active" ? { ...s, status: "done" } : s);
-      const idx = steps.findIndex(s => s.key === ev.key);
-      const entry = { key: ev.key, label: ev.label || "", status: "active" };
+      const idx = steps.findIndex(s => s.key === key);
+      const entry = { key, label: ev.label || "", status: "active" };
       if (idx >= 0) steps[idx] = entry; else steps.push(entry);
       msgs[lastIdx] = { ...bubble, steps };
       break;
@@ -120,7 +226,7 @@ function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
       // A turn-ending error strands any still-active progress steps — check them off so the stepper
       // doesn't sit spinning forever. Whatever the answer had already said stays; the reason is
       // carried beside it, for the answer to state under that text.
-      let base = bubble;
+      let base = withoutCompacting(bubble);
       if (bubble.steps && bubble.steps.some(s => s.status === "active")) {
         base = { ...base, steps: bubble.steps.map(s => s.status === "active" ? { ...s, status: "done" } : s) };
       }
@@ -143,8 +249,16 @@ function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
       }
       msgs.splice(lastIdx, 0, proposalMessage(ev, profile));
       break;
+    case "proposal":
+      // An action a tool proposed and left waiting on the person. Held with the same shape a stored
+      // conversation restates it in, so the card reads the same live and after a reload.
+      msgs.splice(lastIdx, 0, waitingProposal(ev));
+      break;
+    case "question":
+      msgs.splice(lastIdx, 0, questionMessage(ev));
+      break;
     case "done": {
-      let done = { ...bubble, endedAt: Date.now() };
+      let done = { ...withoutCompacting(bubble), endedAt: Date.now() };
       // The turn ended without every progress step's owning tool.result arriving in band (a dropped
       // frame) — check off whatever is still active.
       if (bubble.steps && bubble.steps.some(s => s.status === "active")) {
@@ -160,7 +274,7 @@ function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
       // Streaming is over — reveal the cards below the finished answer.
       msgs[lastIdx] = promotePendingCards(done);
       let start = lastIdx;
-      while (start > 0 && msgs[start - 1].role === "command") start--;
+      while (start > 0 && (msgs[start - 1].role === "command" || msgs[start - 1].role === "question")) start--;
       if (start < lastIdx) {
         const bub = msgs[lastIdx];
         const cards = msgs.slice(start, lastIdx);
@@ -232,22 +346,45 @@ function scaffoldHistory(entries, profile = NO_PROFILE) {
     if (started && bubble.ts) { bubble.startedAt = started; bubble.endedAt = bubble.ts; }
     // The turn's durable id and the verdict already on it. History is the bulk of any corpus, so
     // without these a replayed answer could never be rated — only the newest one could.
-    if (e.turnId) bubble.turnId = e.turnId;
+    const recorded = e.recordId || e.turnId;
+    if (recorded) bubble.turnId = recorded;
     if (e.feedback && e.feedback.rating) {
       bubble.feedback = { rating: e.feedback.rating, note: e.feedback.note || null };
     }
     if (t.thinking) bubble.thinking = t.thinking;
     if (t.usage) bubble.usage = t.usage;
-    const tools = Array.isArray(t.tools)
-      ? t.tools.map((tl, ti) => ({ id: "h" + ei + "_" + ti, label: toolLabel(tl.tool, tl.label), state: "done", summary: tl.summary || "" }))
-      : [];
+    // A question the assistant asked is drawn as a question, not as a tool it used; the call that
+    // asked it is the turn's last word when nothing follows it.
+    const calls = Array.isArray(t.tools) ? t.tools : [];
+    const used = calls.filter(tl => tl && tl.tool !== ASK_QUESTION);
+    const tools = used.map((tl, ti) => ({ id: "h" + ei + "_" + ti, label: toolLabel(tl.tool, tl.label), state: "done", summary: tl.summary || "" }));
     if (tools.length) bubble.tools = tools;
-    const cards = Array.isArray(t.tools)
-      ? t.tools.map(tl => (tl && tl.result ? profile.adaptCard(tl.result) : null)).filter(Boolean)
-      : [];
+    const cards = used
+      .map(tl => { const card = tl.card || tl.result; return card ? profile.adaptCard(card) : null; })
+      .filter(Boolean);
     if (cards.length) bubble.cards = cards;
     if (!t.final && t.outcome && t.outcome !== "ok") { bubble.error = true; bubble.errorText = "This turn didn’t complete."; }
-    out.push(bubble);
+    const asked = calls.filter(tl => tl && tl.tool === ASK_QUESTION && tl.arguments && Array.isArray(tl.arguments.questions));
+    // An answerless turn that only asked has nothing of its own to draw.
+    const blank = !bubble.content && !bubble.thinking && !tools.length && !cards.length && !bubble.error;
+    if (!(asked.length && blank)) out.push(bubble);
+    asked.forEach(tl => out.push(questionMessage(
+      { id: "h" + ei, questions: tl.arguments.questions }, ei === entries.length - 1 ? "open" : "asked")));
+    used.forEach(tl => {
+      const c = tl.confirmation;
+      if (!c) return;
+      out.push(waitingProposal(c));
+      const waiting = out[out.length - 1];
+      // What became of it rides on the confirmation, or beside it on the tool.
+      const resolution = c.resolution || tl.resolution;
+      if (resolution) {
+        const settled = settleProposal(out, c.handle, resolution, profile);
+        out.length = 0;
+        out.push(...settled);
+      } else if (c.expiresAt && Date.parse(c.expiresAt) <= Date.now()) {
+        waiting.state = "expired";
+      }
+    });
   });
   return out;
 }
@@ -383,7 +520,8 @@ function mergeServerConversations(local, serverList, hostId) {
 export {
   NEW_CHAT_TITLE, conversationTitle,
   loadConversations, saveConversations,
-  uid, toolLabel, promotePendingCards, reduceTurnFrame, proposalMessage,
+  uid, toolLabel, promotePendingCards, reduceTurnFrame, proposalMessage, waitingProposal, settleProposal,
+  questionMessage, answersText,
   scaffoldHistory, scaffoldConversation, scaffoldLiveTurn, latestUsage,
   adoptServerConversation, mergeServerConversations,
 };
