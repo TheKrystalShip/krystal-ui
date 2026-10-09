@@ -34,6 +34,9 @@ function formatDuration(ms) {
 // What the turn is doing right now, or null once it is only writing (or finished). A tool's own step
 // is more specific than the tool, and either is more specific than the thinking.
 function currentWork(msg) {
+  if (msg.waiting) {
+    return { label: "Waiting for the turn ahead", count: msg.waiting > 1 ? msg.waiting + " ahead" : null };
+  }
   if (msg.compacting) {
     return { label: msg.compacting === "summarizing" ? "Summarizing earlier messages" : "Clearing old tool output" };
   }

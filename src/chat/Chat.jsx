@@ -291,6 +291,8 @@ function Chat({
 
   const scrollRef = React.useRef(null);
   const abortRef  = React.useRef(null);
+  // Read where a callback defined above `loadTurns` needs it, without rebuilding that callback.
+  const loadTurnsRef = React.useRef(() => {});
 
   // Reading answers aloud. Off until asked: a page that starts talking is a surprise in a room with
   // other people in it, and a browser refuses audio before a gesture anyway. Remembered per
@@ -362,6 +364,7 @@ function Chat({
       if (document.visibilityState !== "visible" || Date.now() - last < 1000) return;
       last = Date.now();
       loadServerHistory();
+      loadTurnsRef.current();
 
       // And let go of a turn POST that was open when this surface was backgrounded. A frozen page's
       // fetch is dead whether or not its promise ever settles, and while this code believes it is open
@@ -406,6 +409,26 @@ function Chat({
   // The changes a turn announces on the event stream are not stamped with who caused them, so this is
   // how a surface tells its own turn from somebody else's.
   const ownActivityRef = React.useRef({ convId: null, endedAt: 0 });
+  // The id of the turn this surface's own request opened, which stays after `ownTurnRef` is released so
+  // the turn's end can be taken off the open list.
+  const ownTurnIdRef = React.useRef(null);
+  // The assistant's turns that have not ended, from whichever surface opened them, kept by the event
+  // stream and read whole when it (re)connects: `{ turnId, conversationId, prompt, startedBy,
+  // startedAt, state: "running" | "queued", queuedBehind }`, oldest first. A conversation runs one at
+  // a time, so on a conversation the first is running and the rest wait.
+  const [openTurns, setOpenTurns] = React.useState([]);
+  const noteTurnStarted = React.useCallback((evt) => {
+    setOpenTurns(prev => (prev.some(t => t.turnId === evt.turnId) ? prev : [...prev, {
+      turnId: evt.turnId, conversationId: evt.conversationId, prompt: evt.prompt || "",
+      startedBy: evt.startedBy || null, startedAt: evt.startedAt || null,
+      queuedBehind: evt.queuedBehind || null, state: evt.queuedBehind ? "queued" : "running",
+    }]));
+  }, []);
+  // The turn that waited behind the one that ended begins.
+  const noteTurnEnded = React.useCallback((turnId) => {
+    setOpenTurns(prev => prev.filter(t => t.turnId !== turnId)
+      .map(t => (t.queuedBehind === turnId ? { ...t, queuedBehind: null, state: "running" } : t)));
+  }, []);
   const ownActivity = (convId) => {
     const own = ownActivityRef.current;
     return own.convId === convId && (own.endedAt === null || Date.now() - own.endedAt < 4000);
@@ -418,6 +441,10 @@ function Chat({
 
   const applyAssistantEvent = React.useCallback((evt) => {
     const id = evt.conversationId;
+
+    // ---- a turn opened, or ended, on any surface of the person's ----
+    if (evt.type === "turn.started" && evt.turnId) { noteTurnStarted(evt); return; }
+    if (evt.type === "turn.ended" && evt.turnId) { noteTurnEnded(evt.turnId); return; }
 
     // ---- the turn frames: a turn on the conversation this surface is attached to ----
     if (evt.type === "turn.attach") {
@@ -545,7 +572,7 @@ function Chat({
     }
     // liveTurn is absent from the deps on purpose: it is read through liveTurnRef so a frame
     // handler is not rebuilt on every delta.
-  }, [loadServerHistory, applyTurnFrame, profile, toggleCopy]);
+  }, [loadServerHistory, applyTurnFrame, profile, toggleCopy, noteTurnStarted, noteTurnEnded]);
 
   // Read inside the frame handler through a ref: the handler must not be rebuilt on every text delta,
   // and it needs the CURRENT turn rather than the one captured when it was created.
@@ -557,7 +584,78 @@ function Chat({
   // actually moved on. Marking the open one behind unconditionally would refetch it on every
   // reconnect — a proxy timeout is ordinary — and each refetch would drop the rows only this browser
   // holds, so the merge decides that from the counts instead.
-  const resyncAfterGap = React.useCallback(() => { loadServerHistory(); }, [loadServerHistory]);
+  // The turns that have not ended, read whole: on arrival, and wherever the event stream may have missed
+  // a start or an end. An assistant with no list of them is one whose turns are mirrored on its stream.
+  const loadTurns = React.useCallback(() => {
+    if (!assistantHost || !assistantUsable || !assistantAuthed) return;
+    const client = clientFor(assistantHost.id);
+    if (typeof client.turns !== "function") return;
+    client.turns().then(
+      (list) => setOpenTurns(list.map(t => ({ ...t, state: t.queuedBehind ? "queued" : (t.state || "running") }))),
+      () => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
+  }, [assistantHost && assistantHost.id, assistantUsable, assistantAuthed]);
+  loadTurnsRef.current = loadTurns;
+  React.useEffect(() => { loadTurns(); }, [loadTurns]);
+
+  // A turn running on another surface, on the conversation on screen, is followed frame by frame: the
+  // prompt and the answer so far appear, and the rest is drawn as it is written. What was drawn is the
+  // assistant's own stream, so when it ends the conversation is read again and that is what stays.
+  const followRef = React.useRef(null);
+  const [followed, setFollowed] = React.useState(0);
+  // A turn is followed once; one whose end has not yet been heard is not followed again.
+  const followedIds = React.useRef(new Set());
+  React.useEffect(() => {
+    const cur = followRef.current;
+    // This surface's own request is being drawn by that request; one that has not yet learned its turn's
+    // id cannot tell its own turn from another's, so it follows nothing until it does.
+    const own = ownActivityRef.current;
+    const ownPending = own.convId === activeId && own.endedAt === null && ownTurnRef.current === null;
+    const want = ownPending ? null : openTurns.find(t => t.conversationId === activeId
+      && t.state === "running" && t.turnId !== ownTurnRef.current && t.turnId !== ownTurnIdRef.current
+      && !followedIds.current.has(t.turnId));
+    // Looking at another conversation lets go of the draft. A turn that has ended is not let go of: its
+    // stream is about to say so itself, and is what finishes the draft.
+    if (cur && cur.convId !== activeId) { cur.ctrl.abort(); followRef.current = null; }
+    if (!want || followRef.current || !assistantHost || !assistantUsable || !assistantAuthed) return;
+    const client = clientFor(assistantHost.id);
+    if (typeof client.follow !== "function") return;
+
+    const ctrl = new AbortController();
+    const convId = want.conversationId;
+    followRef.current = { turnId: want.turnId, convId, ctrl };
+    followedIds.current.add(want.turnId);
+    const began = Date.parse(want.startedAt) || Date.now();
+    setConvos(prev => prev.map(c => (c.id !== convId ? c : {
+      ...c,
+      messages: [...c.messages.filter(m => !m.live),
+        { role: "user", content: want.prompt, ts: began, live: true },
+        { role: "assistant", content: "", live: true, startedAt: began }],
+    })));
+    client.follow(want.turnId, {
+      signal: ctrl.signal,
+      onEvent: (ev) => {
+        // What this surface does not draw from a turn it did not ask for: its start, the audio, a gap.
+        if (ev.type === "turn.started" || ev.type === "audio.delta" || ev.type === "log.gap") return;
+        setConvos(prev => prev.map(c =>
+          c.id === convId ? { ...c, messages: reduceTurnFrame(c.messages, ev, profile) } : c));
+      },
+    }).catch(() => {}).finally(() => {
+      if (followRef.current && followRef.current.ctrl === ctrl) followRef.current = null;
+      setFollowed(n => n + 1);   // another turn may be waiting to be followed
+      const left = ctrl.signal.aborted;
+      if (left) followedIds.current.delete(want.turnId);
+      setConvos(prev => prev.map(c => (c.id !== convId ? c : left
+        // Looked away from: what was drawn is partial, and is dropped.
+        ? { ...c, messages: c.messages.filter(m => !m.live) }
+        // Ended: the conversation as the assistant recorded it replaces the draft.
+        : { ...c, stale: true, messages: c.messages.map(m => (m.live ? { ...m, live: false } : m)) })));
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the open turns and the conversation on screen decide what is followed; the rest is read when it starts
+  }, [openTurns, activeId, followed, assistantHost && assistantHost.id, assistantUsable, assistantAuthed]);
+  React.useEffect(() => () => { if (followRef.current) followRef.current.ctrl.abort(); }, []);
+
+  const resyncAfterGap = React.useCallback(() => { loadServerHistory(); loadTurns(); }, [loadServerHistory, loadTurns]);
 
   useConversationStream({
     client: assistantHost ? clientFor(assistantHost.id) : null,
@@ -770,6 +868,7 @@ function Chat({
 
   const sendLive = async (convId, text, userMsg, answers) => {
     ownActivityRef.current = { convId, endedAt: null };
+    ownTurnIdRef.current = null;
     // Deliberately does NOT name the conversation from the prompt. The assistant names it — first prompt,
     // one line, capped at 80 with an ellipsis — and derives that ONCE for every surface. A copy of the
     // rule here was capped at 40 with no ellipsis, so a first prompt longer than that read one way in
@@ -797,7 +896,13 @@ function Chat({
       // The turn is addressed from here on: Stop reaches it by this id.
       if (ev.type === "turn.started") {
         ownTurnRef.current = ev.turnId;
+        ownTurnIdRef.current = ev.turnId;
         setLiveTurn({ conversationId: convId, turnId: ev.turnId, state: "running", queued: [] });
+        // Behind another turn on this conversation: the answer says it is waiting until that one ends.
+        if (ev.queuedBehind) {
+          setConvos(prev => prev.map(c =>
+            c.id === convId ? { ...c, messages: reduceTurnFrame(c.messages, ev, profile) } : c));
+        }
         return;
       }
       if (ev.type === "turn.attach") {
@@ -874,6 +979,9 @@ function Chat({
       setBusy(false);
       resumedRef.current = false;
       abortRef.current = null;
+      // The turn this request opened has ended for this surface; the event stream's word may follow, or
+      // may not have been heard, and the composer must not wait on it.
+      if (ownTurnIdRef.current) { noteTurnEnded(ownTurnIdRef.current); ownTurnIdRef.current = null; }
       // The queue outlives the request by design — the last sentences arrive with the terminal frame —
       // so this releases the player rather than stopping it. Stopping is what `stop` and the next turn
       // do, because those are the moments somebody decided not to listen.
@@ -964,7 +1072,10 @@ function Chat({
     // out an answer the person just asked it to abandon.
     if (spokenRef.current) spokenRef.current.stop();
     const hostId = assistantHost && assistantHost.id;
-    const turnId = liveTurn && liveTurn.conversationId === activeId ? liveTurn.turnId : null;
+    // The turn this surface is waiting on, else the one running on the conversation from another surface.
+    const running = openTurns.find(t => t.conversationId === activeId && t.state === "running");
+    const turnId = (liveTurn && liveTurn.conversationId === activeId ? liveTurn.turnId : null)
+      || (running ? running.turnId : null);
     if (hostId && turnId) clientFor(hostId).stopTurn(turnId).catch(() => {});
     else if (abortRef.current) abortRef.current.abort();
   };
@@ -978,8 +1089,14 @@ function Chat({
 
   // A turn is the CONVERSATION's, so the composer is busy while one runs on the open conversation
   // whether or not this surface is the one that asked for it.
-  const turnRunning = busy || !!(liveTurn && liveTurn.conversationId === activeId);
-  const queuedHere = (liveTurn && liveTurn.conversationId === activeId && liveTurn.queued) || [];
+  const openHere = openTurns.filter(t => t.conversationId === activeId);
+  const turnRunning = busy || openHere.length > 0 || !!(liveTurn && liveTurn.conversationId === activeId);
+  // Prompts waiting behind the running turn, each with how many turns are ahead of it. This surface's
+  // own waiting prompt is its bubble, and Stop is what cancels it.
+  const queuedHere = (liveTurn && liveTurn.conversationId === activeId && liveTurn.queued && liveTurn.queued.length
+    ? liveTurn.queued
+    : openHere.filter(t => t.state === "queued" && t.turnId !== ownTurnIdRef.current)
+      .map((t) => ({ turnId: t.turnId, prompt: t.prompt, ahead: openHere.indexOf(t) })));
 
   // Run one command at the assistant and render what it answered. The assistant performs every command it
   // lists, so there is no client-side branch on WHAT a command does — only on what its result
@@ -1600,7 +1717,9 @@ function Chat({
               {queuedHere.map(q => (
                 <div key={q.turnId} className="chat-queue__row">
                   <Icon name="clock" size={14} className="chat-queue__icon" />
-                  <span className="chat-queue__text" title={q.prompt}>Queued: {q.prompt}</span>
+                  <span className="chat-queue__text" title={q.prompt}>
+                    {q.ahead === undefined ? "Queued" : q.ahead > 1 ? "Queued, " + q.ahead + " ahead" : "Queued, next"}: {q.prompt}
+                  </span>
                   <IconButton icon="x" label="Discard queued message" variant="ghost" size="xs"
                     onClick={() => cancelQueued(q.turnId)} />
                 </div>

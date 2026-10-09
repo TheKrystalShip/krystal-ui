@@ -73,10 +73,11 @@ function promotePendingCards(bubble) {
   return { ...rest, cards: (bubble.cards || []).concat(pendingCards) };
 }
 
-// The wait the context's compaction puts the answer in ends with the next frame of any other kind.
+// The waits an answer can be in — behind another turn on its conversation (`waiting`, the count of
+// turns ahead), or while the context is compacted — end with the next frame of any other kind.
 function withoutCompacting(bubble) {
-  if (!bubble.compacting) return bubble;
-  const { compacting, ...rest } = bubble;
+  if (!bubble.compacting && !bubble.waiting) return bubble;
+  const { compacting, waiting, ...rest } = bubble;
   return rest;
 }
 
@@ -174,6 +175,10 @@ function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
       break;
     case "thinking.delta":
       msgs[lastIdx] = { ...withoutCompacting(bubble), thinking: (bubble.thinking || "") + (ev.text || "") };
+      break;
+    case "turn.started":
+      // The turn waits behind another on its conversation, and begins when that one ends.
+      if (ev.queuedBehind) msgs[lastIdx] = { ...bubble, waiting: ev.ahead || 1 };
       break;
     case "context.compacting":
       // The context is being reduced to fit the window; `summarizing` is the stage that can take

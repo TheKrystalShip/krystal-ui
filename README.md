@@ -300,7 +300,8 @@ next turn. `clientFor` is called with the assistant's id, and must be stable acr
 A client is `createAssistantClient`'s shape, and these members are optional: `attach` and `streamId`
 (an assistant whose event stream sends one conversation's turn frames), `declines: true` (the confirm
 channel takes `{ token, decision: "decline" }`, which gives a proposal card a Decline button), and
-`wakeSpeech()` (called when the microphone opens). A `question` frame is drawn as choices and a
+`wakeSpeech()` (called when the microphone opens), and `turns()` with `follow(turnId, { signal, onEvent })`
+(the turns the person has open on any surface, and reading one of them frame by frame). A `question` frame is drawn as choices and a
 field for the person's own words, and the answers go out as the next turn's `answers`.
 
 A site whose frame has a sidebar can keep the conversation list there: `railTarget` is the element

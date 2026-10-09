@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.20.0]
+
+### Added
+- **A turn running on another surface is seen and followed.** `turn.started` and `turn.ended` on the
+  event stream keep a list of the person's open turns (read whole through the client's optional
+  `turns()` on arrival, on a reconnect and on returning to the foreground). A running turn on the open
+  conversation that this surface did not start is read through the client's optional `follow(turnId,
+  { signal, onEvent })`, so its prompt and the reply so far appear and the rest is drawn as it is
+  written; when it ends the conversation is read again. The composer is busy for it, Stop reaches it,
+  and a prompt waiting behind it shows as a chip with its place and a discard.
+- A turn this surface sent that waits behind another says so on its answer ("Waiting for the turn ahead",
+  with how many are ahead) until its first frame.
+
 ## [0.19.0]
 
 ### Added
