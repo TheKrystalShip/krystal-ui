@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.21.0]
+
+### Added
+- **`CollectionTile`**: a set of titles as a link, drawn from its posters. `variant="fan"` sets a mark
+  and a name at the left with three posters fanned inside the right edge, for a set whose order means
+  nothing; `variant="strip"` lays its posters along the top in order, numbered, with the rest counted,
+  and with `total` and `watched` follows somebody through it: the titles ahead dim, a segment per title
+  fills, `next` is named, and `doneLabel` once all are watched. It fills the width it is given at 16:9
+  (`size="sm"`: 25:16 and one poster fewer in a strip) and sizes everything inside from that width. On
+  a television it is a flat wide card focused as a `TvCard` is. Styles: `styles/collection-tile.css`.
+
 ## [0.20.2]
 
 ### Fixed

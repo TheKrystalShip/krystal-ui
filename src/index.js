@@ -21,6 +21,7 @@ export { ChatActivity } from "./chat/ChatActivity.jsx";
 export {
   ChatCommand, ChatDaySeparator, ChatEvent, ChatEventRow, ChatFileChange, ChatVerify,
 } from "./chat/ChatMessageParts.jsx";
+export { CollectionTile } from "./components/CollectionTile.jsx";
 export { ChatCard, ChatCardRow, ChatCardRows, ConfidenceBadge } from "./chat/ChatCard.jsx";
 export { ChatMessage } from "./chat/ChatMessage.jsx";
 export { ChatThread } from "./chat/ChatThread.jsx";

@@ -1,0 +1,275 @@
+/* ============================================================================
+   collection-tile.css — <CollectionTile>: a set of titles by its posters,
+   fanned (a mood, a category) or in a numbered strip (a series)
+   ============================================================================ */
+/* The tile fills the width it is given at a fixed shape and is its own container, so what is inside it
+   is sized from its width in a rail, a phone's grid or a television's row alike. */
+.collection-tile {
+  container-type: inline-size;
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: var(--surface-1);
+  border: var(--edge);
+  border-radius: var(--r-md);
+  color: var(--fg-1);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--d-base) var(--ease-out),
+    border-color var(--d-base) var(--ease-out),
+    box-shadow var(--d-base) var(--ease-out);
+}
+
+.collection-tile--sm {
+  aspect-ratio: 25 / 16;
+}
+
+.collection-tile:hover {
+  color: var(--fg-1);
+  border-color: var(--border-strong);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-2);
+}
+
+.collection-tile:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+  border-color: var(--border-accent);
+}
+
+.collection-tile__name {
+  font-size: clamp(13px, 5.3cqi, 18px);
+  font-weight: var(--w-semibold);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+
+/* ---- fan ------------------------------------------------------------------ */
+
+.collection-tile--fan {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(10px, 4.7cqi, 18px);
+}
+
+.collection-tile__mark {
+  position: relative;
+  z-index: 1;
+  width: clamp(26px, 10.7cqi, 40px);
+  aspect-ratio: 1;
+  border-radius: var(--r-pill);
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collection-tile__mark svg {
+  width: 50%;
+  height: 50%;
+}
+
+.collection-tile__text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 46%;
+}
+
+.collection-tile__caption {
+  font-family: var(--font-mono);
+  font-size: clamp(10.5px, 3.7cqi, 13px);
+  color: var(--fg-3);
+}
+
+/* The posters stay inside the tile: a tilted poster reaches past its box by about a tenth of its
+   width, which the fan's inset from the right edge leaves room for. */
+.collection-tile__fan {
+  position: absolute;
+  top: 11%;
+  bottom: 11%;
+  right: 4.7cqi;
+  width: 52%;
+}
+
+.collection-tile__poster {
+  position: absolute;
+  aspect-ratio: 2 / 3;
+  height: 82%;
+  background: var(--surface-3) center / cover;
+  border: var(--edge-strong);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-2);
+}
+
+.collection-tile__poster--a { right: 44%; top: 12%; transform: rotate(-7deg); }
+.collection-tile__poster--b { right: 22%; top: 2%; height: 88%; z-index: 1; }
+.collection-tile__poster--c { right: 3%; top: 12%; transform: rotate(7deg); z-index: 2; }
+
+/* ---- strip ------------------------------------------------------------------ */
+
+.collection-tile__strip {
+  position: absolute;
+  left: clamp(8px, 3.3cqi, 12px);
+  right: clamp(8px, 3.3cqi, 12px);
+  top: clamp(8px, 3.3cqi, 12px);
+  bottom: clamp(44px, 18cqi, 64px);
+  display: flex;
+  gap: clamp(4px, 2cqi, 8px);
+}
+
+.collection-tile--sm .collection-tile__strip {
+  bottom: clamp(42px, 24cqi, 56px);
+}
+
+.collection-tile__cell {
+  position: relative;
+  flex: none;
+  height: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--r-sm);
+  background: var(--surface-3) center / cover;
+  transition: opacity var(--d-base) var(--ease-out), filter var(--d-base) var(--ease-out);
+}
+
+.collection-tile__cell.is-ahead {
+  opacity: .32;
+  filter: grayscale(.6);
+}
+
+.collection-tile__more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 4.3cqi, 15px);
+  font-weight: var(--w-semibold);
+  color: var(--fg-2);
+}
+
+/* The number sits on the poster's art, which is dark under it in every theme. */
+.collection-tile__num {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--canvas) 80%, transparent);
+  color: var(--fg-1);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: var(--w-semibold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collection-tile__foot {
+  position: absolute;
+  left: clamp(10px, 4cqi, 14px);
+  right: clamp(10px, 4cqi, 14px);
+  bottom: clamp(9px, 3.4cqi, 13px);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.collection-tile__segs {
+  display: flex;
+  gap: 3px;
+}
+
+.collection-tile__segs i {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--fg-1) 14%, transparent);
+}
+
+.collection-tile__segs i.is-on {
+  background: var(--krystal-teal);
+}
+
+.collection-tile__line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.collection-tile__line .collection-tile__name {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.collection-tile__state {
+  margin-left: auto;
+  flex: 0 1 auto;
+  max-width: 58%;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-mono);
+  font-size: clamp(10.5px, 3.7cqi, 13px);
+  color: var(--fg-3);
+}
+
+.collection-tile__state.is-next {
+  color: var(--krystal-teal-hover);
+}
+
+/* ---- on a television ------------------------------------------------------- */
+/* A television's tile is one of its row's wide cards: flat, without an edge, and focused as a TvCard is,
+   lifted on its shadow with the hairline and the accent's light, the rest of its row stepped back. */
+
+:root[data-tv] .collection-tile {
+  flex: none;
+  width: var(--tv-wide-w);
+  border: none;
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+}
+
+:root[data-tv] .collection-tile:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+:root[data-tv] .collection-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--fg-1);
+  opacity: 0;
+  transition: opacity var(--d-base) var(--ease-out);
+  pointer-events: none;
+}
+
+:root[data-tv] .collection-tile:focus-visible {
+  transform: scale(var(--tv-lift));
+  box-shadow: var(--glow-accent), var(--shadow-lift);
+  z-index: 1;
+}
+
+:root[data-tv] .collection-tile:focus-visible::after {
+  opacity: 1;
+}
+
+:root[data-tv] .tv-row__track:focus-within .collection-tile:not(:focus-visible) {
+  opacity: var(--tv-dim);
+}
