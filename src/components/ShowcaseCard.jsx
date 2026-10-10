@@ -16,9 +16,13 @@ import { Icon } from "./Icon.jsx";
 //            switch that is on. Shown on hover or focus where there is a pointer that hovers, always
 //            on a touch screen
 //   progress a number from 0 to 1, drawn as a bar along the art's foot; 1 is complete
+//   ribbon   { icon, iconOn?, on, label, onClick, disabled? }   a switch hanging from the art's top
+//            edge on the left, for keeping the thing: filled with `iconOn` while on and always shown,
+//            otherwise shown like the tools. `onClick` gets the press's event, whose `currentTarget`
+//            is the ribbon, for anything drawn beside it. A `corner` moves over to make room
 //
 // A status left out still keeps its line, so a card with nothing to say is as tall as one that has.
-function ShowcaseCard({ name, art, onPick, corner, badge, specs = [], status, action, tools, progress, className }) {
+function ShowcaseCard({ name, art, onPick, corner, badge, specs = [], status, action, tools, progress, ribbon, className }) {
   const open = () => { if (onPick) onPick(); };
   return (
     <article
@@ -27,7 +31,25 @@ function ShowcaseCard({ name, art, onPick, corner, badge, specs = [], status, ac
       role="button" tabIndex={0}
       onKeyDown={e => { if ((e.key === "Enter" || e.key === " ") && e.target === e.currentTarget) { e.preventDefault(); open(); } }}
     >
-      <div className="showcase-card__art" style={art ? { backgroundImage: art, backgroundSize: "cover", backgroundPosition: "center" } : undefined}>
+      <div
+        className={"showcase-card__art" + (ribbon ? " showcase-card__art--ribbon" : "")}
+        style={art ? { backgroundImage: art, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
+      >
+        {ribbon && (
+          <button
+            type="button"
+            className={"showcase-card__ribbon" + (ribbon.on ? " is-on" : "")}
+            aria-label={ribbon.label}
+            aria-pressed={!!ribbon.on}
+            title={ribbon.label}
+            disabled={ribbon.disabled}
+            onClick={e => { e.stopPropagation(); ribbon.onClick(e); }}
+          >
+            <span className="showcase-card__ribbon-tab">
+              <Icon name={ribbon.on ? ribbon.iconOn || ribbon.icon : ribbon.icon} size={15} strokeWidth={2.1} />
+            </span>
+          </button>
+        )}
         {corner && (
           <span className="showcase-card__corner" title={corner.title}>
             {corner.icon && <Icon name={corner.icon} size={11} strokeWidth={2.1} />} {corner.label}

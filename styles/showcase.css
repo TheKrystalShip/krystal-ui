@@ -195,6 +195,90 @@
   }
 }
 
+/* A switch for keeping the thing, hanging from the art's top edge on the left like a bookmark's
+   ribbon. The button is the size a finger needs and the tab drawn in it is smaller. On, it is filled
+   and always shown; off, a hovering pointer finds it on the card it is over, and a touch screen, which
+   has no hover, always shows it. */
+.showcase-card__ribbon {
+  position: absolute;
+  top: 0;
+  left: 4px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  width: 44px;
+  height: 50px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+  transition: opacity var(--d-base) var(--ease-out);
+}
+
+.showcase-card__ribbon-tab {
+  display: flex;
+  justify-content: center;
+  padding-top: 9px;
+  width: 28px;
+  height: 40px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+  background: color-mix(in srgb, var(--canvas) 62%, transparent);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  transition: background var(--d-base) var(--ease-out), height var(--d-base) var(--ease-out);
+}
+
+.showcase-card__ribbon:hover .showcase-card__ribbon-tab {
+  background: color-mix(in srgb, var(--canvas) 82%, transparent);
+  height: 44px;
+}
+
+.showcase-card__ribbon.is-on .showcase-card__ribbon-tab {
+  background: var(--krystal-teal);
+  color: var(--on-accent);
+}
+
+.showcase-card__ribbon:focus-visible {
+  outline: none;
+}
+
+.showcase-card__ribbon:focus-visible .showcase-card__ribbon-tab {
+  box-shadow: inset 0 0 0 2px var(--fg-1);
+}
+
+.showcase-card__ribbon:disabled {
+  cursor: default;
+}
+
+.showcase-card__ribbon:disabled .showcase-card__ribbon-tab {
+  opacity: 0.55;
+}
+
+.showcase-card__art--ribbon .showcase-card__corner {
+  left: 50px;
+  max-width: calc(100% - 60px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .showcase-card__ribbon {
+    opacity: 0;
+  }
+
+  .showcase-card:hover .showcase-card__ribbon,
+  .showcase-card:focus-within .showcase-card__ribbon,
+  .showcase-card__ribbon.is-on {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase-card__ribbon,
+  .showcase-card__ribbon-tab {
+    transition: none;
+  }
+}
+
 /* How far through the thing somebody is, along the art's foot. */
 .showcase-card__progress {
   position: absolute;

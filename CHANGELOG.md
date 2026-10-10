@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.23.0]
+
+### Added
+- **`ShowcaseCard`'s `ribbon`**: a switch hanging from the art's top edge on the left, for keeping the
+  thing without opening it. While `on` it is filled, draws `iconOn`, and is always shown; while off it
+  is shown on the card a fine pointer hovers or that holds focus, and always on a touch screen. Its
+  button is a finger's size around a smaller tab, `onClick` gets the press's event, and a `corner`
+  moves over to make room. Styles: `.showcase-card__ribbon`, `.showcase-card__ribbon-tab`.
+
 ## [0.22.0]
 
 ### Added
