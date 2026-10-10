@@ -1,12 +1,11 @@
 # CLAUDE.md
 
-Guidance for Claude Code working in this repository. The workspace root `../CLAUDE.md` carries the
-ecosystem rules, including the documentation canon and the no-emoji rule.
-
 `krystal-ui` is the design system every TheKrystalShip web surface is built from: React components,
-the stores they read, and the stylesheets that draw them. It is consumed as a versioned package,
-`@thekrystalship/krystal-ui`, from GitHub Packages' npm registry — never by relative path — so a
-consumer builds standing alone and compiles against its pin. `README.md` covers using it.
+the stores they read, and the stylesheets that draw them, consumed as the versioned package
+`@thekrystalship/krystal-ui` and never by relative path. `README.md` covers using it. What it owns and
+who consumes it: `../kgsm-docs/components/krystal-ui.md`; the system:
+`../kgsm-docs/systems/design-system/README.md` and
+`../kgsm-docs/decisions/0046-design-system-is-a-versioned-package.md`.
 
 ## What belongs here
 
@@ -20,7 +19,7 @@ When a site's component needs to come here and it reaches into that site's data 
 in the site first (take the value as a prop, split the module) and move the half that is only view.
 
 **The chat speaks a contract, and its words are that contract's.** `src/chat/` is a client of the
-assistant wire contract (`tks-assistant/docs/wire-contract.md`), so the frame and field names that
+assistant wire contract (`../kgsm-docs/reference/assistant-wire-contract.md`), so the frame and field names that
 contract defines — `proposal`, `question`, `done`, a stepping tool's `progress` — are what it reads. What a product makes of them is the product's: its cards, its verbs and their
 verdicts arrive through `profile` and the render slots, never as a branch here.
 
