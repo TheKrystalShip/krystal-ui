@@ -21,6 +21,7 @@ export { ChatActivity } from "./chat/ChatActivity.jsx";
 export {
   ChatCommand, ChatDaySeparator, ChatEvent, ChatEventRow, ChatFileChange, ChatVerify,
 } from "./chat/ChatMessageParts.jsx";
+export { CarouselPager } from "./components/CarouselPager.jsx";
 export { CollectionTile } from "./components/CollectionTile.jsx";
 export { ChatCard, ChatCardRow, ChatCardRows, ConfidenceBadge } from "./chat/ChatCard.jsx";
 export { ChatMessage } from "./chat/ChatMessage.jsx";
@@ -64,6 +65,7 @@ export {
   Toolbar, ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, useFilters,
 } from "./components/Toolbar.jsx";
 
+export { useCarousel } from "./hooks/useCarousel.js";
 export { useEdgeSwipe } from "./hooks/useEdgeSwipe.js";
 export { usePortalPopover } from "./hooks/usePortalPopover.js";
 export { useStoredFlag } from "./hooks/useStoredFlag.js";

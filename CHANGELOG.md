@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.22.0]
+
+### Added
+- **`useCarousel`**: one of `count` slides at a time, turning to the next every `interval` and back to
+  the first after the last. It holds still while a mouse is over the slides, while keyboard focus is in
+  them (`pauseOnFocus`), while the page is hidden and while `paused` is set, keeps what was left of a
+  slide's time across a pause, and never turns by itself under reduced motion. A key or a press in the
+  slides starts the slide's time over, and a touch swiped across them turns them. `rootProps` go on
+  what holds the slides.
+- **`CarouselPager`**: a mark a slide under a `useCarousel`, the shown one long and filling over the
+  slide's time, held while the slides are held. Choosing a mark shows its slide; `indicator` draws the
+  marks unfocusable, for a television. Styles: `styles/carousel.css`.
+
 ## [0.21.2]
 
 ### Fixed
