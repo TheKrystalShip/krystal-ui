@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.21.2]
+
+### Fixed
+- A `CollectionTile` of `size="sm"` draws its fan above its name's line rather than beside it, so a
+  name as long as the tile is wide never runs under the posters.
+
 ## [0.21.1]
 
 ### Fixed
