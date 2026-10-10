@@ -6,8 +6,10 @@ import { Icon } from "./Icon.jsx";
 //
 //   art      a CSS background-image value (`url(...)`, a gradient, or both), or nothing for the
 //            surface the card already has
+//   eyebrow  { label, icon?, tone?: "accent" }   what kind of thing it is, a short line set on the
+//            art above the name
 //   corner   { label, icon?, title? }   a caution chip on the art's top-left
-//   badge    { label, tone: "accent" | "info", dot?: "idle" | "live", title? }   the art's top-right
+//   badge   { label, tone: "accent" | "info", dot?: "idle" | "live", title? }   the art's top-right
 //   specs    [{ icon, value, label }]   a null value reads as an em-dash, muted
 //   status   { label, icon?, tone?: "success" | "warning" | "notice" | "active", live?, title? }
 //   action   { label, onClick?, title? }   a button when it has onClick, otherwise the card's cue
@@ -16,13 +18,16 @@ import { Icon } from "./Icon.jsx";
 //            switch that is on. Shown on hover or focus where there is a pointer that hovers, always
 //            on a touch screen
 //   progress a number from 0 to 1, drawn as a bar along the art's foot; 1 is complete
+//   segments [number from 0 to 1]   the thing as parts in order (a series' seasons), drawn along the
+//            art's foot as one short bar per part, each filled as far as its number. It takes the
+//            foot in place of `progress`
 //   ribbon   { icon, iconOn?, on, label, onClick, disabled? }   a switch hanging from the art's top
 //            edge on the left, for keeping the thing: filled with `iconOn` while on and always shown,
 //            otherwise shown like the tools. `onClick` gets the press's event, whose `currentTarget`
 //            is the ribbon, for anything drawn beside it. A `corner` moves over to make room
 //
 // A status left out still keeps its line, so a card with nothing to say is as tall as one that has.
-function ShowcaseCard({ name, art, onPick, corner, badge, specs = [], status, action, tools, progress, ribbon, className }) {
+function ShowcaseCard({ name, art, onPick, eyebrow, corner, badge, specs = [], status, action, tools, progress, segments, ribbon, className }) {
   const open = () => { if (onPick) onPick(); };
   return (
     <article
@@ -79,8 +84,22 @@ function ShowcaseCard({ name, art, onPick, corner, badge, specs = [], status, ac
           </div>
         )}
         <div className="showcase-card__veil"></div>
-        <h3 className="showcase-card__name">{name}</h3>
-        {progress != null && (
+        <div className="showcase-card__caption">
+          {eyebrow && (
+            <span className={"showcase-card__eyebrow" + (eyebrow.tone ? " showcase-card__eyebrow--" + eyebrow.tone : "")}>
+              {eyebrow.icon && <Icon name={eyebrow.icon} size={12} strokeWidth={2.1} />}
+              {eyebrow.label}
+            </span>
+          )}
+          <h3 className="showcase-card__name">{name}</h3>
+        </div>
+        {segments && segments.length > 0 ? (
+          <span className="showcase-card__segments" aria-hidden="true">
+            {segments.map((f, i) => (
+              <span key={i}><span style={{ width: `${Math.round(100 * Math.min(1, Math.max(0, f)))}%` }}></span></span>
+            ))}
+          </span>
+        ) : progress != null && (
           <span className={"showcase-card__progress" + (progress >= 1 ? " is-done" : "")} aria-hidden="true">
             <span style={{ width: `${Math.round(100 * Math.min(1, Math.max(0, progress)))}%` }}></span>
           </span>

@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.24.0]
+
+### Added
+- **`ShowcaseCard`'s `eyebrow`**: `{ label, icon?, tone?: "accent" }`, a short line set on the art
+  above the name saying what kind of thing the card is. It is light on the dark art in every theme,
+  and `"accent"` mixes the theme's accent toward white so it reads there too. Styles:
+  `.showcase-card__eyebrow`, `.showcase-card__eyebrow--accent`.
+- **`ShowcaseCard`'s `segments`**: an array of fractions from 0 to 1, the thing's parts in order,
+  drawn along the art's foot as one short bar per part, each filled as far as its fraction. It takes
+  the foot in place of `progress`. Styles: `.showcase-card__segments`.
+
+### Changed
+- The name and the eyebrow sit in `.showcase-card__caption`, which is placed at the art's foot;
+  `.showcase-card__name` is no longer positioned itself.
+
 ## [0.23.0]
 
 ### Added

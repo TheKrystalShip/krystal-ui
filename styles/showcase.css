@@ -44,13 +44,46 @@
   background: linear-gradient(to top, color-mix(in srgb, var(--canvas) 94%, transparent) 4%, color-mix(in srgb, var(--canvas) 25%, transparent) 46%, transparent 78%);
 }
 
-/* The art is dark under the veil in every theme, so the name on it is white in every theme. */
-.showcase-card__name {
+/* The name and the line above it, set at the art's foot. */
+.showcase-card__caption {
   position: absolute;
   left: 14px;
   right: 14px;
   bottom: 11px;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* The art is dark under the veil in every theme, so the words on it are light in every theme. */
+.showcase-card__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.showcase-card__eyebrow svg {
+  flex-shrink: 0;
+}
+
+/* The accent mixed toward white, so it reads on the dark art in a theme whose accent is dark. */
+.showcase-card__eyebrow--accent {
+  color: color-mix(in srgb, var(--krystal-teal) 60%, #fff);
+}
+
+.showcase-card__name {
   margin: 0;
   font-size: 16px;
   font-weight: 700;
@@ -298,6 +331,29 @@
 
 .showcase-card__progress.is-done > span {
   background: var(--success);
+}
+
+/* The thing's parts along the art's foot, a short bar each, filled as far as somebody got. */
+.showcase-card__segments {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  gap: 2px;
+  height: 4px;
+}
+
+.showcase-card__segments > span {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.showcase-card__segments > span > span {
+  display: block;
+  height: 100%;
+  background: var(--krystal-teal);
 }
 
 .showcase-card__specs {
