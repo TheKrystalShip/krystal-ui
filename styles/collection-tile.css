@@ -99,6 +99,10 @@
   width: 52%;
 }
 
+/* A phone's tile is narrow for its name: the fan takes less of it. */
+.collection-tile--sm .collection-tile__fan { width: 44%; }
+.collection-tile--sm .collection-tile__text { max-width: 54%; }
+
 .collection-tile__poster {
   position: absolute;
   aspect-ratio: 2 / 3;

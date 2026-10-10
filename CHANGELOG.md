@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.21.1]
+
+### Fixed
+- A `CollectionTile` of `size="sm"` keeps its fan clear of its name: the fan is narrower and the name
+  has more of the tile.
+
 ## [0.21.0]
 
 ### Added
