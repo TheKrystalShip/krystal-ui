@@ -12,6 +12,9 @@ import { Icon } from "./Icon.jsx";
 //                    segment per title fills, and `next` is named; with all of them watched it says
 //                    `doneLabel`. `caption` is what it says before any is watched.
 //
+// A poster is an image loaded lazily, so tiles far down a page or along a rail cost nothing until
+// they near the screen; its slot shows the surface colour until it arrives.
+//
 // `size` "sm" is the shape for a phone's grid: a little taller for its width, and a strip shows one
 // poster fewer. `label` is the accessible name when `name` alone does not say enough. Every other prop
 // reaches the link, so a site hands it `href` and `onClick`; on a television (`data-tv`) it takes focus
@@ -32,6 +35,10 @@ function CollectionTile({
   );
 }
 
+function Art({ src }) {
+  return <img className="collection-tile__art" src={src} alt="" loading="lazy" decoding="async" />;
+}
+
 function Fan({ name, icon, caption, posters }) {
   // Fewer than three posters stack in from the right, so the fan never leaves a hole at its edge.
   const shown = posters.filter(Boolean).slice(0, 3);
@@ -40,8 +47,9 @@ function Fan({ name, icon, caption, posters }) {
     <>
       <span className="collection-tile__fan" aria-hidden="true">
         {shown.map((src, i) => (
-          <span key={i} className={"collection-tile__poster collection-tile__poster--" + places[i]}
-            style={{ backgroundImage: `url("${src}")` }} />
+          <span key={i} className={"collection-tile__poster collection-tile__poster--" + places[i]}>
+            <Art src={src} />
+          </span>
         ))}
       </span>
       {icon && <span className="collection-tile__mark" aria-hidden="true"><Icon name={icon} size={16} /></span>}
@@ -65,8 +73,8 @@ function Strip({ name, caption, posters, total, watched, next, doneLabel, fit })
       <span className="collection-tile__strip" aria-hidden="true">
         {shown.map((src, i) => (
           <span key={i}
-            className={"collection-tile__cell" + (started && !done && i >= watched ? " is-ahead" : "")}
-            style={src ? { backgroundImage: `url("${src}")` } : undefined}>
+            className={"collection-tile__cell" + (started && !done && i >= watched ? " is-ahead" : "")}>
+            {src && <Art src={src} />}
             <span className="collection-tile__num">{i + 1}</span>
           </span>
         ))}

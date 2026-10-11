@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.26.0]
+
+### Changed
+- **`CollectionTile`'s posters load lazily.** Each poster is an image (`.collection-tile__art`) filling
+  its slot, `.collection-tile__poster` in a fan and `.collection-tile__cell` in a strip, loaded lazily
+  and decoded off the main thread, so a tile far down a page or along a rail fetches nothing until it
+  nears the screen. A slot shows `--surface-3` until its poster arrives.
+
 ## [0.25.1]
 
 ### Fixed
