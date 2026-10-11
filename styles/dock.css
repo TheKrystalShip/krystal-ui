@@ -94,10 +94,13 @@
   background: var(--krystal-teal);
 }
 
-/* On phones the dock takes the whole width. */
+/* On phones the dock takes the whole width, so it has no width to drag and no handle. */
 @media (max-width: 768px) {
   .assistant-dock {
     width: 100vw;
     border-left: none;
+  }
+  .assistant-dock__resize {
+    display: none;
   }
 }

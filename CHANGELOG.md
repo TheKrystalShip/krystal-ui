@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.25.1]
+
+### Fixed
+- **The dock has no resize handle on phones.** At 768px and narrower the dock takes the whole width,
+  so `.assistant-dock__resize` is not shown there; wider, it keeps the tab.
+
 ## [0.25.0]
 
 ### Changed
