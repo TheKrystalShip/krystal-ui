@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.25.0]
+
+### Changed
+- **The dock's resize handle is a tab inside the dock's left edge.** `.assistant-dock__resize` is a
+  14px strip along the inside of the edge, and its `::before` is the tab: 6px wide and 40px long, its
+  long side along the edge, its ends cut at 45 degrees, nothing of it outside the panel. It is
+  `--border-strong` at rest and `--krystal-teal` under a pointer or while held
+  (`.assistant-dock__resize--active`). A site's drawer from the bottom edge draws the same tab lying
+  along its top edge.
+
 ## [0.24.0]
 
 ### Added
