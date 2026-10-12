@@ -1,3 +1,4 @@
+import React from "react";
 import { Icon } from "./Icon.jsx";
 
 // CollectionTile — a set of titles shown by its posters, as a link. It fills the width it is given
@@ -12,25 +13,68 @@ import { Icon } from "./Icon.jsx";
 //                    segment per title fills, and `next` is named; with all of them watched it says
 //                    `doneLabel`. `caption` is what it says before any is watched.
 //
-// A poster is an image loaded lazily, so tiles far down a page or along a rail cost nothing until
-// they near the screen; its slot shows the surface colour until it arrives.
+// A tile asks for its posters once it is within half a screen of being seen, counted past the clipped
+// edge of a rail it scrolls in, so tiles further down a page or along a rail cost nothing until then;
+// a poster's slot shows the surface colour until it arrives.
 //
 // `size` "sm" is the shape for a phone's grid: a little taller for its width, and a strip shows one
 // poster fewer. `label` is the accessible name when `name` alone does not say enough. Every other prop
 // reaches the link, so a site hands it `href` and `onClick`; on a television (`data-tv`) it takes focus
 // as a TvCard does.
+/**
+ * The one observer every tile shares, made when the first tile asks. `scrollMargin` is what reaches
+ * past a rail's clipped edge; an engine without it could not see a tile there until it was scrolled
+ * into view, so there it is `null`, every tile is near from the start, and its images are left to the
+ * browser's own lazy loading.
+ */
+let nearby;
+function observer() {
+  if (nearby !== undefined) return nearby;
+  if (typeof IntersectionObserver !== "function" || !("scrollMargin" in IntersectionObserver.prototype)) return (nearby = null);
+  const waiting = new Map();
+  const watcher = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const near = waiting.get(entry.target);
+      waiting.delete(entry.target);
+      watcher.unobserve(entry.target);
+      if (near) near();
+    }
+  }, { rootMargin: "50% 0px", scrollMargin: "50%" });
+  nearby = {
+    watch(el, near) {
+      waiting.set(el, near);
+      watcher.observe(el);
+      return () => { waiting.delete(el); watcher.unobserve(el); };
+    },
+  };
+  return nearby;
+}
+
+/** Whether the element `ref` holds is within half a screen of being seen, once it has been. */
+function useNear(ref) {
+  const [near, setNear] = React.useState(() => observer() === null);
+  React.useEffect(() => {
+    if (near || !ref.current) return undefined;
+    return observer().watch(ref.current, () => setNear(true));
+  }, [near, ref]);
+  return near;
+}
+
 function CollectionTile({
   variant = "fan", name, icon, caption, posters = [], total, watched = 0, next, doneLabel = "Watched",
   size = "md", label, className, ...rest
 }) {
+  const ref = React.useRef(null);
+  const near = useNear(ref);
   const cls = "collection-tile collection-tile--" + variant + " collection-tile--" + size
     + (className ? " " + className : "");
   return (
-    <a className={cls} aria-label={label || name} {...rest}>
+    <a ref={ref} className={cls} aria-label={label || name} {...rest}>
       {variant === "strip"
         ? <Strip name={name} caption={caption} posters={posters} total={total} watched={watched} next={next}
-            doneLabel={doneLabel} fit={size === "sm" ? 3 : 4} />
-        : <Fan name={name} icon={icon} caption={caption} posters={posters} />}
+            doneLabel={doneLabel} fit={size === "sm" ? 3 : 4} near={near} />
+        : <Fan name={name} icon={icon} caption={caption} posters={posters} near={near} />}
     </a>
   );
 }
@@ -39,7 +83,7 @@ function Art({ src }) {
   return <img className="collection-tile__art" src={src} alt="" loading="lazy" decoding="async" />;
 }
 
-function Fan({ name, icon, caption, posters }) {
+function Fan({ name, icon, caption, posters, near }) {
   // Fewer than three posters stack in from the right, so the fan never leaves a hole at its edge.
   const shown = posters.filter(Boolean).slice(0, 3);
   const places = ["c", "b", "a"].slice(0, shown.length).reverse();
@@ -48,7 +92,7 @@ function Fan({ name, icon, caption, posters }) {
       <span className="collection-tile__fan" aria-hidden="true">
         {shown.map((src, i) => (
           <span key={i} className={"collection-tile__poster collection-tile__poster--" + places[i]}>
-            <Art src={src} />
+            {near && <Art src={src} />}
           </span>
         ))}
       </span>
@@ -61,7 +105,7 @@ function Fan({ name, icon, caption, posters }) {
   );
 }
 
-function Strip({ name, caption, posters, total, watched, next, doneLabel, fit }) {
+function Strip({ name, caption, posters, total, watched, next, doneLabel, fit, near }) {
   const count = total != null ? total : posters.length;
   const over = count > fit;
   const shown = posters.slice(0, over ? fit - 1 : fit);
@@ -74,7 +118,7 @@ function Strip({ name, caption, posters, total, watched, next, doneLabel, fit })
         {shown.map((src, i) => (
           <span key={i}
             className={"collection-tile__cell" + (started && !done && i >= watched ? " is-ahead" : "")}>
-            {src && <Art src={src} />}
+            {src && near && <Art src={src} />}
             <span className="collection-tile__num">{i + 1}</span>
           </span>
         ))}

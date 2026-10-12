@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.26.1]
+
+### Changed
+- **A `CollectionTile` asks for its posters within half a screen of being seen.** One
+  `IntersectionObserver` shared by every tile watches with half a screen of margin, counted past the
+  clipped edge of a rail the tile scrolls in (`scrollMargin`), and a tile draws its posters' images once
+  it is that near. The browser's own lazy loading reaches much further, which on a page a few screens
+  tall is all of it. An engine without `scrollMargin` draws them at once and leaves them to that lazy
+  loading.
+
 ## [0.26.0]
 
 ### Changed
