@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.26.2]
+
+### Changed
+- **On a television, focus is lit by the glow alone, drawn at once.** A focused card, collection
+  tile, button, place in the bar or pill keeps its lift and its glow, without the drop shadow under
+  it, and the glow no longer eases in: either one is painted again at the panel's resolution on every
+  frame of the lift, which a television's GPU does not keep up with. On the reference Fire TV, moving
+  through Home's and Movies' rows misses a frame budget 32 times over the sweep's 28 moves rather than
+  99 to 103.
+
 ## [0.26.1]
 
 ### Changed
