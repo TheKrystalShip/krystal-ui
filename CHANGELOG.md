@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.26.4]
+
+### Changed
+- **A `TvCard` asks for its picture once it is a quarter of a screen from being seen.** Every card is
+  rendered, so it no longer leaves its picture to the browser's lazy loading, whose reach on a
+  television covers a whole page: it shows its surface until it is within a quarter of its scrollers
+  of the screen, down the page and along a row. `useNear` (the hook a `CollectionTile` already used)
+  takes how far ahead to look, and a tile still looks half a screen ahead. A page loads the pictures
+  it did before every card was rendered: on Cinema's Home in the television lab, 40 requests and
+  2.6 MB.
+
 ## [0.26.3]
 
 ### Changed

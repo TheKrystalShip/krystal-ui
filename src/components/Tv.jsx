@@ -1,5 +1,6 @@
 import React from "react";
 import { Icon } from "./Icon.jsx";
+import { useNear } from "../hooks/useNear.js";
 
 // The parts a site is drawn from on a television, under a root marked `data-tv` (styles/tv.css).
 // A television is read from across a room and driven by a remote that moves focus from element to
@@ -103,11 +104,22 @@ function TvRow({ icon, title, count, end, className, children }) {
 
 // TvCard — a picture that is a link: "poster" (2:3) or "wide" (16:9). `progress` (0 to 1) draws how
 // far somebody got; `badge` sits on its top left. `label` is its accessible name. Every other prop
-// reaches the link, so a site hands it `href`, `onClick` and `onFocus`.
+// reaches the link, so a site hands it `href`, `onClick` and `onFocus`. A card asks for its picture
+// once it is within a quarter of its scrollers of being seen (`useNear`), and shows its surface until
+// then: a television's page column and its rows are both scrollers, so that is a quarter screen ahead
+// down the page and along a row, which keeps a page to the pictures it is about to show.
+const CARD_AHEAD = { rootMargin: "0px", scrollMargin: "25%" };
 const TvCard = React.forwardRef(function TvCard({ art, shape = "poster", label, progress, badge, className, children, ...rest }, ref) {
+  const own = React.useRef(null);
+  const near = useNear(own, CARD_AHEAD);
+  const attach = React.useCallback((el) => {
+    own.current = el;
+    if (typeof ref === "function") ref(el);
+    else if (ref) ref.current = el;
+  }, [ref]);
   return (
-    <a ref={ref} className={"tv-card tv-card--" + shape + (className ? " " + className : "")} aria-label={label} {...rest}>
-      {art ? <img className="tv-card__art" src={art} alt="" loading="lazy" decoding="async" /> : <span className="tv-card__name">{label}</span>}
+    <a ref={attach} className={"tv-card tv-card--" + shape + (className ? " " + className : "")} aria-label={label} {...rest}>
+      {art ? (near && <img className="tv-card__art" src={art} alt="" loading="lazy" decoding="async" />) : <span className="tv-card__name">{label}</span>}
       {badge && <span className="tv-card__badge">{badge}</span>}
       {progress != null && (
         <span className="tv-card__progress"><span style={{ width: Math.round(Math.min(1, Math.max(0, progress)) * 100) + "%" }} /></span>

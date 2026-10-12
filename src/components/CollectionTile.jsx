@@ -1,5 +1,6 @@
 import React from "react";
 import { Icon } from "./Icon.jsx";
+import { useNear } from "../hooks/useNear.js";
 
 // CollectionTile — a set of titles shown by its posters, as a link. It fills the width it is given
 // (a rail's item, a grid's cell) at a fixed shape, and everything inside it is sized from that width,
@@ -21,46 +22,6 @@ import { Icon } from "./Icon.jsx";
 // poster fewer. `label` is the accessible name when `name` alone does not say enough. Every other prop
 // reaches the link, so a site hands it `href` and `onClick`; on a television (`data-tv`) it takes focus
 // as a TvCard does.
-/**
- * The one observer every tile shares, made when the first tile asks. `scrollMargin` is what reaches
- * past a rail's clipped edge; an engine without it could not see a tile there until it was scrolled
- * into view, so there it is `null`, every tile is near from the start, and its images are left to the
- * browser's own lazy loading.
- */
-let nearby;
-function observer() {
-  if (nearby !== undefined) return nearby;
-  if (typeof IntersectionObserver !== "function" || !("scrollMargin" in IntersectionObserver.prototype)) return (nearby = null);
-  const waiting = new Map();
-  const watcher = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (!entry.isIntersecting) continue;
-      const near = waiting.get(entry.target);
-      waiting.delete(entry.target);
-      watcher.unobserve(entry.target);
-      if (near) near();
-    }
-  }, { rootMargin: "50% 0px", scrollMargin: "50%" });
-  nearby = {
-    watch(el, near) {
-      waiting.set(el, near);
-      watcher.observe(el);
-      return () => { waiting.delete(el); watcher.unobserve(el); };
-    },
-  };
-  return nearby;
-}
-
-/** Whether the element `ref` holds is within half a screen of being seen, once it has been. */
-function useNear(ref) {
-  const [near, setNear] = React.useState(() => observer() === null);
-  React.useEffect(() => {
-    if (near || !ref.current) return undefined;
-    return observer().watch(ref.current, () => setNear(true));
-  }, [near, ref]);
-  return near;
-}
-
 function CollectionTile({
   variant = "fan", name, icon, caption, posters = [], total, watched = 0, next, doneLabel = "Watched",
   size = "md", label, className, ...rest
