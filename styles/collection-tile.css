@@ -276,6 +276,16 @@
   pointer-events: none;
 }
 
+/* On a television a tile's posters are square-cornered. Each tile draws three or four of them and a
+   page shows rows of tiles, and an image drawn with rounded corners at the panel's resolution costs a
+   television's GPU far more than a square one; at a poster this size, from a sofa, the corner does not
+   show. */
+:root[data-tv] .collection-tile__poster,
+:root[data-tv] .collection-tile__cell,
+:root[data-tv] .collection-tile__art {
+  border-radius: 0;
+}
+
 /* On a television only the lift eases, and focus is lit by the glow alone, drawn at once (tv.css). */
 :root[data-tv] .collection-tile {
   transition: transform var(--d-base) var(--ease-out), border-color var(--d-base) var(--ease-out);

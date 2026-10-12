@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.26.5]
+
+### Changed
+- **On a television a `CollectionTile`'s posters are square-cornered.** An image drawn with rounded
+  corners at the panel's resolution costs a television's GPU far more than a square one, and a tile
+  draws three or four. On the reference Fire TV, moving down through Cinema's Discover misses a frame
+  budget by more than 50 ms 16 to 23 times over 19 moves rather than 33 to 41, and its worst stall is
+  103 to 137 ms rather than 203 to 237.
+
 ## [0.26.4]
 
 ### Changed
