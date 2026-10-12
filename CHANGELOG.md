@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.26.3]
+
+### Changed
+- **Every `TvCard` is rendered, those past the screen's edge too.** A card skipped until it nears the
+  screen was styled and laid out again each time a moving row or page carried it across that edge.
+  On the reference Fire TV, with the site's dimming drawn as an overlay, moving through Home's and
+  Movies' rows and in and out of the bar misses a frame budget 23 to 28 times over 26 moves rather
+  than 33 to 38, and the worst stall crossing into the bar is 120 to 140 ms rather than 220.
+
 ## [0.26.2]
 
 ### Changed

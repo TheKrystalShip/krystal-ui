@@ -345,23 +345,21 @@
   text-decoration: none;
   /* Only the lift eases: opacity changes at once, since a page whose cards all step back together
      would otherwise run a transition on every card, each one styled again on every frame of it, and
-     the glow is drawn at once (focus on a television, above). A card past the screen's edge is
-     skipped until it nears it, at its own size; what it paints outside its box, the glow, is its own
-     and is not clipped. */
+     the glow is drawn at once (focus on a television, above). Every card is rendered, those past the
+     screen's edge too: a card skipped until it nears the screen is styled and laid out again each
+     time a moving row or page carries it across that edge, which costs a television more than
+     drawing it. What a card paints outside its box, the glow, is its own and is not clipped. */
   transition: transform var(--d-base) var(--ease-out);
-  content-visibility: auto;
 }
 
 .tv-card--poster {
   width: var(--tv-poster-w);
   height: var(--tv-poster-h);
-  contain-intrinsic-size: var(--tv-poster-w) var(--tv-poster-h);
 }
 
 .tv-card--wide {
   width: var(--tv-wide-w);
   height: var(--tv-wide-h);
-  contain-intrinsic-size: var(--tv-wide-w) var(--tv-wide-h);
 }
 
 .tv-card__art {
