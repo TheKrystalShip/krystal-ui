@@ -37,6 +37,7 @@
   "scripts": {
     "build": "vite build",
     "prepack": "vite build",
+    "play": "vite playground",
     "lint": "eslint src scripts",
     "check:markdown": "node scripts/check-markdown-highlight.mjs"
   },
