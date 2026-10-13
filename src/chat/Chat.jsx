@@ -25,6 +25,8 @@ import { ChatContextMeter, ContextRing, contextUsage, useCompact } from "./ChatC
 import { ChatHistory } from "./ChatHistory.jsx";
 import { CHAT_PRIVACY_NOTICE, ChatContext, DefaultAboveComposer, DefaultStart, renderSlot } from "./slots.jsx";
 import { ChatThread } from "./ChatThread.jsx";
+import { ComposerAttachments } from "./ChatAttachments.jsx";
+import { acceptFor, prepareAttachment, textOverLimit } from "./attachments.js";
 import { useConversationStream } from "./useConversationStream.js";
 
 // Chat renders a conversation with ONE assistant, over the assistant wire contract. Everything that
@@ -36,7 +38,9 @@ import { useConversationStream } from "./useConversationStream.js";
 //
 // `assistantHost` is the identity of the assistant being addressed — `{ id, name, title }` — and
 // `clientFor(id)` answers its client (`createAssistantClient`, or a site's own with the same
-// methods). A conversation remembers the id it lives on, so one held by another assistant is still
+// methods). A client that has `attachmentLimits`, `uploadAttachment` and `attachment` lets a person
+// attach files (`+` at the composer's left, paste, drop), and one with `reviewAttachment` shows a
+// reviewed transcript's attachments. A conversation remembers the id it lives on, so one held by another assistant is still
 // addressed through its own client. `authed` says the site holds a session that assistant accepts.
 //
 // What a product shows of its own goes through `profile` and the render slots:
@@ -360,6 +364,108 @@ function Chat({
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
   }, [assistantHost && assistantHost.id, assistantUsable, assistantAuthed]);
+  // What a message may carry, as this assistant says (`wire-contract.md` §2.2), or null: nothing to
+  // attach, and no `+`. A client without the attachment calls, or an assistant that cannot be asked,
+  // offers none.
+  const [attachLimits, setAttachLimits] = React.useState(null);
+  React.useEffect(() => {
+    const client = assistantHost && assistantUsable && assistantAuthed ? clientFor(assistantHost.id) : null;
+    if (!client || typeof client.attachmentLimits !== "function" || typeof client.uploadAttachment !== "function") {
+      setAttachLimits(null);
+      return undefined;
+    }
+    let live = true;
+    client.attachmentLimits()
+      .then((l) => { if (live) setAttachLimits(l && typeof l === "object" ? l : null); })
+      .catch(() => { if (live) setAttachLimits(null); });
+    return () => { live = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
+  }, [assistantHost && assistantHost.id, assistantUsable, assistantAuthed]);
+
+  // The files waiting in the composer, each prepared (a picture shrunk, a text file read) and then
+  // uploaded as soon as it is attached, so sending waits on nothing: `{ key, kind, name, previewUrl,
+  // status, progress, info, tokens, error }`. An upload belongs to the person until a turn names it.
+  const [attached, setAttached] = React.useState([]);
+  const attachedRef = React.useRef(attached);
+  React.useEffect(() => { attachedRef.current = attached; }, [attached]);
+  const fileInputRef = React.useRef(null);
+  const [dragging, setDragging] = React.useState(false);
+
+  const patchAttached = (key, patch) =>
+    setAttached(prev => prev.map(a => (a.key === key ? { ...a, ...patch } : a)));
+
+  const addFiles = (list) => {
+    const limits = attachLimits;
+    const files = Array.from(list || []);
+    if (!limits || !assistantHost || files.length === 0) return;
+    const client = clientFor(assistantHost.id);
+    let pictures = attachedRef.current.filter(a => a.kind === "image" && a.status !== "error").length;
+    for (const file of files) {
+      const key = uid();
+      const ctrl = new AbortController();
+      const looksLikePicture = (file.type || "").startsWith("image/");
+      const item = { key, name: file.name || "file", kind: looksLikePicture ? "image" : "text", status: "preparing", progress: 0, ctrl };
+      if (looksLikePicture && limits.images && limits.maxImages && pictures >= limits.maxImages) {
+        setAttached(prev => [...prev, { ...item, status: "error",
+          error: "A message may carry up to " + limits.maxImages + " pictures." }]);
+        continue;
+      }
+      if (looksLikePicture) pictures++;
+      setAttached(prev => [...prev, item]);
+      (async () => {
+        const prepared = await prepareAttachment(file, limits);
+        if (ctrl.signal.aborted) return;
+        if (prepared.error) { patchAttached(key, { status: "error", error: prepared.error }); return; }
+        const previewUrl = prepared.kind === "image" ? URL.createObjectURL(prepared.blob) : null;
+        patchAttached(key, { kind: prepared.kind, name: prepared.name, previewUrl, tokens: prepared.tokens, status: "uploading" });
+        try {
+          const info = await client.uploadAttachment(prepared.blob, prepared.name, {
+            signal: ctrl.signal,
+            onProgress: (sent, total) => patchAttached(key, { progress: total ? sent / total : 0 }),
+          });
+          patchAttached(key, { status: "ready", progress: 1, info });
+        } catch (e) {
+          if (e && e.name === "AbortError") return;
+          patchAttached(key, { status: "error", error: (e && e.userMessage) || "The file couldn\u2019t be uploaded." });
+        }
+      })();
+    }
+  };
+
+  const removeAttached = (key) => {
+    const item = attachedRef.current.find(a => a.key === key);
+    if (item) {
+      item.ctrl.abort();
+      if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
+    }
+    setAttached(prev => prev.filter(a => a.key !== key));
+  };
+
+  const readyAttached = attached.filter(a => a.status === "ready");
+  const attachingNow = attached.some(a => a.status === "preparing" || a.status === "uploading");
+  const attachTooLong = textOverLimit(readyAttached, attachLimits);
+  // Something to send: words, or a file ready and nothing still on its way.
+  const canSend = (!!input.trim() || readyAttached.length > 0) && !attachingNow && !attachTooLong;
+
+  const onComposerPaste = (e) => {
+    const files = e.clipboardData && e.clipboardData.files;
+    if (!attachLimits || !files || files.length === 0) return;
+    e.preventDefault();
+    addFiles(files);
+  };
+  const dragHasFiles = (e) => !!e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files");
+  const onComposerDragOver = (e) => {
+    if (!attachLimits || !dragHasFiles(e)) return;
+    e.preventDefault();
+    if (!dragging) setDragging(true);
+  };
+  const onComposerDrop = (e) => {
+    if (!attachLimits || !dragHasFiles(e)) return;
+    e.preventDefault();
+    setDragging(false);
+    addFiles(e.dataTransfer.files);
+  };
+
   // The player for the turn now running. One at a time — a new turn stops the last one's audio, which
   // is what makes the stop button silence it as well.
   const spokenRef = React.useRef(null);
@@ -921,7 +1027,7 @@ function Chat({
     }));
   };
 
-  const sendLive = async (convId, text, userMsg, answers) => {
+  const sendLive = async (convId, text, userMsg, answers, attachmentIds) => {
     ownActivityRef.current = { convId, endedAt: null };
     ownTurnIdRef.current = null;
     // Deliberately does NOT name the conversation from the prompt. The assistant names it — first prompt,
@@ -992,14 +1098,16 @@ function Chat({
 
     try {
       // Answers to the questions just asked are a turn of their own, and need no words beside them.
-      const prompt = answers ? text : (text || "[The user sent a voice note; transcription was unavailable.]");
+      const prompt = answers || (attachmentIds && attachmentIds.length) ? text
+        : (text || "[The user sent a voice note; transcription was unavailable.]");
       // Whatever the product has open that the turn should see (a draft under review).
       const extras = turnExtras ? turnExtras() : null;
       // Thinking and auto-run are NOT sent: they are the conversation's, held by the assistant and
       // read when the turn runs. Sending them would let this browser contradict what the conversation
       // carries — and two surfaces on one conversation would then disagree about what it is set to.
       await clientFor(assistantHost.id).turn(
-        { prompt, answers, conversationId: convId, ...extras, speak: speakRef.current || undefined },
+        { prompt, answers, conversationId: convId, ...extras, speak: speakRef.current || undefined,
+          attachments: attachmentIds && attachmentIds.length ? attachmentIds : undefined },
         { onEvent: applyFrame, signal: ctrl.signal });
     } catch (e) {
       const aborted = e && e.name === "AbortError";
@@ -1058,7 +1166,11 @@ function Chat({
 
   const send = async (override, voiceMeta) => {
     const text = (typeof override === "string" ? override : input).trim();
-    if (!text && !voiceMeta) return;
+    // What is attached goes with a message typed here, never with a suggestion or a voice note sent
+    // past it, and not while a file is still on its way.
+    const carrying = typeof override === "string" || voiceMeta ? [] : readyAttached;
+    if (!text && !voiceMeta && carrying.length === 0) return;
+    if (carrying.length > 0 && (attachingNow || attachTooLong)) return;
 
     let convId = activeId;
     if (!convId) {
@@ -1072,7 +1184,7 @@ function Chat({
     // slash — a path, a fraction, a typo — is an ordinary message, so nothing a person types is
     // silently swallowed. `resolveCommand` is the strict half of the surface: only an exact name
     // with an argument the command offers counts.
-    const command = voiceMeta ? null : resolveCommand(text, commandCatalog);
+    const command = voiceMeta || carrying.length > 0 ? null : resolveCommand(text, commandCatalog);
     if (command) {
       setInput("");
       setCommandMenu({ items: [], active: 0 });
@@ -1084,6 +1196,12 @@ function Chat({
     const userMsg = voiceMeta
       ? { role: "user", content: text, voice: voiceMeta, ts: Date.now() }
       : { role: "user", content: text, ts: Date.now() };
+    if (carrying.length > 0) {
+      userMsg.attachments = carrying.map(a => ({ ...a.info, localUrl: a.previewUrl || undefined }));
+      // Sent, they are the message's: the composer lets go of them, and the bubble keeps the previews.
+      const sent = new Set(carrying.map(a => a.key));
+      setAttached(prev => prev.filter(a => !sent.has(a.key) && a.status !== "error"));
+    }
     setInput("");
     if (taRef.current) taRef.current.style.height = "auto";
 
@@ -1100,7 +1218,7 @@ function Chat({
       return;
     }
 
-    sendLive(convId, text, userMsg);
+    sendLive(convId, text, userMsg, undefined, carrying.map(a => a.info.id));
   };
 
   // Stop the conversation's turn, whoever started it. A call rather than an abort, because a surface
@@ -1531,6 +1649,24 @@ function Chat({
   }, [railOpen]);
   React.useEffect(() => { setRailOpen(false); }, [activeId]);
 
+  // A sent attachment read back for the bubble that shows it: the open conversation's through its own
+  // assistant, a reviewed one's through the review route. A client without the call shows the name.
+  const ownHostId = (active && active.hostId) || (assistantHost && assistantHost.id) || null;
+  const loadOwnAttachment = React.useMemo(() => {
+    const client = ownHostId && activeId ? clientFor(ownHostId) : null;
+    if (!client || typeof client.attachment !== "function") return undefined;
+    return (a) => client.attachment(activeId, a.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- clientFor is the surface's fixed capability; the host and conversation decide the loader
+  }, [ownHostId, activeId]);
+  const reviewHostId = review && review.conversation ? review.hostId : null;
+  const reviewConvId = review && review.conversation ? review.conversation.id : null;
+  const loadReviewAttachment = React.useMemo(() => {
+    const client = reviewHostId && reviewConvId ? clientFor(reviewHostId) : null;
+    if (!client || typeof client.reviewAttachment !== "function") return undefined;
+    return (a) => client.reviewAttachment(reviewConvId, a.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- clientFor is the surface's fixed capability; the host and conversation decide the loader
+  }, [reviewHostId, reviewConvId]);
+
   // Review mode replaces the whole surface: no rail (there is no "your chats" here), no composer
   // (there is no review write, and a disabled input would still invite typing), and a banner that
   // cannot be scrolled away — a dock that is usually YOUR chat now holds someone else's, and that has
@@ -1587,6 +1723,7 @@ function Chat({
                 renderEntry={renderEntry ? (m, i) => renderEntry(m, i, reviewApi) : undefined}
                 renderCommand={renderReviewCommand}
                 renderCards={renderCards ? (m) => renderCards(m, reviewApi) : undefined}
+                loadAttachment={loadReviewAttachment}
                 readOnlyFeedback />
             )}
           </div>
@@ -1772,7 +1909,8 @@ function Chat({
           ) : (
             <ChatThread messages={active.messages} user={user} assistantName={assistantName}
               renderEntry={renderOwnEntry} renderCommand={renderCommand} renderCards={renderOwnCards}
-              onRate={rateTurn} onUseCommand={offerCommand} onAnswer={answerQuestions} />
+              onRate={rateTurn} onUseCommand={offerCommand} onAnswer={answerQuestions}
+              loadAttachment={loadOwnAttachment} />
           )}
         </div>
 
@@ -1807,7 +1945,11 @@ function Chat({
           )}
           {slots.aboveComposer != null ? renderSlot(slots.aboveComposer, chat) : <DefaultAboveComposer chat={chat} />}
           {voice.phase === "idle" ? (
-            <div className="chat-composer__box" ref={composerRef} onFocus={onComposerFocus} onBlur={onComposerBlur}>
+            <div className={"chat-composer__box" + (dragging ? " chat-composer__box--drop" : "")} ref={composerRef}
+              onFocus={onComposerFocus} onBlur={onComposerBlur} onPaste={onComposerPaste}
+              onDragOver={onComposerDragOver} onDragLeave={() => setDragging(false)} onDrop={onComposerDrop}>
+              <ComposerAttachments items={attached} onRemove={removeAttached} />
+              {attachTooLong && <p className="chat-composer__attach-note" role="alert">{attachTooLong}</p>}
               {/* Name the assistant only where there is a choice of them. HostPicker is the
                   surface saying it addresses several, so there this reads "Message hotrod's
                   assistant" and stays useful; a surface with one assistant has nothing to
@@ -1830,6 +1972,16 @@ function Chat({
                   them where it does not \u2014 both are drawn and the composer's width decides which shows
                   (chat-composer.css), so a dock dragged narrow changes over without a re-render. */}
               <div className="chat-composer__bar">
+                {attachLimits && (
+                  <>
+                    <IconButton icon="plus" variant="ghost" size="sm" className="chat-composer__attach"
+                      label={attachLimits.images ? "Attach pictures or files" : "Attach files"}
+                      title={attachLimits.images ? "Attach pictures or files" : "Attach files"}
+                      onClick={() => fileInputRef.current && fileInputRef.current.click()} />
+                    <input ref={fileInputRef} type="file" multiple hidden accept={acceptFor(attachLimits)}
+                      onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} />
+                  </>
+                )}
                 {assistantHost && (
                   <div className="chat-composer__switches">
                     <Button variant="outline" size="xs" icon="lightbulb" pressed={thinkOn}
@@ -1867,14 +2019,14 @@ function Chat({
                 <span className="chat-composer__ctx">
                   <ChatContextMeter usage={latestUsage(active && active.messages)} onCompact={compactHere} />
                 </span>
-                {!busy && !input.trim() && assistantUsable && (
+                {!busy && !input.trim() && attached.length === 0 && assistantUsable && (
                   <IconButton icon="mic" label="Record a voice note" variant="ghost" size="sm" onClick={startVoice} />
                 )}
                 {turnRunning
                   ? <IconButton icon="square" label="Stop the answer" variant="outline" size="sm" onClick={stop} />
-                  : asPage && !input.trim() ? null
+                  : asPage && !input.trim() && attached.length === 0 ? null
                   : <Button variant="primary" size="sm" icon="arrow-up" onClick={() => send()}
-                      disabled={!input.trim() || !assistantUsable}
+                      disabled={!canSend || !assistantUsable}
                       aria-label="Send" title={assistantUsable ? "Send" : "Assistant unavailable"} />}
               </div>
             </div>

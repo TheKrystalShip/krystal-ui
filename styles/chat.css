@@ -1139,11 +1139,13 @@
   pointer-events: none;
 }
 
-/* The box is one row: the field growing upward as it fills, then the options and the microphone or
-   send. The bar's controls stand in the row itself, after the field. */
+/* The box is one row: `+`, the field growing upward as it fills, then the options and the microphone
+   or send. The bar's controls stand in the row itself, after the field and `+` before it; what is
+   attached takes a row of its own above. */
 .chat-page--as-page .chat-composer__box {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: flex-end;
   gap: 4px;
   padding: 6px;
@@ -1175,6 +1177,17 @@
 
 .chat-page--as-page .chat-composer__bar-spacer {
   display: none;
+}
+
+.chat-page--as-page .chat-composer__bar > .chat-composer__attach {
+  order: 0;
+}
+
+.chat-page--as-page .chat-attachments,
+.chat-page--as-page .chat-composer__attach-note {
+  order: -1;
+  flex-basis: 100%;
+  padding: 2px 2px 4px;
 }
 
 /* The answer is the assistant's without saying so: the page is the assistant's. */

@@ -1,5 +1,5 @@
-// ChatMessage — one turn of the conversation. A person's message is a bubble on the right, its time
-// shown under it on hover. The assistant's answer is text in the column: its Activity line, the answer,
+// ChatMessage — one turn of the conversation. A person's message is a bubble on the right with what
+// they attached above it, its time shown under it on hover. The assistant's answer is text in the column: its Activity line, the answer,
 // whatever cards the product draws under it (`renderCards(msg)`, given the message when it carries
 // `cards`), and once it is finished a meta row to copy it, rate it and read its time.
 //
@@ -14,6 +14,7 @@ import { IconButton } from "../components/Button.jsx";
 import { Icon } from "../components/Icon.jsx";
 import { copyText } from "../lib/clipboard.js";
 import { VoiceNoteBubble } from "./VoiceNote.jsx";
+import { ChatMessageAttachments } from "./ChatAttachments.jsx";
 import { renderMarkdown } from "./markdown.jsx";
 import { ChatActivity } from "./ChatActivity.jsx";
 import { ChatFeedback } from "./ChatFeedback.jsx";
@@ -45,13 +46,16 @@ function CopyAnswer({ text }) {
   );
 }
 
-function UserTurn({ msg }) {
+function UserTurn({ msg, loadAttachment }) {
   return (
     <div className="chat-turn chat-turn--user">
-      <div className={"chat-turn__bubble" + (msg.voice ? " chat-turn__bubble--voice" : "")}>
-        {msg.voice && <VoiceNoteBubble voice={msg.voice} />}
-        {msg.content && <div className="chat-turn__said">{renderMarkdown(msg.content)}</div>}
-      </div>
+      <ChatMessageAttachments attachments={msg.attachments} load={loadAttachment} />
+      {(msg.voice || msg.content) && (
+        <div className={"chat-turn__bubble" + (msg.voice ? " chat-turn__bubble--voice" : "")}>
+          {msg.voice && <VoiceNoteBubble voice={msg.voice} />}
+          {msg.content && <div className="chat-turn__said">{renderMarkdown(msg.content)}</div>}
+        </div>
+      )}
       <TurnTime ts={msg.ts} />
     </div>
   );
@@ -100,8 +104,8 @@ function AssistantTurn({ msg, assistantName, lead, renderCards, onRate, readOnly
   );
 }
 
-function ChatMessage({ msg, assistantName = "Assistant", lead = true, renderCards, onRate, readOnlyFeedback }) {
-  if (msg.role === "user") return <UserTurn msg={msg} />;
+function ChatMessage({ msg, assistantName = "Assistant", lead = true, renderCards, onRate, readOnlyFeedback, loadAttachment }) {
+  if (msg.role === "user") return <UserTurn msg={msg} loadAttachment={loadAttachment} />;
   return (
     <AssistantTurn msg={msg} assistantName={assistantName} lead={lead}
       renderCards={renderCards} onRate={onRate} readOnlyFeedback={readOnlyFeedback} />

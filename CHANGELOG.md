@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.28.0]
+
+### Added
+- **Attachments to a message.** `+` at the composer's left (a page's one-row composer and a panel's
+  bar alike) opens the file picker, offering pictures only where the assistant reads them, and a file
+  pasted into or dropped on the composer is taken the same way. A picture is decoded with its
+  orientation applied, resized to 2048 pixels on its longer side with the browser's high-quality
+  resampling, and written as the smaller of PNG and JPEG, its quality and then its size stepped down
+  until it is under about 3 MB, which also drops the camera's location and device data; a PNG already
+  within that is sent as it is. A text file is read as UTF-8 and counted at three characters a token,
+  as the assistant counts it. Each is uploaded as it is attached, as a chip over the field with its
+  thumbnail or file icon, its progress and a remove button. A refusal stands on its chip (not a
+  picture or text, a picture over the message's count, a text file longer than a message carries) and
+  the text files of a message together over the limit stop the send with the reason. A message may be
+  its attachments alone.
+- **Sent attachments in the transcript.** A message's pictures are thumbnails over its bubble, one
+  alone shown in its own proportions, and open full size in `ChatLightbox`; its text files are chips
+  that open the file. History reads them back through the client, since reading one takes the
+  person's credential, once per attachment for the life of the page; a message this page sent shows
+  its own copy until a reload.
+- `createAssistantClient` gains `attachmentLimits()`, `uploadAttachment(blob, name, { onProgress,
+  signal })` (with upload progress) and `attachment(conversationId, id)`. `Chat` offers attachments
+  only to a client that has them, and shows a reviewed transcript's through `reviewAttachment`.
+- Exports: `ChatMessageAttachments`, `ComposerAttachments`, `ChatLightbox`, and from
+  `src/chat/attachments.js` `prepareAttachment`, `acceptFor`, `textOverLimit`, `sizeLabel`.
+
 ## [0.27.0]
 
 ### Added

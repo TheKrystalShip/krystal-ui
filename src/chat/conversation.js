@@ -48,8 +48,12 @@ function loadConversations(key) {
   } catch { /* storage refused or unreadable */ }
   return [];
 }
+// An attachment's `localUrl` is this page's copy of what it sent, which a reload does not keep: what
+// is stored reads the attachment back from the assistant instead.
 function saveConversations(key, convos) {
-  try { localStorage.setItem(key, JSON.stringify(convos)); } catch { /* storage refused */ }
+  try {
+    localStorage.setItem(key, JSON.stringify(convos, (k, v) => (k === "localUrl" ? undefined : v)));
+  } catch { /* storage refused */ }
 }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
@@ -342,6 +346,7 @@ function scaffoldHistory(entries, profile = NO_PROFILE) {
     const t = e.turn;
     if (!t) return;
     const userMsg = { role: "user", content: t.prompt || "" };
+    if (Array.isArray(t.attachments) && t.attachments.length > 0) userMsg.attachments = t.attachments;
     if (e.startedAt) userMsg.ts = Date.parse(e.startedAt) || undefined;
     out.push(userMsg);
     const bubble = { role: "assistant", content: t.final || "", ts: Date.parse(e.createdAt) || undefined };

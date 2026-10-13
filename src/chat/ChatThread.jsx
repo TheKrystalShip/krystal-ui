@@ -9,7 +9,8 @@
 // Each assistant answer learns whether it leads its run (`lead`), the run being the assistant-side
 // entries between two messages from the person. A day separator goes in where the calendar day changes
 // between timestamped entries, and above the first one when that is not today.
-// `onUseCommand(name)` is handed to the /help card's Use buttons.
+// `onUseCommand(name)` is handed to the /help card's Use buttons, and `loadAttachment(attachment)` reads
+// a sent attachment back for the bubble that shows it.
 
 import { ChatEvent, ChatVerify, ChatDaySeparator, entryTime, dayKeyOf } from "./ChatMessageParts.jsx";
 import { ChatMessage } from "./ChatMessage.jsx";
@@ -20,7 +21,7 @@ const EVENT_ROLES = new Set(["system", "scope", "checkpoint", "toggle"]);
 
 function ChatThread({
   messages, user, assistantName, renderEntry, renderCommand, renderCards, onRate, readOnlyFeedback, onUseCommand,
-  onAnswer,
+  onAnswer, loadAttachment,
 }) {
   // Questions are answerable while they are the last thing said: once the person has written
   // something else beneath them, they stay on the page as plain text.
@@ -49,7 +50,7 @@ function ChatThread({
     if (m.role !== "user") runLed = true;
     return (
       <ChatMessage key={i} msg={m} lead={lead} user={user} assistantName={assistantName}
-        renderCards={renderCards} onRate={onRate} readOnlyFeedback={readOnlyFeedback} />
+        renderCards={renderCards} onRate={onRate} readOnlyFeedback={readOnlyFeedback} loadAttachment={loadAttachment} />
     );
   };
 

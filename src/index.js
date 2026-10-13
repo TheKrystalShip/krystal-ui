@@ -29,6 +29,8 @@ export { CollectionTile } from "./components/CollectionTile.jsx";
 export { ChatCard, ChatCardRow, ChatCardRows, ConfidenceBadge } from "./chat/ChatCard.jsx";
 export { ChatMessage } from "./chat/ChatMessage.jsx";
 export { ChatThread } from "./chat/ChatThread.jsx";
+export { ChatMessageAttachments, ComposerAttachments, ChatLightbox } from "./chat/ChatAttachments.jsx";
+export { prepareAttachment, acceptFor, textOverLimit, sizeLabel } from "./chat/attachments.js";
 export { MarkdownTextarea } from "./chat/MarkdownTextarea.jsx";
 export { renderMarkdown } from "./chat/markdown.jsx";
 export { VoiceComposerBar, VoiceNoteBubble, useVoiceRecorder } from "./chat/VoiceNote.jsx";

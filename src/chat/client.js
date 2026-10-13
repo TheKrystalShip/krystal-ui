@@ -1,7 +1,7 @@
 // createAssistantClient — a browser client of one assistant, over the assistant wire contract
 // (`tks-assistant/docs/wire-contract.md`): the turn stream, the confirm channel, the conversation event
 // stream, conversations and their feedback, the command surface and the tool list, memory, Web Push,
-// and speech.
+// speech, and the files a person attaches to a message.
 //
 //   const client = createAssistantClient({ baseUrl: "/assistant", getToken: () => session.token() });
 //
@@ -172,6 +172,47 @@ function createAssistantClient({ baseUrl, getToken }) {
     return json("POST", "/speech/wake", null, opts);
   };
 
+  // POST /attachments — one file, its body the file itself, answered with what the assistant took it
+  // as: `{ id, kind, name, mimeType, size }`. Sent with XMLHttpRequest, the one browser request that
+  // reports how much of its body has gone: `onProgress(sent, total)`.
+  const uploadAttachment = async (blob, name, opts) => {
+    const { onProgress, signal } = opts || {};
+    const headers = await headersFor({ Accept: "application/json" });
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", base + "/attachments?name=" + encodeURIComponent(name || "file"));
+      for (const [k, v] of Object.entries(headers)) xhr.setRequestHeader(k, v);
+      xhr.setRequestHeader("Content-Type", "application/octet-stream");
+      if (onProgress) xhr.upload.onprogress = (e) => onProgress(e.loaded, e.lengthComputable ? e.total : blob.size);
+      xhr.onload = () => {
+        let payload = null;
+        try { payload = JSON.parse(xhr.responseText); } catch { payload = null; }
+        if (xhr.status >= 200 && xhr.status < 300 && payload) resolve(payload);
+        else reject(failure(xhr.status, payload));
+      };
+      xhr.onerror = () => reject(unreachable());
+      xhr.onabort = () => reject(new DOMException("upload aborted", "AbortError"));
+      if (signal) {
+        if (signal.aborted) { xhr.abort(); return; }
+        signal.addEventListener("abort", () => xhr.abort(), { once: true });
+      }
+      xhr.send(blob);
+    });
+  };
+
+  // GET /conversations/{id}/attachments/{attachmentId} — the bytes, as a Blob of their type.
+  const attachment = async (conversationId, attachmentId, opts) => {
+    const headers = await headersFor({});
+    const res = await request("GET",
+      "/conversations/" + encodeURIComponent(conversationId) + "/attachments/" + encodeURIComponent(attachmentId),
+      { headers, signal: opts && opts.signal });
+    if (!res.ok) {
+      let payload = null; try { payload = await res.json(); } catch { payload = null; }
+      throw failure(res.status, payload);
+    }
+    return res.blob();
+  };
+
   const enc = encodeURIComponent;
   return {
     me: (opts) => json("GET", "/me", null, opts),
@@ -201,6 +242,11 @@ function createAssistantClient({ baseUrl, getToken }) {
     pushSubscribe: (body) => json("POST", "/push/subscribe", body),
     pushUnsubscribe: (body) => json("DELETE", "/push/subscribe", body),
     attach: (conversationId) => json("POST", "/events/attach", { conversationId: conversationId || null }),
+    // What a message may carry (`{ images, maxImages, maxImageBytes, maxTextTokens, ... }`), an upload,
+    // and an attachment read back.
+    attachmentLimits: (opts) => json("GET", "/attachments/limits", null, opts),
+    uploadAttachment,
+    attachment,
     stopTurn: (turnId) => json("DELETE", "/turns/" + enc(turnId)),
     turn,
     confirm,

@@ -257,8 +257,8 @@ sheet, after everything whose focus it overrides.
 `Chat` is a conversation with one assistant over the assistant wire contract
 (`tks-assistant/docs/wire-contract.md`): turns streamed over Server-Sent Events, proposed actions
 confirmed or declined by their handle, questions the assistant asks answered as the next turn, the
-conversation list kept in step with the assistant's, voice notes, and a read-only review of
-somebody else's conversation. It holds no credential and knows no product:
+conversation list kept in step with the assistant's, voice notes, pictures and text files attached to
+a message, and a read-only review of somebody else's conversation. It holds no credential and knows no product:
 
 ```jsx
 const client = createAssistantClient({ baseUrl: "/assistant", getToken: () => session.token() });
@@ -304,6 +304,18 @@ channel takes `{ token, decision: "decline" }`, which gives a proposal card a De
 `wakeSpeech()` (called when the microphone opens), and `turns()` with `follow(turnId, { signal, onEvent })`
 (the turns the person has open on any surface, and reading one of them frame by frame). A `question` frame is drawn as choices and a
 field for the person's own words, and the answers go out as the next turn's `answers`.
+
+**Attachments.** A client with `attachmentLimits()`, `uploadAttachment(blob, name, { onProgress, signal })`
+and `attachment(conversationId, id)` (a Promise of a Blob) lets a person attach files: `+` at the
+composer's left opens the picker (pictures only where the assistant reads them), and a file pasted or
+dropped on the composer is taken the same way. A picture is shrunk to 2048 pixels on its longer side
+in the browser and written as the smaller of PNG and JPEG, under about 3 MB, and is never refused for
+its size; a text file is read and counted as the assistant counts it. Each is uploaded as soon as it
+is attached, as a chip with its progress, and a file the assistant could not take says why on its
+chip. Sent, the message carries its pictures as thumbnails that open full size and its text files as
+chips. `reviewAttachment(conversationId, id)` shows a reviewed transcript's attachments, the
+conversation named as the review listing names it. The rules are `wire-contract.md` §2.2, and the
+module that prepares a file is `src/chat/attachments.js`.
 
 A site whose frame has a sidebar can keep the conversation list there: `railTarget` is the element
 the list is drawn into, and the chat takes the whole width. `pageClass="chat-page--framed"` makes the

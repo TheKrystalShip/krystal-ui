@@ -515,3 +515,118 @@
     padding: 6px 10px;
   }
 }
+
+/* ---- what your message carried ---- */
+.chat-turn__attachments {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  max-width: 72%;
+}
+
+.chat-turn__pictures {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.chat-turn__picture {
+  display: block;
+  width: 132px;
+  height: 132px;
+  padding: 0;
+  border: var(--edge);
+  border-radius: var(--r-lg);
+  background: var(--surface-3);
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+/* One picture alone is shown as it is shaped, within a bound. */
+.chat-turn__pictures > .chat-turn__picture:only-child {
+  width: auto;
+  height: auto;
+  max-width: 280px;
+  max-height: 280px;
+}
+
+.chat-turn__picture img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chat-turn__pictures > .chat-turn__picture:only-child img {
+  width: auto;
+  height: auto;
+  max-width: 280px;
+  max-height: 280px;
+  object-fit: contain;
+}
+
+.chat-turn__picture-wait {
+  display: block;
+  width: 132px;
+  height: 132px;
+}
+
+.chat-turn__files {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+a.chat-attachment--sent {
+  padding: 6px 10px 6px 6px;
+  text-decoration: none;
+}
+
+a.chat-attachment--sent:hover {
+  border-color: var(--border-strong);
+}
+
+a.chat-attachment--sent[aria-disabled="true"] {
+  pointer-events: none;
+}
+
+span.chat-attachment--sent {
+  padding: 6px 10px 6px 6px;
+}
+
+/* A picture full size, over the page. */
+.chat-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--scrim-base) 94%, transparent);
+  cursor: zoom-out;
+}
+
+.chat-lightbox__img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--r-md);
+  cursor: default;
+}
+
+.chat-lightbox__close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--surface-2);
+}
+
+@media (max-width: 640px) {
+  .chat-turn__attachments { max-width: 88%; }
+  .chat-turn__picture,
+  .chat-turn__picture-wait { width: 104px; height: 104px; }
+}
