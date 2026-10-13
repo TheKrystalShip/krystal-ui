@@ -140,7 +140,7 @@ async function prepareImage(file, limits) {
 
 async function prepareText(file, limits) {
   const name = file.name || "file.txt";
-  const notText = "`" + name + "` isn’t a picture or a text file. Convert a picture to PNG or JPEG, or attach the file as text.";
+  const notText = "`" + name + "` isn’t a picture or a text file, so the assistant can’t read it.";
   if (limits.maxTextBytes && file.size > limits.maxTextBytes) {
     return { error: tooLong("`" + name + "`", Math.ceil(file.size / CHARS_PER_TOKEN), limits.maxTextTokens) };
   }
