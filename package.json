@@ -39,7 +39,8 @@
     "prepack": "vite build",
     "play": "vite playground",
     "lint": "eslint src scripts",
-    "check:markdown": "node scripts/check-markdown-highlight.mjs"
+    "check:markdown": "node scripts/check-markdown-highlight.mjs",
+    "check:themes": "node scripts/check-themes.mjs"
   },
   "peerDependencies": {
     "lucide-react": ">=0.460.0",

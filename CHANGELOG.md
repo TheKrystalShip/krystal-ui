@@ -9,6 +9,13 @@
 - **A field with a prefix or suffix draws one focus ring**, its frame's; the bare input inside it no longer
   takes the universal focus ring as well.
 
+## [0.30.0-dev.3]
+
+### Fixed
+- **Native controls follow the palette's mode.** `tokens.css` sets `color-scheme` on the root, dark unless
+  the palette is light, so a checkbox, a scrollbar or a picker the browser draws is not a white box on a
+  dark palette. `npm run check:themes` fails when the light list disagrees with `THEME_OPTS`.
+
 ## [0.30.0-dev.1]
 
 ### Added

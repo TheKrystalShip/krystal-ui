@@ -44,6 +44,7 @@ Renaming one is a breaking change.
 npm install
 npm run lint      # no-undef and Rules of Hooks are errors; everything else warns
 npm run check:markdown   # the composer's highlighter emits every character exactly once
+npm run check:themes     # native controls take the light scheme on exactly the light palettes
 npm run build     # vite library build → dist/, one ES module per source file
 npm publish       # prepack builds; a published version is permanent (a re-publish is refused)
 npm publish --tag dev   # a prerelease — npm refuses one without a tag, so `latest` stays a release

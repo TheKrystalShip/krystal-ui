@@ -4487,6 +4487,35 @@ a:not(.k-btn, .k-iconbtn):hover,
   border-bottom-color: var(--krystal-teal-hover);
 }
 
+/* ---- Native controls' scheme ------------------------- */
+/* Checkboxes, scrollbars and pickers the browser draws follow the palette's own mode. Every palette is
+   dark unless listed here; the list is the light palettes of THEME_OPTS (src/lib/theme.js), and
+   `npm run check:themes` fails when the two disagree. */
+:root {
+  color-scheme: dark;
+}
+
+:root[data-theme="light"],
+:root[data-theme="github-light"],
+:root[data-theme="solarized-light"],
+:root[data-theme="catppuccin-latte"],
+:root[data-theme="nord-light"],
+:root[data-theme="gruvbox-light"],
+:root[data-theme="everforest-light"],
+:root[data-theme="rose-pine-dawn"],
+:root[data-theme="tokyo-night-day"],
+:root[data-theme="one-light"],
+:root[data-theme="ayu-light"],
+:root[data-theme="win95"],
+:root[data-theme="cvd-redgreen-light"],
+:root[data-theme="cvd-deuteran-light"],
+:root[data-theme="cvd-protan-light"],
+:root[data-theme="cvd-tritan-light"],
+:root[data-theme="cvd-universal-light"],
+:root[data-theme="cvd-mono-light"] {
+  color-scheme: light;
+}
+
 /* ---- Focus ring (universal) --------------------------- */
 :focus-visible {
   outline: none;
