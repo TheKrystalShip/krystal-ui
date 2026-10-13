@@ -1,4 +1,5 @@
 import { Icon } from "./Icon.jsx";
+import { Pill } from "./Pill.jsx";
 
 // BriefCard — the "briefing card" shell. A titled header (icon + label + optional
 // count chip + optional action) sitting over a bordered surface-1 card. Every
@@ -43,8 +44,8 @@ function BriefCard({ icon, title, count, countTone, countTitle, meta, pin, onVie
       <span className="chat-brief__title">
         {icon && <Icon name={icon} size={13} />} {title}
         {count != null && count !== false && (
-          <span className={"chat-brief__count" + (countTone ? " chat-brief__count--" + countTone : "")}
-            title={countTitle}>{count}</span>
+          <Pill size="sm" tone={countTone === "neutral" ? "muted" : countTone || "warn"} title={countTitle}
+            className={"chat-brief__count" + (countTone ? " chat-brief__count--" + countTone : "")}>{count}</Pill>
         )}
       </span>
       {pin}

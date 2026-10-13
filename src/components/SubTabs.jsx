@@ -1,4 +1,5 @@
 import { Icon } from "./Icon.jsx";
+import { Pill } from "./Pill.jsx";
 
 // SubTabs — the shared in-page section switcher (desktop button strip + a mobile
 // <select>). Used by the server-detail tabs (App.jsx) and the host diagnostics
@@ -21,7 +22,7 @@ export function SubTabs({ tabs, active, onChange }) {
             title={t.title}>
             <Icon name={t.icon} size={14} />
             {t.label}
-            {t.badge > 0 && <span className={"subtab__badge subtab__badge--" + (t.badgeTone || "info")}>{t.badge}</span>}
+            {t.badge > 0 && <Pill size="sm" tone={t.badgeTone && t.badgeTone !== "info" ? t.badgeTone : "neutral"} className={"subtab__badge subtab__badge--" + (t.badgeTone || "info")}>{t.badge}</Pill>}
           </button>
         ))}
       </div>

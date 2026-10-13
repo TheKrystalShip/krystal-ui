@@ -126,45 +126,18 @@
   top: 10px;
   right: 10px;
   z-index: 1;
-  display: inline-flex;
-  align-items: center;
 }
 
+/* Over artwork the badge needs its own backing: the accent badge a lift, the info badge a scrim. */
 .showcase-card__badge--accent {
-  gap: 6px;
-  height: 24px;
-  padding: 0 10px 0 9px;
-  border-radius: var(--r-pill);
-  background: var(--krystal-teal);
-  color: var(--on-accent);
-  font-size: 11px;
-  font-weight: 700;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
 .showcase-card__badge--info {
-  height: 22px;
-  padding: 0 9px;
-  border-radius: var(--r-pill);
-  background: var(--info-bg);
-  color: var(--info-fg);
-  border: 1px solid rgba(56, 189, 248, 0.32);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.showcase-card__badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--r-pill);
-  background: color-mix(in srgb, var(--canvas) 45%, transparent);
-}
-
-.showcase-card__badge-dot.is-live {
-  background: var(--success);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+  background: color-mix(in srgb, var(--canvas) 72%, var(--info-bg));
+  border: 1px solid color-mix(in srgb, var(--info-fg) 32%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 
 /* What is done to the thing besides opening it, on the art's top-right. A hovering pointer finds them

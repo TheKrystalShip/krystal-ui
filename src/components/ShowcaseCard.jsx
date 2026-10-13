@@ -1,4 +1,5 @@
 import { Icon } from "./Icon.jsx";
+import { Pill } from "./Pill.jsx";
 
 // ShowcaseCard — a catalogue tile: key art with the name set on it, three facts in a row under it,
 // and a foot carrying one status line and the card's action. The whole card opens the thing
@@ -61,10 +62,11 @@ function ShowcaseCard({ name, art, onPick, eyebrow, corner, badge, specs = [], s
           </span>
         )}
         {badge && (
-          <span className={"showcase-card__badge showcase-card__badge--" + (badge.tone || "accent")} title={badge.title}>
-            {badge.dot && <span className={"showcase-card__badge-dot" + (badge.dot === "live" ? " is-live" : "")}></span>}
+          <Pill tone={badge.tone || "accent"} dot={badge.dot && (badge.dot === "live" ? "live" : true)}
+            dotClassName="showcase-card__badge-dot" title={badge.title}
+            className={"showcase-card__badge showcase-card__badge--" + (badge.tone || "accent")}>
             {badge.label}
-          </span>
+          </Pill>
         )}
         {tools && tools.length > 0 && (
           <div className={"showcase-card__tools" + (badge ? " showcase-card__tools--under" : "")}>

@@ -97,16 +97,6 @@
   flex: 1;
 }
 
-.chat-brief__count {
-  background: var(--warning-bg);
-  color: var(--warning-fg);
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0;
-  padding: 1px 7px;
-  border-radius: var(--r-pill);
-}
-
 .chat-brief__hide {
   background: transparent;
   border: none;
@@ -306,17 +296,6 @@
 .chat-brief__item--update .chat-brief__icon {
   background: var(--update-bg);
   color: var(--update-fg);
-}
-
-.chat-brief__count--neutral {
-  background: var(--surface-2);
-  color: var(--fg-3);
-}
-
-/* "all clear" — a state, not a count. */
-.chat-brief__count--ok {
-  background: var(--success-bg);
-  color: var(--success-fg);
 }
 
 .chat-brief__item-title--wrap {

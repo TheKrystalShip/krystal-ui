@@ -1,5 +1,6 @@
 import React from "react";
 import { AccountAvatar } from "./AccountAvatar.jsx";
+import { Pill } from "./Pill.jsx";
 import { Icon } from "./Icon.jsx";
 
 // The application frame: a sidebar beside a scrolling main column, with whatever floats over both
@@ -43,7 +44,7 @@ function TabBar({ items, label = "Main" }) {
           onClick={item.onClick}>
           <span className="tabbar__icon">
             <Icon name={item.icon} size={22} />
-            {item.badge > 0 && <span className={"tabbar__badge tabbar__badge--" + (item.tone || "warn")}>{item.badge}</span>}
+            {item.badge > 0 && <Pill size="sm" tone={item.tone || "warn"} className={"tabbar__badge tabbar__badge--" + (item.tone || "warn")}>{item.badge}</Pill>}
           </span>
           <span className="tabbar__label">{item.label}</span>
         </button>
@@ -171,7 +172,7 @@ function NavItem({ icon, label, active, onClick, badge = 0, tone = "info", tip, 
       aria-label={label}>
       <Icon name={icon} size={iconSize} />
       <span className="nav-item__label">{label}</span>
-      {badge > 0 && <span className={"nav-item__badge nav-item__badge--" + tone}>{badge}</span>}
+      {badge > 0 && <Pill tone={tone === "info" ? "neutral" : tone} className={"nav-item__badge nav-item__badge--" + tone}>{badge}</Pill>}
     </div>
   );
 }

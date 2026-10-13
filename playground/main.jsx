@@ -6,9 +6,9 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import {
   AppShell, Breadcrumbs, BriefCard, Button, Checkbox, Dialog, EmptyState, Field, IconButton, Input,
-  Meter, NavItem, Notice, OptionList, PageHeader, Select, SettingsRow, SettingsSection, ShowcaseCard,
+  Meter, NavItem, Notice, OptionList, PageHeader, Pill, Select, SettingsRow, SettingsSection, ShowcaseCard,
   Sidebar, SidebarGroup, Skeleton, Spinner, SubTabs, Textarea, ThemePicker, Toggle, Toolbar,
-  ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer,
+  ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
 } from "../src/index.js";
 import "../styles.css";
 
@@ -168,6 +168,23 @@ function Badges() {
   const art = "linear-gradient(135deg, var(--surface-3), var(--surface-1))";
   return (
     <Section id="badges" title="Badges">
+      <Sub title="Pill tones (md, sm), with icon, with dot">
+        {["md", "sm"].map((size) => (
+          <div key={size} style={row}>
+            {["neutral", "accent", "info", "ok", "warn", "danger", "muted"].map((t) => (
+              <Pill key={t} tone={t} size={size}>{t}</Pill>
+            ))}
+            {["neutral", "accent", "info", "ok", "warn", "danger", "muted"].map((t) => (
+              <Pill key={"i" + t} tone={t} size={size} icon="lock">{t}</Pill>
+            ))}
+            {["neutral", "ok", "warn"].map((t) => (
+              <Pill key={"d" + t} tone={t} size={size} dot>{t}</Pill>
+            ))}
+            <Pill tone="ok" size={size} dot="live">live</Pill>
+            <Pill size={size}>7</Pill>
+          </div>
+        ))}
+      </Sub>
       <Sub title="NavItem badge (info, warn, danger)">
         <div style={{ width: 240, display: "grid", gap: 2 }}>
           {["info", "warn", "danger"].map((t, i) => (
@@ -198,7 +215,14 @@ function Badges() {
           ))}
         </div>
       </Sub>
-      <Sub title="BriefCard count (default accent, neutral)">
+      <Sub title="TabBar badge (phone width only; info, warn, danger)">
+        <TabBar items={[
+          { id: "a", icon: "server", label: "Info", badge: 3, tone: "info" },
+          { id: "b", icon: "bell", label: "Warn", badge: 12, tone: "warn", active: true },
+          { id: "c", icon: "shield", label: "Danger", badge: 1, tone: "danger" },
+        ]} />
+      </Sub>
+      <Sub title="BriefCard count (default warn, neutral)">
         <div style={{ display: "grid", gap: 14, maxWidth: 420 }}>
           <BriefCard icon="bell" title="Accent count" count={5}><div style={{ padding: 14 }}>Body</div></BriefCard>
           <BriefCard icon="bell" title="Neutral count" count={12} countTone="neutral" countTitle="Last 24 hours">

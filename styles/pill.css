@@ -1,0 +1,86 @@
+/* ============================================================================
+   pill.css — the small label every surface draws (Pill). The nav, sub-tab, tab-bar, showcase and
+   brief sheets add only placement and the few fills their surroundings need. Sits before them.
+   ============================================================================ */
+
+.k-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  box-sizing: border-box;
+  height: 20px;
+  min-width: 20px;
+  padding: 0 8px;
+  border-radius: var(--r-pill);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  background: var(--veil-2);
+  color: var(--fg-2);
+}
+
+.k-pill--sm {
+  height: 16px;
+  min-width: 16px;
+  padding: 0 5px;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.k-pill--neutral {
+  background: var(--veil-2);
+  color: var(--fg-2);
+}
+
+.k-pill--muted {
+  background: var(--surface-2);
+  color: var(--fg-3);
+}
+
+.k-pill--accent {
+  background: var(--krystal-teal);
+  color: var(--on-accent);
+}
+
+.k-pill--info {
+  background: var(--info-bg);
+  color: var(--info-fg);
+}
+
+.k-pill--ok {
+  background: var(--success-bg);
+  color: var(--success-fg);
+}
+
+.k-pill--warn {
+  background: var(--warning-bg);
+  color: var(--warning-fg);
+}
+
+.k-pill--danger {
+  background: var(--danger-bg);
+  color: var(--danger-fg);
+}
+
+.k-pill__icon {
+  flex: none;
+}
+
+.k-pill__dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: currentColor;
+  opacity: 0.7;
+}
+
+.k-pill__dot.is-live {
+  background: var(--success);
+  opacity: 1;
+}

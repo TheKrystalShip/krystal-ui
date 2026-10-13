@@ -221,29 +221,9 @@
   border-radius: 0 2px 2px 0;
 }
 
+/* The count after a link; Pill draws it. */
 .nav-item__badge {
   margin-left: auto;
-  font-size: 11px;
-  padding: 1px 7px;
-  border-radius: var(--r-pill);
-  background: var(--veil-2);
-  color: var(--fg-2);
-  font-weight: 600;
-}
-
-.nav-item__badge--danger {
-  background: var(--danger-bg);
-  color: var(--danger-fg);
-}
-
-.nav-item__badge--warn {
-  background: var(--warning-bg);
-  color: var(--warning-fg);
-}
-
-.nav-item__badge--info {
-  background: var(--veil-2);
-  color: var(--fg-2);
 }
 
 /* ============= Account (the foot's last row) =============

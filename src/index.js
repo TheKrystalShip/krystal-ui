@@ -49,6 +49,7 @@ export { Icon } from "./components/Icon.jsx";
 export { Meter } from "./components/Meter.jsx";
 export { Modal } from "./components/Modal.jsx";
 export { Notice } from "./components/Notice.jsx";
+export { Pill } from "./components/Pill.jsx";
 export { NotificationsPanel } from "./components/NotificationsPanel.jsx";
 export { OptionList } from "./components/OptionList.jsx";
 export { PageHeader } from "./components/PageHeader.jsx";

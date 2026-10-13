@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.30.0-dev.1]
+
+### Added
+- **`Pill`**, the one small non-interactive label: a `tone` of neutral, accent, info, ok, warn, danger or
+  muted, a `size` of md or sm, and an `icon` or a leading `dot` before its text.
+
+### Changed
+- **The badges draw through `Pill`**: `NavItem`'s and `SubTabs`'s counts, `TabBar`'s pip, `ShowcaseCard`'s
+  badge and `BriefCard`'s count keep their class names and share one height, weight, case and tint
+  per tone. The showcase badge is no longer uppercase or taller than the others, and the family
+  sheets keep only placement and the fills their surroundings need.
+
 ## [0.29.4]
 
 ### Changed

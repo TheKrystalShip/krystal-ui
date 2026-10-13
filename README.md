@@ -42,6 +42,7 @@ lists them in the order they assume.
 | The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatActivity`, `ChatCommand`, `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
 | Cards and lists | `BriefCard`, `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art, a `ribbon` hanging from its top edge for keeping the thing, an `eyebrow` above the name saying what kind of thing it is, and along its foot a `progress` bar or one short bar per part in `segments`), `CollectionTile` (a set of titles as a link: `fan` draws three posters fanned beside its mark and name, `strip` its posters in order, numbered, and with `total` and `watched` follows somebody through it; it fills its slot at a fixed shape and takes a TvCard's focus on a television), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Slides | `useCarousel` (one of several slides at a time, turning by itself on an interval: held still under a mouse, under keyboard focus, on a hidden page and while `paused`, never turning by itself under reduced motion, its time started over by a key or a press in it, and turned by a swipe), `CarouselPager` (a mark a slide, the shown one filling over the slide's time; `indicator` for a television, where the marks are not focused) |
+| Labels | `Pill` (a count, a state or a kind as a small non-interactive label) |
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `Textarea`, `Checkbox`, `Field`, `Select`, `OptionList`, `Meter` |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
@@ -129,6 +130,17 @@ lays a short single choice side by side, each label over its `aside`.
 `segments` (`{ value, tone, label }`, `tone` one of neutral, accent, success, warn, danger) are parts
 laid end to end, a meter whose spoken value names each part unless `valueText` gives one, and a part
 above zero is never drawn narrower than a sliver. `start` and `end` are a monospace caption under it.
+
+`Pill` is the label every badge is drawn with: `tone` neutral (default), accent, info, ok, warn,
+danger or muted; `size` md or sm; `icon` or `dot` (`"live"` for a running thing) before the text.
+`NavItem`, `SubTabs`, `TabBar`, `ShowcaseCard` and `BriefCard` draw their count or badge through it
+and keep their own class names, so a site's rule on `.nav-item__badge--warn` still lands.
+
+```jsx
+<Pill tone="warn">3</Pill>
+<Pill tone="muted" icon="lock">Locked</Pill>
+<Pill tone="ok" dot="live" size="sm">Running</Pill>
+```
 
 ## Pages and dialogs
 
