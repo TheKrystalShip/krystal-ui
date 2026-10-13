@@ -1,5 +1,6 @@
 import React from "react";
 import { Icon } from "./Icon.jsx";
+import { IconButton } from "./Button.jsx";
 
 // The form controls: a text field, a multi-line field, a checkbox, and the labelled frame a form
 // lays them out in. Each one is the native element with the package's look; every prop a native
@@ -29,6 +30,24 @@ const Input = React.forwardRef(function Input(
       <input ref={ref} className="k-input__el" aria-invalid={invalid || undefined} {...rest} />
       {suffix != null && <span className="k-input__affix">{suffix}</span>}
     </span>
+  );
+});
+
+// PasswordInput — an Input whose suffix is a button revealing what is typed. `revealLabel` is the
+// button's accessible name in each state, [hidden, shown]; every other prop is Input's and reaches the
+// input, and the ref reaches it too. A press on the button leaves focus in the input.
+const PasswordInput = React.forwardRef(function PasswordInput(
+  { revealLabel = ["Show password", "Hide password"], size = "md", ...inputProps }, ref) {
+  const [shown, setShown] = React.useState(false);
+  return (
+    <Input {...inputProps} ref={ref} size={size} type={shown ? "text" : "password"}
+      suffix={(
+        <IconButton variant="ghost" size={size === "sm" ? "xs" : "sm"} className="k-input__reveal"
+          icon={shown ? "eye-off" : "eye"} label={shown ? revealLabel[1] : revealLabel[0]}
+          disabled={inputProps.disabled}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => setShown((v) => !v)} />
+      )} />
   );
 });
 
@@ -81,4 +100,4 @@ function Field({ label, aside, hint, error, group = false, className, children }
   );
 }
 
-export { Checkbox, Field, Input, Textarea };
+export { Checkbox, Field, Input, PasswordInput, Textarea };

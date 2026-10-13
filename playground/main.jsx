@@ -6,7 +6,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import {
   AppShell, Breadcrumbs, BriefCard, Button, Checkbox, Dialog, EmptyState, Field, IconButton, Input,
-  Meter, NavItem, Notice, OptionList, PageHeader, Pill, Select, SettingsRow, SettingsSection, ShowcaseCard,
+  Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, ShowcaseCard,
   Sidebar, SidebarGroup, Skeleton, Spinner, SubTabs, Textarea, ThemePicker, Toggle, Toolbar,
   ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
 } from "../src/index.js";
@@ -40,7 +40,15 @@ const OPTIONS = [
   { value: "d", label: "Delta" },
 ];
 
+// The strength rule is the site's; this one only gives the bar something to show.
+const PW_WORDS = ["Empty", "Weak", "Fair", "Good", "Strong"];
+const PW_TONES = ["neutral", "danger", "warn", "accent", "success"];
+const PROVIDERS = ["discord", "github", "google", "microsoft"];
+
 function Controls() {
+  const [pw, setPw] = React.useState("hunter2");
+  const pwRef = React.useRef(null);
+  const pwScore = pw ? Math.min(4, 1 + (pw.length >= 8) + (/\d/.test(pw) && /[a-z]/i.test(pw)) + (pw.length >= 14)) : 0;
   const [chk, setChk] = React.useState(true);
   const [tog, setTog] = React.useState(true);
   const [one, setOne] = React.useState("a");
@@ -109,6 +117,34 @@ function Controls() {
           <Field label="Label" aside="optional" hint="A hint under the control."><Input /></Field>
           <Field label="Label" error="Something is wrong."><Input invalid /></Field>
           <Field label="Group" group><Checkbox checked onChange={() => {}}>One</Checkbox><Checkbox>Two</Checkbox></Field>
+        </div>
+      </Sub>
+      <Sub title="PasswordInput, strength bar">
+        <div style={{ ...col, maxWidth: 360 }}>
+          <Field label="Password" hint="Eight characters or more.">
+            <PasswordInput ref={pwRef} value={pw} onChange={(e) => setPw(e.target.value)} placeholder="Password"
+              autoComplete="new-password" />
+            <Meter label="Password strength" max={4} valueText={PW_WORDS[pwScore]}
+              segments={[0, 1, 2, 3].map((i) => ({ value: 1, tone: i < pwScore ? PW_TONES[pwScore] : "neutral" }))} />
+          </Field>
+          <Button size="sm" variant="outline" onClick={() => pwRef.current && pwRef.current.focus()}>Focus the field</Button>
+          <PasswordInput size="sm" defaultValue="small" />
+          <PasswordInput size="lg" defaultValue="large" invalid />
+          <PasswordInput disabled defaultValue="disabled" />
+        </div>
+      </Sub>
+      <Sub title="ProviderButton">
+        <div style={{ display: "grid", gap: 14, maxWidth: 360 }}>
+          {PROVIDERS.map((p) => (
+            <ProviderButton key={p} provider={p} brand wide size="lg">Continue with {providerLabel(p)}</ProviderButton>
+          ))}
+          <ProviderButton provider="oidc-acme" wide size="lg">Continue with oidc-acme</ProviderButton>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 9 }}>
+            {PROVIDERS.map((p) => <ProviderButton key={p} provider={p} wide>{providerLabel(p)}</ProviderButton>)}
+          </div>
+          <ProviderButton provider="discord" brand busy wide size="lg">Signing in</ProviderButton>
+          <ProviderButton provider="google" brand busy wide size="lg">Signing in</ProviderButton>
+          <ProviderButton provider="github" disabled wide>Disabled</ProviderButton>
         </div>
       </Sub>
       <Sub title="Checkbox, Toggle">
@@ -352,7 +388,7 @@ function Frame() {
   );
 }
 
-const LATER = ["Pill", "PasswordInput", "ProviderButton", "ListRow / List", "CardScreen", "CopyField"];
+const LATER = ["ListRow / List", "CardScreen", "CopyField"];
 
 function App() {
   return (

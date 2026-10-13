@@ -1,0 +1,24 @@
+/* ---- ProviderButton ------------------------------------------------------
+   A brand fill is the provider's own colour (--brand-<provider>) with its ink (--on-brand-<provider>),
+   the same in every theme. Hover darkens the fill toward the ink's opposite; the hairline keeps a
+   fill that matches the page (white on a light theme, near-black on a dark one) a visible shape. */
+.k-btn--brand {
+  border-color: color-mix(in srgb, var(--on-brand) 22%, transparent);
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+.k-btn--brand:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--on-brand) 22%, transparent);
+  background: color-mix(in srgb, var(--brand) 86%, black);
+  color: var(--on-brand);
+}
+
+.k-btn--brand-google:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--brand) 92%, black);
+}
+
+.k-btn--brand-discord { --brand: var(--brand-discord); --on-brand: var(--on-brand-discord); }
+.k-btn--brand-github { --brand: var(--brand-github); --on-brand: var(--on-brand-github); }
+.k-btn--brand-google { --brand: var(--brand-google); --on-brand: var(--on-brand-google); }
+.k-btn--brand-microsoft { --brand: var(--brand-microsoft); --on-brand: var(--on-brand-microsoft); }

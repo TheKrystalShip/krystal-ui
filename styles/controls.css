@@ -852,3 +852,8 @@
     min-height: 48px;
   }
 }
+
+/* The reveal button inside a password field sits close to the frame's edge. */
+.k-input__reveal {
+  margin-right: -6px;
+}

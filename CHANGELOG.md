@@ -5,6 +5,12 @@
 ### Added
 - **`Pill`**, the one small non-interactive label: a `tone` of neutral, accent, info, ok, warn, danger or
   muted, a `size` of md or sm, and an `icon` or a leading `dot` before its text.
+- **`PasswordInput`**: an `Input` with a reveal button in its suffix (eye, eye-off), `revealLabel` naming the
+  button in each state; every `Input` prop and the ref reach the input.
+- **`ProviderMark`, `providerLabel` and `ProviderButton`**: the discord, github, google and microsoft marks
+  (any other provider draws a `log-in` icon), their names, and a `Button` carrying a mark with the caller's
+  label. `brand` fills it with the provider's colour through the new tokens `--brand-<provider>` and
+  `--on-brand-<provider>`, the same in every theme; `busy` swaps the mark for the spinner.
 
 ### Changed
 - **The badges draw through `Pill`**: `NavItem`'s and `SubTabs`'s counts, `TabBar`'s pip, `ShowcaseCard`'s

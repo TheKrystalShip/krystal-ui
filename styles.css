@@ -4,6 +4,7 @@
 @import "./styles/motion.css";
 @import "./styles/scrollbar.css";
 @import "./styles/controls.css";
+@import "./styles/providers.css";
 @import "./styles/page.css";
 @import "./styles/pill.css";
 @import "./styles/shell.css";

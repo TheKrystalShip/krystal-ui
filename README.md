@@ -43,7 +43,8 @@ lists them in the order they assume.
 | Cards and lists | `BriefCard`, `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art, a `ribbon` hanging from its top edge for keeping the thing, an `eyebrow` above the name saying what kind of thing it is, and along its foot a `progress` bar or one short bar per part in `segments`), `CollectionTile` (a set of titles as a link: `fan` draws three posters fanned beside its mark and name, `strip` its posters in order, numbered, and with `total` and `watched` follows somebody through it; it fills its slot at a fixed shape and takes a TvCard's focus on a television), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Slides | `useCarousel` (one of several slides at a time, turning by itself on an interval: held still under a mouse, under keyboard focus, on a hidden page and while `paused`, never turning by itself under reduced motion, its time started over by a key or a press in it, and turned by a swipe), `CarouselPager` (a mark a slide, the shown one filling over the slide's time; `indicator` for a television, where the marks are not focused) |
 | Labels | `Pill` (a count, a state or a kind as a small non-interactive label) |
-| Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `Textarea`, `Checkbox`, `Field`, `Select`, `OptionList`, `Meter` |
+| Sign-in | `ProviderMark`, `providerLabel`, `ProviderButton` (a provider's mark and name, and a button carrying them) |
+| Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `OptionList`, `Meter` |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Modal`, `ReversablePortal`, `usePortalPopover` |
@@ -114,6 +115,16 @@ its accessible name and tooltip. `Input` takes `prefix` and `suffix` words insid
   { value: incoming, tone: "accent", label: "This download" },
 ]} max={capacity} start="This device" end="23.4 GB free" />
 <Meter label="Downloaded" value={34} />
+
+<Field label="Password" hint="Eight characters or more.">
+  <PasswordInput ref={passwordRef} value={pw} onChange={(e) => setPw(e.target.value)} />
+  <Meter label="Password strength" max={4} valueText={words[score]}
+    segments={[0, 1, 2, 3].map((i) => ({ value: 1, tone: i < score ? "accent" : "neutral" }))} />
+</Field>
+
+<ProviderButton provider="discord" brand wide>Continue with Discord</ProviderButton>
+<ProviderButton provider="github">{providerLabel("github")}</ProviderButton>
+<ProviderButton provider="google" busy>Signing in</ProviderButton>
 ```
 
 `OptionList` is a group of full-width rows, each a real radio or checkbox inside its label, so the
@@ -130,6 +141,19 @@ lays a short single choice side by side, each label over its `aside`.
 `segments` (`{ value, tone, label }`, `tone` one of neutral, accent, success, warn, danger) are parts
 laid end to end, a meter whose spoken value names each part unless `valueText` gives one, and a part
 above zero is never drawn narrower than a sliver. `start` and `end` are a monospace caption under it.
+
+`PasswordInput` is an `Input` whose suffix is a ghost `IconButton` (eye, eye-off) that shows or hides
+what is typed; `revealLabel` is its accessible name in each state (`["Show password", "Hide
+password"]`). Every `Input` prop reaches the input (`size`, `invalid`, `autoComplete`, …) and the ref
+reaches it too. How strong a password is stays the site's rule; a `Meter` of four segments draws it.
+
+`ProviderMark` draws a sign-in provider's logo (`discord`, `github`, `google`, `microsoft`; any other
+name gets a neutral `log-in` icon) at `size` px, and `providerLabel(provider)` is its name in a
+sentence (an unknown provider is its own label). `ProviderButton` is a `Button` with the mark as its
+icon and the caller's words as its label; every `Button` prop applies. `brand` fills it with the
+provider's colour, through the tokens `--brand-<provider>` and `--on-brand-<provider>`, the same in
+every theme; without `brand` it is the neutral button, so several providers sit side by side in a
+grid. `busy` swaps the mark for the spinner.
 
 `Pill` is the label every badge is drawn with: `tone` neutral (default), accent, info, ok, warn,
 danger or muted; `size` md or sm; `icon` or `dot` (`"live"` for a running thing) before the text.

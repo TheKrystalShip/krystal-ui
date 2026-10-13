@@ -190,6 +190,19 @@
   --d-slow: 240ms;
   /* @kind other */
 
+  /* ---------- BRAND — sign-in providers --------------------
+     Each provider's own button fill and the ink on it. They are the
+     same in every theme: a provider's colour is its identity, not
+     part of a palette. */
+  --brand-discord: #5865F2;
+  --on-brand-discord: #FFFFFF;
+  --brand-github: #24292F;
+  --on-brand-github: #FFFFFF;
+  --brand-google: #FFFFFF;
+  --on-brand-google: #1F1F1F;
+  --brand-microsoft: #2F2F2F;
+  --on-brand-microsoft: #FFFFFF;
+
   /* ---------- LAYOUT --------------------------------------- */
   --sidebar-w: 240px;
   /* @kind spacing */
