@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.26.6]
+
+### Fixed
+- **A chat in the dock draws no frame of its own.** The dock draws the panel's edges and the bar or
+  strip under it draws the bottom one, so `.chat-main` inside `.assistant-dock .chat-page--docked`
+  has no border: on a phone its bottom edge stood as a second line on the tab bar's, or on a site's
+  strip above the bar, and on a wide screen its left edge beside the dock's.
+
 ## [0.26.5]
 
 ### Changed

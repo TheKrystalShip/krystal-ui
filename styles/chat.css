@@ -1066,6 +1066,12 @@
   display: none;
 }
 
+/* The dock draws the panel's edges, and the bar or strip under it draws the bottom one, so the main
+   panel draws none of its own: a border here would stand as a second line beside each of them. */
+.assistant-dock .chat-page--docked .chat-main {
+  border: none;
+}
+
 /* Single cohesive header carries new-chat + history in the dock. */
 .assistant-dock .chat-page--docked .chat-head__nav {
   display: flex;
