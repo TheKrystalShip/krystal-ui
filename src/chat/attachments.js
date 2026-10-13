@@ -19,8 +19,9 @@ const CHARS_PER_TOKEN = 3;
 
 const IMAGE_NAME = /\.(png|jpe?g|gif|webp|avif|heic|heif|bmp|tiff?)$/i;
 
-// What the file picker offers for text. Anything else a person drops or pastes is still tried: a file
-// is text if it reads as text.
+// The text types a single picker for files and pictures names, for a site that draws one. The chat's own
+// file picker names no type at all, because a phone greys out a file whose extension it does not map: a
+// file is text if it reads as text, and anything else is refused on its chip.
 const TEXT_ACCEPT = [
   "text/*", ".txt", ".md", ".log", ".json", ".jsonc", ".yaml", ".yml", ".toml", ".ini", ".cfg", ".conf",
   ".properties", ".csv", ".tsv", ".xml", ".env", ".sh", ".bash", ".ps1", ".bat", ".sql", ".diff", ".patch",
@@ -28,7 +29,9 @@ const TEXT_ACCEPT = [
   ".lua", ".html", ".css", ".service",
 ].join(",");
 
-// The `accept` of the picker: pictures only where the assistant reads them.
+// The `accept` of one picker for pictures and files: pictures only where the assistant reads them. A
+// phone given pictures among its types opens its photo and camera chooser alone, which is why the chat
+// draws two pickers.
 function acceptFor(limits) {
   return (limits && limits.images ? "image/*," : "") + TEXT_ACCEPT;
 }

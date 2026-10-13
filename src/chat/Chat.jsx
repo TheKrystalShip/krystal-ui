@@ -26,7 +26,7 @@ import { ChatHistory } from "./ChatHistory.jsx";
 import { CHAT_PRIVACY_NOTICE, ChatContext, DefaultAboveComposer, DefaultStart, renderSlot } from "./slots.jsx";
 import { ChatThread } from "./ChatThread.jsx";
 import { ComposerAttachments } from "./ChatAttachments.jsx";
-import { acceptFor, prepareAttachment, textOverLimit } from "./attachments.js";
+import { prepareAttachment, textOverLimit } from "./attachments.js";
 import { useConversationStream } from "./useConversationStream.js";
 
 // Chat renders a conversation with ONE assistant, over the assistant wire contract. Everything that
@@ -391,6 +391,9 @@ function Chat({
   const attachedRef = React.useRef(attached);
   React.useEffect(() => { attachedRef.current = attached; }, [attached]);
   const fileInputRef = React.useRef(null);
+  const pictureInputRef = React.useRef(null);
+  const attachRef = React.useRef(null);
+  const [attachOpen, setAttachOpen] = React.useState(false);
   const [dragging, setDragging] = React.useState(false);
 
   const patchAttached = (key, patch) =>
@@ -1973,13 +1976,23 @@ function Chat({
                   them where it does not \u2014 both are drawn and the composer's width decides which shows
                   (chat-composer.css), so a dock dragged narrow changes over without a re-render. */}
               <div className="chat-composer__bar">
+                {/* Two pickers, because one cannot offer both: a phone given pictures among its types
+                    opens its photo and camera chooser and nothing else, and one given text types greys
+                    out a file whose extension it does not know. The file picker takes anything, and the
+                    assistant refuses on the chip what it cannot read. */}
                 {attachLimits && (
                   <>
-                    <IconButton icon="plus" variant="ghost" size="sm" className="chat-composer__attach"
-                      label={attachLimits.images ? "Attach pictures or files" : "Attach files"}
-                      title={attachLimits.images ? "Attach pictures or files" : "Attach files"}
-                      onClick={() => fileInputRef.current && fileInputRef.current.click()} />
-                    <input ref={fileInputRef} type="file" multiple hidden accept={acceptFor(attachLimits)}
+                    <IconButton ref={attachRef} icon="plus" variant="ghost" size="sm" className="chat-composer__attach"
+                      label={attachLimits.images ? "Attach a picture or a file" : "Attach a file"}
+                      title={attachLimits.images ? "Attach a picture or a file" : "Attach a file"}
+                      aria-haspopup={attachLimits.images ? "menu" : undefined}
+                      aria-expanded={attachLimits.images ? attachOpen : undefined}
+                      onClick={() => (attachLimits.images
+                        ? setAttachOpen(o => !o)
+                        : fileInputRef.current && fileInputRef.current.click())} />
+                    <input ref={pictureInputRef} type="file" multiple hidden accept="image/*"
+                      onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} />
+                    <input ref={fileInputRef} type="file" multiple hidden
                       onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} />
                   </>
                 )}
@@ -2037,6 +2050,17 @@ function Chat({
             </div>
           )}
           {asPage && empty && assistantHost && <p className="chat-composer__note">{CHAT_PRIVACY_NOTICE}</p>}
+          <ChatMenu open={attachOpen} setOpen={setAttachOpen} anchorRef={attachRef} label="Attach"
+            align={asPage ? undefined : "start"} className="chat-menu--attach">
+            <Button variant="ghost" size="sm" wide icon="image" role="menuitem" className="chat-menu__item"
+              onClick={() => { setAttachOpen(false); if (pictureInputRef.current) pictureInputRef.current.click(); }}>
+              Picture
+            </Button>
+            <Button variant="ghost" size="sm" wide icon="file-text" role="menuitem" className="chat-menu__item"
+              onClick={() => { setAttachOpen(false); if (fileInputRef.current) fileInputRef.current.click(); }}>
+              File
+            </Button>
+          </ChatMenu>
           <ChatMenu open={optsOpen} setOpen={setOptsOpen} anchorRef={optsRef} role="dialog" label="Chat options" align={asPage ? undefined : "start"}
             className="chat-menu--options">
             <div className="chat-menu__row" title={thinkTip}>

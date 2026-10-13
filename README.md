@@ -322,8 +322,10 @@ as the next turn's `answers`.
 
 **Attachments.** A client with `attachmentLimits()`, `uploadAttachment(blob, name, { onProgress, signal })`
 and `attachment(conversationId, id)` (a Promise of a Blob) lets a person attach files: `+` at the
-composer's left opens the picker (pictures only where the assistant reads them), and a file pasted or
-dropped on the composer is taken the same way. A picture is shrunk to 2048 pixels on its longer side
+composer's left opens a menu of two pickers, *Picture* (`image/*`, which on a phone is its photos and
+camera) and *File* (any file, refused on its chip when it is neither a picture nor text); where the
+assistant reads no pictures, `+` opens the file picker at once. A file pasted or dropped on the composer is
+taken the same way. A picture is shrunk to 2048 pixels on its longer side
 in the browser and written as the smaller of PNG and JPEG, under about 3 MB, and is never refused for
 its size; a text file is read and counted as the assistant counts it. Each is uploaded as soon as it
 is attached, as a chip with its progress, and a file the assistant could not take says why on its

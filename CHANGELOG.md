@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.29.1]
+
+### Fixed
+- **A phone can attach a text file.** `+` opens a menu (the chat's own `ChatMenu`, as the options use)
+  with two pickers: *Picture*, taking `image/*`, which a phone offers as its photos and camera; and
+  *File*, taking any file, which a phone offers as its file browser. One picker for both made Chrome on
+  Android offer its photo and camera chooser alone, and a list of text extensions greyed out a file
+  whose extension a phone does not map. A file that is neither a picture nor text is refused on its chip
+  as before. Where the assistant reads no pictures, `+` opens the file picker at once.
+
 ## [0.29.0]
 
 ### Changed
