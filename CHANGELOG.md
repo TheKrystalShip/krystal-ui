@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.29.3]
+
+### Changed
+- **A file the assistant cannot read says what to send instead**, on its chip as it is attached: a PDF
+  (paste the text, or a screenshot of the page), an office document (paste the text, or save it as plain
+  text or CSV), a recording (use the microphone), a video (a screenshot of the moment), an archive (the
+  files inside it). They are told apart by name and type before anything is read. Any other file that is
+  neither a picture nor text says the assistant cannot read it.
+
 ## [0.29.2]
 
 ### Fixed

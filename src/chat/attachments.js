@@ -10,7 +10,8 @@
 // among them. A PNG already within the size is sent as it is.
 //
 // A text file is UTF-8 with no NUL byte, counted in tokens as the assistant counts them (three
-// characters each), and refused with how to trim it when it is longer than a message carries.
+// characters each), and refused with how to trim it when it is longer than a message carries. A PDF,
+// an office document, a recording, a video or an archive is refused with what to send instead.
 
 const IMAGE_EDGE = 2048;
 const IMAGE_TARGET_BYTES = 3 * 1024 * 1024;
@@ -160,8 +161,33 @@ async function prepareText(file, limits) {
 
 // A file as it will be uploaded — `{ kind, blob, name, mimeType, tokens? }` — or `{ error }`, a
 // sentence for the person.
+// The kinds of file a person reaches for that are neither a picture nor text, each with what to send
+// instead. Told apart by name or type before anything is read, so the chip says it at once.
+const UNSUPPORTED = [
+  { test: (t, n) => t === "application/pdf" || /\.pdf$/i.test(n),
+    why: (name) => "`" + name + "` is a PDF, which can\u2019t be attached yet. Paste the text you need, or attach a screenshot of the page." },
+  { test: (t, n) => /\.(docx?|xlsx?|pptx?|od[tsp]|pages|numbers|key)$/i.test(n)
+      || /^application\/(msword|vnd\.ms-|vnd\.openxmlformats|vnd\.oasis\.opendocument)/.test(t),
+    why: (name) => "`" + name + "` is an office document, which can\u2019t be attached yet. Paste the text you need, or save it as plain text (a spreadsheet as CSV)." },
+  { test: (t, n) => t.startsWith("audio/") || /\.(mp3|m4a|aac|wav|ogg|oga|opus|flac|amr|3ga)$/i.test(n),
+    why: (name) => "`" + name + "` is a recording, which can\u2019t be attached. To say something to the assistant, use the microphone." },
+  { test: (t, n) => t.startsWith("video/") || /\.(mp4|m4v|mov|mkv|webm|avi|3gp)$/i.test(n),
+    why: (name) => "`" + name + "` is a video, which can\u2019t be attached. Attach a screenshot of the moment instead." },
+  { test: (t, n) => /\.(zip|7z|rar|tar|gz|tgz|bz2|xz)$/i.test(n) || /^application\/(zip|x-7z|x-rar|x-tar|gzip)/.test(t),
+    why: (name) => "`" + name + "` is an archive, which can\u2019t be attached. Attach the files inside it instead." },
+];
+
+function unsupported(file) {
+  const type = (file.type || "").toLowerCase();
+  const name = file.name || "";
+  const kind = UNSUPPORTED.find(k => k.test(type, name));
+  return kind ? kind.why(name || "file") : null;
+}
+
 async function prepareAttachment(file, limits) {
   if (!file || file.size === 0) return { error: "`" + ((file && file.name) || "file") + "` is empty." };
+  const refused = unsupported(file);
+  if (refused) return { error: refused };
   return isImage(file) ? prepareImage(file, limits) : prepareText(file, limits);
 }
 
