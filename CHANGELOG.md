@@ -5,6 +5,10 @@
 ### Changed
 - **`CardScreen`'s wordmark is the screen's heading** (`h1`), so a signed-out screen has one.
 
+### Fixed
+- **A field with a prefix or suffix draws one focus ring**, its frame's; the bare input inside it no longer
+  takes the universal focus ring as well.
+
 ## [0.30.0-dev.1]
 
 ### Added

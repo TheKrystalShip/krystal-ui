@@ -443,6 +443,10 @@
   outline: none;
 }
 
+.k-input__el:focus-visible {
+  box-shadow: none;
+}
+
 .k-input__el:disabled {
   cursor: not-allowed;
 }
