@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.27.0]
+
+### Added
+- **`Chat`'s `layout="page"`: the chat as the whole page a phone's tab opens.** It stands on the
+  page's background with no frame, so a black theme is black edge to edge; its header draws its rule
+  once the thread scrolls under it. The header carries the conversation's title, a way back to the
+  empty conversation (reopening one already waiting empty rather than starting a second) and the
+  conversation list as a sheet from the left edge; no close or window buttons and no rail at any
+  width. The empty conversation is the greeting in the middle of the screen, with the opening
+  suggestions as a row of chips over the composer, each one sent as it is picked, until the person
+  writes. The composer is one row: the field growing as it fills, the options (Thinking, Read aloud)
+  and the microphone or send, at the tight `--r-sm` radius. An answer carries no name above it. While
+  the person writes, `body.chat-typing` gives the tab bar's room to the keyboard, which the chat lays
+  over the page with the VirtualKeyboard API where the browser has it; a press elsewhere ends typing
+  once it has landed. `layout="panel"` is the default and draws the chat as before.
+- **`slots`: a site's own blocks in the chat's frame.** `start` (the empty conversation's column),
+  `aboveComposer`, `headerActions` and `history` (the head of the conversation list) each take a node
+  or a function of the chat's handle; a place left empty draws the chat's own blocks. Every block in
+  the chat reads the handle with `useChat()`: `layout`, `empty`, `usable`, `assistant`, `input`, the
+  `conversations`, `ask(text)`, `draft(text)`, `newChat()`, `open(id)` and `client()`. The chat's own
+  blocks are exported for a site composing its own: `ChatGreeting`, `ChatSuggestions`,
+  `ChatSuggestionChips`, `ChatRecent`, `ChatPrivacyNote`, and `ChatBlock` to set a site's block in the
+  column.
+- **`usePhone()`**: whether the window is 768px wide or narrower, following it as it changes.
+
+### Changed
+- **`BriefingPanel` is replaced by the `start` slot.** A site's block in the empty conversation is
+  composed there with the chat's own (`ChatGreeting`, `ChatSuggestions`, `ChatBlock`, `ChatRecent`,
+  `ChatPrivacyNote`), and takes `useChat().draft` where it was handed `onPick`. Its wrapper is
+  `.chat-start__block`, in place of `.chat-start__brief`.
+- **A popover follows its button.** One that a layout change moves while the popover is open (a bar
+  coming back, a panel growing) has the popover placed against it again, each frame it is open,
+  where it was placed only on a resize or a scroll.
+
 ## [0.26.6]
 
 ### Fixed

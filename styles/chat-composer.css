@@ -25,6 +25,48 @@
   margin-right: auto;
 }
 
+/* ---- a page's opening suggestions, a row over the box ---- */
+.chat-chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.chat-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.chat-chips__chip {
+  flex: none;
+  padding: 9px 14px;
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  background: var(--surface-1);
+  color: var(--fg-2);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
+}
+
+.chat-chips__chip:hover {
+  border-color: var(--border-strong);
+  color: var(--fg-1);
+}
+
+/* A page's one line under the box, on the empty conversation only. */
+.chat-composer__note {
+  margin: 8px auto 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--fg-4);
+  text-align: center;
+  text-wrap: balance;
+}
+
 /* ---- the box ---- */
 .chat-composer__box {
   box-sizing: border-box;

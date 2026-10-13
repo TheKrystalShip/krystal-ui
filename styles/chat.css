@@ -1077,6 +1077,111 @@
   display: flex;
 }
 
+/* ── As a page ────────────────────────────────────────────────────────────── */
+
+/* The chat as the whole page a phone shows (`layout="page"`): it stands on the page's own background,
+   so a theme whose canvas is black is black here too. The header draws its rule once the thread has
+   scrolled under it, the thread fades out under the composer, and the empty conversation stands in the
+   middle of the screen. */
+.chat-page--as-page {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* A page keeps its conversations in the header's sheet at every width, never in a rail. */
+.chat-page--as-page .chat-rail {
+  display: none;
+}
+
+.chat-page--as-page .chat-head__nav {
+  display: flex;
+}
+
+.chat-page--as-page .chat-main {
+  background: var(--canvas);
+}
+
+.chat-page--as-page .chat-head {
+  background: var(--canvas);
+  border-bottom-color: transparent;
+  transition: border-color var(--d-fast) var(--ease-out);
+}
+
+.chat-page--as-page .chat-head--lifted {
+  border-bottom-color: var(--border-subtle);
+}
+
+/* The way back to the empty conversation stands at the header's edge, its icon where the title would start. */
+.chat-page--as-page .chat-head__back {
+  flex-shrink: 0;
+  margin-left: -8px;
+}
+
+.chat-page--as-page .chat-start {
+  justify-content: center;
+  min-height: 100%;
+  padding: 32px 24px;
+}
+
+.chat-page--as-page .chat-composer {
+  position: relative;
+  padding: 0 12px 12px;
+  background: var(--canvas);
+}
+
+.chat-page--as-page .chat-composer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 24px;
+  background: linear-gradient(to bottom, transparent, var(--canvas));
+  pointer-events: none;
+}
+
+/* The box is one row: the field growing upward as it fills, then the options and the microphone or
+   send. The bar's controls stand in the row itself, after the field. */
+.chat-page--as-page .chat-composer__box {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 6px;
+  background: var(--surface-1);
+  border-radius: var(--r-sm);
+}
+
+.chat-page--as-page .chat-composer__field {
+  flex: 1;
+  min-width: 0;
+  order: 1;
+  align-self: center;
+}
+
+/* The field is sized to its scrollHeight, which counts its padding, so its box counts the padding too. */
+.chat-page--as-page .chat-composer__box textarea,
+.chat-page--as-page .chat-composer__hl {
+  box-sizing: border-box;
+  padding: 6px 4px 6px 8px;
+}
+
+.chat-page--as-page .chat-composer__bar {
+  display: contents;
+}
+
+.chat-page--as-page .chat-composer__bar > * {
+  order: 2;
+}
+
+.chat-page--as-page .chat-composer__bar-spacer {
+  display: none;
+}
+
+/* The answer is the assistant's without saying so: the page is the assistant's. */
+.chat-page--as-page .chat-turn__head {
+  display: none;
+}
+
 /* After the phone rule that sizes .chat-page to the viewport, which is the same specificity: a framed
    chat is sized by the column it fills, whatever the width. */
 @media (max-width: 768px) {

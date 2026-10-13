@@ -135,6 +135,19 @@
     display: none;
   }
 
+  /* While a person writes in a chat that is the page, the keyboard takes the bar's room. */
+  body.chat-typing .app--tabbed .tabbar {
+    display: none;
+  }
+
+  body.chat-typing .app--tabbed .assistant-dock {
+    bottom: env(keyboard-inset-height, 0px);
+  }
+
+  body.chat-typing .app--tabbed .app__main {
+    padding-bottom: env(keyboard-inset-height, 0px);
+  }
+
   .app--tabbed:has(.assistant-fab) .kfoot__bar {
     padding-right: 16px;
   }

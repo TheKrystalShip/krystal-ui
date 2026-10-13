@@ -314,6 +314,39 @@ only then. `listTarget` is a page of the site's own — a phone's tab of convers
 list is drawn full width, with New chat above it and the open conversation marked. A chat whose list
 a site draws elsewhere carries no history popover in its header.
 
+`layout` is where the chat stands. `"panel"`, the default, is a panel beside or over a page: its own
+surface, framed, with a dock's window buttons. `"page"` is the chat as the whole page, as a phone's
+tab opens it: it stands on the page's background with no frame, its header has a way back to the
+empty conversation and the conversation list as a sheet, its opening suggestions are a row of chips
+over a one-row composer, and while the person writes the site's tab bar gives its room to the
+keyboard. Give a page `pageClass="chat-page--framed"` as well, to fill the column.
+
+`slots` puts a site's own blocks in the chat's frame, by place: `start` is the empty conversation's
+column, `aboveComposer` a row over the composer, `headerActions` buttons in the header and `history`
+the head of the conversation list. A slot is a node or a function of the chat's handle, and any
+block inside the chat reads the same handle with `useChat()`: the `layout`, whether the conversation
+is `empty` and the assistant `usable`, the `conversations`, and `ask(text)` to send a turn,
+`draft(text)` to leave words in the composer for the person to finish, `newChat()` and `open(id)`.
+A place left empty draws the chat's own blocks, which are exported for a site composing its own:
+`ChatGreeting`, `ChatSuggestions` (a grid, each one drafted), `ChatSuggestionChips` (a row, each one
+sent), `ChatRecent` and `ChatPrivacyNote`, with `ChatBlock` to set a site's block in the column. The
+chat fetches nothing for a block; the site's block brings its own data.
+
+```jsx
+<Chat
+  slots={{
+    start: (chat) => (
+      <>
+        <ChatGreeting />
+        <ChatSuggestions />
+        <ChatBlock><Alerts onPick={(alert) => chat.draft(alert.prompt)} /></ChatBlock>
+        <ChatRecent />
+        <ChatPrivacyNote />
+      </>
+    ),
+  }} />
+```
+
 `ChatCard` is the card a product draws under an answer: an icon tile in a `tone` (neutral, accent,
 ok, warn, danger, muted), a title with a `sub` line, a `confidence` mark (confirmed, likely,
 possible), and `onOpen` with `openLabel` for the way to the full context, or any `action` node. Its

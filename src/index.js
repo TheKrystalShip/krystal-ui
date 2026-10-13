@@ -19,6 +19,9 @@ export { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 export { Chat, CHAT_PRIVACY_NOTICE, DEFAULT_PROFILE as CHAT_DEFAULT_PROFILE, DEFAULT_TOGGLE_COPY as CHAT_TOGGLE_COPY } from "./chat/Chat.jsx";
 export { ChatActivity } from "./chat/ChatActivity.jsx";
 export {
+  ChatBlock, ChatGreeting, ChatPrivacyNote, ChatRecent, ChatSuggestionChips, ChatSuggestions, useChat,
+} from "./chat/slots.jsx";
+export {
   ChatCommand, ChatDaySeparator, ChatEvent, ChatEventRow, ChatFileChange, ChatVerify,
 } from "./chat/ChatMessageParts.jsx";
 export { CarouselPager } from "./components/CarouselPager.jsx";
@@ -67,6 +70,7 @@ export {
 
 export { useCarousel } from "./hooks/useCarousel.js";
 export { useEdgeSwipe } from "./hooks/useEdgeSwipe.js";
+export { usePhone } from "./hooks/usePhone.js";
 export { usePortalPopover } from "./hooks/usePortalPopover.js";
 export { useStoredFlag } from "./hooks/useStoredFlag.js";
 

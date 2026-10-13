@@ -1,7 +1,7 @@
 // usePortalPopover — a generic hook for portaled popovers that float over the
 // page (z-indexed above any docked panel). Returns { pos, menuRef }: render via
 // createPortal(..., document.body) with style={pos} and attach menuRef.
-// Auto-places on both axes; outside-click closes.
+// Auto-places on both axes, and follows the button when the page moves it; outside-click closes.
 
 import React from "react";
 
@@ -20,10 +20,12 @@ function usePortalPopover(open, setOpen, ref) {
   }, [open, setOpen, ref]);
   React.useLayoutEffect(() => {
     if (!open) return;
+    let at = null;
     const place = () => {
       const el = ref.current;
       if (!el) return;
       const r = el.getBoundingClientRect();
+      at = r.top + "," + r.left;
       const vw = window.innerWidth, vh = window.innerHeight;
       const horiz = (r.left + r.right) / 2 > vw / 2
         ? { right: Math.round(vw - r.right) }
@@ -36,7 +38,20 @@ function usePortalPopover(open, setOpen, ref) {
     place();
     window.addEventListener("resize", place);
     window.addEventListener("scroll", place, true);
+    // A layout change that is neither moves the button too (a bar coming back, a panel growing): each
+    // frame the popover is open compares where the button stands with where it was placed against.
+    let frame = 0;
+    const follow = () => {
+      const el = ref.current;
+      if (el) {
+        const r = el.getBoundingClientRect();
+        if (r.top + "," + r.left !== at) place();
+      }
+      frame = requestAnimationFrame(follow);
+    };
+    frame = requestAnimationFrame(follow);
     return () => {
+      cancelAnimationFrame(frame);
       window.removeEventListener("resize", place);
       window.removeEventListener("scroll", place, true);
     };

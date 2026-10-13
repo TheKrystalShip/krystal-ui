@@ -322,7 +322,8 @@
   color: var(--fg-3);
 }
 
-.chat-start__brief {
+/* A site's block in the column (ChatBlock): the column's width, its own content left-aligned. */
+.chat-start__block {
   width: 100%;
   margin-top: 18px;
   text-align: left;
@@ -543,4 +544,67 @@
   padding: 16px 8px;
   font-size: 12.5px;
   color: var(--fg-3);
+}
+
+/* ---- the history as a sheet, where the chat is a page ---- */
+.chat-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+}
+
+.chat-sheet__scrim {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--scrim-base) 60%, transparent);
+  animation: k-fade var(--d-fast) var(--ease-out);
+}
+
+.chat-sheet__panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: min(86vw, 360px);
+  padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+  background: var(--canvas);
+  border-right: var(--edge);
+  animation: chat-sheet-in var(--d-base) var(--ease-out);
+}
+
+@keyframes chat-sheet-in {
+  from { transform: translateX(-100%); }
+  to { transform: none; }
+}
+
+.chat-sheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 8px 0 16px;
+}
+
+.chat-sheet__title {
+  font-size: 15px;
+  font-weight: var(--w-semibold);
+  color: var(--fg-1);
+}
+
+.chat-sheet__new {
+  padding: 4px 12px 12px;
+}
+
+.chat-sheet__list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 4px 12px;
+}
+
+.chat-sheet .chat-hist__open {
+  min-height: 44px;
 }

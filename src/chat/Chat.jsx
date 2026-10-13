@@ -23,7 +23,7 @@ import { MarkdownTextarea } from "./MarkdownTextarea.jsx";
 import { resolveCommand, suggestFor } from "./chatCommands.js";
 import { ChatContextMeter, ContextRing, contextUsage, useCompact } from "./ChatContextMeter.jsx";
 import { ChatHistory } from "./ChatHistory.jsx";
-import { RecentConversations } from "./RecentConversations.jsx";
+import { CHAT_PRIVACY_NOTICE, ChatContext, DefaultAboveComposer, DefaultStart, renderSlot } from "./slots.jsx";
 import { ChatThread } from "./ChatThread.jsx";
 import { useConversationStream } from "./useConversationStream.js";
 
@@ -122,11 +122,6 @@ function pickGreeting() {
   return CHAT_GREETINGS[Math.floor(Math.random() * CHAT_GREETINGS.length)];
 }
 
-// The standing disclosure on the fresh-conversation screen: conversations are stored by the assistant
-// (they are its memory AND the corpus its tuning is judged from), so nobody should discover after the
-// fact that a conversation can be read back.
-const CHAT_PRIVACY_NOTICE =
-  "Conversations are saved and may be reviewed to improve the assistant.";
 
 // A popover the chat's chrome opens from one of its buttons: placed against that button, closed by a
 // click outside or Escape, which hands focus back to the button. `align="start"` lines its left edge
@@ -203,11 +198,21 @@ function Chat({
   canSeeActions = false, canUseActions = false,
   // Review of someone else's conversation. Absent ⇒ the surface has no review mode.
   loadTranscript = null,
-  // Chrome a site injects: a briefing on the empty screen, and a picker among several assistants.
-  BriefingPanel = null, HostPicker = null,
+  // A picker among several assistants, in the header.
+  HostPicker = null,
+  // A site's blocks in the chat's frame, by place: `start`, `aboveComposer`, `headerActions` and
+  // `history` (slots.jsx says what each is and what the handle every block is given offers). A place
+  // left empty draws the chat's own blocks there.
+  slots = {},
   // An extra class on the page root, for a surface that lays the chat out differently — a chat that
   // owns the whole viewport, or one in a content area inside a shell.
   pageClass = "",
+  // Where the chat stands. `"panel"` is a panel beside or over a page: its own surface, framed, with
+  // the dock's window buttons. `"page"` is the chat as the whole page a phone shows: it stands on the
+  // page's own background with no frame, leaves through the site's tab bar rather than a close button,
+  // offers its suggestions as a row over the composer, keeps its conversations in a sheet, and gives
+  // the tab bar's room to the keyboard while the person types.
+  layout = "panel",
   // The way to this surface's own settings, when the chat IS the app and so carries the only route
   // to it.
   onOpenSettings = null,
@@ -236,6 +241,7 @@ function Chat({
   renderEntry, renderCards, turnExtras,
 }) {
   const conn = connection || { tone: "muted", label: "No assistant", usable: false, message: null };
+  const asPage = layout === "page";
   const assistantUsable = !!conn.usable;
 
   // The assistant accepts the session this surface already holds, so there is nothing to sign in to
@@ -246,6 +252,40 @@ function Chat({
   const [activeId, setActiveId] = React.useState(() => loadConversations(storageKey)[0]?.id || null);
   const [input, setInput]       = React.useState("");
   const [busy, setBusy]         = React.useState(false);
+  // A page's header draws its rule only once the thread has scrolled under it.
+  const [lifted, setLifted]     = React.useState(false);
+  // Whether the person is writing, on a page: the site's tab bar gives its room to the keyboard then
+  // (`body.chat-typing`, tabbar.css).
+  const [typing, setTyping]     = React.useState(false);
+  const pressingRef = React.useRef(false);
+  React.useEffect(() => {
+    if (!asPage) return undefined;
+    const down = () => { pressingRef.current = true; };
+    const up = () => { pressingRef.current = false; };
+    document.addEventListener("pointerdown", down, true);
+    document.addEventListener("pointerup", up, true);
+    document.addEventListener("pointercancel", up, true);
+    return () => {
+      document.removeEventListener("pointerdown", down, true);
+      document.removeEventListener("pointerup", up, true);
+      document.removeEventListener("pointercancel", up, true);
+    };
+  }, [asPage]);
+  React.useEffect(() => {
+    if (!asPage || !typing) return undefined;
+    document.body.classList.add("chat-typing");
+    return () => document.body.classList.remove("chat-typing");
+  }, [asPage, typing]);
+  // A page lays the keyboard over itself rather than letting it resize the viewport, so the page
+  // decides what moves: the composer rises by the keyboard's height (`env(keyboard-inset-height)`,
+  // tabbar.css) and nothing else on the site changes for a keyboard while the chat is not open.
+  React.useEffect(() => {
+    const keyboard = typeof navigator !== "undefined" ? navigator.virtualKeyboard : null;
+    if (!asPage || !keyboard) return undefined;
+    const before = keyboard.overlaysContent;
+    keyboard.overlaysContent = true;
+    return () => { keyboard.overlaysContent = before; };
+  }, [asPage]);
 
 
   // Thinking and auto-run are the CONVERSATION's, held by the assistant and read by the turn — so these
@@ -778,6 +818,7 @@ function Chat({
     if (!el) return;
     const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
     pinnedRef.current = distanceFromBottom <= 80;
+    setLifted(el.scrollTop > 0);
   }, []);
 
   // A deliberate pick, which is a different act from the retarget below: this one is the person
@@ -810,7 +851,9 @@ function Chat({
     setActiveId(id);
   };
 
-  const newChat = () => {
+  // `quiet` opens it without taking the keyboard: a page going back to its empty conversation is
+  // leaving one, not starting to write.
+  const newChat = (opts) => {
     const hostId = assistantHost && assistantHost.id;
     const id = uid();
     // Opened at once, so pressing the button is never a wait. What it is CALLED is the assistant's, and
@@ -820,7 +863,7 @@ function Chat({
     setConvos(prev => [{ id, title: NEW_CHAT_TITLE, messages: [], created: Date.now(), hostId }, ...prev]);
     setActiveId(id);
     setInput("");
-    if (taRef.current) taRef.current.focus();
+    if (!(opts && opts.quiet) && taRef.current) taRef.current.focus();
 
     // The id is ours to pick, but the conversation is the assistant's to create — so a chat opened here
     // exists, is named, and is resumable from another device before anything is said in it. The answer
@@ -1224,8 +1267,9 @@ function Chat({
     send(transcript || "", { id, duration, peaks });
   };
 
-  const startBriefingChat = (item) => {
-    setInput(item.prompt);
+  // Words put in the composer for the person to finish: a suggestion picked, a block's prompt, a seed.
+  const draft = (text) => {
+    setInput(text);
     setTimeout(() => {
       const ta = taRef.current;
       if (ta) { ta.focus(); ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 200) + "px"; }
@@ -1234,7 +1278,7 @@ function Chat({
 
   React.useEffect(() => {
     if (!seed || !seed.prompt) return;
-    startBriefingChat({ prompt: seed.prompt });
+    draft(seed.prompt);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fire once per seed via seed.nonce; seed.prompt is read fresh at that edge
   }, [seed && seed.nonce]);
 
@@ -1440,7 +1484,23 @@ function Chat({
   // eslint-disable-next-line react-hooks/exhaustive-deps -- activeId is the POINT: it re-rolls the greeting per conversation, not a value read inside.
   const greeting = React.useMemo(() => pickGreeting(), [activeId]);
 
-  const ChatBriefingPanel = BriefingPanel;
+  // What every block in the frame is given, through `useChat()` and as a slot function's argument.
+  const chat = {
+    layout: asPage ? "page" : "panel",
+    empty: !active || active.messages.length === 0,
+    usable: assistantUsable,
+    assistant: assistantHost || null,
+    input,
+    greeting, primer, noAssistant, suggestions,
+    conversations: convos, activeId,
+    ask: (text) => { if (assistantUsable) send(text); },
+    draft,
+    newChat: () => newChat(),
+    open: pickChat,
+    client: () => (assistantHost ? clientFor(assistantHost.id) : null),
+  };
+  // A transcript under review offers nothing to act on.
+  const reviewChat = { ...chat, usable: false, ask: () => {}, draft: () => {}, newChat: () => {}, open: () => {} };
 
   // The composer's switches, gathered into one menu where the composer is too narrow to label them.
   const [optsOpen, setOptsOpen] = React.useState(false);
@@ -1480,6 +1540,7 @@ function Chat({
       ? (review.conversation.user.displayName || review.conversation.user.userId)
       : null;
     return (
+      <ChatContext.Provider value={reviewChat}>
       <div className={"chat-page chat-page--review" + (docked ? " chat-page--docked" : "") + (pageClass ? " " + pageClass : "")}>
         <div className="chat-main">
           <div className="chat-main__head chat-head">
@@ -1531,14 +1592,41 @@ function Chat({
           </div>
         </div>
       </div>
+      </ChatContext.Provider>
     );
   }
 
   const shown = (fn) => (...args) => { fn(...args); if (onShowConversation) onShowConversation(); };
+  const empty = !active || active.messages.length === 0;
+  // A page's way back is to its empty conversation, which is a new chat: one already waiting empty is
+  // reopened rather than a second one started beside it.
+  const backToStart = () => {
+    const hostId = assistantHost && assistantHost.id;
+    const waiting = convos.find(c => c.messages.length === 0 && (!hostId || !c.hostId || c.hostId === hostId));
+    if (waiting) { setActiveId(waiting.id); setInput(""); }
+    else newChat({ quiet: true });
+  };
+  // Where the textarea takes or loses focus, the page's typing state follows it; a button pressed
+  // inside the composer is not writing.
+  const onComposerFocus = asPage ? (e) => { if (e.target.tagName === "TEXTAREA") setTyping(true); } : undefined;
+  // A press elsewhere is what usually takes the focus, and the tab bar coming back would move what it is
+  // pressing before it lets go: the page leaves typing once the press is over, and its click has landed.
+  const onComposerBlur = asPage ? (e) => {
+    if (e.target.tagName !== "TEXTAREA") return;
+    if (!pressingRef.current) { setTyping(false); return; }
+    const done = () => {
+      document.removeEventListener("pointerup", done, true);
+      document.removeEventListener("pointercancel", done, true);
+      setTimeout(() => setTyping(false), 0);
+    };
+    document.addEventListener("pointerup", done, true);
+    document.addEventListener("pointercancel", done, true);
+  } : undefined;
 
   return (
+    <ChatContext.Provider value={chat}>
     <div className={"chat-page" + (docked ? " chat-page--docked" : "") + (railTarget ? " chat-page--railless" : "")
-      + (pageClass ? " " + pageClass : "")}>
+      + (asPage ? " chat-page--as-page" : "") + (pageClass ? " " + pageClass : "")}>
       {railTarget && createPortal(
         <div className="chat-convos">
           <NavItem icon="square-pen" label="New chat" onClick={shown(newChat)} />
@@ -1623,7 +1711,10 @@ function Chat({
         {/* The header names the conversation being read; which assistant answers is the surface's
             to say. The connection shows here only when it is not fine \u2014 a healthy one is what the
             whole page already demonstrates. */}
-        <div className={"chat-main__head chat-head" + (docked ? " chat-head--docked" : "")}>
+        <div className={"chat-main__head chat-head" + (docked ? " chat-head--docked" : "") + (asPage && lifted ? " chat-head--lifted" : "")}>
+          {asPage && !empty && (
+            <IconButton icon="arrow-left" label="Back" variant="ghost" size="sm" className="chat-head__back" onClick={backToStart} />
+          )}
           <span className="chat-head__title" title={conversationTitle(active)}>{conversationTitle(active)}</span>
           {conn.tone !== "online" && (
             <span className={"chat-head__conn chat-head__conn--" + conn.tone} role="status">
@@ -1637,31 +1728,33 @@ function Chat({
             </span>
           )}
           <div className="chat-head__actions">
+            {renderSlot(slots.headerActions, chat)}
             {/* The phone-width and dock replacement for the rail (CSS decides, at the breakpoint
                 that hides it), so the rail's foot travels here with it. */}
             <div className="chat-head__nav">
-              <IconButton icon="square-pen" label="New chat" variant="ghost" size="sm" onClick={newChat} />
+              {!asPage && <IconButton icon="square-pen" label="New chat" variant="ghost" size="sm" onClick={newChat} />}
               {!railTarget && !listTarget && (
-                <ChatHistory convos={convos} activeId={activeId} onPick={pickChat} onDelete={deleteChat} onOpen={loadServerHistory} loading={histLoading} />
+                <ChatHistory convos={convos} activeId={activeId} onPick={pickChat} onDelete={deleteChat} onOpen={loadServerHistory} loading={histLoading}
+                  sheet={asPage} onNew={backToStart} head={renderSlot(slots.history, chat)} />
               )}
               {onOpenSettings && (
                 <IconButton icon="settings" label="Settings" variant="ghost" size="sm" onClick={onOpenSettings} />
               )}
             </div>
-            {!docked && active && (
+            {!docked && !asPage && active && (
               <ConversationOptions
                 onCompact={compactHere}
                 onDelete={() => deleteChat(active.id)} />
             )}
-            {docked && showPin && (
+            {docked && !asPage && showPin && (
               <IconButton icon={pinned ? "pin" : "pin-off"} label={pinned ? "Unpin" : "Pin"} variant="ghost" size="sm"
                 pressed={!!pinned} disabled={pinDisabled} onClick={onTogglePin}
                 title={pinDisabled ? "Not enough room to pin" : pinned ? "Unpin \u00b7 float over the page" : "Pin \u00b7 push the page aside"} />
             )}
-            {docked && onExpand && (
+            {docked && !asPage && onExpand && (
               <IconButton icon="maximize-2" label="Expand to full screen" variant="ghost" size="sm" onClick={onExpand} />
             )}
-            {docked && (
+            {docked && !asPage && (
               <IconButton icon="x" label="Close assistant" variant="ghost" size="sm" onClick={onClose} />
             )}
             {!docked && onClose && (
@@ -1672,35 +1765,9 @@ function Chat({
         </div>
 
         <div className="chat-scroll" ref={scrollRef} onScroll={onThreadScroll}>
-          {(!active || active.messages.length === 0) ? (
+          {empty ? (
             <div className="chat-start">
-              <span className="chat-start__disc"><Icon name="bot" size={24} /></span>
-              <h3 className="chat-start__greeting">{assistantHost ? greeting : "No assistant available"}</h3>
-              {(assistantHost ? primer : noAssistant) && (
-                <p className="chat-start__primer">{assistantHost ? primer : noAssistant}</p>
-              )}
-              {/* A suggestion is its words, or `{ text, icon }` for a product that marks each one. */}
-              {assistantHost && suggestions.length > 0 && (
-                <div className="chat-start__suggestions">
-                  {suggestions.map((s, i) => {
-                    const text = typeof s === "string" ? s : s.text;
-                    return (
-                      <button key={i} type="button" className="chat-start__suggestion"
-                        onClick={() => { setInput(text); if (taRef.current) taRef.current.focus(); }}>
-                        <Icon name={(s && s.icon) || "message-circle"} size={15} className="chat-start__suggestion-icon" />
-                        <span>{text}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-              {ChatBriefingPanel && (
-                <div className="chat-start__brief"><ChatBriefingPanel onPick={startBriefingChat} /></div>
-              )}
-              <RecentConversations convos={convos} activeId={activeId} onPick={pickChat} />
-              {/* On the fresh-conversation screen only — it opens every new chat, and the
-                  composer's own footprint stays exactly as it is without a pinned line. */}
-              {assistantHost && <p className="chat-start__privacy">{CHAT_PRIVACY_NOTICE}</p>}
+              {slots.start != null ? renderSlot(slots.start, chat) : <DefaultStart chat={chat} />}
             </div>
           ) : (
             <ChatThread messages={active.messages} user={user} assistantName={assistantName}
@@ -1738,8 +1805,9 @@ function Chat({
               ))}
             </div>
           )}
+          {slots.aboveComposer != null ? renderSlot(slots.aboveComposer, chat) : <DefaultAboveComposer chat={chat} />}
           {voice.phase === "idle" ? (
-            <div className="chat-composer__box" ref={composerRef}>
+            <div className="chat-composer__box" ref={composerRef} onFocus={onComposerFocus} onBlur={onComposerBlur}>
               {/* Name the assistant only where there is a choice of them. HostPicker is the
                   surface saying it addresses several, so there this reads "Message hotrod's
                   assistant" and stays useful; a surface with one assistant has nothing to
@@ -1804,6 +1872,7 @@ function Chat({
                 )}
                 {turnRunning
                   ? <IconButton icon="square" label="Stop the answer" variant="outline" size="sm" onClick={stop} />
+                  : asPage && !input.trim() ? null
                   : <Button variant="primary" size="sm" icon="arrow-up" onClick={() => send()}
                       disabled={!input.trim() || !assistantUsable}
                       aria-label="Send" title={assistantUsable ? "Send" : "Assistant unavailable"} />}
@@ -1814,7 +1883,8 @@ function Chat({
               <VoiceComposerBar rec={voice} onSend={sendVoice} onCancel={voice.cancel} />
             </div>
           )}
-          <ChatMenu open={optsOpen} setOpen={setOptsOpen} anchorRef={optsRef} role="dialog" label="Chat options" align="start"
+          {asPage && empty && assistantHost && <p className="chat-composer__note">{CHAT_PRIVACY_NOTICE}</p>}
+          <ChatMenu open={optsOpen} setOpen={setOptsOpen} anchorRef={optsRef} role="dialog" label="Chat options" align={asPage ? undefined : "start"}
             className="chat-menu--options">
             <div className="chat-menu__row" title={thinkTip}>
               <Icon name="lightbulb" size={14} className="chat-menu__icon" />
@@ -1851,6 +1921,7 @@ function Chat({
         </div>
       </div>
     </div>
+    </ChatContext.Provider>
   );
 }
 
