@@ -437,6 +437,26 @@ function Chat({
     }
   };
 
+  // The file picker. Where the browser has the File System Access picker and the chat is not in another
+  // origin's frame (which may not show one), that picker: Chrome on Android opens it as the phone's file
+  // browser, where an `<input type=file>` opens a chooser of the camera and the photo picker alone,
+  // whatever its `accept`. Everywhere else, the file input.
+  const pickFiles = async () => {
+    let topLevel = false;
+    try { topLevel = window.self === window.top; } catch { topLevel = false; }
+    if (!topLevel || typeof window.showOpenFilePicker !== "function") {
+      if (fileInputRef.current) fileInputRef.current.click();
+      return;
+    }
+    try {
+      const handles = await window.showOpenFilePicker({ multiple: true });
+      addFiles(await Promise.all(handles.map(h => h.getFile())));
+    } catch (e) {
+      if (e && e.name === "AbortError") return;
+      if (fileInputRef.current) fileInputRef.current.click();
+    }
+  };
+
   const removeAttached = (key) => {
     const item = attachedRef.current.find(a => a.key === key);
     if (item) {
@@ -1976,10 +1996,10 @@ function Chat({
                   them where it does not \u2014 both are drawn and the composer's width decides which shows
                   (chat-composer.css), so a dock dragged narrow changes over without a re-render. */}
               <div className="chat-composer__bar">
-                {/* Two pickers, because one cannot offer both: a phone given pictures among its types
-                    opens its photo and camera chooser and nothing else, and one given text types greys
-                    out a file whose extension it does not know. The file picker takes anything, and the
-                    assistant refuses on the chip what it cannot read. */}
+                {/* Two pickers, because one cannot offer both: Chrome on Android shows a picture picker
+                    as the camera and the photos, and only the File System Access picker as the phone's
+                    file browser (pickFiles). The file picker takes anything, and the assistant refuses
+                    on the chip what it cannot read. */}
                 {attachLimits && (
                   <>
                     <IconButton ref={attachRef} icon="plus" variant="ghost" size="sm" className="chat-composer__attach"
@@ -1989,7 +2009,7 @@ function Chat({
                       aria-expanded={attachLimits.images ? attachOpen : undefined}
                       onClick={() => (attachLimits.images
                         ? setAttachOpen(o => !o)
-                        : fileInputRef.current && fileInputRef.current.click())} />
+                        : pickFiles())} />
                     <input ref={pictureInputRef} type="file" multiple hidden accept="image/*"
                       onChange={(e) => { addFiles(e.target.files); e.target.value = ""; }} />
                     <input ref={fileInputRef} type="file" multiple hidden
@@ -2057,7 +2077,7 @@ function Chat({
               Picture
             </Button>
             <Button variant="ghost" size="sm" wide icon="file-text" role="menuitem" className="chat-menu__item"
-              onClick={() => { setAttachOpen(false); if (fileInputRef.current) fileInputRef.current.click(); }}>
+              onClick={() => { setAttachOpen(false); pickFiles(); }}>
               File
             </Button>
           </ChatMenu>

@@ -324,7 +324,10 @@ as the next turn's `answers`.
 and `attachment(conversationId, id)` (a Promise of a Blob) lets a person attach files: `+` at the
 composer's left opens a menu of two pickers, *Picture* (`image/*`, which on a phone is its photos and
 camera) and *File* (any file, refused on its chip when it is neither a picture nor text); where the
-assistant reads no pictures, `+` opens the file picker at once. A file pasted or dropped on the composer is
+assistant reads no pictures, `+` opens the file picker at once. *File* is the File System Access picker
+(`showOpenFilePicker`) where the browser has it and the chat is not framed by another origin, because
+Chrome on Android opens that one as the phone's file browser and an `<input type=file>` as the camera
+and the photos alone; elsewhere it is the file input. A file pasted or dropped on the composer is
 taken the same way. A picture is shrunk to 2048 pixels on its longer side
 in the browser and written as the smaller of PNG and JPEG, under about 3 MB, and is never refused for
 its size; a text file is read and counted as the assistant counts it. Each is uploaded as soon as it

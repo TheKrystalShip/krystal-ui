@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.29.2]
+
+### Fixed
+- **On an Android phone, *File* opens the phone's file browser.** Chrome on Android answers any
+  `<input type=file>` with a chooser of the camera and the photo picker, whatever its `accept`, and offers
+  the file browser only for the File System Access picker. *File* is that picker
+  (`showOpenFilePicker({ multiple: true })`) where the browser has it and the chat is not in another
+  origin's frame, which may not show one; a cancelled picker attaches nothing. Everywhere else, framed
+  included (a Discord Activity), *File* is the file input as before.
+
 ## [0.29.1]
 
 ### Fixed
