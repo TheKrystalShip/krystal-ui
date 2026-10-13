@@ -34,7 +34,7 @@ export { prepareAttachment, acceptFor, textOverLimit, sizeLabel } from "./chat/a
 export { MarkdownTextarea } from "./chat/MarkdownTextarea.jsx";
 export { renderMarkdown } from "./chat/markdown.jsx";
 export { VoiceComposerBar, VoiceNoteBubble, useVoiceRecorder } from "./chat/VoiceNote.jsx";
-export { createAssistantClient } from "./chat/client.js";
+export { createAssistantClient } from "./lib/assistantClient.js";
 export { useConversationStream } from "./chat/useConversationStream.js";
 export {
   NEW_CHAT_TITLE, conversationTitle, uid as chatUid, toolLabel, promotePendingCards, reduceTurnFrame,

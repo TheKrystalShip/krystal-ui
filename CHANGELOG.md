@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.29.0]
+
+### Changed
+- **`createAssistantClient` is the one client of the wire contract**, carrying what the Control Panel's
+  own client did, and lives at the import-free subpath `@thekrystalship/krystal-ui/lib/assistantClient`
+  (the barrel still exports it).
+  - `baseUrl` may be a function, asked on every call; where the assistant is is asked before the
+    bearer, so an assistant with no address fails with the site's own error.
+  - `renewToken()` and `canRenew()` (optional): a call that may be sent twice is renewed and sent again
+    when refused 401; a turn, a confirmation, a command, a stop and an upload are never sent twice, their
+    bearer renewed first when its JWT `exp` has passed. Without `renewToken` a 401 is reported.
+  - A turn carries a message id and is picked up again from its last frame after a dropped connection
+    (`GET /turns/{id}/events?after=`), each frame delivered once; a turn the assistant no longer holds
+    ends with a network error, and a cancelled one surfaces as an AbortError. `turns()` and
+    `follow(turnId, { after, onEvent, signal })` read the turns open on any surface.
+  - The event stream opens with a `hello`, reopens from its last position, and takes a `log.gap`'s
+    position; `attach` calls nothing unless the assistant's own `hello` names its stream.
+  - `confirm({ token, decision })` sends the contract's `{ handle, decision }`, and the client says
+    `declines: true`.
+  - Conversations, commands, tools, memories and turns come back as arrays.
+  - A refusal carries `envCode`, the refusal's own `code`.
+  - Added: `request(method, path, body, opts)` for a product's own routes; the review routes
+    (`reviewUsers`, `reviewStats`, `reviewConversations`, `reviewConversation(person, id)`,
+    `reviewAttachment(person, id, attachmentId)`).
+- **A reviewed transcript's attachments come from the site's `loadReviewAttachment(hostId,
+  conversationId, attachment)`**, beside `loadTranscript`, which names the conversation as the site's
+  review listing does; the chat no longer asks the client for them.
+
 ## [0.28.0]
 
 ### Added

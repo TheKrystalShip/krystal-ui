@@ -298,12 +298,27 @@ succeed reads.
 `renderEntry` draws transcript roles of the product's own, and `turnExtras()` adds fields to the
 next turn. `clientFor` is called with the assistant's id, and must be stable across renders.
 
-A client is `createAssistantClient`'s shape, and these members are optional: `attach` and `streamId`
-(an assistant whose event stream sends one conversation's turn frames), `declines: true` (the confirm
-channel takes `{ token, decision: "decline" }`, which gives a proposal card a Decline button), and
-`wakeSpeech()` (called when the microphone opens), and `turns()` with `follow(turnId, { signal, onEvent })`
-(the turns the person has open on any surface, and reading one of them frame by frame). A `question` frame is drawn as choices and a
-field for the person's own words, and the answers go out as the next turn's `answers`.
+**The client.** `createAssistantClient({ baseUrl, getToken, renewToken, canRenew })` is the one browser
+client of the wire contract, and is also an import-free subpath for code that runs outside a browser
+(`@thekrystalship/krystal-ui/lib/assistantClient`). `baseUrl` is a string or a function asked on every
+call, so a site that resolves where each assistant is throws its own error when there is none.
+`getToken` answers the bearer; `renewToken()` and `canRenew()`, when given, renew it as each call
+allows: a call that may be sent twice (a read, a delete, a memory write, a transcription, an
+attachment read) is renewed and sent again when refused 401, and a call that must not be (a turn, a
+confirmation, a command, a stop, an upload) is never sent again, its bearer renewed before it when the
+JWT's `exp` has passed. A turn carries a message id and is picked up again from its last frame when the
+connection drops; the event stream reopens from its last position and opens with a `hello`; the lists
+the contract wraps come back as arrays; a refusal is an Error with `status`, `envCode` and
+`userMessage`. `request(method, path, body, opts)` reaches a route of the product's own beside the
+contract's with the same renewal. A site with several assistants makes one client per assistant and
+hands the same one to the chat on every render.
+
+A site's own client is the same shape, and the chat reads its members only where they are present:
+`declines: true` gives a proposal card a Decline button, `wakeSpeech()` is called when the microphone
+opens, `turns()` with `follow(turnId, { signal, onEvent })` reads the turns the person has open on any
+surface, and `attach` and `streamId` serve an assistant whose event stream names itself in a `hello`.
+A `question` frame is drawn as choices and a field for the person's own words, and the answers go out
+as the next turn's `answers`.
 
 **Attachments.** A client with `attachmentLimits()`, `uploadAttachment(blob, name, { onProgress, signal })`
 and `attachment(conversationId, id)` (a Promise of a Blob) lets a person attach files: `+` at the
@@ -313,8 +328,10 @@ in the browser and written as the smaller of PNG and JPEG, under about 3 MB, and
 its size; a text file is read and counted as the assistant counts it. Each is uploaded as soon as it
 is attached, as a chip with its progress, and a file the assistant could not take says why on its
 chip. Sent, the message carries its pictures as thumbnails that open full size and its text files as
-chips. `reviewAttachment(conversationId, id)` shows a reviewed transcript's attachments, the
-conversation named as the review listing names it. The rules are `wire-contract.md` §2.2, and the
+chips. A reviewed transcript shows its attachments through the site's
+`loadReviewAttachment(hostId, conversationId, attachment)`, beside `loadTranscript`, the conversation
+named as the site's review listing names it; the client's own is
+`reviewAttachment(person, conversationId, attachmentId)`. The rules are `wire-contract.md` §2.2, and the
 module that prepares a file is `src/chat/attachments.js`.
 
 A site whose frame has a sidebar can keep the conversation list there: `railTarget` is the element

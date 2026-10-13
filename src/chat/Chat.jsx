@@ -39,8 +39,7 @@ import { useConversationStream } from "./useConversationStream.js";
 // `assistantHost` is the identity of the assistant being addressed — `{ id, name, title }` — and
 // `clientFor(id)` answers its client (`createAssistantClient`, or a site's own with the same
 // methods). A client that has `attachmentLimits`, `uploadAttachment` and `attachment` lets a person
-// attach files (`+` at the composer's left, paste, drop), and one with `reviewAttachment` shows a
-// reviewed transcript's attachments. A conversation remembers the id it lives on, so one held by another assistant is still
+// attach files (`+` at the composer's left, paste, drop). A conversation remembers the id it lives on, so one held by another assistant is still
 // addressed through its own client. `authed` says the site holds a session that assistant accepts.
 //
 // What a product shows of its own goes through `profile` and the render slots:
@@ -200,8 +199,11 @@ function Chat({
   // What the caller may do with THIS assistant: see proposed actions, and run them without
   // confirming. The site asks the assistant it talks to.
   canSeeActions = false, canUseActions = false,
-  // Review of someone else's conversation. Absent ⇒ the surface has no review mode.
-  loadTranscript = null,
+  // Review of someone else's conversation: `loadTranscript(hostId, conversationId)` reads it, and
+  // `loadReviewAttachment(hostId, conversationId, attachment)` (a Promise of a Blob) one of its
+  // attachments, the conversation named as the site's review listing names it. Absent ⇒ the surface
+  // has no review mode, and a reviewed transcript without the second shows each attachment's name.
+  loadTranscript = null, loadReviewAttachment = null,
   // A picker among several assistants, in the header.
   HostPicker = null,
   // A site's blocks in the chat's frame, by place: `start`, `aboveComposer`, `headerActions` and
@@ -1660,11 +1662,10 @@ function Chat({
   }, [ownHostId, activeId]);
   const reviewHostId = review && review.conversation ? review.hostId : null;
   const reviewConvId = review && review.conversation ? review.conversation.id : null;
-  const loadReviewAttachment = React.useMemo(() => {
-    const client = reviewHostId && reviewConvId ? clientFor(reviewHostId) : null;
-    if (!client || typeof client.reviewAttachment !== "function") return undefined;
-    return (a) => client.reviewAttachment(reviewConvId, a.id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- clientFor is the surface's fixed capability; the host and conversation decide the loader
+  const reviewAttachmentLoader = React.useMemo(() => {
+    if (!reviewHostId || !reviewConvId || !loadReviewAttachment) return undefined;
+    return (a) => loadReviewAttachment(reviewHostId, reviewConvId, a);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadReviewAttachment is the surface's fixed capability; the host and conversation decide the loader
   }, [reviewHostId, reviewConvId]);
 
   // Review mode replaces the whole surface: no rail (there is no "your chats" here), no composer
@@ -1723,7 +1724,7 @@ function Chat({
                 renderEntry={renderEntry ? (m, i) => renderEntry(m, i, reviewApi) : undefined}
                 renderCommand={renderReviewCommand}
                 renderCards={renderCards ? (m) => renderCards(m, reviewApi) : undefined}
-                loadAttachment={loadReviewAttachment}
+                loadAttachment={reviewAttachmentLoader}
                 readOnlyFeedback />
             )}
           </div>
