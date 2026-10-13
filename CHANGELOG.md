@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.30.0-dev.2]
+
+### Changed
+- **`CardScreen`'s wordmark is the screen's heading** (`h1`), so a signed-out screen has one.
+
 ## [0.30.0-dev.1]
 
 ### Added

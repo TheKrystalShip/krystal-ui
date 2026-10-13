@@ -1,6 +1,6 @@
 // CardScreen — the centred card on the page background that the sign-in family, the wait for
 // approval, a device approval and a site's signed-out screens stand on. The brand block (`mark`, an
-// image URL; `wordmark`; `tagline`) sits above the card, `foot` under it.
+// image URL; `wordmark`, the screen's heading; `tagline`) sits above the card, `foot` under it.
 //
 //   width   sm (400px, the default) | md (520px)
 //
@@ -16,7 +16,7 @@ function CardScreen({ mark, wordmark, tagline, children, foot, width = "sm", cla
         {brand && (
           <div className="k-cardscreen__brand">
             {mark && <img className="k-cardscreen__mark" src={mark} alt="" />}
-            {wordmark && <div className="k-cardscreen__wordmark">{wordmark}</div>}
+            {wordmark && <h1 className="k-cardscreen__wordmark">{wordmark}</h1>}
             {tagline && <div className="k-cardscreen__tagline">{tagline}</div>}
           </div>
         )}
