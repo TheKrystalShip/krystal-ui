@@ -43,6 +43,8 @@ lists them in the order they assume.
 | Cards and lists | `BriefCard`, `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art, a `ribbon` hanging from its top edge for keeping the thing, an `eyebrow` above the name saying what kind of thing it is, and along its foot a `progress` bar or one short bar per part in `segments`), `CollectionTile` (a set of titles as a link: `fan` draws three posters fanned beside its mark and name, `strip` its posters in order, numbered, and with `total` and `watched` follows somebody through it; it fills its slot at a fixed shape and takes a TvCard's focus on a television), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Slides | `useCarousel` (one of several slides at a time, turning by itself on an interval: held still under a mouse, under keyboard focus, on a hidden page and while `paused`, never turning by itself under reduced motion, its time started over by a key or a press in it, and turned by a swipe), `CarouselPager` (a mark a slide, the shown one filling over the slide's time; `indicator` for a television, where the marks are not focused) |
 | Labels | `Pill` (a count, a state or a kind as a small non-interactive label) |
+| Lists | `List`, `ListRow` (a framed list of rows with a lead, pills, an aside and actions) |
+| Sign-in screens | `CardScreen` (the centred card on the page background), `CopyField` (a read-only value with a copy button) |
 | Sign-in | `ProviderMark`, `providerLabel`, `ProviderButton` (a provider's mark and name, and a button carrying them) |
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `OptionList`, `Meter` |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
@@ -164,6 +166,41 @@ and keep their own class names, so a site's rule on `.nav-item__badge--warn` sti
 <Pill tone="warn">3</Pill>
 <Pill tone="muted" icon="lock">Locked</Pill>
 <Pill tone="ok" dot="live" size="sm">Running</Pill>
+```
+
+`List` is a `ul` with the frame and a hairline between rows; a `List` with no rows draws nothing, so
+an `EmptyState` stands in. `ListRow` is its `li`: `lead` (an `AccountAvatar`, an `Icon` in a tile),
+`title`, `sub`, `meta` (`Pill`s), `aside` (monospace, quiet) and `actions` (`Button`s, `IconButton`s).
+With `onOpen` the title is a button, with `href` a link, and its hit area covers the whole row, so
+`actions` stay separate targets and a press anywhere else on the row opens it. `selected` tints the row
+with the accent, `disabled` dims it and blocks opening, `tone` (accent, ok, info, warn, danger) draws a
+thin leading edge. At phone width `meta` and `aside` wrap under the title. `data-*` props reach the `li`.
+
+```jsx
+<List label="People">
+  <ListRow lead={<AccountAvatar user={user} size={32} />} title={user.name} sub={user.handle}
+    meta={<Pill size="sm" tone="info">Operator</Pill>} onOpen={() => open(user)}
+    actions={<IconButton variant="ghost" icon="trash-2" label="Remove" onClick={() => remove(user)} />} />
+</List>
+```
+
+`CardScreen` is the centred card on the page background that sign-in, the wait for approval and a
+site's signed-out screens stand on: `mark` (an image URL), `wordmark` and `tagline` above the card,
+`foot` under it, `width` `sm` (400px, default) or `md` (520px). It fills the viewport, pads for the
+safe areas, and renders no `style` attribute, so a static document under a style-refusing policy can
+use its classes (`k-cardscreen`, `k-cardscreen__card`, `__brand`, `__mark`, `__wordmark`,
+`__tagline`, `__foot`). Set `--k-cardscreen-height` on an ancestor to size it to a box other than the
+viewport. `CopyField` is a read-only `Input` (monospace unless `mono={false}`) whose suffix button
+copies the value and shows a check for a moment; `label` names the button, `onCopied(value)` runs
+after a copy that worked, every other prop is `Input`'s.
+
+```jsx
+<CardScreen mark={mark} wordmark="TheKrystalShip" tagline="Sign in to continue" foot={<a href="/register">Register</a>}>
+  <Field label="Password"><PasswordInput wide /></Field>
+  <Button variant="primary" size="lg" wide>Sign in</Button>
+  <ProviderButton provider="discord" brand wide size="lg">Continue with Discord</ProviderButton>
+</CardScreen>
+<CopyField value={token} onCopied={() => toast("Copied")} />
 ```
 
 ## Pages and dialogs

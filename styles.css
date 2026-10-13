@@ -5,8 +5,10 @@
 @import "./styles/scrollbar.css";
 @import "./styles/controls.css";
 @import "./styles/providers.css";
+@import "./styles/cardscreen.css";
 @import "./styles/page.css";
 @import "./styles/pill.css";
+@import "./styles/list.css";
 @import "./styles/shell.css";
 @import "./styles/subtabs.css";
 @import "./styles/hero.css";

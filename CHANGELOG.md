@@ -11,6 +11,14 @@
   (any other provider draws a `log-in` icon), their names, and a `Button` carrying a mark with the caller's
   label. `brand` fills it with the provider's colour through the new tokens `--brand-<provider>` and
   `--on-brand-<provider>`, the same in every theme; `busy` swaps the mark for the spinner.
+- **`List` and `ListRow`**: a framed list of rows with a `lead`, a title and `sub`, `Pill`s in `meta`, a
+  monospace `aside` and `actions`. `onOpen` or `href` stretches the title's hit area over the row while the
+  actions stay separate targets; `selected`, `disabled` and `tone` (a thin leading edge) mark a row; at phone
+  width `meta` and `aside` wrap under the title.
+- **`CardScreen`**: the centred card on the page background with a brand block above and a `foot` under it,
+  `width` `sm` or `md`, safe-area padding, and no `style` attribute so a static document can reuse its classes.
+- **`CopyField`**: a read-only `Input` with a copy button in its suffix that shows a check after the text is on
+  the clipboard.
 
 ### Changed
 - **The badges draw through `Pill`**: `NavItem`'s and `SubTabs`'s counts, `TabBar`'s pip, `ShowcaseCard`'s

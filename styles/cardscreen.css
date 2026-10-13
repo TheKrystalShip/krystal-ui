@@ -1,0 +1,114 @@
+/* ============================================================================
+   cardscreen.css — CardScreen: the centred card on the page background. Plain classes only, because
+   a static document under a style-refusing policy reuses them. Sits after controls and providers,
+   whose fields and buttons the card holds.
+   ============================================================================ */
+
+.k-cardscreen {
+  position: relative;
+  display: flex;
+  box-sizing: border-box;
+  min-height: var(--k-cardscreen-height, 100vh);
+  min-height: var(--k-cardscreen-height, 100dvh);
+  padding: max(40px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right))
+    max(40px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  overflow: hidden;
+  background: var(--canvas);
+  color: var(--fg-1);
+  font-family: var(--font-ui);
+}
+
+/* A soft brand-tinted glow in two corners. */
+.k-cardscreen::before,
+.k-cardscreen::after {
+  content: "";
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: var(--r-pill);
+  pointer-events: none;
+  filter: blur(120px);
+  opacity: 0.18;
+}
+
+.k-cardscreen::before {
+  top: -240px;
+  left: -180px;
+  background: radial-gradient(circle, var(--krystal-teal) 0%, transparent 70%);
+}
+
+.k-cardscreen::after {
+  bottom: -240px;
+  right: -180px;
+  background: radial-gradient(circle, var(--krystal-teal-press) 0%, transparent 70%);
+}
+
+.k-cardscreen__inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  margin: auto;
+}
+
+.k-cardscreen--sm .k-cardscreen__inner { max-width: 400px; }
+.k-cardscreen--md .k-cardscreen__inner { max-width: 520px; }
+
+.k-cardscreen__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.k-cardscreen__mark {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.k-cardscreen__wordmark {
+  color: var(--fg-1);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.k-cardscreen__tagline {
+  color: var(--fg-3);
+  font-size: 14px;
+  text-align: center;
+}
+
+.k-cardscreen__card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  padding: 28px;
+  background: var(--surface-1);
+  border: var(--edge);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
+}
+
+.k-cardscreen__foot {
+  color: var(--fg-3);
+  font-size: 13px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .k-cardscreen {
+    padding-top: max(24px, env(safe-area-inset-top));
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+
+  .k-cardscreen__card {
+    padding: 22px 18px;
+  }
+}

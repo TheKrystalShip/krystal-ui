@@ -1,15 +1,16 @@
 // The krystal-ui playground: every component in its variants and states on one page, for looking
 // at a change and for the visual harness to shoot. Not packaged.
 // Run: npm run play -- --port 5211, then open http://127.0.0.1:5211/#controls (or #badges, #page,
-// #settings, #dialogs, #lists, #frame).
+// #settings, #dialogs, #lists, #cardscreen, #frame).
 import React from "react";
 import { createRoot } from "react-dom/client";
 import {
-  AppShell, Breadcrumbs, BriefCard, Button, Checkbox, Dialog, EmptyState, Field, IconButton, Input,
-  Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, ShowcaseCard,
+  AccountAvatar, AppShell, Breadcrumbs, BriefCard, Button, CardScreen, Checkbox, CopyField, Dialog, EmptyState, Field, IconButton, Input,
+  Icon, List, ListRow, Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, ShowcaseCard,
   Sidebar, SidebarGroup, Skeleton, Spinner, SubTabs, Textarea, ThemePicker, Toggle, Toolbar,
   ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
 } from "../src/index.js";
+import tksMark from "../assets/tks-mark.png";
 import "../styles.css";
 
 const row = { display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", marginBottom: 12 };
@@ -356,10 +357,101 @@ function Dialogs() {
   );
 }
 
+const PEOPLE = [
+  { name: "Ada Lovelace", handle: "@ada", roles: [["Owner", "accent"], ["Operator", "info"]], status: ["Active", "ok"] },
+  { name: "Grace Hopper", handle: "@grace", roles: [["Operator", "info"]], status: ["Active", "ok"] },
+  { name: "Alan Turing", handle: "@alan", roles: [["Viewer", "neutral"]], status: ["Suspended", "warn"] },
+];
+
 function Lists() {
+  const [opened, setOpened] = React.useState("none");
+  const [picked, setPicked] = React.useState("b");
+  const tile = (name) => (
+    <span style={{ width: 32, height: 32, borderRadius: 8, background: "var(--surface-3)", color: "var(--fg-2)",
+      display: "inline-flex", alignItems: "center", justifyContent: "center" }}><Icon name={name} size={16} /></span>
+  );
   return (
     <Section id="lists" title="Lists">
-      <Sub title="ListRow / List"><p style={{ margin: 0, opacity: 0.6 }}>Placeholder.</p></Sub>
+      <Sub title="People: lead, sub, role pills, status pill, an action">
+        <List label="People">
+          {PEOPLE.map((p) => (
+            <ListRow key={p.handle} data-person={p.handle}
+              lead={<AccountAvatar user={{ name: p.name }} size={32} />}
+              title={p.name} sub={p.handle}
+              meta={<>{p.roles.map(([r, t]) => <Pill key={r} tone={t} size="sm">{r}</Pill>)}<Pill tone={p.status[1]} size="sm" dot>{p.status[0]}</Pill></>}
+              actions={<Button size="sm" variant="outline">Manage</Button>} />
+          ))}
+        </List>
+      </Sub>
+      <Sub title={"Navigable (onOpen): opened " + opened}>
+        <List label="Applications">
+          {["Control Panel", "Cinema", "Assistant"].map((n, i) => (
+            <ListRow key={n} data-row={n} lead={tile(["server", "film", "bot"][i])} title={n}
+              sub="3 clients, 2 roles" aside={"app-" + (i + 1)} onOpen={() => setOpened(n)} />
+          ))}
+          <ListRow title="A link row" sub="href renders an anchor" href="#lists" />
+        </List>
+      </Sub>
+      <Sub title="Two actions, openable">
+        <List label="Grants">
+          <ListRow data-row="grants" lead={tile("key")} title="servers.restart" sub="Scope: instance factorio-1"
+            meta={<Pill size="sm" tone="info">effect allow</Pill>}
+            aside="2026-10-12 09:14" onOpen={() => setOpened("grant")}
+            actions={<><Button size="sm" variant="outline">Edit</Button><IconButton size="sm" variant="ghost" tone="danger" icon="trash-2" label="Remove" /></>} />
+        </List>
+      </Sub>
+      <Sub title="Selected, tone, disabled">
+        <List label="States">
+          {["a", "b", "c"].map((k) => (
+            <ListRow key={k} title={"Selectable row " + k} sub="aria-current marks the chosen one"
+              selected={picked === k} onOpen={() => setPicked(k)} />
+          ))}
+          <ListRow tone="warn" lead={tile("alert-triangle")} title="Needs approval" sub="tone warn" meta={<Pill size="sm" tone="warn">Pending</Pill>} onOpen={() => {}} />
+          <ListRow tone="danger" lead={tile("circle-x")} title="Failed" sub="tone danger" aside="exit 1" />
+          <ListRow disabled title="Disabled row" sub="onOpen is blocked" onOpen={() => setOpened("DISABLED FIRED")}
+            actions={<Button size="sm" variant="outline" disabled>Manage</Button>} />
+        </List>
+      </Sub>
+      <Sub title="Empty: the List draws nothing, an EmptyState stands in">
+        <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+          <div data-empty-list><List label="Nobody">{[]}</List><p style={{ margin: 0, opacity: 0.5, fontSize: 12 }}>(an empty List)</p></div>
+          <EmptyState icon="users" title="Nobody here yet">Accounts you invite show up in this list.</EmptyState>
+        </div>
+      </Sub>
+    </Section>
+  );
+}
+
+function CardScreens() {
+  const [pw, setPw] = React.useState("");
+  return (
+    <Section id="cardscreen" title="CardScreen and CopyField">
+      <Sub title="CardScreen, contained">
+        <div style={{ ["--k-cardscreen-height"]: "100%", height: 720, overflow: "auto", border: "1px solid var(--border-subtle)", borderRadius: 12 }}
+          data-cardscreen-box>
+          <CardScreen mark={tksMark} wordmark="TheKrystalShip" tagline="Sign in to continue"
+            foot={<>No account? <a href="#cardscreen">Register</a></>}>
+            <Field label="Username"><Input wide autoComplete="username" placeholder="ada" /></Field>
+            <Field label="Password" aside="8+ characters">
+              <PasswordInput wide value={pw} onChange={(e) => setPw(e.target.value)} autoComplete="current-password" />
+            </Field>
+            <Button variant="primary" size="lg" wide>Sign in</Button>
+            <div style={{ textAlign: "center", fontSize: 12, color: "var(--fg-3)" }}>or</div>
+            {PROVIDERS.map((p) => <ProviderButton key={p} provider={p} brand wide size="lg">Continue with {providerLabel(p)}</ProviderButton>)}
+          </CardScreen>
+        </div>
+      </Sub>
+      <Sub title="CardScreen md, no brand">
+        <div style={{ ["--k-cardscreen-height"]: "100%", height: 260, overflow: "auto", border: "1px solid var(--border-subtle)", borderRadius: 12 }}>
+          <CardScreen width="md"><EmptyState icon="shield-check" title="Approve this device">Confirm the code shown on your TV.</EmptyState></CardScreen>
+        </div>
+      </Sub>
+      <Sub title="CopyField">
+        <div style={col}>
+          <CopyField value="kgsm_pat_7f3a91c2d8e04b5a" data-copyfield />
+          <CopyField value="https://kgsm.thekrystalship.com" label="Copy address" mono={false} size="sm" />
+        </div>
+      </Sub>
     </Section>
   );
 }
@@ -388,15 +480,13 @@ function Frame() {
   );
 }
 
-const LATER = ["ListRow / List", "CardScreen", "CopyField"];
-
 function App() {
   return (
     <div style={{ maxWidth: 1040, margin: "0 auto", padding: "24px 16px 80px" }}>
       <h1 style={{ margin: "0 0 12px", fontSize: 22 }}>krystal-ui playground</h1>
       <ThemePicker />
       <nav style={{ ...row, marginTop: 16 }}>
-        {["controls", "badges", "page", "settings", "dialogs", "lists", "frame", "later"].map((id) => (
+        {["controls", "badges", "page", "settings", "dialogs", "lists", "cardscreen", "frame"].map((id) => (
           <a key={id} href={"#" + id}>#{id}</a>
         ))}
       </nav>
@@ -406,10 +496,8 @@ function App() {
       <Settings />
       <Dialogs />
       <Lists />
+      <CardScreens />
       <Frame />
-      <Section id="later" title="Not yet built">
-        {LATER.map((name) => <Sub key={name} title={name}><p style={{ margin: 0, opacity: 0.6 }}>Placeholder.</p></Sub>)}
-      </Section>
     </div>
   );
 }
