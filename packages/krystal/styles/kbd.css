@@ -1,0 +1,50 @@
+/* ============================================================================
+   kbd.css — a keyboard key (Kbd) and a chord of them: mono, small, on a raised surface.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 var(--s-1);
+  border: var(--edge-strong);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  color: var(--fg-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 1px 0 var(--border-strong);
+}
+
+.k-kbd--sm {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 3px;
+  font-size: 10px;
+}
+
+.k-kbd-chord {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-family: var(--font-mono);
+}
+
+.k-kbd-chord__sep {
+  color: var(--fg-4);
+  font-size: 11px;
+}
+
+.k-kbd-chord--sm .k-kbd-chord__sep {
+  font-size: 10px;
+}
+}
