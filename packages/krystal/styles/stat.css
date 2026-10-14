@@ -41,6 +41,28 @@
 .k-stat--warn::before { background: var(--warning); }
 .k-stat--danger::before { background: var(--danger); }
 
+.k-stat__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.k-stat__head > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.k-stat__aside {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .k-stat__label {
   display: flex;
   align-items: center;

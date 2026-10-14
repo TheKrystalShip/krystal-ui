@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  AccountAvatar, Avatar, Button, Card, DataState, IconButton, List, ListRow, Pill, StatTile, StatTiles, Table, sortRows,
+  AccountAvatar, Avatar, Button, Card, DataState, IconButton, List, ListRow, Pill, StatTile, StatusDot, StatTiles, Table, sortRows,
 } from "@thekrystalship/krystal";
 import { Section, Sub, col, row } from "../kit.jsx";
 
@@ -66,6 +66,8 @@ export function StatTileExamples() {
           <StatTile icon="activity" label="Latency" value={null} sub="Not measured" />
           <StatTile label="With spark" value="1.4" unit="GB" spark={<svg viewBox="0 0 100 24" width="100%" height="24" preserveAspectRatio="none" aria-hidden="true"><polyline fill="none" stroke="var(--krystal-teal)" strokeWidth="2" points="0,20 20,14 40,16 60,6 80,10 100,3" /></svg>} />
           <StatTile label="Opens" value={5} onOpen={() => {}} sub="Whole tile is a button" />
+          <StatTile icon="cpu" label="With aside" value="42" unit="%" onOpen={() => {}} sub="A pin stays pressable"
+            aside={<><StatusDot size="sm" tone="ok" label="Live" /><IconButton variant="ghost" size="sm" icon="pin" label="Pin" /></>} />
         </StatTiles>
         <div style={{ ...row, marginTop: 12 }}>
           <div style={{ width: 150 }}><StatTile size="sm" icon="users" label="Players" value={4} sub="2 offline" tone="info" /></div>

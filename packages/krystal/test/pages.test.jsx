@@ -1,6 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import userEvent from "@testing-library/user-event";
 import { render, screen } from "@testing-library/react";
-import { BriefEmpty, BriefItem, DetailPage, FormField, ListPage, ListRow, Notice, SignInScreen } from "@thekrystalship/krystal";
+import { BriefEmpty, BriefItem, DetailPage, FormField, ListPage, ListRow, Notice, SignInScreen, StatTile } from "@thekrystalship/krystal";
 
 describe("SignInScreen", () => {
   it("draws usernameExtra between the username and the password, and passwordHint inside the password's frame", () => {
@@ -73,5 +74,19 @@ describe("ListRow", () => {
   it("stays an li by default", () => {
     const { container } = render(<ul><ListRow title="Row" /></ul>);
     expect(container.querySelector("li.k-listrow")).toBeTruthy();
+  });
+});
+
+describe("StatTile aside", () => {
+  it("draws the aside beside the label, and a press on it does not open the tile", async () => {
+    const user = userEvent.setup();
+    const onOpen = vi.fn();
+    const onPin = vi.fn();
+    render(<StatTile label="CPU" value={4} onOpen={onOpen} aside={<button onClick={onPin}>Pin</button>} />);
+    await user.click(screen.getByRole("button", { name: "Pin" }));
+    expect(onPin).toHaveBeenCalledTimes(1);
+    expect(onOpen).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "CPU" }));
+    expect(onOpen).toHaveBeenCalledTimes(1);
   });
 });
