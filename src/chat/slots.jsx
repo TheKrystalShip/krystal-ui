@@ -28,16 +28,26 @@ import React from "react";
 import { Icon } from "../components/Icon.jsx";
 import { RecentConversations } from "./RecentConversations.jsx";
 
+/** @type {React.Context<import("./types.js").ChatHandle | null>} */
 const ChatContext = React.createContext(null);
 
-/** The handle of the chat a block is drawn in. */
+/**
+ * The handle of the chat a block is drawn in.
+ * @returns {import("./types.js").ChatHandle}
+ */
 function useChat() {
   const chat = React.useContext(ChatContext);
   if (!chat) throw new Error("useChat() is for a block drawn inside a Chat.");
   return chat;
 }
 
-/** A slot's content: a node as given, a function given the handle. */
+/**
+ * A slot's content: a node as given, a function given the handle.
+ * A slot's content: a node as given, a function given the handle.
+ * @param {import("./types.js").Slot} slot
+ * @param {import("./types.js").ChatHandle} chat
+ * @returns {import("react").ReactNode}
+ */
 function renderSlot(slot, chat) {
   if (slot == null) return null;
   return typeof slot === "function" ? slot(chat) : slot;
@@ -66,7 +76,7 @@ function ChatSuggestions() {
         const text = typeof s === "string" ? s : s.text;
         return (
           <button key={i} type="button" className="chat-start__suggestion" onClick={() => chat.draft(text)}>
-            <Icon name={(s && s.icon) || "message-circle"} size={15} className="chat-start__suggestion-icon" />
+            <Icon name={(s && /** @type {{ icon?: string }} */ (s).icon) || "message-circle"} size={15} className="chat-start__suggestion-icon" />
             <span>{text}</span>
           </button>
         );
@@ -93,7 +103,11 @@ function ChatSuggestionChips() {
   );
 }
 
-/** The conversations to pick up again, newest first. */
+/**
+ * The conversations to pick up again, newest first.
+ * @param {object} props
+ * @param {number} [props.max] how many conversations to list
+ */
 function ChatRecent({ max }) {
   const chat = useChat();
   return <RecentConversations convos={chat.conversations} activeId={chat.activeId} onPick={chat.open} max={max} />;
@@ -105,7 +119,12 @@ function ChatPrivacyNote() {
   return chat.assistant ? <p className="chat-start__privacy">{CHAT_PRIVACY_NOTICE}</p> : null;
 }
 
-/** A site's block in the empty conversation's column: the column's width, its own content left-aligned. */
+/**
+ * A site's block in the empty conversation's column: the column's width, its own content left-aligned.
+ * @param {object} props
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function ChatBlock({ className = "", children }) {
   return <div className={"chat-start__block" + (className ? " " + className : "")}>{children}</div>;
 }
@@ -113,7 +132,11 @@ function ChatBlock({ className = "", children }) {
 const CHAT_PRIVACY_NOTICE =
   "Conversations are saved and may be reviewed to improve the assistant.";
 
-/** What the empty conversation's column holds when a site fills nothing: on a page, the greeting alone. */
+/**
+ * What the empty conversation's column holds when a site fills nothing: on a page, the greeting alone.
+ * @param {object} props
+ * @param {import("./types.js").ChatHandle} props.chat
+ */
 function DefaultStart({ chat }) {
   return (
     <>
@@ -123,7 +146,11 @@ function DefaultStart({ chat }) {
   );
 }
 
-/** What stands over the composer when a site fills nothing: a page's suggestions until the person writes. */
+/**
+ * What stands over the composer when a site fills nothing: a page's suggestions until the person writes.
+ * @param {object} props
+ * @param {import("./types.js").ChatHandle} props.chat
+ */
 function DefaultAboveComposer({ chat }) {
   return chat.layout === "page" && chat.empty && !chat.input.trim() ? <ChatSuggestionChips /> : null;
 }

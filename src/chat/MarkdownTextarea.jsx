@@ -18,7 +18,17 @@ import { highlightMarkdown } from "./markdownHighlight.jsx";
 //   pre-edit text in the element's own color, and that color is transparent here. So during
 //   composition the layer hides and the textarea shows its text; the swap back is the end of the
 //   composition, before the next paint of committed characters.
-const MarkdownTextarea = React.forwardRef(function MarkdownTextarea(
+const MarkdownTextarea = React.forwardRef(/**
+ * The composer's input: a highlight layer behind a real textarea.
+ * @param {object} props
+ * @param {string} [props.value]
+ * @param {string} [props.placeholder]
+ * @param {number} [props.rows]
+ * @param {(event: import("react").ChangeEvent<HTMLTextAreaElement>) => void} [props.onChange]
+ * @param {(event: import("react").KeyboardEvent<HTMLTextAreaElement>) => void} [props.onKeyDown]
+ * @param {import("react").ForwardedRef<HTMLTextAreaElement>} ref resolves to the textarea
+ */
+function MarkdownTextarea(
   { value = "", placeholder, rows = 1, onChange, onKeyDown },
   ref,
 ) {

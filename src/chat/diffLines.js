@@ -15,6 +15,12 @@ function splitLines(text) {
 }
 
 // [{ type: "same" | "del" | "add", text }] in reading order.
+/**
+ * A line diff in reading order.
+ * @param {string | null | undefined} before
+ * @param {string | null | undefined} after
+ * @returns {import("./types.js").DiffOp[]}
+ */
 function diffLines(before, after) {
   const a = splitLines(before);
   const b = splitLines(after);
@@ -24,6 +30,7 @@ function diffLines(before, after) {
   while (tail < a.length - head && tail < b.length - head
     && a[a.length - 1 - tail] === b[b.length - 1 - tail]) tail++;
 
+  /** @type {import("./types.js").DiffOp[]} */
   const out = a.slice(0, head).map(text => ({ type: "same", text }));
   const am = a.slice(head, a.length - tail);
   const bm = b.slice(head, b.length - tail);
@@ -61,12 +68,19 @@ function diffLines(before, after) {
 
 // The diff as it is read: every change with `context` unchanged lines either side, and each longer
 // unchanged run between them folded into one `{ type: "skip", count }` row.
+/**
+ * The diff as it is read: each change with `context` unchanged lines either side, longer unchanged runs folded into a `skip` row.
+ * @param {import("./types.js").DiffOp[]} ops
+ * @param {number} [context]
+ * @returns {import("./types.js").DiffOp[]}
+ */
 function diffHunks(ops, context = 3) {
   const keep = new Array(ops.length).fill(false);
   ops.forEach((op, i) => {
     if (op.type === "same") return;
     for (let k = Math.max(0, i - context); k <= Math.min(ops.length - 1, i + context); k++) keep[k] = true;
   });
+  /** @type {import("./types.js").DiffOp[]} */
   const out = [];
   let skipped = 0;
   ops.forEach((op, i) => {

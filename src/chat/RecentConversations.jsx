@@ -22,6 +22,14 @@ function hasContent(c) {
   return Array.isArray(c.messages) && c.messages.some(m => m && m.role === "user");
 }
 
+/**
+ * The fresh-chat screen's list of conversations to pick up again.
+ * @param {object} props
+ * @param {import("./types.js").Conversation[]} props.convos
+ * @param {string | null} props.activeId
+ * @param {(id: string) => void} props.onPick
+ * @param {number} [props.max]
+ */
 function RecentConversations({ convos, activeId, onPick, max = 3 }) {
   const recent = React.useMemo(() => (convos || [])
     .filter(c => c && c.id !== activeId && hasContent(c))

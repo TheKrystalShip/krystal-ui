@@ -17,6 +17,10 @@ const CONFIDENCE = {
   possible: { label: "Possible", title: "Can’t be measured directly" },
 };
 
+/**
+ * @param {object} props
+ * @param {"confirmed" | "likely" | "possible"} [props.level]
+ */
 function ConfidenceBadge({ level }) {
   const meta = CONFIDENCE[level];
   if (!meta) return null;
@@ -27,6 +31,20 @@ function ConfidenceBadge({ level }) {
   );
 }
 
+/**
+ * @param {object} props
+ * @param {string | import("react").ReactNode} [props.icon] a Lucide name or a node
+ * @param {"neutral" | "accent" | "ok" | "warn" | "danger" | "muted"} [props.tone]
+ * @param {import("react").ReactNode} [props.title]
+ * @param {import("react").ReactNode} [props.sub]
+ * @param {boolean} [props.subMono] sets `sub` as code; false sets it as prose
+ * @param {"confirmed" | "likely" | "possible"} [props.confidence]
+ * @param {() => void} [props.onOpen] the way to the full context
+ * @param {string} [props.openLabel]
+ * @param {import("react").ReactNode} [props.action] any other node for the head's right end; wins over `onOpen`
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function ChatCard({
   icon, tone = "neutral", title, sub, subMono = true, confidence, onOpen, openLabel = "Open", action,
   className, children,
@@ -75,6 +93,16 @@ const VERDICTS = {
   neutral: { icon: "minus", label: "Skipped" },
 };
 
+/**
+ * @param {object} props
+ * @param {import("react").ReactNode} [props.label]
+ * @param {import("react").ReactNode} [props.value]
+ * @param {"ok" | "warn" | "danger" | "neutral" | "skip"} [props.verdict]
+ * @param {string} [props.verdictLabel]
+ * @param {boolean} [props.mono] sets the label as code
+ * @param {boolean} [props.valueMono] sets the value as code
+ * @param {import("react").ReactNode} [props.action]
+ */
 function ChatCardRow({ label, value, verdict, verdictLabel, mono = false, valueMono = false, action }) {
   const tone = verdict === "skip" ? "neutral" : verdict;
   const v = VERDICTS[tone];
@@ -94,6 +122,10 @@ function ChatCardRow({ label, value, verdict, verdictLabel, mono = false, valueM
 }
 
 // The rows' frame under the card's head.
+/**
+ * @param {object} props
+ * @param {import("react").ReactNode} [props.children]
+ */
 function ChatCardRows({ children }) {
   return <div className="chat-card-rows">{children}</div>;
 }

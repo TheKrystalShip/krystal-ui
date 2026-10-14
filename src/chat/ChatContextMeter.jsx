@@ -11,6 +11,11 @@ import { usePortalPopover } from "../hooks/usePortalPopover.js";
 const WARN_AT = 75;
 
 // The window's figures from a turn's `usage`, or null when there is no window to speak of.
+/**
+ * The window's figures from a turn's usage, or null when there is no window to speak of.
+ * @param {import("./types.js").Usage | null | undefined} usage
+ * @returns {{ win: number, used: number, pct: number, warn: boolean } | null}
+ */
 function contextUsage(usage) {
   const win = usage && usage.contextWindow > 0 ? usage.contextWindow : 0;
   if (!win) return null;
@@ -22,6 +27,10 @@ function contextUsage(usage) {
 // A 16px ring that fills clockwise from the top.
 const RING_R = 7;
 const RING_C = 2 * Math.PI * RING_R;
+/**
+ * @param {object} props
+ * @param {number} props.pct 0 to 100
+ */
 function ContextRing({ pct }) {
   return (
     <svg className="chat-ctxring" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
@@ -35,6 +44,12 @@ function ContextRing({ pct }) {
 
 // Compacting through `onCompact`, with the answer it gave: closed when it compacted, a note when it
 // had nothing to summarize or failed.
+/**
+ * Compacting through `onCompact`: closes when it compacted, notes when it had nothing to summarize or failed.
+ * @param {(() => Promise<import("./types.js").CompactResult>) | null | undefined} onCompact
+ * @param {() => void} onDone
+ * @returns {{ compacting: boolean, note: string | null, setNote: (note: string | null) => void, run: () => Promise<void> }}
+ */
 function useCompact(onCompact, onDone) {
   const [compacting, setCompacting] = React.useState(false);
   const [note, setNote] = React.useState(null);
@@ -55,6 +70,11 @@ function useCompact(onCompact, onDone) {
   return { compacting, note, setNote, run };
 }
 
+/**
+ * @param {object} props
+ * @param {import("./types.js").Usage | null} [props.usage]
+ * @param {(() => Promise<import("./types.js").CompactResult>) | null} [props.onCompact]
+ */
 function ChatContextMeter({ usage, onCompact }) {
   const ctx = contextUsage(usage);
   const [open, setOpen] = React.useState(false);

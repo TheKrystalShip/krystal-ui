@@ -12,11 +12,16 @@ import { toolLabel } from "./conversation.js";
 
 // Split into what reads and what changes something. It is the question someone opens a command
 // list with. `onUseCommand(name)` puts the command in the composer; without it a row has no Use.
+/**
+ * @param {object} props
+ * @param {import("./types.js").Message} props.msg
+ * @param {(name: string) => void} [props.onUseCommand]
+ */
 function ChatCommandHelp({ msg, onUseCommand }) {
   const commands = msg.commands || [];
   const reads = commands.filter(c => !c.mutates);
   const acts = commands.filter(c => c.mutates);
-  const groups = [["Reference", reads], ["Changes something", acts]].filter(([, g]) => g.length > 0);
+  const groups = /** @type {[string, import("./types.js").CommandInfo[]][]} */ ([["Reference", reads], ["Changes something", acts]]).filter(([, g]) => g.length > 0);
 
   return (
     <ChatCard icon="square-slash" title="Commands you can type" className="chat-cmds">
@@ -49,6 +54,10 @@ function firstSentence(text) {
   return stop < 0 ? text : text.slice(0, stop + 1);
 }
 
+/**
+ * @param {object} props
+ * @param {import("./types.js").Message} props.msg
+ */
 function ChatCommandTools({ msg }) {
   const tools = msg.tools || [];
   return (

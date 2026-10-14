@@ -80,6 +80,9 @@ const titleOf = (host) => (host && (host.title || host.name)) || "the assistant"
 
 // A proposed action this surface knows nothing about: named by its verb, aimed at its subject, and
 // redeemable — the assistant that proposed it is the one that performs it.
+/**
+ * @type {import("./types.js").Profile}
+ */
 const DEFAULT_PROFILE = {
   adaptCard: () => null,
   proposalLabel: (verb) => (verb || "Run").replace(/_/g, " "),
@@ -97,6 +100,9 @@ const DEFAULT_PROFILE = {
 
 // What each of a conversation's switches means in the state it stands at: the composer's tooltip on
 // that switch, and what the transcript says when it moves.
+/**
+ * @type {import("./types.js").ToggleCopy}
+ */
 const DEFAULT_TOGGLE_COPY = {
   thinking: {
     on:  "Thinking on — replies may take a little longer but tend to be more thorough and accurate.",
@@ -111,6 +117,9 @@ const DEFAULT_TOGGLE_COPY = {
 // Greetings for the empty-chat screen. One is drawn at random per conversation so opening a new chat
 // feels like being greeted rather than reading a label. Free of product names — the header and the
 // composer placeholder already say WHICH assistant is answering.
+/**
+ * @type {string[]}
+ */
 const CHAT_GREETINGS = [
   "Hello, what can I do for you?",
   "Hi there — what can I help with?",
@@ -130,6 +139,17 @@ function pickGreeting() {
 // click outside or Escape, which hands focus back to the button. `align="start"` lines its left edge
 // up with the button's — for a button at the start of a row, whose menu would otherwise hang off to
 // the side away from what it belongs to.
+/**
+ * @param {object} props
+ * @param {boolean} props.open
+ * @param {(open: boolean) => void} props.setOpen
+ * @param {import("react").RefObject<HTMLElement>} props.anchorRef the button the menu opens from
+ * @param {string} [props.role]
+ * @param {string} props.label
+ * @param {"start"} [props.align] lines the menu's left edge up with the button's
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function ChatMenu({ open, setOpen, anchorRef, role = "menu", label, align, className = "", children }) {
   const { pos, menuRef } = usePortalPopover(open, setOpen, anchorRef,
     align === "start" ? { placement: "bottom-start" } : undefined);
@@ -181,6 +201,53 @@ function ConversationOptions({ onCompact, onDelete }) {
   );
 }
 
+/**
+ * A conversation with one assistant over the assistant wire contract. What is true of the surface
+ * around it rather than of the conversation arrives as a prop; the defaults describe the smallest
+ * surface, which passes almost nothing.
+ * @param {object} props
+ * @param {any} [props.user] the signed-in person, handed on to the renderers of the thread
+ * @param {boolean} [props.docked] drawn in the dock's window
+ * @param {{ prompt?: string, nonce?: number | string }} [props.seed] words put in the composer once per `nonce`
+ * @param {() => void} [props.onClose]
+ * @param {() => void} [props.onExpand]
+ * @param {import("./types.js").AssistantHost} [props.assistantHost] the assistant addressed
+ * @param {import("./types.js").AssistantHost[]} [props.assistantHosts] every assistant a picker offers
+ * @param {(id: string, opts?: { chosen?: boolean }) => void} [props.onSelectAssistantHost]
+ * @param {boolean} [props.showPin]
+ * @param {boolean} [props.pinned]
+ * @param {boolean} [props.pinDisabled]
+ * @param {() => void} [props.onTogglePin]
+ * @param {import("./types.js").Review} [props.review] a conversation of another person under review: read-only, replaces the whole surface
+ * @param {() => void} [props.onExitReview]
+ * @param {(hostId: string) => import("./types.js").AssistantClient} props.clientFor the client of the assistant with that id (`createAssistantClient`, or a site's own with the same methods)
+ * @param {boolean} [props.authed] the site holds a session the assistant accepts
+ * @param {import("./types.js").Connection} [props.connection] the header badge and the usable gate
+ * @param {boolean} [props.canSeeActions] the caller may see proposed actions
+ * @param {boolean} [props.canUseActions] the caller may run actions without confirming
+ * @param {((hostId: string, conversationId: string) => Promise<{ entries: import("./types.js").HistoryEntry[] }>) | null} [props.loadTranscript] reads a conversation under review
+ * @param {((hostId: string, conversationId: string, attachment: import("./types.js").AttachmentInfo) => Promise<Blob>) | null} [props.loadReviewAttachment]
+ * @param {import("react").ComponentType<import("./types.js").HostPickerProps> | null} [props.HostPicker] a picker among several assistants, in the header
+ * @param {import("./types.js").ChatSlots} [props.slots] a site's blocks in the chat's frame
+ * @param {string} [props.pageClass] an extra class on the page root
+ * @param {"page" | "panel"} [props.layout] a panel beside or over a page, or the whole page a phone shows
+ * @param {(() => void) | null} [props.onOpenSettings] the way to the surface's own settings, when the chat is the app
+ * @param {HTMLElement | null} [props.railTarget] the element the conversation list is drawn into, for a site whose frame has a sidebar
+ * @param {HTMLElement | null} [props.listTarget] a page of the site's own that shows the same list full width
+ * @param {(() => void) | null} [props.onShowConversation] the person opened or started a conversation while the site shows something else
+ * @param {boolean} [props.conversationShown] whether the chat is what is on screen
+ * @param {string} [props.storageKey] where this browser caches the conversation list
+ * @param {string} [props.assistantName]
+ * @param {import("./types.js").Profile} [props.profile] what a product shows of its own: cards, and how a proposed action reads
+ * @param {import("./types.js").ToggleCopy} [props.toggleCopy] what each switch means in the state it stands at
+ * @param {import("./types.js").Suggestion[]} [props.suggestions] the empty screen's opening suggestions
+ * @param {string} [props.primer] the sentence under the greeting saying what the assistant can do for this caller
+ * @param {string} [props.noAssistant] what the empty screen says when there is no assistant to talk to
+ * @param {{ locked: string, on?: string, off?: string }} [props.autorunHint] the auto-run switch's tooltip
+ * @param {(msg: import("./types.js").Message, key: number, api: import("./types.js").ChatApi) => import("react").ReactNode | undefined} [props.renderEntry] a product's own transcript roles; `undefined` falls through
+ * @param {(msg: import("./types.js").Message, api: import("./types.js").ChatApi) => import("react").ReactNode} [props.renderCards] the cards under an answer
+ * @param {() => Record<string, any> | null} [props.turnExtras] extra fields the next turn carries (a draft open for review)
+ */
 function Chat({
   user, docked, seed, onClose, onExpand,
   assistantHost, assistantHosts = [], onSelectAssistantHost,
@@ -280,7 +347,7 @@ function Chat({
   // decides what moves: the composer rises by the keyboard's height (`env(keyboard-inset-height)`,
   // tabbar.css) and nothing else on the site changes for a keyboard while the chat is not open.
   React.useEffect(() => {
-    const keyboard = typeof navigator !== "undefined" ? navigator.virtualKeyboard : null;
+    const keyboard = typeof navigator !== "undefined" ? /** @type {any} */ (navigator).virtualKeyboard : null;
     if (!asPage || !keyboard) return undefined;
     const before = keyboard.overlaysContent;
     keyboard.overlaysContent = true;
@@ -438,12 +505,12 @@ function Chat({
   const pickFiles = async () => {
     let topLevel = false;
     try { topLevel = window.self === window.top; } catch { topLevel = false; }
-    if (!topLevel || typeof window.showOpenFilePicker !== "function") {
+    if (!topLevel || typeof /** @type {any} */ (window).showOpenFilePicker !== "function") {
       if (fileInputRef.current) fileInputRef.current.click();
       return;
     }
     try {
-      const handles = await window.showOpenFilePicker({ multiple: true });
+      const handles = await /** @type {any} */ (window).showOpenFilePicker({ multiple: true });
       addFiles(await Promise.all(handles.map(h => h.getFile())));
     } catch (e) {
       if (e && e.name === "AbortError") return;
@@ -698,10 +765,10 @@ function Chat({
         const next = { ...c, think: !!evt.think, autorun: !!evt.autorun };
         // Only a conversation whose value this surface already knew can have seen it change; the
         // first read of a switch is not somebody moving it.
-        const moved = [
+        const moved = /** @type {["thinking" | "actions", "think" | "autorun", boolean][]} */ ([
           ["thinking", "think", !!evt.think],
           ["actions", "autorun", !!evt.autorun],
-        ].filter(([, field, on]) => typeof c[field] === "boolean" && c[field] !== on);
+        ]).filter(([, field, on]) => typeof c[field] === "boolean" && c[field] !== on);
         if (moved.length && c.messages.length > 0) {
           next.messages = [...c.messages, ...moved.map(([toggle, , on]) => ({
             role: "toggle", toggle, on, label: toggleCopy[toggle][on ? "on" : "off"], at: Date.now(),
@@ -1622,6 +1689,7 @@ function Chat({
   const greeting = React.useMemo(() => pickGreeting(), [activeId]);
 
   // What every block in the frame is given, through `useChat()` and as a slot function's argument.
+  /** @type {import("./types.js").ChatHandle} */
   const chat = {
     layout: asPage ? "page" : "panel",
     empty: !active || active.messages.length === 0,

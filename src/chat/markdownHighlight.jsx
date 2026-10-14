@@ -107,6 +107,11 @@ function lineParts(lineText, key) {
   return highlightInline(lineText, key);
 }
 
+/**
+ * The composer's text as styled spans that cover every character exactly once.
+ * @param {string} text
+ * @returns {import("react").ReactNode}
+ */
 function highlightMarkdown(text) {
   if (!text) return [];
   let n = 0;

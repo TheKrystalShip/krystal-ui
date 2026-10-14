@@ -24,6 +24,16 @@ import React from "react";
 const FIRST_RETRY_MS = 1000;
 const MAX_RETRY_MS = 30000;
 
+/**
+ * Holds the assistant's event stream open, reconnecting with backoff, and re-points it at the open conversation.
+ * @param {object} options
+ * @param {Pick<import("./types.js").AssistantClient, "events" | "streamId"> & Partial<Pick<import("./types.js").AssistantClient, "attach">> | null} options.client
+ * @param {string | null} options.clientKey names which assistant; changing it re-opens the stream
+ * @param {boolean} options.enabled
+ * @param {string | null} [options.conversationId] the conversation on screen
+ * @param {(event: import("./types.js").EventFrame) => void} options.onEvent
+ * @param {() => void} [options.onResync] fires on every reconnection after the first connection
+ */
 function useConversationStream({ client, clientKey, enabled, conversationId, onEvent, onResync }) {
   // Held in refs so a changed callback never tears the stream down and reconnects: the identity of
   // `onEvent` changes on most renders, and a reconnect per render would be a reconnect storm.

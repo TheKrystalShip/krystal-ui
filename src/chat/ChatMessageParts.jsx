@@ -11,6 +11,11 @@ import { diffHunks, diffLines } from "./diffLines.js";
 // ---------- time ----------
 // An entry's moment is `ts` (epoch ms) or `at` (epoch ms or an ISO string, as a stored entry carries
 // it); null when it has neither or it does not parse.
+/**
+ * An entry's moment in epoch ms from its `ts` or `at`; null when it has neither or it does not parse.
+ * @param {{ ts?: number, at?: number | string } | null | undefined} msg
+ * @returns {number | null}
+ */
 function entryTime(msg) {
   const v = msg && (msg.ts != null ? msg.ts : msg.at);
   if (v == null) return null;
@@ -23,6 +28,10 @@ function clockOf(t) {
 }
 
 // The local calendar day a moment falls on, as a key two moments compare equal on.
+/**
+ * @param {number} t epoch ms
+ * @returns {string}
+ */
 function dayKeyOf(t) {
   const d = new Date(t);
   return d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate();
@@ -47,6 +56,7 @@ function dayLabel(t, now = Date.now()) {
 // where the question was asked, so scrolling back finds both together.
 
 // A verdict line's `status` as the row's mark.
+/** @type {Record<string, "ok" | "warn" | "danger">} */
 const LINE_VERDICT = { pass: "ok", ok: "ok", success: "ok", warn: "warn", fail: "danger", danger: "danger" };
 
 // A sentence used as a title loses its full stop; an ellipsis stays.
@@ -65,8 +75,15 @@ function baseName(path) {
 // verified; otherwise `tone` says warn (it ran, the end state was not seen) or danger (it did not
 // run), and without one a warn line marks it as the former. `auto` is an action that ran without
 // being asked, so the card does not say somebody confirmed it.
+/**
+ * What a confirmed action came to, as the card's state.
+ * @param {object} props
+ * @param {import("./types.js").Message} props.msg
+ * @param {import("react").ReactNode} [props.title] names the action; defaults to its label and target
+ * @param {boolean} [props.auto] ran without being asked
+ */
 function ChatVerify({ msg, title, auto }) {
-  const action = msg.action || {};
+  const action = msg.action || /** @type {{ label?: string, serverName?: string }} */ ({});
   const running = title || [action.label, action.serverName].filter(Boolean).join(" ");
   if (msg.state === "pending") {
     return (
@@ -109,6 +126,11 @@ const OMITTED = {
 // The proposal's change. With the file's current text it is a line diff; a file that does not exist
 // yet (`currentContent` null, nothing omitted) is every line added; a "before" the assistant held back
 // says why, over the proposed text.
+/**
+ * A proposal's file change: a line diff, or every line added for a file that does not exist yet.
+ * @param {object} props
+ * @param {import("./types.js").FileChange} props.file
+ */
 function ChatFileChange({ file }) {
   const omitted = file.currentOmitted ? (OMITTED[file.currentOmitted] || OMITTED.unavailable) : null;
   const before = typeof file.currentContent === "string" ? file.currentContent
@@ -166,6 +188,19 @@ function useLapsed(expiresAt) {
   return lapsed;
 }
 
+/**
+ * A proposed action's card, through its states: offered, armed, confirmed, declined, expired, and its outcome.
+ * @param {object} props
+ * @param {import("./types.js").Message} props.msg
+ * @param {(msg: import("./types.js").Message) => void} props.onRun
+ * @param {(msg: import("./types.js").Message) => void} [props.onDecline] absent: no Decline button
+ * @param {import("./types.js").ProposalView['meta']} props.meta
+ * @param {string} [props.target]
+ * @param {string} [props.title] names the action when label and target do not read
+ * @param {boolean} [props.runnable]
+ * @param {string} [props.unavailable] why it cannot run here
+ * @param {import("./types.js").Message} [props.verify]
+ */
 function ChatCommand({
   msg, onRun, onDecline, meta, target, title: named, runnable = true, unavailable = "Not available here yet", verify,
 }) {
@@ -249,6 +284,15 @@ function ChatCommand({
 // few words, the time. Colour is on the icon only, and only for a mode or an outcome — `tone` accent,
 // warning or success; `alert` sets the whole line in the warning colour, for the one event that
 // changes what the person can do next. `icon` is a Lucide name or a node.
+/**
+ * @param {object} props
+ * @param {string | import("react").ReactNode} [props.icon] a Lucide name or a node
+ * @param {"accent" | "warning" | "success"} [props.tone]
+ * @param {boolean} [props.alert] sets the whole line in the warning colour
+ * @param {number | null} [props.at] epoch ms
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function ChatEventRow({ icon, tone, alert = false, at, className, children }) {
   const time = clockOf(entryTime({ at }));
   return (
@@ -265,6 +309,10 @@ function ChatEventRow({ icon, tone, alert = false, at, className, children }) {
 }
 
 // Where a conversation crosses into another day.
+/**
+ * @param {object} props
+ * @param {number | string | null} props.at epoch ms or an ISO string
+ */
 function ChatDaySeparator({ at }) {
   const t = entryTime({ at });
   if (t == null) return null;
@@ -273,6 +321,11 @@ function ChatDaySeparator({ at }) {
 
 // An event entry in the transcript, worded from what it records — which switch moved and where it
 // stands, which assistant is now spoken to, which host's assistant left or came back.
+/**
+ * An event entry in the transcript, worded from what it records.
+ * @param {object} props
+ * @param {import("./types.js").Message} props.msg
+ */
 function ChatEvent({ msg }) {
   const at = entryTime(msg);
   switch (msg.role) {

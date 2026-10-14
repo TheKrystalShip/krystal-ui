@@ -9,11 +9,25 @@
 import { acquire, currentEndpoint, release, support } from "../lib/pushBrowser.js";
 
 /**
+ * What `pushStatus` reports: the browser's own push state with whether the assistant sends and whether this browser is registered.
+ * @typedef {object} PushStatus
+ * @property {string} state `unsupported`, `needs-install`, `denied` or `ready`
+ * @property {boolean} [canPrompt]
+ * @property {boolean} enabled the assistant sends pushes at all
+ * @property {boolean} registered this browser is registered with the assistant
+ * @property {boolean} [unreachable] the assistant did not answer
+ * @property {string} [reason] why it did not
+ */
+
+/**
  * Whether this browser could receive a notification, and whether the assistant would send one.
  *
  * The two are separate questions with separate answers: a browser that cannot subscribe is told
  * what to do about it (on iOS, "add to the Home Screen"), and an assistant whose operator has the
  * whole path switched off says so rather than offering a switch that achieves nothing.
+ *
+ * @param {Pick<import("../chat/types.js").AssistantClient, "pushKey" | "pushDevices">} client
+ * @returns {Promise<PushStatus>}
  */
 async function pushStatus(client) {
   const browser = support();
@@ -59,6 +73,9 @@ async function pushStatus(client) {
  *
  * Must be called from a real user gesture: a permission prompt that was not asked for is denied,
  * and a denied permission is close to unrecoverable.
+ *
+ * @param {Pick<import("../chat/types.js").AssistantClient, "pushKey" | "pushSubscribe">} client
+ * @returns {Promise<string>} the endpoint registered
  */
 async function pushSubscribe(client) {
   const { publicKey } = await client.pushKey();
@@ -74,7 +91,11 @@ async function pushSubscribe(client) {
   return sub.endpoint;
 }
 
-/** Give this browser up, telling the assistant before the browser forgets its own endpoint. */
+/**
+ * Give this browser up, telling the assistant before the browser forgets its own endpoint.
+ *
+ * @param {Pick<import("../chat/types.js").AssistantClient, "pushUnsubscribe">} client
+ */
 async function pushUnsubscribe(client) {
   await release((endpoint) => client.pushUnsubscribe({ endpoint }));
 }

@@ -20,13 +20,17 @@ let ctx = null;
 
 function context() {
   if (ctx) return ctx;
-  const Ctor = window.AudioContext || window.webkitAudioContext;
+  const Ctor = window.AudioContext || /** @type {any} */ (window).webkitAudioContext;
   if (!Ctor) return null;
   ctx = new Ctor();
   return ctx;
 }
 
 // One turn's spoken answer: the sentences still to play, and what is playing now.
+/**
+ * One turn's spoken answer: queues `audio.delta` frames and plays them back to back.
+ * @returns {{ push: (frame: { mime: string, data: string }) => void, stop: () => void }}
+ */
 function createSpokenReply() {
   let queue = [];
   let playing = false;
@@ -48,13 +52,13 @@ function createSpokenReply() {
       const buffer = await audio.decodeAudioData(next.slice(0));
       if (stopped) return;
 
-      await new Promise((done) => {
+      await /** @type {Promise<void>} */ (new Promise((done) => {
         source = audio.createBufferSource();
         source.buffer = buffer;
         source.connect(audio.destination);
         source.onended = () => { source = null; done(); };
         source.start();
-      });
+      }));
     } catch {
       // A sentence that will not decode is a sentence not heard. The words are already on the screen,
       // and the rest of the answer still plays — which is why this drops rather than stops.
@@ -95,6 +99,10 @@ function createSpokenReply() {
 
 // Called on the gesture that asks for audio — the send — so the context exists and is running before
 // the first frame lands. Returns whether audio is usable at all, which is what the toggle reports.
+/**
+ * Creates and resumes the audio context on the gesture that asks for audio.
+ * @returns {Promise<boolean>} whether audio is usable at all
+ */
 async function armAudio() {
   const audio = context();
   if (!audio) return false;

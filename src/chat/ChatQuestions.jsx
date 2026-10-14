@@ -14,6 +14,12 @@ import { Button } from "../components/Button.jsx";
 import { Input } from "../components/fields.jsx";
 import { OptionList } from "../components/OptionList.jsx";
 
+/**
+ * @param {object} props
+ * @param {import("./types.js").Message} props.msg
+ * @param {boolean} [props.open] whether the person may still answer
+ * @param {(msg: import("./types.js").Message, answers: import("./types.js").Answer[]) => void} [props.onAnswer]
+ */
 function ChatQuestions({ msg, open, onAnswer }) {
   const questions = msg.questions || [];
   const [picked, setPicked] = React.useState(() => questions.map(() => []));

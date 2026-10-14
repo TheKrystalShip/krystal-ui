@@ -12,7 +12,17 @@ import { usePortalPopover } from "../hooks/usePortalPopover.js";
 import { fmtRelative } from "../lib/time.js";
 import { conversationTitle } from "./conversation.js";
 
-/** The conversations, newest first, each opening on a press and deleted by its own button. */
+/**
+ * The conversations, newest first, each opening on a press and deleted by its own button.
+ * @param {object} props
+ * @param {import("./types.js").Conversation[]} props.convos
+ * @param {string | null} props.activeId
+ * @param {(id: string) => void} props.onPick
+ * @param {(id: string, event: import("react").MouseEvent) => void} props.onDelete
+ * @param {boolean} [props.loading]
+ * @param {() => void} [props.close]
+ * @param {string} [props.role]
+ */
 function HistoryRows({ convos, activeId, onPick, onDelete, loading, close, role }) {
   return (
     <>
@@ -41,7 +51,18 @@ function HistoryRows({ convos, activeId, onPick, onDelete, loading, close, role 
   );
 }
 
-/** The sheet: the screen's full height from its left edge, over a scrim that closes it, as Escape does; focus stays in it and the screen behind is inert. */
+/**
+ * The sheet: the screen's full height from its left edge, over a scrim that closes it, as Escape does; focus stays in it and the screen behind is inert.
+ * @param {object} props
+ * @param {() => void} props.close
+ * @param {() => void} [props.onNew]
+ * @param {import("react").ReactNode} [props.head]
+ * @param {import("./types.js").Conversation[]} props.convos
+ * @param {string | null} props.activeId
+ * @param {(id: string) => void} props.onPick
+ * @param {(id: string, event: import("react").MouseEvent) => void} props.onDelete
+ * @param {boolean} [props.loading]
+ */
 function HistorySheet({ close, onNew, head, ...rows }) {
   const root = React.useRef(null);
   useModalBehaviour(root, { onClose: close });
@@ -67,6 +88,19 @@ function HistorySheet({ close, onNew, head, ...rows }) {
 }
 
 // `head` is a site's block at the top of the list (the `history` slot).
+/**
+ * The conversation list, as a popover or a sheet.
+ * @param {object} props
+ * @param {import("./types.js").Conversation[]} props.convos
+ * @param {string | null} props.activeId
+ * @param {(id: string) => void} props.onPick
+ * @param {(id: string, event: import("react").MouseEvent) => void} props.onDelete
+ * @param {() => void} [props.onOpen] called when the list opens
+ * @param {boolean} [props.loading]
+ * @param {boolean} [props.sheet] a sheet instead of a popover
+ * @param {() => void} [props.onNew]
+ * @param {import("react").ReactNode} [props.head] a site's block at the top of the list
+ */
 function ChatHistory({ convos, activeId, onPick, onDelete, onOpen, loading, sheet = false, onNew, head = null }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);
