@@ -15,6 +15,11 @@
 //     classList.add/remove/toggle/contains/replace, and the selector argument of
 //     querySelector, querySelectorAll, closest and matches.
 //   - HTML (.html): class="..." attributes.
+//   A site's own modifier or element of a package block (`rail--posters`, `rail__cell` where `rail`
+//   is a block in the map) is rewritten to the block's new name (`k-rail--posters`), whether or not
+//   the map lists it, and is counted apart as "site modifiers on package blocks". It follows its
+//   block: when the block is held as ambiguous the modifier is held with it, and a block outside
+//   the map is never touched.
 //   A fragment that ends a class token before a dynamic part ("rail--" + x, `rail--${x}`) is
 //   rewritten when every mapped class sharing that prefix agrees on the new prefix.
 //
@@ -373,6 +378,7 @@ export class ClassMap {
         candidates.set(frag, set);
       }
     }
+    this.blocks = new Set(Object.keys(map).filter((c) => !/--|__/.test(c) && !isState(c)));
     this.fragments = new Map();
     this.conflicts = new Set();
     for (const [frag, set] of candidates) {
@@ -384,6 +390,14 @@ export class ClassMap {
   }
   has(cls) {
     return Object.prototype.hasOwnProperty.call(this.map, cls);
+  }
+  // `<block>--x` or `<block>__x` that the map does not list, where `<block>` is a package block
+  // (a mapped class with no modifier, element or state marker): { block, neu }, else null.
+  derive(cls) {
+    if (this.has(cls)) return null;
+    const m = /^(.+?)(--|__)/.exec(cls);
+    if (!m || !this.blocks.has(m[1])) return null;
+    return { block: m[1], neu: this.map[m[1]] + cls.slice(m[1].length) };
   }
 }
 
@@ -399,10 +413,14 @@ function rewriteList(text, seg, cm, visit) {
     if (atEnd && seg.partialEnd) {
       if (cm.has(tok)) return visit(tok, cm.map[tok], off, false, companion(tok)) ?? tok;
       if (cm.fragments.has(tok)) return visit(tok, cm.fragments.get(tok), off, true) ?? tok;
+      const d = cm.derive(tok);
+      if (d) return visit(tok, d.neu, off, false, false, d.block) ?? tok;
       if (cm.conflicts.has(tok)) visit(tok, null, off, true);
       return tok;
     }
     if (cm.has(tok)) return visit(tok, cm.map[tok], off, false, companion(tok)) ?? tok;
+    const d = cm.derive(tok);
+    if (d) return visit(tok, d.neu, off, false, false, d.block) ?? tok;
     return tok;
   });
 }
@@ -416,9 +434,10 @@ function rewriteSelector(text, base, cm, visit) {
   const found = selectorClasses(text, 0);
   const edits = [];
   for (const { name, s, e, group } of found) {
-    if (!cm.has(name)) continue;
+    const d = cm.derive(name);
+    if (!cm.has(name) && !d) continue;
     const companion = found.some((o) => o.group === group && o.name !== name && isPackageClass(cm, o.name));
-    const r = visit(name, cm.map[name], s, false, companion);
+    const r = d ? visit(name, d.neu, s, false, false, d.block) : visit(name, cm.map[name], s, false, companion);
     if (r != null) edits.push([s, e, r]);
   }
   let out = "";
@@ -445,7 +464,7 @@ function lineOf(text, index) {
   return line;
 }
 
-// Applies the map to one file's text. Returns { text, count, held, cssNames, emitted, conflicts }
+// Applies the map to one file's text. Returns { text, count, siteMods, held, cssNames, emitted, conflicts }
 // where held lists every occurrence the `hold` predicate refused, cssNames the mapped classes a
 // stylesheet selector names and emitted the mapped classes markup emits.
 export function transform(text, ext, cm, { hold = () => false, comments = false } = {}) {
@@ -454,13 +473,22 @@ export function transform(text, ext, cm, { hold = () => false, comments = false 
   const cssNames = new Set();
   const emitted = new Set();
   let count = 0;
+  let siteMods = 0;
   const edits = []; // [start, end, replacement]
 
-  const mk = (absBase) => (old, neu, off, fragment, companion) => {
+  const mk = (absBase) => (old, neu, off, fragment, companion, block) => {
     const abs = absBase + off;
     if (neu == null) {
       conflicts.push({ old, line: lineOf(text, abs) });
       return null;
+    }
+    if (block) {
+      if (hold(block)) {
+        held.push({ cls: block, line: lineOf(text, abs) });
+        return null;
+      }
+      siteMods++;
+      return neu;
     }
     if (!fragment && hold(old) && !(isState(old) && companion)) {
       held.push({ cls: old, line: lineOf(text, abs) });
@@ -518,7 +546,7 @@ export function transform(text, ext, cm, { hold = () => false, comments = false 
     last = e;
   }
   out += text.slice(last);
-  return { text: out, count, held, conflicts, cssNames, emitted };
+  return { text: out, count, siteMods, held, conflicts, cssNames, emitted };
 }
 
 // `.old` and backticked `old` inside a comment.
@@ -588,15 +616,19 @@ function main() {
 
   // Pass 2: the rewrite.
   let total = 0;
+  let totalMods = 0;
   const heldAll = [];
   const conflictAll = [];
   const perFile = [];
+  const siteModFiles = [];
   for (const f of files) {
     const text = sources.get(f);
     const r = transform(text, extname(f), cm, { hold: (c) => ambiguous.has(c), comments: opts.comments });
     const rel = relative(root, f);
     if (r.count) perFile.push([rel, r.count]);
     total += r.count;
+    totalMods += r.siteMods;
+    if (r.siteMods) siteModFiles.push([rel, r.siteMods]);
     r.held.forEach((h) => heldAll.push({ file: rel, ...h }));
     r.conflicts.forEach((h) => conflictAll.push({ file: rel, ...h }));
     if (opts.write && r.text !== text) writeFileSync(f, r.text);
@@ -604,6 +636,8 @@ function main() {
 
   console.log(`${opts.write ? "rewrote" : "would rewrite"} ${total} class tokens in ${perFile.length} of ${files.length} files under ${root}`);
   for (const [rel, n] of perFile) console.log(`  ${String(n).padStart(5)}  ${rel}`);
+  console.log(`${opts.write ? "rewrote" : "would rewrite"} ${totalMods} site modifiers on package blocks`);
+  for (const [rel, n] of siteModFiles) console.log(`  ${String(n).padStart(5)}  ${rel}`);
   if (conflictAll.length) {
     console.log(`\nfragments left to the site (a state prefix, or no single new prefix): ${conflictAll.length}`);
     for (const h of conflictAll) console.log(`  ${h.file}:${h.line}  ${h.old}`);
