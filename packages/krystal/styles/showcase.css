@@ -2,6 +2,9 @@
    showcase.css — <ShowcaseCard>: key art with the name on it, a row of facts,
    and a foot with one status line and the action
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 /* The card is a container (`showcase`), so a site can fit its facts to the card's own width — a site
    whose values are long lets their icons (`.k-showcase-spec__ico`) go on a narrow card. */
 .k-showcase-card {
@@ -472,4 +475,5 @@
   outline: 2px solid var(--krystal-teal);
   outline-offset: 3px;
   border-radius: var(--r-sm);
+}
 }

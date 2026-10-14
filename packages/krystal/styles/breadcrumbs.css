@@ -3,6 +3,9 @@
    One line at every width: each crumb ellipsizes, ancestors give up their width
    before the current page does, and no crumb is wider than --crumbs-max.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-breadcrumbs {
   --crumbs-max: 22ch;
   min-width: 0;
@@ -78,4 +81,5 @@
     --crumbs-max: 14ch;
     font-size: 12.5px;
   }
+}
 }

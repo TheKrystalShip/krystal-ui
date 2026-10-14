@@ -5,6 +5,9 @@
    (settings.css); only the page's measure and what is particular to a memory
    are spelled out here.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 /* A page beside the chat, at a reading measure rather than the full window: its rows are text, and
    a row stretched across a desktop leaves its control a screen away from its label. */
@@ -88,4 +91,5 @@
 
 .k-assistant-memory-editor__spacer {
   flex: 1;
+}
 }

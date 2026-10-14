@@ -3,6 +3,9 @@
    surface-1 card holding a list of rows, an empty state, or any body. <Rail>
    and the settings furniture are built on it.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-brief {
   box-sizing: border-box;
   width: 100%;
@@ -342,4 +345,5 @@
 
 .k-view-all:hover {
   color: var(--krystal-teal-hover);
+}
 }

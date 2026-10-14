@@ -4,6 +4,9 @@
    `.k-skeleton-toolbar` are the frames a site arranges blocks in when its own
    containers are not the shape it needs.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-skeleton {
   display: block;
   background: var(--surface-2);
@@ -57,4 +60,5 @@
   border: var(--edge);
   border-radius: var(--r-sm);
   padding: 10px 12px;
+}
 }

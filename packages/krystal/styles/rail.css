@@ -9,6 +9,9 @@
 
    A site sets its own density per shelf by re-valuing `--rail-per-view` on
    `.k-rail--<variant> .k-rail__track`, usually inside `@container rail (…)` queries. */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 .k-rail {
   container-type: inline-size;
@@ -123,4 +126,5 @@
 .k-rail__item > * {
   flex: 1 1 auto;
   min-width: 0;
+}
 }

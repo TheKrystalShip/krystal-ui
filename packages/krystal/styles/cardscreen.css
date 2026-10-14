@@ -3,6 +3,9 @@
    a static document under a style-refusing policy reuses them. Sits after controls and providers,
    whose fields and buttons the card holds.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 .k-cardscreen {
   position: relative;
@@ -112,4 +115,5 @@
   .k-cardscreen__card {
     padding: 22px 18px;
   }
+}
 }

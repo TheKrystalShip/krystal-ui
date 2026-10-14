@@ -4,6 +4,9 @@
    scrollbar-width and scrollbar-color are the standard properties (Firefox,
    and Chromium where the ::-webkit- pseudo-elements are not drawn).
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.base {
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
@@ -27,4 +30,5 @@
 
 *::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
+}
 }

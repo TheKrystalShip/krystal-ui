@@ -9,6 +9,9 @@
    960 by 540 page). A row's cards run past the right margin, so there is always something to the
    right. A row scrolls to whatever takes focus in it, so its arrows are not drawn: on a remote they
    would only be two more stops on the way along the row. */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 :root[data-tv] {
   --tv-margin-x: 48px;
@@ -445,4 +448,5 @@
   background: var(--surface-3);
   font-size: var(--text-base);
   font-weight: var(--w-semibold);
+}
 }

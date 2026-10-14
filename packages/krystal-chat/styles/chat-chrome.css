@@ -5,6 +5,9 @@
    empty conversation with its suggestions and recent conversations, and the
    history popover. Drawn by Chat, RecentConversations and ChatHistory.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 /* ---- header ---- */
 .k-chat-head {
@@ -607,4 +610,5 @@
 
 .k-chat-sheet .k-chat-hist__open {
   min-height: 44px;
+}
 }

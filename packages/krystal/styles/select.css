@@ -5,6 +5,9 @@
    card header); --sm/--md/--lg set a field's or an inline select's height to
    match the Input and Button beside it.
    ========================================================================== */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-select {
   position: relative;
   display: inline-flex;
@@ -99,4 +102,5 @@
 
 .k-select--chip .k-select__chev {
   right: 7px;
+}
 }

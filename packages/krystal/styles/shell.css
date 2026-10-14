@@ -4,6 +4,9 @@
    drawer on phones. Drawn by AppShell, Sidebar, SidebarGroup, NavItem and
    MobileNavToggle.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 /* ============= Frame ============= */
 .k-app {
@@ -647,4 +650,5 @@
   .k-mobile-nav--edge {
     display: inline-flex;
   }
+}
 }

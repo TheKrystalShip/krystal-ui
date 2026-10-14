@@ -3,6 +3,9 @@
    carries a ::after over the whole row (the stretched link); the actions sit above it, so a press
    on an action is never a press on the row. Sits after pill.css, whose Pills the rows hold.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 .k-list {
   margin: 0;
@@ -204,4 +207,5 @@
   .k-listrow > .k-listrow__main:first-child ~ .k-listrow__aside {
     grid-column: 1 / span 2;
   }
+}
 }

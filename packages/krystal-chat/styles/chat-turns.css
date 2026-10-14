@@ -9,6 +9,9 @@
    and the time. Colour carries state only: the accent for what is running or
    pressed, success/warning/danger for an outcome. Code, notes and steps are neutral.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 /* ---- a turn ---- */
 /* A turn sizes itself by the column it sits in, not the window: the same thread is a full page, a
@@ -629,4 +632,5 @@ span.k-chat-attachment--sent {
   .k-chat-turn__attachments { max-width: 88%; }
   .k-chat-turn__picture,
   .k-chat-turn__picture-wait { width: 104px; height: 104px; }
+}
 }

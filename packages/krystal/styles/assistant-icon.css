@@ -6,6 +6,9 @@
    (translate). Because they're different elements in the SVG DOM, they compose
    naturally — the eyes blink regardless of where they're looking.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-assistant-icon__eye {
   transform-box: fill-box;
   transform-origin: center;
@@ -78,4 +81,5 @@
     translate: var(--eye-x, 0) var(--eye-y, 0);
     transition: translate 0.1s ease-out;
   }
+}
 }

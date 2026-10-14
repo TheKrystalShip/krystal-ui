@@ -5,6 +5,9 @@
    label · value · verdict row every card body is written in.
    The cards themselves are ChatCard (`.k-chat-card`, in chat.css).
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 /* ---------- card rows ---------- */
 .k-chat-card-rows {
@@ -339,4 +342,5 @@
   margin-right: 8px;
   color: var(--fg-4);
   font-size: 12px;
+}
 }

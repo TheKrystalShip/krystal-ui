@@ -2,6 +2,9 @@
    collection-tile.css — <CollectionTile>: a set of titles by its posters,
    fanned (a mood, a category) or in a numbered strip (a series)
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 /* The tile fills the width it is given at a fixed shape and is its own container, so what is inside it
    is sized from its width in a rail, a phone's grid or a television's row alike. */
 .k-collection-tile {
@@ -303,4 +306,5 @@
 
 :root[data-tv] .k-tv-row__track:focus-within .k-collection-tile:not(:focus-visible) {
   opacity: var(--tv-dim);
+}
 }

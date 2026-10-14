@@ -1,6 +1,9 @@
 /* ============================================================================
    pagination.css — the page navigator under a paged list (<Pagination>).
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-pagination {
   display: flex;
   align-items: center;
@@ -101,4 +104,5 @@
     justify-content: center;
     flex-wrap: wrap;
   }
+}
 }

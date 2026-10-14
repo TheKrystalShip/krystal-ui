@@ -3,6 +3,9 @@
    A section is a briefing card (brief.css); a row is one of its items with a
    right-hand slot for its controls.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-settings-row__controls {
   display: flex;
   align-items: center;
@@ -20,4 +23,5 @@
 .k-settings-value--mono {
   font-family: var(--font-mono);
   font-size: 11.5px;
+}
 }

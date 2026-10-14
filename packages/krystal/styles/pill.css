@@ -2,6 +2,9 @@
    pill.css — the small label every surface draws (Pill). The nav, sub-tab, tab-bar, showcase and
    brief sheets add only placement and the few fills their surroundings need. Sits before them.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 .k-pill {
   display: inline-flex;
@@ -83,4 +86,5 @@
 .k-pill__dot.k-is-live {
   background: var(--success);
   opacity: 1;
+}
 }

@@ -3,6 +3,9 @@
    page, its drag-to-resize handle, and the floating button that opens it. Drawn
    by Dock and DockFab.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-assistant-dock {
   position: fixed;
   top: 0;
@@ -103,4 +106,5 @@
   .k-assistant-dock__resize {
     display: none;
   }
+}
 }

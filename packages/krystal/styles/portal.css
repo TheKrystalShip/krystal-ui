@@ -4,7 +4,11 @@
    layout exactly as if it were a direct child, and reparenting the host between
    an inline slot and a modal reflows cleanly.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-portal-slot,
 .k-portal-host {
   display: contents;
+}
 }

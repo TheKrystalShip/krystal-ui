@@ -1,6 +1,9 @@
 /* ============================================================================
    Footer — the brand block, the link groups beside it, and the bar under both
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-footer {
   /* Pins the footer to the bottom of the scrolling column when the page is short. */
   margin-top: auto;
@@ -300,4 +303,5 @@
       padding: 14px 16px max(16px, env(safe-area-inset-bottom, 0));
     }
   }
+}
 }

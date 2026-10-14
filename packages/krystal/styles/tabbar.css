@@ -5,6 +5,9 @@
    site's own tab. Drawn by TabBar inside AppShell's `tabBar`. Sits after
    dock.css and footer.css, whose phone rules it adjusts.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 .k-tabbar {
   display: none;
@@ -142,4 +145,5 @@
   .k-app--tabbed:has(.k-assistant-fab) .k-footer__bar {
     padding-right: 16px;
   }
+}
 }

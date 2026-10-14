@@ -3,6 +3,9 @@
    three widths, its banner art, head, sub line, scrolling body and foot. Drawn
    by Dialog; a site that builds a sheet by hand uses the same classes.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 .k-backdrop {
   position: fixed;
@@ -156,4 +159,5 @@
     border-radius: 0;
     padding-top: env(safe-area-inset-top);
   }
+}
 }

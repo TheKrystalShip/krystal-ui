@@ -1,5 +1,8 @@
 /* toast.css — the live outcome cards (<Toasts>) and the history popover they
    fall into (<NotificationsPanel>). */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 /* ---- the live stack ---------------------------------------------------- */
 
@@ -250,4 +253,5 @@
     /* Centred and clear of the FAB, which sits lower-right on a phone too. */
     bottom: calc(84px + env(safe-area-inset-bottom, 0px));
   }
+}
 }

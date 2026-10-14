@@ -10,6 +10,9 @@
    switches and the context ring give way to one "Chat options" button, so a
    narrow dock and a phone get the same composer.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 .k-chat-composer {
   container: chat-composer / inline-size;
@@ -614,4 +617,5 @@
   font-size: 12px;
   line-height: 1.4;
   color: var(--danger-fg);
+}
 }

@@ -3,6 +3,9 @@
    a heading set directly on the art, and a frosted control bar. Drawn by Hero;
    the plain `.k-hero` is the bordered card variant a page lays out itself.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-hero {
   position: relative;
   background: var(--surface-1);
@@ -303,4 +306,5 @@
     min-height: 0;
     padding: 14px 18px;
   }
+}
 }

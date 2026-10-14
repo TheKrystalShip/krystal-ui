@@ -2,6 +2,9 @@
    motion.css — the keyframes the package's components animate with.
    Global by name, so a site's own rules may use them too.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.base {
 @keyframes k-fade {
   from {
     opacity: 0;
@@ -41,4 +44,5 @@
     opacity: 1;
     transform: none;
   }
+}
 }

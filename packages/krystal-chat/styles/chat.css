@@ -8,6 +8,9 @@
    composer controls drawn inside that frame are chat-chrome.css,
    chat-turns.css, chat-actions.css and chat-composer.css.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-chat-page {
   display: grid;
   grid-template-columns: 240px 1fr;
@@ -1201,4 +1204,5 @@
   .k-chat-page--framed {
     height: auto;
   }
+}
 }

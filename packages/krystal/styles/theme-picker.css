@@ -1,4 +1,7 @@
 /* theme-picker.css — the theme swatch grid (<ThemePicker>). */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 /* ── Theme picker ───────────────────────────────────────────────────────────────
    Each tile carries its own `data-theme`, so everything inside it resolves that
@@ -241,4 +244,5 @@
 .k-theme-mini__line--dim {
   width: 60%;
   background: var(--fg-3);
+}
 }

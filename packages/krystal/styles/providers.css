@@ -2,6 +2,9 @@
    A brand fill is the provider's own colour (--brand-<provider>) with its ink (--on-brand-<provider>),
    the same in every theme. Hover darkens the fill toward the ink's opposite; the hairline keeps a
    fill that matches the page (white on a light theme, near-black on a dark one) a visible shape. */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 .k-btn--brand {
   border-color: color-mix(in srgb, var(--on-brand) 22%, transparent);
   background: var(--brand);
@@ -22,3 +25,4 @@
 .k-btn--brand-github { --brand: var(--brand-github); --on-brand: var(--on-brand-github); }
 .k-btn--brand-google { --brand: var(--brand-google); --on-brand: var(--on-brand-google); }
 .k-btn--brand-microsoft { --brand: var(--brand-microsoft); --on-brand: var(--on-brand-microsoft); }
+}

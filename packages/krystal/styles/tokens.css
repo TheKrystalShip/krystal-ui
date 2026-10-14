@@ -5,6 +5,9 @@
    shadow, motion. Import this file in every Krystal artefact.
    ============================================================ */
 
+@layer krystal.tokens, krystal.base, krystal.components;
+
+
 /* ---- Brand fonts (local) -------------------------------------
    Inter and JetBrains Mono ship as WOFF2 variable fonts in this package's
    fonts/, referenced relatively so the consuming site's bundler emits
@@ -55,6 +58,7 @@
   unicode-range: U+0000-00FF,U+0100-017F,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+0394,U+03A9,U+03BC,U+03C0,U+2000-206F,U+20A0-20CF,U+2100-214F,U+2190-21FF,U+2200-22FF,U+2300-23FF,U+2500-257F,U+2580-259F,U+25A0-25FF,U+2600-26FF,U+FEFF,U+FFFD,U+2700-27BF;
 }
 
+@layer krystal.tokens {
 /* ============================================================
    STRUCTURAL TOKENS — the defaults, and the small subset a theme
    is allowed to re-value.
@@ -4389,7 +4393,9 @@
   --scrollbar-thumb: rgba(0, 0, 0, 0.32);
   --scrollbar-thumb-hover: rgba(0, 0, 0, 0.48);
 }
+}
 
+@layer krystal.base {
 /* ============================================================
    SEMANTIC ELEMENT STYLES
    ============================================================ */
@@ -4551,4 +4557,5 @@ a:not(.k-btn, .k-iconbtn):hover,
   outline: none;
   box-shadow: var(--ring-focus);
   border-radius: var(--r-sm);
+}
 }

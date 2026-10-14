@@ -12,6 +12,9 @@
    reset, and a control told to fill its column must not hang out of it by its
    own padding and border.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 /* ---- Button ------------------------------------------------------------- */
 .k-btn {
@@ -860,4 +863,5 @@
 /* The reveal button inside a password field sits close to the frame's edge. */
 .k-input__reveal {
   margin-right: -6px;
+}
 }

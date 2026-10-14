@@ -3,6 +3,9 @@
    about: its heading, a notice inside its content, and the screen it shows
    when it has nothing else to. Drawn by PageHeader, Notice and EmptyState.
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 
 /* ============= Page heading ============= */
 .k-pagehead {
@@ -199,4 +202,5 @@
   .k-empty--card {
     padding: 32px 20px 24px;
   }
+}
 }

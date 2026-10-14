@@ -2,6 +2,9 @@
    carousel.css — <CarouselPager> and what useCarousel's slides need: one mark
    a slide, the shown one long and filling over its time
    ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
 /* A touch across the slides is the carousel's to turn them; one along them still scrolls the page. */
 [data-carousel] {
   touch-action: pan-y;
@@ -93,4 +96,5 @@
 
 :root[data-tv] .k-carousel-pager__mark[aria-current] .k-carousel-pager__bar {
   width: 44px;
+}
 }
