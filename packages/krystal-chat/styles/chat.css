@@ -2,13 +2,13 @@
    chat.css — the assistant chat's frame: the page layouts (railless, framed,
    docked, review), the conversation list in a sidebar, on a page of its own and
    in the rail, the main panel and its header, the history popover, the thread
-   column, the ChatCard shell (`.ev-card`), the composer's two-layer input and
+   column, the ChatCard shell (`.k-chat-card`), the composer's two-layer input and
    its markdown highlight, the slash-command menu, the full-screen pop-out, the
    review banner and the answer-feedback block. The chrome, turns, cards and
    composer controls drawn inside that frame are chat-chrome.css,
    chat-turns.css, chat-actions.css and chat-composer.css.
    ============================================================================ */
-.chat-page {
+.k-chat-page {
   display: grid;
   grid-template-columns: 240px 1fr;
   gap: 14px;
@@ -19,46 +19,46 @@
 }
 
 /* The conversation list is in the site's sidebar, so the chat is one column. */
-.chat-page--railless {
+.k-chat-page--railless {
   grid-template-columns: minmax(0, 1fr);
 }
 
 /* A chat that is a page inside an AppShell: it fills the main column, edge to edge, and the column's
    own scroll never moves — the thread scrolls inside it. */
-.chat-page--framed {
+.k-chat-page--framed {
   flex: 1 1 auto;
   height: auto;
   min-height: 0;
   gap: 0;
 }
 
-.chat-page--framed .chat-main {
+.k-chat-page--framed .k-chat-main {
   border: none;
 }
 
 /* ---- the conversation list, drawn into a sidebar ---- */
-.chat-convos {
+.k-chat-convos {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-height: 0;
 }
 
-.chat-convos__label {
+.k-chat-convos__label {
   padding-top: 12px;
 }
 
-.chat-convos__list {
+.k-chat-convos__list {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.chat-convos__item {
+.k-chat-convos__item {
   padding-right: 4px;
 }
 
-.chat-convos__item .nav-item__label {
+.k-chat-convos__item .k-nav-item__label {
   flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
@@ -66,7 +66,7 @@
   white-space: nowrap;
 }
 
-.chat-convos__del {
+.k-chat-convos__del {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -83,41 +83,41 @@
   transition: opacity var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
 }
 
-.chat-convos__item:hover .chat-convos__del,
-.chat-convos__item:focus-within .chat-convos__del,
-.chat-convos__del:focus-visible {
+.k-chat-convos__item:hover .k-chat-convos__del,
+.k-chat-convos__item:focus-within .k-chat-convos__del,
+.k-chat-convos__del:focus-visible {
   opacity: 1;
 }
 
-.chat-convos__del:hover {
+.k-chat-convos__del:hover {
   color: var(--danger-fg);
 }
 
-.chat-convos__del:focus-visible {
+.k-chat-convos__del:focus-visible {
   outline: none;
   box-shadow: var(--ring-focus);
 }
 
 /* The collapsed rail keeps the way to a new chat; a column of identical icons names no conversation. */
-.sidebar--rail .chat-convos__label,
-.sidebar--rail .chat-convos__list {
+.k-sidebar--rail .k-chat-convos__label,
+.k-sidebar--rail .k-chat-convos__list {
   display: none;
 }
 
 @media (hover: none) {
-  .chat-convos__del {
+  .k-chat-convos__del {
     opacity: 1;
   }
 }
 
 /* ---- the conversation list as a page of its own ---- */
-.chat-list {
+.k-chat-list {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 
-.chat-list__rows {
+.k-chat-list__rows {
   display: flex;
   flex-direction: column;
   background: var(--surface-1);
@@ -126,18 +126,18 @@
   overflow: hidden;
 }
 
-.chat-list__item {
+.k-chat-list__item {
   display: flex;
   align-items: center;
   gap: 4px;
   padding-right: 6px;
 }
 
-.chat-list__item+.chat-list__item {
+.k-chat-list__item+.k-chat-list__item {
   border-top: 1px solid var(--border-subtle);
 }
 
-.chat-list__open {
+.k-chat-list__open {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
@@ -154,17 +154,17 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.chat-list__open:hover,
-.chat-list__open:active {
+.k-chat-list__open:hover,
+.k-chat-list__open:active {
   color: var(--fg-1);
 }
 
-.chat-list__open:focus-visible {
+.k-chat-list__open:focus-visible {
   outline: none;
   box-shadow: inset var(--ring-focus);
 }
 
-.chat-list__title {
+.k-chat-list__title {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -174,24 +174,24 @@
   color: var(--fg-1);
 }
 
-.chat-list__item--active {
+.k-chat-list__item--active {
   background: var(--krystal-teal-dim);
 }
 
-.chat-list__item--active .chat-list__open,
-.chat-list__item--active .chat-list__title {
+.k-chat-list__item--active .k-chat-list__open,
+.k-chat-list__item--active .k-chat-list__title {
   color: var(--krystal-teal);
 }
 
 /* ---- conversation rail ---- */
-.chat-rail {
+.k-chat-rail {
   display: flex;
   flex-direction: column;
   background: var(--surface-1);
   overflow: hidden;
 }
 
-.chat-rail__new {
+.k-chat-rail__new {
   margin: 12px;
   padding: 0 12px;
   height: 38px;
@@ -209,11 +209,11 @@
   cursor: pointer;
 }
 
-.chat-rail__new:hover {
+.k-chat-rail__new:hover {
   background: var(--krystal-teal-hover);
 }
 
-.chat-rail__list {
+.k-chat-rail__list {
   flex: 1;
   overflow-y: auto;
   padding: 0 8px;
@@ -223,14 +223,14 @@
   min-height: 0;
 }
 
-.chat-rail__empty {
+.k-chat-rail__empty {
   color: var(--fg-4);
   font-size: 12.5px;
   text-align: center;
   padding: 20px 8px;
 }
 
-.chat-rail__item {
+.k-chat-rail__item {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -241,17 +241,17 @@
   cursor: pointer;
 }
 
-.chat-rail__item:hover {
+.k-chat-rail__item:hover {
   background: var(--surface-2);
   color: var(--fg-1);
 }
 
-.chat-rail__item--active {
+.k-chat-rail__item--active {
   background: var(--surface-3);
   color: var(--fg-1);
 }
 
-.chat-rail__title {
+.k-chat-rail__title {
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -259,7 +259,7 @@
   white-space: nowrap;
 }
 
-.chat-rail__del {
+.k-chat-rail__del {
   background: transparent;
   border: none;
   color: var(--fg-4);
@@ -269,18 +269,18 @@
   display: flex;
 }
 
-.chat-rail__item:hover .chat-rail__del {
+.k-chat-rail__item:hover .k-chat-rail__del {
   opacity: 1;
 }
 
-.chat-rail__del:hover {
+.k-chat-rail__del:hover {
   color: var(--danger-fg);
 }
 
 /* ---- the way to settings (only on a surface where the chat is the whole app) ----
    Foot of the rail, divided off the conversation list above it: it is the one row here that is not
    a chat. At phone width the rail is hidden and the same route is a cog in the header. */
-.chat-rail__settings {
+.k-chat-rail__settings {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -297,15 +297,15 @@
   flex-shrink: 0;
 }
 
-.chat-rail__settings:hover { color: var(--fg-1); background: var(--veil-1); }
+.k-chat-rail__settings:hover { color: var(--fg-1); background: var(--veil-1); }
 
-.chat-rail__settings-icon {
+.k-chat-rail__settings-icon {
   color: var(--fg-4);
   flex-shrink: 0;
 }
 
 /* ---- main panel ---- */
-.chat-main {
+.k-chat-main {
   display: flex;
   flex-direction: column;
   background: var(--surface-1);
@@ -314,7 +314,7 @@
   min-width: 0;
 }
 
-.chat-main__head {
+.k-chat-main__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -324,26 +324,26 @@
 }
 
 /* ---- cohesive single header: identity (left) + ghost actions (right) ---- */
-.chat-main__head {
+.k-chat-main__head {
   align-items: center;
   gap: 10px;
 }
 
-.chat-head__actions {
+.k-chat-head__actions {
   display: flex;
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
 }
 
-.chat-head__nav {
+.k-chat-head__nav {
   display: none;
   align-items: center;
   gap: 2px;
 }
 
 /* History popover — matches the sidebar account menu. */
-.chat-hist {
+.k-chat-hist {
   position: relative;
   display: inline-flex;
 }
@@ -352,7 +352,7 @@
    rect) so the docked panel's overflow:hidden can't clip it when the dock is
    squished narrow — it floats over the page. z-index sits above the dock (60)
    and its resizer (61), below modals/toasts (80/90). */
-.chat-hist__menu {
+.k-chat-hist__menu {
   position: fixed;
   width: 282px;
   max-width: 84vw;
@@ -368,7 +368,7 @@
   animation: k-fade var(--d-fast) var(--ease-out);
 }
 
-.chat-hist__head {
+.k-chat-hist__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -377,7 +377,7 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.chat-hist__list {
+.k-chat-hist__list {
   overflow-y: auto;
   padding: 6px;
   display: flex;
@@ -387,7 +387,7 @@
 }
 
 /* ---- thread / scroll ---- */
-.chat-scroll {
+.k-chat-scroll {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
@@ -395,7 +395,7 @@
 
 /* The thread spaces its entries, turns, cards and event rows alike; nothing in it carries a margin
    or a rule of its own between neighbours. Every entry spans the column. */
-.chat-thread {
+.k-chat-thread {
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -417,14 +417,14 @@
 }
 
 /* ---------- evidence cards ---------- */
-.chat-evidence {
+.k-chat-evidence {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin: 4px 0 4px 0px;
 }
 
-.ev-card {
+.k-chat-card {
   background: var(--surface-1);
   border: var(--edge);
   border-radius: var(--r-sm);
@@ -434,7 +434,7 @@
 
 /* In a narrow column (a dock) the confidence and the head's action drop under the title rather
    than squeezing it to an ellipsis. */
-.ev-card__head {
+.k-chat-card__head {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -444,11 +444,11 @@
 }
 
 /* A card that is only its head has nothing to rule off. */
-.ev-card__head:last-child {
+.k-chat-card__head:last-child {
   border-bottom: none;
 }
 
-.ev-card__icon {
+.k-chat-card__icon {
   width: 26px;
   height: 26px;
   border-radius: var(--r-sm);
@@ -460,7 +460,7 @@
   flex-shrink: 0;
 }
 
-.ev-card__titles {
+.k-chat-card__titles {
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -470,14 +470,14 @@
 
 /* The confidence and the head's action, kept together at the right edge on the title's line or the
    one under it. */
-.ev-card__end {
+.k-chat-card__end {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   margin-left: auto;
 }
 
-.ev-card__title {
+.k-chat-card__title {
   font-size: 13px;
   font-weight: 600;
   color: var(--fg-1);
@@ -486,7 +486,7 @@
   white-space: nowrap;
 }
 
-.ev-card__sub {
+.k-chat-card__sub {
   font-size: 11px;
   line-height: 1.45;
   color: var(--fg-3);
@@ -495,47 +495,47 @@
 }
 
 /* A sub that is a sentence rather than a figure or a path. */
-.ev-card__sub--prose {
+.k-chat-card__sub--prose {
   font-size: 12px;
   font-family: var(--font-ui);
   overflow-wrap: break-word;
 }
 
-.ev-card__open {
+.k-chat-card__open {
   flex-shrink: 0;
 }
 
-.ev-card--accent .ev-card__icon {
+.k-chat-card--accent .k-chat-card__icon {
   background: var(--krystal-teal-dim);
   color: var(--krystal-teal);
 }
 
-.ev-card--ok .ev-card__icon {
+.k-chat-card--ok .k-chat-card__icon {
   background: var(--success-bg);
   color: var(--success-fg);
 }
 
-.ev-card--warn .ev-card__icon {
+.k-chat-card--warn .k-chat-card__icon {
   background: var(--warning-bg);
   color: var(--warning-fg);
 }
 
-.ev-card--danger .ev-card__icon {
+.k-chat-card--danger .k-chat-card__icon {
   background: var(--danger-bg);
   color: var(--danger-fg);
 }
 
 /* A card the conversation has moved past. */
-.ev-card--muted {
+.k-chat-card--muted {
   opacity: 0.7;
 }
 
-.ev-card--muted .ev-card__icon {
+.k-chat-card--muted .k-chat-card__icon {
   color: var(--fg-4);
 }
 
 /* Confidence: a dot and a word, in the colour of how sure. */
-.ev-conf {
+.k-chat-confidence {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -546,7 +546,7 @@
   flex-shrink: 0;
 }
 
-.ev-conf::before {
+.k-chat-confidence::before {
   content: "";
   width: 6px;
   height: 6px;
@@ -554,37 +554,37 @@
   background: currentColor;
 }
 
-.ev-conf--confirmed {
+.k-chat-confidence--confirmed {
   color: var(--success-fg);
 }
 
-.ev-conf--confirmed::before {
+.k-chat-confidence--confirmed::before {
   background: var(--success);
 }
 
-.ev-conf--likely {
+.k-chat-confidence--likely {
   color: var(--info-fg);
 }
 
-.ev-conf--likely::before {
+.k-chat-confidence--likely::before {
   background: var(--info);
 }
 
-.ev-conf--possible {
+.k-chat-confidence--possible {
   color: var(--fg-3);
 }
 
-.ev-conf--possible::before {
+.k-chat-confidence--possible::before {
   background: var(--fg-4);
 }
 
 /* ---- composer ---- */
-.chat-composer {
+.k-chat-composer {
   padding: 12px 16px 14px;
   background: var(--surface-1);
 }
 
-.chat-composer__box {
+.k-chat-composer__box {
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -602,7 +602,7 @@
    Less is more; it should read as the field gently coming into focus, not a halo.
    Shared site-wide as --ring-input (the default text-field highlight); buttons/cards
    keep the bolder --ring-focus glow for keyboard visibility. */
-.chat-composer__box:focus-within {
+.k-chat-composer__box:focus-within {
   border-color: var(--border-accent);
   box-shadow: var(--ring-input);
 }
@@ -612,8 +612,8 @@
    twice is how the two drift: whatever changes here (font, size, padding, wrapping) must land on
    both at once, because it is the identity of those metrics that keeps the styled copy aligned
    with the text being typed, character for character. */
-.chat-composer__box textarea,
-.chat-composer__hl {
+.k-chat-composer__box textarea,
+.k-chat-composer__hl {
   width: 100%;
   resize: none;
   background: transparent;
@@ -636,8 +636,8 @@
 
 /* The textarea sits above the layer and paints no text of its own — the layer is what the caret
    rides over. `caret-color` is what remains visible of the text color, so the caret reads at the
-   same tone the field always did; IME composition brings the real color back (see .is-composing). */
-.chat-composer__box textarea {
+   same tone the field always did; IME composition brings the real color back (see .k-chat-is-composing). */
+.k-chat-composer__box textarea {
   position: relative;
   z-index: 1;
   color: transparent;
@@ -646,32 +646,32 @@
 
 /* During an IME composition the browser draws the pre-edit text in the element's own color, and
    that color is transparent here — so the textarea shows its text and the layer stands down. */
-.chat-composer__box textarea.is-composing {
+.k-chat-composer__box textarea.k-chat-is-composing {
   color: var(--fg-1);
 }
 
 /* Translucent on purpose: the selection background is painted by the textarea, which is ABOVE the
    layer, so an opaque one would hide the very text it is highlighting. */
-.chat-composer__box textarea::selection {
+.k-chat-composer__box textarea::selection {
   background: color-mix(in srgb, var(--krystal-teal) 45%, transparent);
 }
 
 /* The field wraps the two layers. Relative so the layer can fill it, and block so the textarea
    inside doesn't sit on a baseline strut (which would make the field taller than the textarea the
    layer is supposed to mirror). */
-.chat-composer__field {
+.k-chat-composer__field {
   position: relative;
   display: block;
 }
 
-.chat-composer__field textarea {
+.k-chat-composer__field textarea {
   display: block;
 }
 
 /* The highlight layer: absolutely positioned over the field's exact box (the shared rule above
    gives it the textarea's font, padding and wrapping), out of the pointer's way, and clipping
    rather than scrolling — syncScroll() moves its scrollTop with the textarea's past the 200px cap. */
-.chat-composer__hl {
+.k-chat-composer__hl {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -681,7 +681,7 @@
   -webkit-user-select: none;
 
   /* The code tint, OPAQUE — mixed against the box's own background rather than against
-     transparency. The block is a single painted element (see .md-codeblock), so its interior has
+     transparency. The block is a single painted element (see .k-chat-md-codeblock), so its interior has
      no seams by construction; opacity still matters at its edges and for the inline chips, where
      a translucent tint composites against whatever it meets and can show a step. Painted opaque
      over surface-3 the tint is exactly the colour a 14% alpha composites to. One definition, one
@@ -689,7 +689,7 @@
   --code-tint: color-mix(in srgb, var(--krystal-teal) 14%, var(--surface-3));
 }
 
-.chat-composer__hl--off {
+.k-chat-composer__hl--off {
   visibility: hidden;
 }
 
@@ -697,11 +697,11 @@
    Color and background ONLY — never weight, style or family, which would shift glyph widths and
    break the alignment the shared rule above exists to hold. Palette is existing tokens, so every
    theme (dark, tribute light, the monospace ones) comes along without a second definition. */
-.chat-composer__hl .md-delim {
+.k-chat-composer__hl .k-chat-md-delim {
   color: var(--fg-4);
 }
 
-.chat-composer__hl .md-fence-lang {
+.k-chat-composer__hl .k-chat-md-fence-lang {
   color: var(--info-fg);
   /* No uppercase here, unlike the transcript's fence labels: every text transform makes the
      displayed width differ from what the textarea holds, and the caret is placed from the
@@ -709,7 +709,7 @@
      the only caret-safe choice. */
 }
 
-.chat-composer__hl .md-list-marker {
+.k-chat-composer__hl .k-chat-md-list-marker {
   color: var(--krystal-teal);
 }
 
@@ -720,14 +720,14 @@
    only — an inline box's HORIZONTAL padding would push the glyphs after it, the one thing this
    whole arrangement forbids; vertical padding paints outside the line box without moving a glyph,
    and at 1px it can't reach the neighbouring line's chip. */
-.chat-composer__hl .md-fence,
-.chat-composer__hl .md-code-inline {
+.k-chat-composer__hl .k-chat-md-fence,
+.k-chat-composer__hl .k-chat-md-code-inline {
   background: var(--code-tint);
   border-radius: var(--r-sm);
   padding: 1px 0;
 }
 
-.chat-composer__hl .md-code-inline {
+.k-chat-composer__hl .k-chat-md-code-inline {
   color: var(--krystal-teal);
 }
 
@@ -742,15 +742,15 @@
 /* A code block is ONE element around its lines, background painted once across its content box —
    inter-line space included, because that's how a block box paints. No per-line paint exists, so
    there is nothing that could gap, overlap or hairline against a neighbour: the seam has no
-   origin. Opaque --code-tint (see .chat-composer__hl); the block carries its lines' colour too. */
-.chat-composer__hl .md-codeblock {
+   origin. Opaque --code-tint (see .k-chat-composer__hl); the block carries its lines' colour too. */
+.k-chat-composer__hl .k-chat-md-codeblock {
   background: var(--code-tint);
   color: var(--fg-2);
   border-radius: var(--r-sm);
 }
 
 /* An emptied block shows its ticks instead of sitting on an empty slab. */
-.chat-composer__hl .md-codeblock--empty {
+.k-chat-composer__hl .k-chat-md-codeblock--empty {
   background: transparent;
 }
 
@@ -758,9 +758,9 @@
    font = the same 21px the textarea's rows are), blank lines held open by the same min-height,
    wrapped lines growing in whole line-box steps. Stacked, they total what the textarea's rows
    total — line for line, at any width — with no dependence on how a browser treats a forced
-   break at a block edge. It is also what lets .md-codeblock wrap its lines in a single background
+   break at a block edge. It is also what lets .k-chat-md-codeblock wrap its lines in a single background
    without touching the flow. */
-.chat-composer__hl .md-line {
+.k-chat-composer__hl .k-chat-md-line {
   min-height: 1.5em;
 }
 
@@ -768,32 +768,32 @@
    which): kept in the flow — they still occupy their width, so the caret lands where the text
    really is — with only their pixels removed. The fence wrapper hides as a whole, chip
    background included: a tinted chip around hidden ticks would be a chip of nothing. */
-.chat-composer__hl .md-delim--hidden,
-.chat-composer__hl .md-fence--hidden {
+.k-chat-composer__hl .k-chat-md-delim--hidden,
+.k-chat-composer__hl .k-chat-md-fence--hidden {
   visibility: hidden;
 }
 
 /* The inner textarea never carries its own highlight — the box owns the focus
    affordance. Kills the universal :focus-visible ring (tokens.css) on the field, so
    focusing the input doesn't double up a glow inside the already-accented box. */
-.chat-composer__box textarea:focus,
-.chat-composer__box textarea:focus-visible {
+.k-chat-composer__box textarea:focus,
+.k-chat-composer__box textarea:focus-visible {
   outline: none;
   box-shadow: none;
 }
 
-.chat-composer__box textarea::placeholder {
+.k-chat-composer__box textarea::placeholder {
   color: var(--fg-4);
 }
 
 /* Toolbar row beneath the input: context scope on the left, mic/send on the right. */
-.chat-composer__bar {
+.k-chat-composer__bar {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.chat-composer__bar-spacer {
+.k-chat-composer__bar-spacer {
   flex: 1;
 }
 
@@ -801,7 +801,7 @@
    Portaled to <body> and positioned against the composer, because the composer sits at the bottom
    of a scrolling column in a dock and inside a fixed shell on a full page — a list
    rendered in flow would be clipped by one and would shove the textarea down in the other. */
-.chat-cmdmenu {
+.k-chat-cmdmenu {
   position: fixed;
   z-index: 1200;
   /* The width is measured off the composer, so the padding and border have to fit INSIDE it —
@@ -817,7 +817,7 @@
   box-shadow: var(--shadow-2);
 }
 
-.chat-cmdmenu__row {
+.k-chat-cmdmenu__row {
   display: flex;
   align-items: baseline;
   gap: 10px;
@@ -831,12 +831,12 @@
   color: inherit;
 }
 
-.chat-cmdmenu__row:hover,
-.chat-cmdmenu__row--active {
+.k-chat-cmdmenu__row:hover,
+.k-chat-cmdmenu__row--active {
   background: var(--veil-2);
 }
 
-.chat-cmdmenu__name {
+.k-chat-cmdmenu__name {
   flex: 0 0 auto;
   font-family: var(--font-mono);
   font-size: 12px;
@@ -844,7 +844,7 @@
   white-space: nowrap;
 }
 
-.chat-cmdmenu__desc {
+.k-chat-cmdmenu__desc {
   flex: 1 1 auto;
   min-width: 0;
   font-size: 11.5px;
@@ -854,14 +854,14 @@
   white-space: nowrap;
 }
 
-.chat-cmdmenu__tag {
+.k-chat-cmdmenu__tag {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   color: var(--warning-fg);
 }
 
-.chat-cmdmenu__hint {
+.k-chat-cmdmenu__hint {
   padding: 6px 9px 2px;
   border-top: 1px solid var(--border-subtle);
   margin-top: 4px;
@@ -869,7 +869,7 @@
   color: var(--fg-4);
 }
 
-.chat-cmdmenu__hint kbd {
+.k-chat-cmdmenu__hint kbd {
   font-family: var(--font-mono);
   font-size: 10px;
   padding: 0 3px;
@@ -883,22 +883,22 @@
    keyboard hint goes with them: there are no arrow keys to press, and it is the one row that can be
    dropped without losing anything a touch user can act on. */
 @media (max-width: 560px) {
-  .chat-cmdmenu__row {
+  .k-chat-cmdmenu__row {
     flex-direction: column;
     gap: 2px;
   }
 
-  .chat-cmdmenu__desc {
+  .k-chat-cmdmenu__desc {
     white-space: normal;
   }
 
-  .chat-cmdmenu__hint {
+  .k-chat-cmdmenu__hint {
     display: none;
   }
 }
 
 /* ---- full-screen modal pop-out ---- */
-.chat-modal-scrim {
+.k-chat-modal-scrim {
   position: fixed;
   inset: 0;
   z-index: 60;
@@ -910,7 +910,7 @@
   animation: k-fade var(--d-base) var(--ease-out);
 }
 
-.chat-modal {
+.k-chat-modal {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
@@ -924,24 +924,24 @@
   animation: k-rise var(--d-base) var(--ease-out);
 }
 
-.chat-modal .chat-page {
+.k-chat-modal .k-chat-page {
   height: 100%;
   flex: 1;
 }
 
 /* A dock resized narrow tightens the composer toolbar so mic and send stay on screen — the phone
    rule below, triggered by the dock's width rather than the viewport's. */
-.assistant-dock--compact .chat-composer__bar {
+.k-assistant-dock--compact .k-chat-composer__bar {
   gap: 6px;
 }
 
 /* ---- mobile ---- */
 @media (max-width: 768px) {
-  .chat-page {
+  .k-chat-page {
     grid-template-columns: 1fr;
     /* ONE row, because there is one item: the rail is display:none here (its job is done by the
        in-header new-chat + history popover), and a display:none child generates no grid item at
-       all. A second track would leave .chat-main auto-placed in the first one — sized to its
+       all. A second track would leave .k-chat-main auto-placed in the first one — sized to its
        content instead of to the screen — and the leftover height would sit below the composer as
        dead space that grows with the viewport. */
     grid-template-rows: 1fr;
@@ -949,44 +949,44 @@
   }
 
   /* Desktop rail is replaced by the in-header new-chat + history popover. */
-  .chat-rail {
+  .k-chat-rail {
     display: none;
   }
 
-  .chat-head__nav {
+  .k-chat-head__nav {
     display: flex;
   }
 
-  .chat-evidence {
+  .k-chat-evidence {
     margin-left: 0;
   }
 
   /* The composer toolbar tightens so mic and send can't get pushed off-screen. */
-  .chat-composer__bar {
+  .k-chat-composer__bar {
     gap: 6px;
   }
 
   /* Skeleton density — on phones the generous desktop padding wastes a lot of a small screen.
      Tighten the structural chrome (header, thread, composer, box) and the rail/main gap so more of
      the screen is conversation. */
-  .chat-page {
+  .k-chat-page {
     gap: 8px;
   }
 
-  .chat-main__head {
+  .k-chat-main__head {
     padding: 8px 12px;
     gap: 8px;
   }
 
-  .chat-thread {
+  .k-chat-thread {
     padding: 12px 12px 6px;
   }
 
-  .chat-composer {
+  .k-chat-composer {
     padding: 8px 10px 10px;
   }
 
-  .chat-composer__box {
+  .k-chat-composer__box {
     padding: 8px 8px 6px 12px;
   }
 }
@@ -997,7 +997,7 @@
    banner is part of the column rather than something scrolled past, and the
    composer is REMOVED (not disabled — a greyed input still invites typing into
    a conversation that cannot be replied to). */
-.chat-review__banner {
+.k-chat-review__banner {
   display: flex;
   align-items: center;
   gap: var(--s-2);
@@ -1009,25 +1009,25 @@
   flex: none;
 }
 
-.chat-review__banner b {
+.k-chat-review__banner b {
   font-weight: var(--w-semibold);
 }
 
 /* The review column owns the full dock width — there is no conversation rail,
    because "your chats" is not what is being browsed here. */
-.chat-page--review .chat-main {
+.k-chat-page--review .k-chat-main {
   width: 100%;
 }
 
 /* ── Answer feedback (under an assistant reply) ────────────────────────────── */
-.chat-fb {
+.k-chat-fb {
   display: flex;
   flex-direction: column;
   gap: var(--s-2);
   margin-top: var(--s-2);
 }
 
-.chat-fb__note {
+.k-chat-fb__note {
   font-size: var(--text-xs);
   color: var(--fg-4);
   font-style: italic;
@@ -1035,14 +1035,14 @@
   overflow-wrap: anywhere;
 }
 
-.chat-fb__note-form {
+.k-chat-fb__note-form {
   display: flex;
   align-items: center;
   gap: var(--s-2);
   flex-wrap: wrap;
 }
 
-.chat-fb--ro {
+.k-chat-fb--ro {
   flex-direction: row;
   align-items: center;
   gap: var(--s-2);
@@ -1053,7 +1053,7 @@
 
 /* The docked chat fills the panel and drops its conversation rail — the header's new-chat and
    history carry it instead. The dock owns full height so the composer pins to the bottom. */
-.assistant-dock .chat-page--docked {
+.k-assistant-dock .k-chat-page--docked {
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
   gap: 0;
@@ -1062,18 +1062,18 @@
   flex: 1;
 }
 
-.assistant-dock .chat-page--docked .chat-rail {
+.k-assistant-dock .k-chat-page--docked .k-chat-rail {
   display: none;
 }
 
 /* The dock draws the panel's edges, and the bar or strip under it draws the bottom one, so the main
    panel draws none of its own: a border here would stand as a second line beside each of them. */
-.assistant-dock .chat-page--docked .chat-main {
+.k-assistant-dock .k-chat-page--docked .k-chat-main {
   border: none;
 }
 
 /* Single cohesive header carries new-chat + history in the dock. */
-.assistant-dock .chat-page--docked .chat-head__nav {
+.k-assistant-dock .k-chat-page--docked .k-chat-head__nav {
   display: flex;
 }
 
@@ -1083,52 +1083,52 @@
    so a theme whose canvas is black is black here too. The header draws its rule once the thread has
    scrolled under it, the thread fades out under the composer, and the empty conversation stands in the
    middle of the screen. */
-.chat-page--as-page {
+.k-chat-page--as-page {
   grid-template-columns: minmax(0, 1fr);
 }
 
 /* A page keeps its conversations in the header's sheet at every width, never in a rail. */
-.chat-page--as-page .chat-rail {
+.k-chat-page--as-page .k-chat-rail {
   display: none;
 }
 
-.chat-page--as-page .chat-head__nav {
+.k-chat-page--as-page .k-chat-head__nav {
   display: flex;
 }
 
-.chat-page--as-page .chat-main {
+.k-chat-page--as-page .k-chat-main {
   background: var(--canvas);
 }
 
-.chat-page--as-page .chat-head {
+.k-chat-page--as-page .k-chat-head {
   background: var(--canvas);
   border-bottom-color: transparent;
   transition: border-color var(--d-fast) var(--ease-out);
 }
 
-.chat-page--as-page .chat-head--lifted {
+.k-chat-page--as-page .k-chat-head--lifted {
   border-bottom-color: var(--border-subtle);
 }
 
 /* The way back to the empty conversation stands at the header's edge, its icon where the title would start. */
-.chat-page--as-page .chat-head__back {
+.k-chat-page--as-page .k-chat-head__back {
   flex-shrink: 0;
   margin-left: -8px;
 }
 
-.chat-page--as-page .chat-start {
+.k-chat-page--as-page .k-chat-start {
   justify-content: center;
   min-height: 100%;
   padding: 32px 24px;
 }
 
-.chat-page--as-page .chat-composer {
+.k-chat-page--as-page .k-chat-composer {
   position: relative;
   padding: 0 12px 12px;
   background: var(--canvas);
 }
 
-.chat-page--as-page .chat-composer::before {
+.k-chat-page--as-page .k-chat-composer::before {
   content: "";
   position: absolute;
   left: 0;
@@ -1142,7 +1142,7 @@
 /* The box is one row: `+`, the field growing upward as it fills, then the options and the microphone
    or send. The bar's controls stand in the row itself, after the field and `+` before it; what is
    attached takes a row of its own above. */
-.chat-page--as-page .chat-composer__box {
+.k-chat-page--as-page .k-chat-composer__box {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -1153,7 +1153,7 @@
   border-radius: var(--r-sm);
 }
 
-.chat-page--as-page .chat-composer__field {
+.k-chat-page--as-page .k-chat-composer__field {
   flex: 1;
   min-width: 0;
   order: 1;
@@ -1161,44 +1161,44 @@
 }
 
 /* The field is sized to its scrollHeight, which counts its padding, so its box counts the padding too. */
-.chat-page--as-page .chat-composer__box textarea,
-.chat-page--as-page .chat-composer__hl {
+.k-chat-page--as-page .k-chat-composer__box textarea,
+.k-chat-page--as-page .k-chat-composer__hl {
   box-sizing: border-box;
   padding: 6px 4px 6px 8px;
 }
 
-.chat-page--as-page .chat-composer__bar {
+.k-chat-page--as-page .k-chat-composer__bar {
   display: contents;
 }
 
-.chat-page--as-page .chat-composer__bar > * {
+.k-chat-page--as-page .k-chat-composer__bar > * {
   order: 2;
 }
 
-.chat-page--as-page .chat-composer__bar-spacer {
+.k-chat-page--as-page .k-chat-composer__bar-spacer {
   display: none;
 }
 
-.chat-page--as-page .chat-composer__bar > .chat-composer__attach {
+.k-chat-page--as-page .k-chat-composer__bar > .k-chat-composer__attach {
   order: 0;
 }
 
-.chat-page--as-page .chat-attachments,
-.chat-page--as-page .chat-composer__attach-note {
+.k-chat-page--as-page .k-chat-attachments,
+.k-chat-page--as-page .k-chat-composer__attach-note {
   order: -1;
   flex-basis: 100%;
   padding: 2px 2px 4px;
 }
 
 /* The answer is the assistant's without saying so: the page is the assistant's. */
-.chat-page--as-page .chat-turn__head {
+.k-chat-page--as-page .k-chat-turn__head {
   display: none;
 }
 
-/* After the phone rule that sizes .chat-page to the viewport, which is the same specificity: a framed
+/* After the phone rule that sizes .k-chat-page to the viewport, which is the same specificity: a framed
    chat is sized by the column it fills, whatever the width. */
 @media (max-width: 768px) {
-  .chat-page--framed {
+  .k-chat-page--framed {
     height: auto;
   }
 }

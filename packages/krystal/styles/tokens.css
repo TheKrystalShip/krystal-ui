@@ -4406,8 +4406,7 @@ body {
 }
 
 /* ---- Display & headings --------------------------------- */
-.k-display,
-h1.display {
+.k-display {
   font-size: var(--text-5xl);
   font-weight: var(--w-bold);
   line-height: var(--lh-tight);

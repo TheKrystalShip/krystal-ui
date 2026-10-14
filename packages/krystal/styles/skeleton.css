@@ -1,10 +1,10 @@
 /* ============================================================================
    skeleton.css — placeholders that hold a surface's footprint while it loads
-   (<Skeleton>). `.skel` is one shimmering block; `.skel-card`, `.skel-row` and
-   `.skel-toolbar` are the frames a site arranges blocks in when its own
+   (<Skeleton>). `.k-skeleton` is one shimmering block; `.k-skeleton-card`, `.k-skeleton-row` and
+   `.k-skeleton-toolbar` are the frames a site arranges blocks in when its own
    containers are not the shape it needs.
    ============================================================================ */
-.skel {
+.k-skeleton {
   display: block;
   background: var(--surface-2);
   background-image: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--fg-4) 16%, transparent) 50%, transparent 100%);
@@ -24,31 +24,31 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skel {
+  .k-skeleton {
     animation: none;
     background-image: none;
   }
 }
 
-.skel-card {
+.k-skeleton-card {
   background: var(--surface-1);
   border: var(--edge);
   border-radius: var(--r-sm);
   overflow: hidden;
 }
 
-.skel-card__art {
+.k-skeleton-card__art {
   background: var(--surface-2);
   width: 100%;
 }
 
-.skel-row {
+.k-skeleton-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.skel-toolbar {
+.k-skeleton-toolbar {
   display: flex;
   align-items: center;
   gap: 10px;

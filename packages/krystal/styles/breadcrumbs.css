@@ -3,14 +3,14 @@
    One line at every width: each crumb ellipsizes, ancestors give up their width
    before the current page does, and no crumb is wider than --crumbs-max.
    ============================================================================ */
-.crumbs {
+.k-breadcrumbs {
   --crumbs-max: 22ch;
   min-width: 0;
   font-size: 13px;
   color: var(--fg-3);
 }
 
-.crumbs__list {
+.k-breadcrumbs__list {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -20,7 +20,7 @@
   list-style: none;
 }
 
-.crumbs__item {
+.k-breadcrumbs__item {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -30,16 +30,16 @@
 }
 
 /* The separator is drawn, and carries an empty alternative so a screen reader skips it. */
-.crumbs__item + .crumbs__item::before {
+.k-breadcrumbs__item + .k-breadcrumbs__item::before {
   content: "/";
   content: "/" / "";
   flex: none;
   color: var(--fg-4);
 }
 
-.crumbs__link,
-.crumbs__text,
-.crumbs__current {
+.k-breadcrumbs__link,
+.k-breadcrumbs__text,
+.k-breadcrumbs__current {
   display: block;
   min-width: 0;
   overflow: hidden;
@@ -47,34 +47,34 @@
   white-space: nowrap;
 }
 
-.crumbs__link {
+.k-breadcrumbs__link {
   color: var(--fg-3);
   font-weight: 500;
   border-bottom: 0;
 }
 
-.crumbs__link:hover {
+.k-breadcrumbs__link:hover {
   color: var(--fg-1);
   border-bottom: 0;
 }
 
-.crumbs__text {
+.k-breadcrumbs__text {
   font-weight: 500;
 }
 
 /* The current page keeps its width longest and is allowed more of it. */
-.crumbs__item:last-child {
+.k-breadcrumbs__item:last-child {
   max-width: calc(var(--crumbs-max) * 1.6);
   flex: 0 1 auto;
 }
 
-.crumbs__current {
+.k-breadcrumbs__current {
   color: var(--fg-1);
   font-weight: 600;
 }
 
 @media (max-width: 600px) {
-  .crumbs {
+  .k-breadcrumbs {
     --crumbs-max: 14ch;
     font-size: 12.5px;
   }

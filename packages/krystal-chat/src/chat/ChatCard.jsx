@@ -25,7 +25,7 @@ function ConfidenceBadge({ level }) {
   const meta = CONFIDENCE[level];
   if (!meta) return null;
   return (
-    <span className={"ev-conf ev-conf--" + level} title={meta.title}>
+    <span className={"k-chat-confidence k-chat-confidence--" + level} title={meta.title}>
       {meta.label}
     </span>
   );
@@ -52,24 +52,24 @@ function ChatCard({
   const right = action !== undefined
     ? action
     : onOpen && (
-      <Button variant="ghost" size="xs" iconRight="arrow-right" className="ev-card__open" onClick={onOpen}>
+      <Button variant="ghost" size="xs" iconRight="arrow-right" className="k-chat-card__open" onClick={onOpen}>
         {openLabel}
       </Button>
     );
   return (
-    <div className={"ev-card ev-card--" + tone + (className ? " " + className : "")}>
-      <div className="ev-card__head">
+    <div className={"k-chat-card k-chat-card--" + tone + (className ? " " + className : "")}>
+      <div className="k-chat-card__head">
         {icon && (
-          <span className="ev-card__icon">
+          <span className="k-chat-card__icon">
             {typeof icon === "string" ? <Icon name={icon} size={14} strokeWidth={2} /> : icon}
           </span>
         )}
-        <div className="ev-card__titles">
-          <span className="ev-card__title">{title}</span>
-          {sub && <span className={"ev-card__sub" + (subMono ? "" : " ev-card__sub--prose")}>{sub}</span>}
+        <div className="k-chat-card__titles">
+          <span className="k-chat-card__title">{title}</span>
+          {sub && <span className={"k-chat-card__sub" + (subMono ? "" : " k-chat-card__sub--prose")}>{sub}</span>}
         </div>
         {(CONFIDENCE[confidence] || right) && (
-          <div className="ev-card__end">
+          <div className="k-chat-card__end">
             <ConfidenceBadge level={confidence} />
             {right}
           </div>
@@ -108,11 +108,11 @@ function ChatCardRow({ label, value, verdict, verdictLabel, mono = false, valueM
   const v = VERDICTS[tone];
   const bare = label == null || label === "";
   return (
-    <div className={"chat-card-row" + (v ? " chat-card-row--" + tone : "") + (bare ? " chat-card-row--bare" : "")}>
-      {!bare && <span className={"chat-card-row__label" + (mono ? " chat-card-row__label--mono" : "")}>{label}</span>}
-      <span className={"chat-card-row__value" + (valueMono ? " chat-card-row__value--mono" : "")}>{value}</span>
+    <div className={"k-chat-card-row" + (v ? " k-chat-card-row--" + tone : "") + (bare ? " k-chat-card-row--bare" : "")}>
+      {!bare && <span className={"k-chat-card-row__label" + (mono ? " k-chat-card-row__label--mono" : "")}>{label}</span>}
+      <span className={"k-chat-card-row__value" + (valueMono ? " k-chat-card-row__value--mono" : "")}>{value}</span>
       {v && (
-        <span className="chat-card-row__verdict" role="img" aria-label={verdictLabel || v.label} title={verdictLabel || v.label}>
+        <span className="k-chat-card-row__verdict" role="img" aria-label={verdictLabel || v.label} title={verdictLabel || v.label}>
           <Icon name={v.icon} size={14} strokeWidth={2.2} />
         </span>
       )}
@@ -127,7 +127,7 @@ function ChatCardRow({ label, value, verdict, verdictLabel, mono = false, valueM
  * @param {import("react").ReactNode} [props.children]
  */
 function ChatCardRows({ children }) {
-  return <div className="chat-card-rows">{children}</div>;
+  return <div className="k-chat-card-rows">{children}</div>;
 }
 
 export { ChatCard, ChatCardRow, ChatCardRows, ConfidenceBadge };

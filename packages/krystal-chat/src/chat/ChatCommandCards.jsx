@@ -24,15 +24,15 @@ function ChatCommandHelp({ msg, onUseCommand }) {
   const groups = /** @type {[string, import("./types.js").CommandInfo[]][]} */ ([["Reference", reads], ["Changes something", acts]]).filter(([, g]) => g.length > 0);
 
   return (
-    <ChatCard icon="square-slash" title="Commands you can type" className="chat-cmds">
+    <ChatCard icon="square-slash" title="Commands you can type" className="k-chat-cmds">
       <ChatCardRows>
         {groups.map(([title, group]) => (
-          <div key={title} className="chat-cmds__group">
-            {groups.length > 1 && <div className="chat-cmds__grouphead">{title}</div>}
+          <div key={title} className="k-chat-cmds__group">
+            {groups.length > 1 && <div className="k-chat-cmds__grouphead">{title}</div>}
             {group.map(c => (
               <ChatCardRow key={c.name} mono label={usageOf(c)} value={c.description}
                 action={onUseCommand && (
-                  <Button variant="outline" size="xs" className="chat-cmds__use"
+                  <Button variant="outline" size="xs" className="k-chat-cmds__use"
                     aria-label={"Use /" + c.name} onClick={() => onUseCommand(c.name)}>
                     Use
                   </Button>
@@ -61,7 +61,7 @@ function firstSentence(text) {
 function ChatCommandTools({ msg }) {
   const tools = msg.tools || [];
   return (
-    <ChatCard icon="wrench" title="What I can do for you" className="chat-cmds chat-cmds--tools">
+    <ChatCard icon="wrench" title="What I can do for you" className="k-chat-cmds k-chat-cmds--tools">
       <ChatCardRows>
         {tools.map(t => (
           <ChatCardRow key={t.name} label={toolLabel(t.name)} value={firstSentence(t.description)} />

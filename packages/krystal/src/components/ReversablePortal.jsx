@@ -46,7 +46,7 @@ function ReversablePortal({
   const hostRef = React.useRef(null);
   if (hostRef.current === null) {
     const host = document.createElement("div");
-    host.className = "rportal-host";
+    host.className = "k-portal-host";
     host.style.display = "contents";
     hostRef.current = host;
   }
@@ -68,13 +68,13 @@ function ReversablePortal({
 
   return (
     <>
-      <div ref={inlineRef} className="rportal-slot">
+      <div ref={inlineRef} className="k-portal-slot">
         {fullscreen && placeholder}
       </div>
       {fullscreen && (
         <Modal onClose={onClose} scrimClassName={scrimClassName}>
           <div className={modalClassName} role="dialog" aria-modal="true" aria-label={ariaLabel}>
-            <div ref={modalRef} className="rportal-slot" />
+            <div ref={modalRef} className="k-portal-slot" />
           </div>
         </Modal>
       )}

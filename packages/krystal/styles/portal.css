@@ -4,7 +4,7 @@
    layout exactly as if it were a direct child, and reparenting the host between
    an inline slot and a modal reflows cleanly.
    ============================================================================ */
-.rportal-slot,
-.rportal-host {
+.k-portal-slot,
+.k-portal-host {
   display: contents;
 }

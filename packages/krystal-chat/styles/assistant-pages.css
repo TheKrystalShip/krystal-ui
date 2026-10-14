@@ -8,7 +8,7 @@
 
 /* A page beside the chat, at a reading measure rather than the full window: its rows are text, and
    a row stretched across a desktop leaves its control a screen away from its label. */
-.assistant-page {
+.k-assistant-page {
   box-sizing: border-box;
   width: 100%;
   max-width: 760px;
@@ -21,7 +21,7 @@
 }
 
 @media (max-width: 768px) {
-  .assistant-page {
+  .k-assistant-page {
     padding: 16px 14px 24px;
     padding-top: calc(16px + env(safe-area-inset-top));
   }
@@ -30,18 +30,18 @@
 /* ---- The memory editor --------------------------------------------------- */
 
 /* A field's length against the assistant's cap. */
-.mem-editor__count {
+.k-assistant-memory-editor__count {
   font-family: var(--font-mono);
   font-weight: 500;
 }
 
-.mem-editor__count--over {
+.k-assistant-memory-editor__count--over {
   color: var(--danger-fg);
 }
 
 /* The key of a memory that already exists: shown as the identifier it is, at the height of the input
    it replaces so the fields keep one rhythm. */
-.mem-editor__key {
+.k-assistant-memory-editor__key {
   display: inline-flex;
   align-items: center;
   min-height: 34px;
@@ -51,14 +51,14 @@
 /* The notes take what the fields above them leave, with a floor so a short viewport still shows
    something to write in. A grid, so the editor's row is a definite track: an editor that renders a
    `height: 100%` box collapses in Firefox against a height that is only flex-derived. */
-.mem-editor__notes {
+.k-assistant-memory-editor__notes {
   flex: 1 1 auto;
   min-height: 220px;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
-.mem-editor__body {
+.k-assistant-memory-editor__body {
   display: flex;
   min-height: 0;
   background: var(--surface-0);
@@ -67,13 +67,13 @@
   overflow: hidden;
 }
 
-.mem-editor__body>* {
+.k-assistant-memory-editor__body>* {
   flex: 1;
   min-width: 0;
 }
 
 /* The plain body: the box above is its frame, so the text area draws none of its own. */
-.mem-editor__textarea {
+.k-assistant-memory-editor__textarea {
   height: 100%;
   border: 0;
   border-radius: 0;
@@ -81,11 +81,11 @@
   resize: none;
 }
 
-.mem-editor__dirty {
+.k-assistant-memory-editor__dirty {
   font-size: 12px;
   color: var(--warning-fg);
 }
 
-.mem-editor__spacer {
+.k-assistant-memory-editor__spacer {
   flex: 1;
 }

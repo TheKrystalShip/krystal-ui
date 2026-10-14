@@ -17,13 +17,13 @@ import { Icon } from "./Icon.jsx";
  */
 function SettingsRow({ icon, title, sub, tone, children }) {
   return (
-    <div className={"chat-brief__item chat-brief__item--static" + (tone ? " chat-brief__item--" + tone : "")}>
-      <span className="chat-brief__icon"><Icon name={icon} size={14} /></span>
-      <div className="chat-brief__body">
-        <span className="chat-brief__item-title"><span className="chat-brief__titletext">{title}</span></span>
-        {sub && <span className="chat-brief__detail" style={{ whiteSpace: "normal" }}>{sub}</span>}
+    <div className={"k-brief__item k-brief__item--static" + (tone ? " k-brief__item--" + tone : "")}>
+      <span className="k-brief__icon"><Icon name={icon} size={14} /></span>
+      <div className="k-brief__body">
+        <span className="k-brief__item-title"><span className="k-brief__titletext">{title}</span></span>
+        {sub && <span className="k-brief__detail" style={{ whiteSpace: "normal" }}>{sub}</span>}
       </div>
-      <div className="settings-row__controls">{children}</div>
+      <div className="k-settings-row__controls">{children}</div>
     </div>
   );
 }
@@ -40,7 +40,7 @@ function SettingsRow({ icon, title, sub, tone, children }) {
 function SettingsSection({ icon, title, meta, action, className, children }) {
   return (
     <BriefCard icon={icon} title={title} meta={meta} action={action} className={className}>
-      <div className="chat-brief__list">{children}</div>
+      <div className="k-brief__list">{children}</div>
     </BriefCard>
   );
 }

@@ -184,13 +184,13 @@ function renderInline(text, keyBase = "i") {
     if (m.index > last) out.push(text.slice(last, m.index));
     const key = keyBase + "." + k++;
     if (m[1] != null) {
-      out.push(<code key={key} className="chat-md__code">{m[1]}</code>);
+      out.push(<code key={key} className="k-chat-md__code">{m[1]}</code>);
     } else if (m[2] != null) {
       out.push(SAFE_HREF.test(m[3])
-        ? <a key={key} className="chat-md__link" href={m[3]} target="_blank" rel="noopener noreferrer">{renderInline(m[2], key)}</a>
+        ? <a key={key} className="k-chat-md__link" href={m[3]} target="_blank" rel="noopener noreferrer">{renderInline(m[2], key)}</a>
         : <React.Fragment key={key}>{renderInline(m[2], key)}</React.Fragment>);
     } else if (m[4] != null) {
-      out.push(<a key={key} className="chat-md__link" href={m[4]} target="_blank" rel="noopener noreferrer">{m[4]}</a>);
+      out.push(<a key={key} className="k-chat-md__link" href={m[4]} target="_blank" rel="noopener noreferrer">{m[4]}</a>);
     } else if (m[5] != null || m[6] != null) {
       out.push(<strong key={key}>{renderInline(m[5] ?? m[6], key)}</strong>);
     } else {
@@ -223,13 +223,13 @@ function CodeBlock({ lang, value }) {
   }, [copied]);
   const label = copied === true ? "Copied" : copied === false ? "Couldn’t copy" : "Copy code";
   return (
-    <div className="chat-md__pre">
-      <div className="chat-md__pre-bar">
-        <span className="chat-md__pre-lang">{lang}</span>
+    <div className="k-chat-md__pre">
+      <div className="k-chat-md__pre-bar">
+        <span className="k-chat-md__pre-lang">{lang}</span>
         <IconButton variant="ghost" size="xs" icon={copied === true ? "check" : "copy"} label={label}
           onClick={() => copyText(value).then(setCopied)} />
       </div>
-      <pre className="chat-md__pre-body"><code>{value}</code></pre>
+      <pre className="k-chat-md__pre-body"><code>{value}</code></pre>
     </div>
   );
 }
@@ -237,7 +237,7 @@ function CodeBlock({ lang, value }) {
 function renderList(block, key) {
   const Tag = block.type;
   return (
-    <Tag key={key} className={"chat-md__list chat-md__list--" + block.type}
+    <Tag key={key} className={"k-chat-md__list k-chat-md__list--" + block.type}
       start={block.type === "ol" && block.start !== 1 ? block.start : undefined}>
       {block.items.map((item, i) => {
         const nested = item.children.length ? parseBlocks(dedent(item.children)) : [];
@@ -263,19 +263,19 @@ function renderBlock(b, key) {
       return <CodeBlock key={key} lang={b.lang} value={b.value} />;
     case "heading": {
       const Tag = /** @type {"h3" | "h4" | "h5" | "h6"} */ ("h" + Math.min(b.level + 2, 6));
-      return <Tag key={key} className="chat-md__h">{renderInline(b.text, key)}</Tag>;
+      return <Tag key={key} className="k-chat-md__h">{renderInline(b.text, key)}</Tag>;
     }
     case "rule":
-      return <hr key={key} className="chat-md__rule" />;
+      return <hr key={key} className="k-chat-md__rule" />;
     case "quote":
-      return <blockquote key={key} className="chat-md__quote">{b.children.map((c, j) => renderBlock(c, key + "." + j))}</blockquote>;
+      return <blockquote key={key} className="k-chat-md__quote">{b.children.map((c, j) => renderBlock(c, key + "." + j))}</blockquote>;
     case "ul":
     case "ol":
       return renderList(b, key);
     case "table":
       return (
-        <div key={key} className="chat-md__table-wrap">
-          <table className="chat-md__table">
+        <div key={key} className="k-chat-md__table-wrap">
+          <table className="k-chat-md__table">
             <thead>
               <tr>{b.head.map((c, j) => <th key={j} style={b.align[j] ? { textAlign: b.align[j] } : undefined}>{renderInline(c, key + ".h" + j)}</th>)}</tr>
             </thead>
@@ -292,7 +292,7 @@ function renderBlock(b, key) {
         </div>
       );
     default:
-      return <p key={key} className="chat-md__p">{renderLines(b.lines, key)}</p>;
+      return <p key={key} className="k-chat-md__p">{renderLines(b.lines, key)}</p>;
   }
 }
 

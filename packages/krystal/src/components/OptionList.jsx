@@ -90,7 +90,7 @@ function OptionList({
         const off = disabled || !!o.disabled;
         return (
           <label key={String(o.value)}
-            className={"k-optlist__row" + (on ? " is-on" : "") + (off ? " is-disabled" : "")}>
+            className={"k-optlist__row" + (on ? " k-is-on" : "") + (off ? " k-is-disabled" : "")}>
             <input ref={o === firstRevealed ? revealRef : undefined}
               type={multiple ? "checkbox" : "radio"} className="k-optlist__input" name={groupName}
               value={String(o.value)} checked={on} disabled={off}

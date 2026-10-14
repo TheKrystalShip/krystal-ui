@@ -22,7 +22,7 @@
   --tv-dim: 0.55;
 }
 
-:root[data-tv] .rail__arrow {
+:root[data-tv] .k-rail__arrow {
   display: none;
 }
 
@@ -36,7 +36,7 @@
    Focus on a television is lit by the glow alone, drawn at once: a blurred drop shadow under what is
    lifted, or a shadow that eases in, is painted again at the panel's resolution on every frame of the
    lift, which a television's GPU does not keep up with. */
-:root[data-tv] :is(.k-btn, .tv-bar__item, .tv-bar__button, .tv-pill):focus-visible {
+:root[data-tv] :is(.k-btn, .k-tv-bar__item, .k-tv-bar__button, .k-tv-pill):focus-visible {
   background: var(--fg-1);
   color: var(--canvas);
   border-color: transparent;
@@ -44,7 +44,7 @@
   transform: scale(1.06);
 }
 
-:root[data-tv] :is(.k-btn, .tv-bar__item, .tv-bar__button, .tv-pill) {
+:root[data-tv] :is(.k-btn, .k-tv-bar__item, .k-tv-bar__button, .k-tv-pill) {
   transition: transform var(--d-base) var(--ease-out), background var(--d-base) var(--ease-out),
     color var(--d-base) var(--ease-out);
 }
@@ -56,7 +56,7 @@
 
 /* ---- The bar ---------------------------------------------------------------------------------- */
 
-.tv-bar {
+.k-tv-bar {
   position: fixed;
   top: var(--tv-margin-y);
   left: var(--tv-margin-x);
@@ -70,31 +70,31 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tv-bar {
+  .k-tv-bar {
     transition: none;
   }
 }
 
-.tv-bar[data-hidden] {
+.k-tv-bar[data-hidden] {
   transform: translateY(-80px);
   opacity: 0;
   pointer-events: none;
 }
 
-.tv-bar__mark {
+.k-tv-bar__mark {
   width: 26px;
   height: 26px;
   border-radius: var(--r-sm);
 }
 
-.tv-bar__nav {
+.k-tv-bar__nav {
   display: flex;
   align-items: center;
   gap: 6px;
   flex: 1;
 }
 
-.tv-bar__item {
+.k-tv-bar__item {
   position: relative;
   padding: 7px 13px;
   border-radius: var(--r-pill);
@@ -104,12 +104,12 @@
   text-decoration: none;
 }
 
-.tv-bar__item[aria-current="page"] {
+.k-tv-bar__item[aria-current="page"] {
   color: var(--fg-1);
   font-weight: var(--w-semibold);
 }
 
-.tv-bar__item[aria-current="page"]::after {
+.k-tv-bar__item[aria-current="page"]::after {
   content: "";
   position: absolute;
   left: 13px;
@@ -120,17 +120,17 @@
   background: var(--krystal-teal);
 }
 
-.tv-bar__item[aria-current="page"]:focus-visible::after {
+.k-tv-bar__item[aria-current="page"]:focus-visible::after {
   display: none;
 }
 
-.tv-bar__actions {
+.k-tv-bar__actions {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.tv-bar__button {
+.k-tv-bar__button {
   position: relative;
   width: 34px;
   height: 34px;
@@ -145,14 +145,14 @@
   overflow: visible;
 }
 
-.tv-bar__button > img,
-.tv-bar__button > .k-avatar {
+.k-tv-bar__button > img,
+.k-tv-bar__button > .k-avatar {
   width: 34px;
   height: 34px;
   border-radius: var(--r-pill);
 }
 
-.tv-bar__dot {
+.k-tv-bar__dot {
   position: absolute;
   top: 5px;
   right: 6px;
@@ -164,7 +164,7 @@
 
 /* ---- The backdrop ----------------------------------------------------------------------------- */
 
-.tv-backdrop {
+.k-tv-backdrop {
   position: fixed;
   top: 0;
   right: 0;
@@ -174,16 +174,16 @@
   pointer-events: none;
 }
 
-.tv-backdrop--short {
+.k-tv-backdrop--short {
   height: 330px;
 }
 
-.tv-backdrop--page {
+.k-tv-backdrop--page {
   width: 80%;
   height: 470px;
 }
 
-.tv-backdrop__art {
+.k-tv-backdrop__art {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -194,7 +194,7 @@
   will-change: opacity;
 }
 
-.tv-backdrop__shade {
+.k-tv-backdrop__shade {
   position: absolute;
   inset: 0;
   background:
@@ -210,7 +210,7 @@
 
 /* ---- The spotlight ---------------------------------------------------------------------------- */
 
-.tv-spot {
+.k-tv-spot {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -218,7 +218,7 @@
   color: var(--fg-1);
 }
 
-.tv-spot__eyebrow {
+.k-tv-spot__eyebrow {
   font-size: 11.5px;
   font-weight: var(--w-bold);
   letter-spacing: 0.08em;
@@ -226,7 +226,7 @@
   color: var(--krystal-teal);
 }
 
-.tv-spot__title {
+.k-tv-spot__title {
   margin: 0;
   font-size: 40px;
   line-height: 1.05;
@@ -236,23 +236,23 @@
 
 /* Above a row the spotlight has a fixed height to fit in: its name takes one line, as wide as the
    page, and its story stays narrow. */
-.tv-spot--md {
+.k-tv-spot--md {
   gap: 9px;
   max-width: none;
 }
 
-.tv-spot--md .tv-spot__title {
+.k-tv-spot--md .k-tv-spot__title {
   font-size: var(--text-4xl);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.tv-spot--md > :not(.tv-spot__title) {
+.k-tv-spot--md > :not(.k-tv-spot__title) {
   max-width: 460px;
 }
 
-.tv-spot__meta {
+.k-tv-spot__meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -261,7 +261,7 @@
   color: var(--fg-2);
 }
 
-.tv-spot__overview {
+.k-tv-spot__overview {
   margin: 0;
   font-size: var(--text-base);
   line-height: var(--lh-normal);
@@ -272,11 +272,11 @@
   overflow: hidden;
 }
 
-.tv-spot--md .tv-spot__overview {
+.k-tv-spot--md .k-tv-spot__overview {
   -webkit-line-clamp: 2;
 }
 
-.tv-spot__actions {
+.k-tv-spot__actions {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -285,12 +285,12 @@
 
 /* ---- Rows and cards --------------------------------------------------------------------------- */
 
-.tv-row {
+.k-tv-row {
   display: flex;
   flex-direction: column;
 }
 
-.tv-row__head {
+.k-tv-row__head {
   margin: 0;
   padding: 0 var(--tv-margin-x);
   display: flex;
@@ -303,11 +303,11 @@
   color: var(--fg-2);
 }
 
-.tv-row:focus-within .tv-row__head {
+.k-tv-row:focus-within .k-tv-row__head {
   color: var(--fg-1);
 }
 
-.tv-row__count {
+.k-tv-row__count {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: var(--w-medium);
@@ -319,7 +319,7 @@
 }
 
 /* The track's own padding is the room a lifted card grows into, top and bottom and at the start. */
-.tv-row__track {
+.k-tv-row__track {
   display: flex;
   gap: var(--tv-gap);
   overflow-x: auto;
@@ -330,11 +330,11 @@
   clip-path: inset(0 0 0 calc(var(--tv-margin-x) * 0.6));
 }
 
-.tv-row__track::-webkit-scrollbar {
+.k-tv-row__track::-webkit-scrollbar {
   display: none;
 }
 
-.tv-card {
+.k-tv-card {
   position: relative;
   flex: none;
   display: block;
@@ -352,24 +352,24 @@
   transition: transform var(--d-base) var(--ease-out);
 }
 
-.tv-card--poster {
+.k-tv-card--poster {
   width: var(--tv-poster-w);
   height: var(--tv-poster-h);
 }
 
-.tv-card--wide {
+.k-tv-card--wide {
   width: var(--tv-wide-w);
   height: var(--tv-wide-h);
 }
 
-.tv-card__art {
+.k-tv-card__art {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.tv-card__name {
+.k-tv-card__name {
   position: absolute;
   inset: 0;
   padding: 12px;
@@ -379,7 +379,7 @@
   font-weight: var(--w-semibold);
 }
 
-.tv-card__badge {
+.k-tv-card__badge {
   position: absolute;
   top: 8px;
   left: 8px;
@@ -393,7 +393,7 @@
   font-weight: var(--w-semibold);
 }
 
-.tv-card__progress {
+.k-tv-card__progress {
   position: absolute;
   left: 0;
   right: 0;
@@ -402,14 +402,14 @@
   background: color-mix(in srgb, var(--fg-1) 18%, transparent);
 }
 
-.tv-card__progress > span {
+.k-tv-card__progress > span {
   display: block;
   height: 100%;
   background: var(--krystal-teal);
 }
 
 /* The hairline is drawn over the picture, which a box-shadow on the card itself would sit under. */
-.tv-card::after {
+.k-tv-card::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -420,23 +420,23 @@
   pointer-events: none;
 }
 
-:root[data-tv] .tv-card:focus-visible {
+:root[data-tv] .k-tv-card:focus-visible {
   transform: scale(var(--tv-lift));
   box-shadow: var(--glow-accent);
   z-index: 1;
 }
 
-.tv-card:focus-visible::after {
+.k-tv-card:focus-visible::after {
   opacity: 1;
 }
 
-/* With focus in a row its other cards step back; `.tv-dim` does the same for a whole page. */
-.tv-row__track:focus-within .tv-card:not(:focus-visible),
-.tv-dim .tv-card:not(:focus-visible) {
+/* With focus in a row its other cards step back; `.k-tv-dim` does the same for a whole page. */
+.k-tv-row__track:focus-within .k-tv-card:not(:focus-visible),
+.k-tv-dim .k-tv-card:not(:focus-visible) {
   opacity: var(--tv-dim);
 }
 
-.tv-tile {
+.k-tv-tile {
   display: flex;
   flex-direction: column;
   align-items: center;

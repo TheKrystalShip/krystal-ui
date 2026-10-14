@@ -11,7 +11,7 @@
    narrow dock and a phone get the same composer.
    ============================================================================ */
 
-.chat-composer {
+.k-chat-composer {
   container: chat-composer / inline-size;
   flex-shrink: 0;
   padding: 0 16px 20px;
@@ -19,14 +19,14 @@
 }
 
 /* Everything in the composer keeps the thread's measure. */
-.chat-composer > * {
+.k-chat-composer > * {
   max-width: 760px;
   margin-left: auto;
   margin-right: auto;
 }
 
 /* ---- a page's opening suggestions, a row over the box ---- */
-.chat-chips {
+.k-chat-chips {
   display: flex;
   gap: 8px;
   margin-bottom: 10px;
@@ -34,11 +34,11 @@
   scrollbar-width: none;
 }
 
-.chat-chips::-webkit-scrollbar {
+.k-chat-chips::-webkit-scrollbar {
   display: none;
 }
 
-.chat-chips__chip {
+.k-chat-chips__chip {
   flex: none;
   padding: 9px 14px;
   border: var(--edge);
@@ -52,13 +52,13 @@
   transition: border-color var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
 }
 
-.chat-chips__chip:hover {
+.k-chat-chips__chip:hover {
   border-color: var(--border-strong);
   color: var(--fg-1);
 }
 
 /* A page's one line under the box, on the empty conversation only. */
-.chat-composer__note {
+.k-chat-composer__note {
   margin: 8px auto 0;
   font-size: 11px;
   line-height: 1.4;
@@ -68,7 +68,7 @@
 }
 
 /* ---- the box ---- */
-.chat-composer__box {
+.k-chat-composer__box {
   box-sizing: border-box;
   gap: 10px;
   padding: 12px 12px 10px;
@@ -78,24 +78,24 @@
 }
 
 /* Shared by the field and its highlight layer, which must agree to the pixel (chat.css). */
-.chat-composer__box textarea,
-.chat-composer__hl {
+.k-chat-composer__box textarea,
+.k-chat-composer__hl {
   padding: 2px 4px 0;
 }
 
-.chat-composer__bar {
+.k-chat-composer__bar {
   display: flex;
   align-items: center;
   gap: 6px;
   min-width: 0;
 }
 
-.chat-composer__bar-spacer {
+.k-chat-composer__bar-spacer {
   flex: 1;
 }
 
 /* ---- the switches ---- */
-.chat-composer__switches {
+.k-chat-composer__switches {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -103,89 +103,89 @@
 }
 
 /* On stays on under the pointer: the hover of an outline button would otherwise read as off. */
-.chat-composer__switches .k-btn[aria-pressed="true"]:hover:not(:disabled) {
+.k-chat-composer__switches .k-btn[aria-pressed="true"]:hover:not(:disabled) {
   background: var(--krystal-teal-dim);
   border-color: var(--border-accent);
   color: var(--krystal-teal-hover);
 }
 
 /* Auto-run skips the confirmation, so on it reads in the warning colour. */
-.chat-switch--warn[aria-pressed="true"],
-.chat-composer__switches .chat-switch--warn[aria-pressed="true"]:hover:not(:disabled) {
+.k-chat-switch--warn[aria-pressed="true"],
+.k-chat-composer__switches .k-chat-switch--warn[aria-pressed="true"]:hover:not(:disabled) {
   background: var(--warning-bg);
   border-color: var(--warning);
   color: var(--warning-fg);
 }
 
 /* The narrow composer's one button, with a dot for each switch that is on. */
-.chat-composer__opts {
+.k-chat-composer__opts {
   display: none;
   align-items: center;
   gap: 4px;
 }
 
-.chat-composer__dots {
+.k-chat-composer__dots {
   display: inline-flex;
   gap: 4px;
 }
 
-.chat-composer__dot {
+.k-chat-composer__dot {
   width: 6px;
   height: 6px;
   border-radius: var(--r-pill);
   background: var(--krystal-teal);
 }
 
-.chat-composer__dot--warn {
+.k-chat-composer__dot--warn {
   background: var(--warning);
 }
 
-.chat-composer__ctx {
+.k-chat-composer__ctx {
   display: inline-flex;
 }
 
 @container chat-composer (max-width: 560px) {
-  .chat-composer__switches,
-  .chat-composer__ctx {
+  .k-chat-composer__switches,
+  .k-chat-composer__ctx {
     display: none;
   }
 
-  .chat-composer__opts {
+  .k-chat-composer__opts {
     display: inline-flex;
   }
 }
 
 /* ---- context ring and its popover ---- */
-.chat-ctxring__track {
+.k-chat-ctxring__track {
   fill: none;
   stroke: var(--border-subtle);
   stroke-width: 2.5;
 }
 
-.chat-ctxring__fill {
+.k-chat-ctxring__fill {
   fill: none;
   stroke: currentColor;
   stroke-width: 2.5;
   stroke-linecap: round;
 }
 
-.chat-ctx-btn.k-btn {
+.k-chat-ctx-btn.k-btn {
   gap: 6px;
   padding: 0 6px;
 }
 
-.chat-ctx-btn__pct {
+.k-chat-ctx-btn__pct {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 500;
 }
 
-.chat-ctx-btn--warn.k-btn,
-.chat-ctx-btn--warn.k-btn:hover:not(:disabled) {
+.k-chat-ctx-btn--warn.k-btn,
+.k-chat-ctx-btn--warn.k-btn:hover:not(:disabled) {
   color: var(--warning-fg);
 }
 
-.chat-ctxpop {
+.k-chat-ctxpop {
   position: fixed;
   z-index: 1200;
   box-sizing: border-box;
@@ -201,46 +201,46 @@
   animation: k-fade var(--d-fast) var(--ease-out);
 }
 
-.chat-ctxpop__head {
+.k-chat-ctxpop__head {
   display: flex;
   align-items: baseline;
   gap: 8px;
 }
 
-.chat-ctxpop__pct {
+.k-chat-ctxpop__pct {
   font-size: 22px;
   font-weight: 700;
   color: var(--fg-1);
   font-variant-numeric: tabular-nums;
 }
 
-.chat-ctxpop__cap {
+.k-chat-ctxpop__cap {
   font-size: 12px;
   color: var(--fg-3);
 }
 
-.chat-ctxpop__bar {
+.k-chat-ctxpop__bar {
   height: 6px;
   border-radius: var(--r-pill);
   background: var(--surface-3);
   overflow: hidden;
 }
 
-.chat-ctxpop__bar > i {
+.k-chat-ctxpop__bar > i {
   display: block;
   height: 100%;
   background: var(--fg-3);
 }
 
-.chat-ctxpop--warn .chat-ctxpop__pct {
+.k-chat-ctxpop--warn .k-chat-ctxpop__pct {
   color: var(--warning-fg);
 }
 
-.chat-ctxpop--warn .chat-ctxpop__bar > i {
+.k-chat-ctxpop--warn .k-chat-ctxpop__bar > i {
   background: var(--warning);
 }
 
-.chat-ctxpop__nums {
+.k-chat-ctxpop__nums {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 4px 12px;
@@ -249,29 +249,29 @@
   color: var(--fg-2);
 }
 
-.chat-ctxpop__nums dt {
+.k-chat-ctxpop__nums dt {
   margin: 0;
 }
 
-.chat-ctxpop__nums dd {
+.k-chat-ctxpop__nums dd {
   margin: 0;
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
-.chat-ctxpop__foot {
+.k-chat-ctxpop__foot {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.chat-ctxpop__note {
+.k-chat-ctxpop__note {
   font-size: 12px;
   color: var(--fg-3);
 }
 
 /* ---- lines above the box ---- */
-.chat-composer .chat-composer__downhint {
+.k-chat-composer .k-chat-composer__downhint {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -282,14 +282,14 @@
   color: var(--warning-fg);
 }
 
-.chat-queue {
+.k-chat-queue {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 8px;
 }
 
-.chat-queue__row {
+.k-chat-queue__row {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -301,12 +301,12 @@
   color: var(--fg-2);
 }
 
-.chat-queue__icon {
+.k-chat-queue__icon {
   flex-shrink: 0;
   color: var(--fg-3);
 }
 
-.chat-queue__text {
+.k-chat-queue__text {
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -315,18 +315,18 @@
 }
 
 /* ---- recording ---- */
-.chat-composer__box--voice {
+.k-chat-composer__box--voice {
   padding: 10px 10px 10px 16px;
 }
 
-.chat-voice {
+.k-chat-voice {
   display: flex;
   align-items: center;
   gap: 12px;
   min-height: 30px;
 }
 
-.chat-voice__dot {
+.k-chat-voice__dot {
   flex-shrink: 0;
   width: 8px;
   height: 8px;
@@ -339,7 +339,7 @@
   50% { opacity: 0.35; }
 }
 
-.chat-voice__time {
+.k-chat-voice__time {
   flex-shrink: 0;
   font-family: var(--font-mono);
   font-size: 12.5px;
@@ -347,7 +347,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.chat-voice__wave {
+.k-chat-voice__wave {
   flex: 1;
   min-width: 0;
   height: 24px;
@@ -358,7 +358,7 @@
   overflow: hidden;
 }
 
-.chat-voice__bar {
+.k-chat-voice__bar {
   flex-shrink: 0;
   width: 3px;
   border-radius: var(--r-sm);
@@ -366,47 +366,47 @@
   transition: height 80ms linear;
 }
 
-.chat-voice__icon {
+.k-chat-voice__icon {
   flex-shrink: 0;
 }
 
-.chat-voice__msg {
+.k-chat-voice__msg {
   flex: 1;
   min-width: 0;
   font-size: 13px;
   color: var(--fg-2);
 }
 
-.chat-voice--error,
-.chat-voice--error .chat-voice__msg {
+.k-chat-voice--error,
+.k-chat-voice--error .k-chat-voice__msg {
   color: var(--danger-fg);
 }
 
-.chat-voice--working {
+.k-chat-voice--working {
   color: var(--fg-3);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chat-voice__dot {
+  .k-chat-voice__dot {
     animation: none;
   }
 }
 
 /* ---- a voice note, inside the message that sent it ---- */
-.chat-voicenote {
+.k-chat-voicenote {
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 220px;
 }
 
-.chat-voicenote__play.k-iconbtn {
+.k-chat-voicenote__play.k-iconbtn {
   border-radius: var(--r-pill);
   background: var(--veil-2);
   color: var(--fg-1);
 }
 
-.chat-voicenote__wave {
+.k-chat-voicenote__wave {
   flex: 1;
   min-width: 0;
   height: 22px;
@@ -416,18 +416,18 @@
   overflow: hidden;
 }
 
-.chat-voicenote__bar {
+.k-chat-voicenote__bar {
   flex-shrink: 0;
   width: 3px;
   border-radius: var(--r-sm);
   background: var(--fg-3);
 }
 
-.chat-voicenote__bar--played {
+.k-chat-voicenote__bar--played {
   background: var(--fg-1);
 }
 
-.chat-voicenote__dur {
+.k-chat-voicenote__dur {
   flex-shrink: 0;
   font-family: var(--font-mono);
   font-size: 11.5px;
@@ -436,13 +436,13 @@
 }
 
 /* Audio from an earlier session is gone; the note still reads as one, with a play button at rest. */
-.chat-voicenote--expired .chat-voicenote__wave,
-.chat-voicenote--expired .chat-voicenote__play.k-iconbtn:disabled {
+.k-chat-voicenote--expired .k-chat-voicenote__wave,
+.k-chat-voicenote--expired .k-chat-voicenote__play.k-iconbtn:disabled {
   opacity: 0.6;
 }
 
 /* ---- the slash menu ---- */
-.chat-cmdmenu {
+.k-chat-cmdmenu {
   padding: 0;
   border: var(--edge-strong);
   border-radius: var(--r-sm);
@@ -450,43 +450,43 @@
   box-shadow: var(--shadow-pop);
 }
 
-.chat-cmdmenu__row {
+.k-chat-cmdmenu__row {
   align-items: center;
   gap: 12px;
   padding: 8px 12px;
   border-radius: 0;
 }
 
-.chat-cmdmenu__row:hover {
+.k-chat-cmdmenu__row:hover {
   background: var(--veil-1);
 }
 
-.chat-cmdmenu__row--active,
-.chat-cmdmenu__row--active:hover {
+.k-chat-cmdmenu__row--active,
+.k-chat-cmdmenu__row--active:hover {
   background: var(--krystal-teal-dim);
 }
 
-.chat-cmdmenu__name {
+.k-chat-cmdmenu__name {
   min-width: 110px;
   font-size: 12.5px;
 }
 
-.chat-cmdmenu__desc {
+.k-chat-cmdmenu__desc {
   font-size: 12px;
   color: var(--fg-3);
 }
 
-.chat-cmdmenu__row--active .chat-cmdmenu__desc {
+.k-chat-cmdmenu__row--active .k-chat-cmdmenu__desc {
   color: var(--fg-2);
 }
 
-.chat-cmdmenu__tag {
+.k-chat-cmdmenu__tag {
   font-size: 11px;
   white-space: nowrap;
   color: var(--warning-fg);
 }
 
-.chat-cmdmenu__hint {
+.k-chat-cmdmenu__hint {
   display: flex;
   gap: 12px;
   margin: 0;
@@ -498,11 +498,11 @@
 
 /* ---- phones ---- */
 @media (max-width: 768px) {
-  .chat-composer {
+  .k-chat-composer {
     padding: 0 12px 12px;
   }
 
-  .chat-composer__box {
+  .k-chat-composer__box {
     gap: 6px;
     padding: 10px 8px 8px 10px;
   }
@@ -510,13 +510,13 @@
 
 /* ---- attachments ---- */
 /* The files waiting to go with the message, a row of chips over the field. */
-.chat-attachments {
+.k-chat-attachments {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.chat-attachment {
+.k-chat-attachment {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -530,12 +530,12 @@
   color: var(--fg-2);
 }
 
-.chat-attachment--error {
+.k-chat-attachment--error {
   border-color: var(--danger);
   background: var(--danger-bg);
 }
 
-.chat-attachment__thumb {
+.k-chat-attachment__thumb {
   flex-shrink: 0;
   width: 34px;
   height: 34px;
@@ -543,17 +543,17 @@
   object-fit: cover;
 }
 
-.chat-attachment__icon {
+.k-chat-attachment__icon {
   flex-shrink: 0;
   margin-left: 4px;
   color: var(--fg-3);
 }
 
-.chat-attachment--error .chat-attachment__icon {
+.k-chat-attachment--error .k-chat-attachment__icon {
   color: var(--danger-fg);
 }
 
-.chat-attachment__text {
+.k-chat-attachment__text {
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -561,14 +561,14 @@
   flex: 1;
 }
 
-.chat-attachment__name {
+.k-chat-attachment__name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--fg-1);
 }
 
-.chat-attachment__error {
+.k-chat-attachment__error {
   font-size: 11.5px;
   line-height: 1.35;
   color: var(--danger-fg);
@@ -578,13 +578,13 @@
   overflow: hidden;
 }
 
-.chat-attachment__size {
+.k-chat-attachment__size {
   flex-shrink: 0;
   font-size: 11.5px;
   color: var(--fg-4);
 }
 
-.chat-attachment__progress {
+.k-chat-attachment__progress {
   display: block;
   height: 3px;
   border-radius: var(--r-pill);
@@ -592,24 +592,24 @@
   overflow: hidden;
 }
 
-.chat-attachment__bar {
+.k-chat-attachment__bar {
   display: block;
   height: 100%;
   background: var(--krystal-teal);
   transition: width 120ms linear;
 }
 
-.chat-attachment--error {
+.k-chat-attachment--error {
   max-width: 100%;
 }
 
 /* A file held over the box. */
-.chat-composer__box--drop {
+.k-chat-composer__box--drop {
   border-color: var(--border-accent);
   background: var(--krystal-teal-dim);
 }
 
-.chat-composer__attach-note {
+.k-chat-composer__attach-note {
   margin: 0;
   font-size: 12px;
   line-height: 1.4;

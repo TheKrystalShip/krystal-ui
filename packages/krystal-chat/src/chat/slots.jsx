@@ -59,9 +59,9 @@ function ChatGreeting() {
   const line = chat.assistant ? chat.primer : chat.noAssistant;
   return (
     <>
-      <span className="chat-start__disc"><Icon name="bot" size={24} /></span>
-      <h3 className="chat-start__greeting">{chat.assistant ? chat.greeting : "No assistant available"}</h3>
-      {line && <p className="chat-start__primer">{line}</p>}
+      <span className="k-chat-start__disc"><Icon name="bot" size={24} /></span>
+      <h3 className="k-chat-start__greeting">{chat.assistant ? chat.greeting : "No assistant available"}</h3>
+      {line && <p className="k-chat-start__primer">{line}</p>}
     </>
   );
 }
@@ -71,12 +71,12 @@ function ChatSuggestions() {
   const chat = useChat();
   if (!chat.assistant || chat.suggestions.length === 0) return null;
   return (
-    <div className="chat-start__suggestions">
+    <div className="k-chat-start__suggestions">
       {chat.suggestions.map((s, i) => {
         const text = typeof s === "string" ? s : s.text;
         return (
-          <button key={i} type="button" className="chat-start__suggestion" onClick={() => chat.draft(text)}>
-            <Icon name={(s && /** @type {{ icon?: string }} */ (s).icon) || "message-circle"} size={15} className="chat-start__suggestion-icon" />
+          <button key={i} type="button" className="k-chat-start__suggestion" onClick={() => chat.draft(text)}>
+            <Icon name={(s && /** @type {{ icon?: string }} */ (s).icon) || "message-circle"} size={15} className="k-chat-start__suggestion-icon" />
             <span>{text}</span>
           </button>
         );
@@ -90,11 +90,11 @@ function ChatSuggestionChips() {
   const chat = useChat();
   if (!chat.assistant || !chat.usable || chat.suggestions.length === 0) return null;
   return (
-    <div className="chat-chips" role="list">
+    <div className="k-chat-chips" role="list">
       {chat.suggestions.map((s, i) => {
         const text = typeof s === "string" ? s : s.text;
         return (
-          <button key={i} type="button" role="listitem" className="chat-chips__chip" onClick={() => chat.ask(text)}>
+          <button key={i} type="button" role="listitem" className="k-chat-chips__chip" onClick={() => chat.ask(text)}>
             {text}
           </button>
         );
@@ -116,7 +116,7 @@ function ChatRecent({ max }) {
 /** That conversations are kept and may be read. */
 function ChatPrivacyNote() {
   const chat = useChat();
-  return chat.assistant ? <p className="chat-start__privacy">{CHAT_PRIVACY_NOTICE}</p> : null;
+  return chat.assistant ? <p className="k-chat-start__privacy">{CHAT_PRIVACY_NOTICE}</p> : null;
 }
 
 /**
@@ -126,7 +126,7 @@ function ChatPrivacyNote() {
  * @param {import("react").ReactNode} [props.children]
  */
 function ChatBlock({ className = "", children }) {
-  return <div className={"chat-start__block" + (className ? " " + className : "")}>{children}</div>;
+  return <div className={"k-chat-start__block" + (className ? " " + className : "")}>{children}</div>;
 }
 
 const CHAT_PRIVACY_NOTICE =

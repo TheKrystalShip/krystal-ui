@@ -6,8 +6,8 @@ import { Pill } from "./Pill.jsx";
 // titled card renders through this one component so the card family stays
 // visually identical and never drifts.
 //
-// The body is passed as children — a `.chat-brief__list` of rows, a
-// `.chat-brief__empty` placeholder, or any custom content (e.g. a grid).
+// The body is passed as children — a `.k-brief__list` of rows, a
+// `.k-brief__empty` placeholder, or any custom content (e.g. a grid).
 //
 // Props:
 //   icon, title            — header (icon + label)
@@ -51,7 +51,7 @@ function BriefCard({ icon, title, count, countTone, countTitle, meta, pin, onVie
     ? action
     : (onViewAll
         ? (
-          <button className="dash-section__more" onClick={onViewAll}>
+          <button className="k-view-all" onClick={onViewAll}>
             {viewAllLabel} <Icon name="arrow-right" size={11} strokeWidth={2.2} />
           </button>
         )
@@ -59,29 +59,29 @@ function BriefCard({ icon, title, count, countTone, countTitle, meta, pin, onVie
   const shut = collapsible && !open;
   const head = (
     <>
-      <span className="chat-brief__title">
+      <span className="k-brief__title">
         {icon && <Icon name={icon} size={13} />} {title}
         {count != null && count !== false && (
           <Pill size="sm" tone={countTone === "neutral" ? "muted" : countTone || "warn"} title={countTitle}
-            className={"chat-brief__count" + (countTone ? " chat-brief__count--" + countTone : "")}>{count}</Pill>
+            className={"k-brief__count" + (countTone ? " k-brief__count--" + countTone : "")}>{count}</Pill>
         )}
       </span>
       {pin}
       {right}
-      {collapsible && <Icon name="chevron-down" size={16} className="chat-brief__chev" />}
+      {collapsible && <Icon name="chevron-down" size={16} className="k-brief__chev" />}
     </>
   );
   return (
-    <div className={"chat-brief" + (shut ? " chat-brief--shut" : "") + (className ? " " + className : "")}>
+    <div className={"k-brief" + (shut ? " k-brief--shut" : "") + (className ? " " + className : "")}>
       {collapsible
         ? (
-          <button type="button" className="chat-brief__head chat-brief__head--toggle"
+          <button type="button" className="k-brief__head k-brief__head--toggle"
             onClick={onToggle} aria-expanded={open}>
             {head}
           </button>
         )
-        : <div className="chat-brief__head">{head}</div>}
-      {!shut && meta && <div className="chat-brief__meta">{meta}</div>}
+        : <div className="k-brief__head">{head}</div>}
+      {!shut && meta && <div className="k-brief__meta">{meta}</div>}
       {!shut && children}
     </div>
   );

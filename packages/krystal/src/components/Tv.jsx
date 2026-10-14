@@ -21,16 +21,16 @@ import { useNear } from "../hooks/useNear.js";
  */
 function TvBar({ mark, name, items, actions, hidden = false }) {
   return (
-    <header className="tv-bar" data-hidden={hidden ? "" : undefined}>
-      {mark && <img className="tv-bar__mark" src={mark} alt={name || ""} />}
-      <nav className="tv-bar__nav" aria-label={name}>
+    <header className="k-tv-bar" data-hidden={hidden ? "" : undefined}>
+      {mark && <img className="k-tv-bar__mark" src={mark} alt={name || ""} />}
+      <nav className="k-tv-bar__nav" aria-label={name}>
         {items.map(({ id, label, active, href, onClick }) => (
-          <a key={id} className="tv-bar__item" href={href} onClick={onClick} aria-current={active ? "page" : undefined}>
+          <a key={id} className="k-tv-bar__item" href={href} onClick={onClick} aria-current={active ? "page" : undefined}>
             {label}
           </a>
         ))}
       </nav>
-      {actions && <div className="tv-bar__actions">{actions}</div>}
+      {actions && <div className="k-tv-bar__actions">{actions}</div>}
     </header>
   );
 }
@@ -49,9 +49,9 @@ function TvBar({ mark, name, items, actions, hidden = false }) {
 /** @param {TvBarButtonProps} props */
 function TvBarButton({ icon, label, dot = false, children, className, ...rest }) {
   return (
-    <button type="button" className={"tv-bar__button" + (className ? " " + className : "")} aria-label={label} {...rest}>
+    <button type="button" className={"k-tv-bar__button" + (className ? " " + className : "")} aria-label={label} {...rest}>
       {children || <Icon name={icon} size={17} />}
-      {dot && <span className="tv-bar__dot" />}
+      {dot && <span className="k-tv-bar__dot" />}
     </button>
   );
 }
@@ -85,9 +85,9 @@ function TvBackdrop({ src, size = "tall" }) {
     return () => { live = false; };
   }, [src]);
   return (
-    <div className={"tv-backdrop tv-backdrop--" + size} aria-hidden="true">
-      {layers.map((layer) => <img key={layer.key} className="tv-backdrop__art" src={layer.src} alt="" decoding="async" />)}
-      <div className="tv-backdrop__shade" />
+    <div className={"k-tv-backdrop k-tv-backdrop--" + size} aria-hidden="true">
+      {layers.map((layer) => <img key={layer.key} className="k-tv-backdrop__art" src={layer.src} alt="" decoding="async" />)}
+      <div className="k-tv-backdrop__shade" />
     </div>
   );
 }
@@ -106,10 +106,10 @@ function TvBackdrop({ src, size = "tall" }) {
  */
 function TvSpotlight({ eyebrow, title, meta, size = "lg", className, children }) {
   return (
-    <section className={"tv-spot tv-spot--" + size + (className ? " " + className : "")}>
-      {eyebrow && <span className="tv-spot__eyebrow">{eyebrow}</span>}
-      <h1 className="tv-spot__title">{title}</h1>
-      {meta && <div className="tv-spot__meta">{meta}</div>}
+    <section className={"k-tv-spot k-tv-spot--" + size + (className ? " " + className : "")}>
+      {eyebrow && <span className="k-tv-spot__eyebrow">{eyebrow}</span>}
+      <h1 className="k-tv-spot__title">{title}</h1>
+      {meta && <div className="k-tv-spot__meta">{meta}</div>}
       {children}
     </section>
   );
@@ -129,13 +129,13 @@ function TvSpotlight({ eyebrow, title, meta, size = "lg", className, children })
  */
 function TvRow({ icon, title, count, end, className, children }) {
   return (
-    <section className={"tv-row" + (className ? " " + className : "")} data-tv-row="">
-      <h2 className="tv-row__head">
+    <section className={"k-tv-row" + (className ? " " + className : "")} data-tv-row="">
+      <h2 className="k-tv-row__head">
         {icon && <Icon name={icon} size={14} />}
         {title}
-        {count != null && <span className="tv-row__count">{count}</span>}
+        {count != null && <span className="k-tv-row__count">{count}</span>}
       </h2>
-      <div className="tv-row__track">
+      <div className="k-tv-row__track">
         {children}
         {end}
       </div>
@@ -171,11 +171,11 @@ const TvCard = React.forwardRef(function TvCard({ art, shape = "poster", label, 
     else if (ref) ref.current = el;
   }, [ref]);
   return (
-    <a ref={attach} className={"tv-card tv-card--" + shape + (className ? " " + className : "")} aria-label={label} {...rest}>
-      {art ? (near && <img className="tv-card__art" src={art} alt="" loading="lazy" decoding="async" />) : <span className="tv-card__name">{label}</span>}
-      {badge && <span className="tv-card__badge">{badge}</span>}
+    <a ref={attach} className={"k-tv-card k-tv-card--" + shape + (className ? " " + className : "")} aria-label={label} {...rest}>
+      {art ? (near && <img className="k-tv-card__art" src={art} alt="" loading="lazy" decoding="async" />) : <span className="k-tv-card__name">{label}</span>}
+      {badge && <span className="k-tv-card__badge">{badge}</span>}
       {progress != null && (
-        <span className="tv-card__progress"><span style={{ width: Math.round(Math.min(1, Math.max(0, progress)) * 100) + "%" }} /></span>
+        <span className="k-tv-card__progress"><span style={{ width: Math.round(Math.min(1, Math.max(0, progress)) * 100) + "%" }} /></span>
       )}
       {children}
     </a>
@@ -194,7 +194,7 @@ const TvCard = React.forwardRef(function TvCard({ art, shape = "poster", label, 
 /** @param {TvTileProps} props */
 function TvTile({ icon = "arrow-right", label, shape = "poster", className, ...rest }) {
   return (
-    <a className={"tv-card tv-tile tv-card--" + shape + (className ? " " + className : "")} {...rest}>
+    <a className={"k-tv-card k-tv-tile k-tv-card--" + shape + (className ? " " + className : "")} {...rest}>
       <Icon name={icon} size={28} />
       <span>{label}</span>
     </a>

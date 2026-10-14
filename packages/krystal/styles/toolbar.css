@@ -3,19 +3,19 @@
    Quiet chrome: no card around the row, ghost controls, surface-2
    hovers, teal reserved for active state.
    =================================================================== */
-.toolbar {
+.k-toolbar {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.toolbar__col-search {
+.k-toolbar__col-search {
   flex: 0 0 50%;
   min-width: 200px;
 }
 
-.toolbar__col-filters {
+.k-toolbar__col-filters {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
@@ -23,7 +23,7 @@
   flex-wrap: wrap;
 }
 
-.toolbar__col-rest {
+.k-toolbar__col-rest {
   flex: 0 0 auto;
   margin-left: auto;
   display: inline-flex;
@@ -33,7 +33,7 @@
 }
 
 /* Search — calm anchor: reads as part of the page, lifts on focus. */
-.toolbar__search {
+.k-toolbar__search {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -48,13 +48,13 @@
   transition: border-color var(--d-fast) var(--ease-out), box-shadow var(--d-fast) var(--ease-out);
 }
 
-.toolbar__search:focus-within {
+.k-toolbar__search:focus-within {
   border-color: var(--border-accent);
   box-shadow: var(--ring-input);
   color: var(--fg-2);
 }
 
-.toolbar__search input {
+.k-toolbar__search input {
   flex: 1;
   min-width: 0;
   background: transparent;
@@ -65,7 +65,7 @@
   font-size: 14px;
 }
 
-.toolbar__search input::placeholder {
+.k-toolbar__search input::placeholder {
   color: var(--fg-4);
 }
 
@@ -73,13 +73,13 @@
    affordance. Kills the universal :focus-visible ring (tokens.css) on the
    field, so focusing the input doesn't double up a glow inside the already-
    accented box. */
-.toolbar__search input:focus,
-.toolbar__search input:focus-visible {
+.k-toolbar__search input:focus,
+.k-toolbar__search input:focus-visible {
   outline: none;
   box-shadow: none;
 }
 
-.toolbar__search-clear {
+.k-toolbar__search-clear {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -93,12 +93,12 @@
   cursor: pointer;
 }
 
-.toolbar__search-clear:hover {
+.k-toolbar__search-clear:hover {
   background: var(--surface-2);
   color: var(--fg-1);
 }
 
-.toolbar__search-pending {
+.k-toolbar__search-pending {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -107,23 +107,23 @@
   animation: k-spin .7s linear infinite;
 }
 
-.toolbar__spacer {
+.k-toolbar__spacer {
   display: none;
 }
 
-.toolbar__count {
+.k-toolbar__count {
   font-size: 12.5px;
   color: var(--fg-3);
   white-space: nowrap;
 }
 
-.toolbar__count b {
+.k-toolbar__count b {
   color: var(--fg-1);
   font-weight: 600;
 }
 
 /* Ghost action button — transparent until hover. */
-.toolbar-btn {
+.k-toolbar-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -142,35 +142,35 @@
   transition: background var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out), border-color var(--d-fast) var(--ease-out);
 }
 
-.toolbar-btn:hover:not(:disabled) {
+.k-toolbar-btn:hover:not(:disabled) {
   background: var(--surface-2);
   color: var(--fg-1);
   border-color: var(--border-strong);
 }
 
-.toolbar-btn:disabled {
+.k-toolbar-btn:disabled {
   opacity: 0.45;
   cursor: default;
 }
 
-.toolbar-btn--on {
+.k-toolbar-btn--on {
   background: var(--surface-2);
   color: var(--fg-1);
   border-color: var(--border-strong);
 }
 
-.toolbar-btn--icon {
+.k-toolbar-btn--icon {
   width: 36px;
   padding: 0;
   justify-content: center;
 }
 
-.toolbar-btn .is-spinning {
+.k-toolbar-btn .k-is-spinning {
   animation: k-spin .7s linear infinite;
 }
 
 /* Filters: trigger + popover + inline active chips */
-.toolbar-filter {
+.k-toolbar-filter {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -178,11 +178,11 @@
   flex-wrap: wrap;
 }
 
-.toolbar-filter__trigger {
+.k-toolbar-filter__trigger {
   position: relative;
 }
 
-.toolbar-filter__badge {
+.k-toolbar-filter__badge {
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
@@ -200,7 +200,7 @@
 }
 
 /* Active-filter chip — clearing it resets that field. */
-.toolbar-chip {
+.k-toolbar-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -218,24 +218,24 @@
   transition: filter var(--d-fast) var(--ease-out);
 }
 
-.toolbar-chip:hover {
+.k-toolbar-chip:hover {
   filter: brightness(1.12);
 }
 
-.toolbar-chip__key {
+.k-toolbar-chip__key {
   color: var(--krystal-teal);
   font-weight: 600;
 }
 
-.toolbar-chip__val {
+.k-toolbar-chip__val {
   font-weight: 500;
 }
 
-.toolbar-chip>svg {
+.k-toolbar-chip>svg {
   color: var(--fg-3);
 }
 
-.toolbar-filter__menu {
+.k-toolbar-filter__menu {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
@@ -253,7 +253,7 @@
   animation: k-fade var(--d-fast) var(--ease-out);
 }
 
-.toolbar-filter__head {
+.k-toolbar-filter__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -262,7 +262,7 @@
   border-bottom: 1px solid var(--border-subtle);
 }
 
-.toolbar-filter__head-label {
+.k-toolbar-filter__head-label {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -270,7 +270,7 @@
   color: var(--fg-3);
 }
 
-.toolbar-filter__reset {
+.k-toolbar-filter__reset {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -283,11 +283,11 @@
   font-weight: 500;
 }
 
-.toolbar-filter__reset:hover {
+.k-toolbar-filter__reset:hover {
   color: var(--krystal-teal);
 }
 
-.toolbar-filter__body {
+.k-toolbar-filter__body {
   overflow-y: auto;
   padding: 6px;
   display: flex;
@@ -296,15 +296,15 @@
   min-height: 0;
 }
 
-.toolbar-filter__group {
+.k-toolbar-filter__group {
   padding: 8px 8px 10px;
 }
 
-.toolbar-filter__group+.toolbar-filter__group {
+.k-toolbar-filter__group+.k-toolbar-filter__group {
   border-top: 1px solid var(--border-subtle);
 }
 
-.toolbar-filter__group-label {
+.k-toolbar-filter__group-label {
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -313,13 +313,13 @@
   padding: 0 4px 6px;
 }
 
-.toolbar-filter__opts {
+.k-toolbar-filter__opts {
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
 
-.toolbar-filter__opt {
+.k-toolbar-filter__opt {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -336,16 +336,16 @@
   transition: background var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
 }
 
-.toolbar-filter__opt:hover {
+.k-toolbar-filter__opt:hover {
   background: var(--surface-2);
   color: var(--fg-1);
 }
 
-.toolbar-filter__opt--on {
+.k-toolbar-filter__opt--on {
   color: var(--fg-1);
 }
 
-.toolbar-filter__radio {
+.k-toolbar-filter__radio {
   flex-shrink: 0;
   width: 14px;
   height: 14px;
@@ -355,11 +355,11 @@
   transition: border-color var(--d-fast) var(--ease-out);
 }
 
-.toolbar-filter__opt--on .toolbar-filter__radio {
+.k-toolbar-filter__opt--on .k-toolbar-filter__radio {
   border-color: var(--krystal-teal);
 }
 
-.toolbar-filter__opt--on .toolbar-filter__radio::after {
+.k-toolbar-filter__opt--on .k-toolbar-filter__radio::after {
   content: "";
   position: absolute;
   inset: 2.5px;
@@ -367,37 +367,37 @@
   background: var(--krystal-teal);
 }
 
-.toolbar-filter__opt-label {
+.k-toolbar-filter__opt-label {
   flex: 1;
   min-width: 0;
 }
 
-.toolbar-filter__opt-count {
+.k-toolbar-filter__opt-count {
   font-family: var(--font-mono);
   font-size: 11.5px;
   color: var(--fg-4);
 }
 
-.toolbar-filter__opt--on .toolbar-filter__opt-count {
+.k-toolbar-filter__opt--on .k-toolbar-filter__opt-count {
   color: var(--krystal-teal);
 }
 
-.toolbar-filter__opt-dir {
+.k-toolbar-filter__opt-dir {
   flex-shrink: 0;
   color: var(--krystal-teal);
 }
 
 /* Sort: reuses the filter trigger + popover; adds a direction toggle. */
-.toolbar-sort__dir-ico {
+.k-toolbar-sort__dir-ico {
   color: var(--fg-3);
   margin-left: -1px;
 }
 
-.toolbar-btn--on .toolbar-sort__dir-ico {
+.k-toolbar-btn--on .k-toolbar-sort__dir-ico {
   color: var(--krystal-teal);
 }
 
-.toolbar-sort__dir {
+.k-toolbar-sort__dir {
   display: inline-flex;
   gap: 2px;
   padding: 2px;
@@ -406,7 +406,7 @@
   border: var(--edge);
 }
 
-.toolbar-sort__dir-btn {
+.k-toolbar-sort__dir-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -423,11 +423,11 @@
   transition: background var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
 }
 
-.toolbar-sort__dir-btn:hover {
+.k-toolbar-sort__dir-btn:hover {
   color: var(--fg-1);
 }
 
-.toolbar-sort__dir-btn.is-on {
+.k-toolbar-sort__dir-btn.k-is-on {
   background: var(--surface-1);
   color: var(--krystal-teal);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
@@ -435,7 +435,7 @@
 
 /* Mobile: 2 rows — search full-width on row 1, filters + rest on row 2 */
 @media (max-width: 860px) {
-  .toolbar__col-search {
+  .k-toolbar__col-search {
     flex: 0 0 100%;
   }
 }
@@ -443,15 +443,15 @@
 /* A phone: a popover opened from the second row would hang its full width off its button, past the
    screen's edge, so it hangs from the toolbar instead and spans it. */
 @media (max-width: 600px) {
-  .toolbar {
+  .k-toolbar {
     position: relative;
   }
 
-  .toolbar-filter {
+  .k-toolbar-filter {
     position: static;
   }
 
-  .toolbar-filter__menu {
+  .k-toolbar-filter__menu {
     left: 0;
     right: 0;
     width: auto;

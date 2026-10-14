@@ -6,17 +6,17 @@
    dock.css and footer.css, whose phone rules it adjusts.
    ============================================================================ */
 
-.tabbar {
+.k-tabbar {
   display: none;
 }
 
 @media (max-width: 768px) {
-  .app--tabbed {
+  .k-app--tabbed {
     /* The row itself; the home indicator's inset is added beneath it. */
     --tabbar-h: 56px;
   }
 
-  .tabbar {
+  .k-tabbar {
     position: fixed;
     left: 0;
     right: 0;
@@ -34,7 +34,7 @@
     border-top: var(--edge);
   }
 
-  .tabbar__tab {
+  .k-tabbar__tab {
     height: 50px;
     display: flex;
     flex-direction: column;
@@ -52,25 +52,25 @@
     transition: color var(--d-fast) var(--ease-out);
   }
 
-  .tabbar__tab--active {
+  .k-tabbar__tab--active {
     color: var(--krystal-teal);
   }
 
-  .tabbar__tab:active {
+  .k-tabbar__tab:active {
     color: var(--fg-1);
   }
 
-  .tabbar__tab:focus-visible {
+  .k-tabbar__tab:focus-visible {
     outline: none;
     box-shadow: var(--ring-focus);
   }
 
-  .tabbar__icon {
+  .k-tabbar__icon {
     position: relative;
     display: inline-flex;
   }
 
-  .tabbar__label {
+  .k-tabbar__label {
     font-size: 10.5px;
     font-weight: 600;
     line-height: 1;
@@ -78,68 +78,68 @@
   }
 
   /* A pip on the icon: Pill's tint is too faint over the bar, so the tones are solid fills. */
-  .tabbar__badge {
+  .k-tabbar__badge {
     position: absolute;
     top: -4px;
     left: calc(50% + 6px);
     min-width: 18px;
   }
 
-  .tabbar__badge--warn {
+  .k-tabbar__badge--warn {
     background: var(--warning);
     color: var(--on-warning);
   }
 
-  .tabbar__badge--danger {
+  .k-tabbar__badge--danger {
     background: var(--danger);
     color: var(--on-danger);
   }
 
-  .tabbar__badge--info {
+  .k-tabbar__badge--info {
     background: var(--info);
     color: var(--on-info);
   }
 
   /* The bar is the way around, so the drawer is never drawn. */
-  .app--tabbed .sidebar {
+  .k-app--tabbed .k-sidebar {
     display: none;
   }
 
   /* The page scrolls clear of the bar, and its footer leaves the home indicator to the bar. The
      padding is inside the column's screen height, so what ends the column ends above the bar. */
-  .app--tabbed .app__main {
+  .k-app--tabbed .k-app__main {
     box-sizing: border-box;
     padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
   }
 
-  .app--tabbed .kfoot__bar {
+  .k-app--tabbed .k-footer__bar {
     padding-bottom: 16px;
   }
 
   /* The dock ends above the bar, which stays to leave it by; a site opens it from a tab. */
-  .app--tabbed .assistant-dock {
+  .k-app--tabbed .k-assistant-dock {
     bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
     box-shadow: none;
   }
 
-  .app--tabbed .assistant-fab {
+  .k-app--tabbed .k-assistant-fab {
     display: none;
   }
 
   /* While a person writes in a chat that is the page, the keyboard takes the bar's room. */
-  body.chat-typing .app--tabbed .tabbar {
+  body.k-chat-typing .k-app--tabbed .k-tabbar {
     display: none;
   }
 
-  body.chat-typing .app--tabbed .assistant-dock {
+  body.k-chat-typing .k-app--tabbed .k-assistant-dock {
     bottom: env(keyboard-inset-height, 0px);
   }
 
-  body.chat-typing .app--tabbed .app__main {
+  body.k-chat-typing .k-app--tabbed .k-app__main {
     padding-bottom: env(keyboard-inset-height, 0px);
   }
 
-  .app--tabbed:has(.assistant-fab) .kfoot__bar {
+  .k-app--tabbed:has(.k-assistant-fab) .k-footer__bar {
     padding-right: 16px;
   }
 }

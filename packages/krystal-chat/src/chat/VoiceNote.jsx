@@ -299,9 +299,9 @@ function VoiceComposerBar({ rec, onSend, onCancel }) {
 
   if (phase === "error") {
     return (
-      <div className="chat-voice chat-voice--error" role="alert">
-        <Icon name="mic-off" size={15} className="chat-voice__icon" />
-        <span className="chat-voice__msg">{error || "Couldn’t start recording."}</span>
+      <div className="k-chat-voice k-chat-voice--error" role="alert">
+        <Icon name="mic-off" size={15} className="k-chat-voice__icon" />
+        <span className="k-chat-voice__msg">{error || "Couldn’t start recording."}</span>
         {/* A recording that failed to transcribe is still here, so the way out is to try again —
             not to say the whole thing over because a request failed. */}
         {held && <Button variant="outline" size="sm" icon="rotate-ccw" onClick={onSend}>Try again</Button>}
@@ -316,9 +316,9 @@ function VoiceComposerBar({ rec, onSend, onCancel }) {
   // that was about to arrive.
   if (phase === "transcribing") {
     return (
-      <div className="chat-voice chat-voice--working" role="status">
+      <div className="k-chat-voice k-chat-voice--working" role="status">
         <Spinner size={14} />
-        <span className="chat-voice__msg">Transcribing</span>
+        <span className="k-chat-voice__msg">Transcribing</span>
       </div>
     );
   }
@@ -328,12 +328,12 @@ function VoiceComposerBar({ rec, onSend, onCancel }) {
   const bars = levels.length < 56 ? [...new Array(56 - levels.length).fill(0.06), ...levels] : levels;
 
   return (
-    <div className="chat-voice">
-      <span className="chat-voice__dot" aria-hidden="true"></span>
-      <span className="chat-voice__time" role="timer">{requesting ? "0:00" : fmtClock(seconds)}</span>
-      <div className="chat-voice__wave" aria-hidden="true">
+    <div className="k-chat-voice">
+      <span className="k-chat-voice__dot" aria-hidden="true"></span>
+      <span className="k-chat-voice__time" role="timer">{requesting ? "0:00" : fmtClock(seconds)}</span>
+      <div className="k-chat-voice__wave" aria-hidden="true">
         {bars.map((v, i) => (
-          <span key={i} className="chat-voice__bar" style={{ height: (3 + v * 21).toFixed(1) + "px" }}></span>
+          <span key={i} className="k-chat-voice__bar" style={{ height: (3 + v * 21).toFixed(1) + "px" }}></span>
         ))}
       </div>
       <Button variant="ghost" size="sm" onClick={onCancel}>Cancel</Button>
@@ -378,19 +378,19 @@ function VoiceNoteBubble({ voice }) {
   const filled = Math.round(pos * peaks.length);
 
   return (
-    <div className={"chat-voicenote" + (available ? "" : " chat-voicenote--expired")}>
-      <IconButton icon={playing ? "pause" : "play"} variant="ghost" size="xs" className="chat-voicenote__play"
+    <div className={"k-chat-voicenote" + (available ? "" : " k-chat-voicenote--expired")}>
+      <IconButton icon={playing ? "pause" : "play"} variant="ghost" size="xs" className="k-chat-voicenote__play"
         label={playing ? "Pause voice note" : "Play voice note"}
         title={available ? undefined : "Audio from a previous session isn’t available"}
         disabled={!available} onClick={toggle} />
-      <div className="chat-voicenote__wave" aria-hidden="true">
+      <div className="k-chat-voicenote__wave" aria-hidden="true">
         {peaks.map((v, i) => (
           <span key={i}
-            className={"chat-voicenote__bar" + (i < filled ? " chat-voicenote__bar--played" : "")}
+            className={"k-chat-voicenote__bar" + (i < filled ? " k-chat-voicenote__bar--played" : "")}
             style={{ height: (3 + v * 19).toFixed(1) + "px" }}></span>
         ))}
       </div>
-      <span className="chat-voicenote__dur">{fmtClock(voice.duration)}</span>
+      <span className="k-chat-voicenote__dur">{fmtClock(voice.duration)}</span>
     </div>
   );
 }

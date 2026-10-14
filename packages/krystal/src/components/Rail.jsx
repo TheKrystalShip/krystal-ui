@@ -72,25 +72,25 @@ function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", i
   const showArrows = edge.scrollable && !disabled;
 
   return (
-    <div className={"chat-brief rail" + (variant ? " rail--" + variant : "")} data-disabled={disabled ? "" : undefined}>
-      <div className="chat-brief__head">
-        <span className="chat-brief__title">
+    <div className={"k-brief k-rail" + (variant ? " k-rail--" + variant : "")} data-disabled={disabled ? "" : undefined}>
+      <div className="k-brief__head">
+        <span className="k-brief__title">
           {icon ? <Icon name={icon} size={13} /> : null} {title}
-          {count != null && <span className="chat-brief__count chat-brief__count--neutral">{count}</span>}
+          {count != null && <span className="k-brief__count k-brief__count--neutral">{count}</span>}
         </span>
-        <div className="rail__nav">
+        <div className="k-rail__nav">
           {pin}
           {showArrows && (
             <>
               <button
-                type="button" className="rail__arrow"
+                type="button" className="k-rail__arrow"
                 aria-label={"Scroll " + title + " left"} title="Scroll left"
                 disabled={edge.start} onClick={() => page(-1)}
               >
                 <Icon name="chevron-left" size={15} strokeWidth={2.2} />
               </button>
               <button
-                type="button" className="rail__arrow"
+                type="button" className="k-rail__arrow"
                 aria-label={"Scroll " + title + " right"} title="Scroll right"
                 disabled={edge.end} onClick={() => page(1)}
               >
@@ -99,7 +99,7 @@ function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", i
             </>
           )}
           {onViewAll && (
-            <button className="dash-section__more" onClick={onViewAll}>
+            <button className="k-view-all" onClick={onViewAll}>
               {viewAllLabel} <Icon name="arrow-right" size={11} strokeWidth={2.2} />
             </button>
           )}
@@ -107,7 +107,7 @@ function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", i
       </div>
 
       <div
-        className="rail__track"
+        className="k-rail__track"
         ref={trackRef}
         role="group"
         aria-label={ariaLabel || title}
@@ -119,7 +119,7 @@ function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", i
         data-end={edge.end ? "" : undefined}
       >
         {items.map((item, i) => (
-          <div className="rail__item" key={itemKey ? itemKey(item) : (/** @type {any} */ (item).id ?? i)}>
+          <div className="k-rail__item" key={itemKey ? itemKey(item) : (/** @type {any} */ (item).id ?? i)}>
             {renderItem(item)}
           </div>
         ))}

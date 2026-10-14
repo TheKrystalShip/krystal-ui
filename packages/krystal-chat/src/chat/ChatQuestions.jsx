@@ -28,11 +28,11 @@ function ChatQuestions({ msg, open, onAnswer }) {
 
   if (!open) {
     return (
-      <div className="chat-asked">
+      <div className="k-chat-asked">
         {questions.map((q, i) => (
-          <p key={i} className="chat-asked__row">
-            {q.header && <span className="chat-asked__header">{q.header}</span>}
-            <span className="chat-asked__text">{q.question}</span>
+          <p key={i} className="k-chat-asked__row">
+            {q.header && <span className="k-chat-asked__header">{q.header}</span>}
+            <span className="k-chat-asked__text">{q.question}</span>
           </p>
         ))}
       </div>
@@ -59,17 +59,17 @@ function ChatQuestions({ msg, open, onAnswer }) {
   };
 
   return (
-    <div className="chat-questions" role="group" aria-label="Questions">
+    <div className="k-chat-questions" role="group" aria-label="Questions">
       {questions.map((q, i) => (
-        <div key={i} className="chat-questions__item">
-          {q.header && <span className="chat-questions__header">{q.header}</span>}
-          <p className="chat-questions__text">{q.question}</p>
+        <div key={i} className="k-chat-questions__item">
+          {q.header && <span className="k-chat-questions__header">{q.header}</span>}
+          <p className="k-chat-questions__text">{q.question}</p>
           <OptionList size="sm" multiple={q.multiple} label={q.question} disabled={sending}
             options={q.options.map((o) => ({ value: o.label, label: o.label, detail: o.description }))}
             value={q.multiple ? picked[i] : (picked[i][0] ?? null)}
             onChange={(v) => pick(i, q.multiple ? v : [v])} />
           {q.custom && (
-            <Input size="sm" wide className="chat-questions__own" value={written[i]} disabled={sending}
+            <Input size="sm" wide className="k-chat-questions__own" value={written[i]} disabled={sending}
               aria-label={"Your own answer to " + q.question} placeholder="Or write your own"
               maxLength={2000}
               onChange={(e) => write(i, e.target.value)}
@@ -77,7 +77,7 @@ function ChatQuestions({ msg, open, onAnswer }) {
           )}
         </div>
       ))}
-      <div className="chat-questions__foot">
+      <div className="k-chat-questions__foot">
         <Button variant="primary" size="sm" icon="arrow-up" busy={sending} disabled={!ready} onClick={send}>
           Send answers
         </Button>

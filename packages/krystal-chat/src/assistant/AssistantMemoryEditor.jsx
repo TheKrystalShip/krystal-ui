@@ -26,14 +26,14 @@ const bodyPath = (key) => (key ? key : "new") + ".memory";
 
 function PlainBody({ value, onChange, readOnly }) {
   return (
-    <Textarea className="mem-editor__textarea" value={value} readOnly={readOnly}
+    <Textarea className="k-assistant-memory-editor__textarea" value={value} readOnly={readOnly}
       onChange={(e) => onChange(e.target.value)} />
   );
 }
 
 // A field's length against the assistant's cap, beside its label.
 function Count({ n, max }) {
-  return <span className={"mem-editor__count" + (n > max ? " mem-editor__count--over" : "")}>{n} / {max}</span>;
+  return <span className={"k-assistant-memory-editor__count" + (n > max ? " k-assistant-memory-editor__count--over" : "")}>{n} / {max}</span>;
 }
 
 /**
@@ -86,7 +86,7 @@ function AssistantMemoryEditor({
     <Dialog
       size="xl"
       fill
-      className="mem-editor"
+      className="k-assistant-memory-editor"
       icon={isNew || byPerson ? "user-pen" : "brain"}
       title={isNew ? "Write a memory" : "Edit this memory"}
       sub={isNew
@@ -97,8 +97,8 @@ function AssistantMemoryEditor({
       onClose={onClose}
       canClose={!saving}
       foot={<>
-        {dirty && <span className="mem-editor__dirty">Unsaved changes</span>}
-        <span className="mem-editor__spacer" />
+        {dirty && <span className="k-assistant-memory-editor__dirty">Unsaved changes</span>}
+        <span className="k-assistant-memory-editor__spacer" />
         <Button variant="outline" onClick={onClose} disabled={saving}>Cancel</Button>
         <Button variant="primary" icon="save" busy={saving} onClick={save} disabled={!canSave}>
           {saving ? "Saving…" : isNew ? "Remember this" : "Save"}
@@ -114,7 +114,7 @@ function AssistantMemoryEditor({
       ) : (
         <Field label="Name" group
           hint="Fixed — writing this name again is what replaces the memory. To rename it, write a new one and forget this.">
-          <span className="settings-value settings-value--mono mem-editor__key">{key}</span>
+          <span className="k-settings-value k-settings-value--mono k-assistant-memory-editor__key">{key}</span>
         </Field>
       )}
 
@@ -126,10 +126,10 @@ function AssistantMemoryEditor({
           onChange={(e) => setSummary(e.target.value)} />
       </Field>
 
-      <Field label="Notes" group className="mem-editor__notes"
+      <Field label="Notes" group className="k-assistant-memory-editor__notes"
         aside={limits && <Count n={body.length} max={limits.maxBodyLength} />}
         hint="Read only when something asks for it, so it can hold the detail the summary leaves out.">
-        <div className="mem-editor__body">
+        <div className="k-assistant-memory-editor__body">
           <React.Suspense fallback={<Skeleton w="100%" h="100%" r={0} />}>
             <BodyEditor value={body} onChange={setBody} path={bodyPath(memory ? memory.key : "")}
               readOnly={saving} />

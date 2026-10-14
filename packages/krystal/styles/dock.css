@@ -3,7 +3,7 @@
    page, its drag-to-resize handle, and the floating button that opens it. Drawn
    by Dock and DockFab.
    ============================================================================ */
-.assistant-dock {
+.k-assistant-dock {
   position: fixed;
   top: 0;
   right: 0;
@@ -21,7 +21,7 @@
   box-sizing: border-box;
 }
 
-.assistant-dock.assistant-dock--open {
+.k-assistant-dock.k-assistant-dock--open {
   transform: translateX(0);
   box-shadow: -16px 0 48px rgba(0, 0, 0, 0.4);
 }
@@ -29,12 +29,12 @@
 /* Push mode: the open dock reads as a layout column rather than a floating overlay. The frame
    reserves its width through --dock-push, so the page reflows left, and the dock drops its heavy
    shadow (the border-left is the divider). */
-.assistant-dock.assistant-dock--push {
+.k-assistant-dock.k-assistant-dock--push {
   box-shadow: none;
 }
 
 /* Floating launcher, bottom-right: the same side the dock slides in from. */
-.assistant-fab {
+.k-assistant-fab {
   position: fixed;
   right: 24px;
   bottom: 24px;
@@ -53,19 +53,19 @@
   transition: transform var(--d-fast) var(--ease-out), background var(--d-fast) var(--ease-out);
 }
 
-.assistant-fab:hover {
+.k-assistant-fab:hover {
   background: var(--krystal-teal-hover);
   transform: translateY(-2px);
 }
 
-.assistant-fab:active {
+.k-assistant-fab:active {
   transform: translateY(0);
 }
 
 /* Drag-to-resize handle on the dock's left edge: a tab on the inside of the edge. Its long side lies
    along the edge, its ends are cut at 45 degrees and no part of it crosses outside the panel. The
    element is the hit area, a strip along the edge; the tab is drawn in it. */
-.assistant-dock__resize {
+.k-assistant-dock__resize {
   position: absolute;
   top: 0;
   left: 0;
@@ -76,7 +76,7 @@
   touch-action: none;
 }
 
-.assistant-dock__resize::before {
+.k-assistant-dock__resize::before {
   content: "";
   position: absolute;
   top: 50%;
@@ -89,18 +89,18 @@
   transition: background var(--d-fast);
 }
 
-.assistant-dock__resize:hover::before,
-.assistant-dock__resize--active::before {
+.k-assistant-dock__resize:hover::before,
+.k-assistant-dock__resize--active::before {
   background: var(--krystal-teal);
 }
 
 /* On phones the dock takes the whole width, so it has no width to drag and no handle. */
 @media (max-width: 768px) {
-  .assistant-dock {
+  .k-assistant-dock {
     width: 100vw;
     border-left: none;
   }
-  .assistant-dock__resize {
+  .k-assistant-dock__resize {
     display: none;
   }
 }

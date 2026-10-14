@@ -41,16 +41,16 @@ function RecentConversations({ convos, activeId, onPick, max = 3 }) {
   if (recent.length === 0) return null;
 
   return (
-    <section className="chat-recent" aria-label="Pick up where you left off">
-      <span className="chat-recent__label">Pick up where you left off</span>
-      <div className="chat-recent__list">
+    <section className="k-chat-recent" aria-label="Pick up where you left off">
+      <span className="k-chat-recent__label">Pick up where you left off</span>
+      <div className="k-chat-recent__list">
         {recent.map(c => {
           const when = lastTouched(c);
           return (
-            <button key={c.id} type="button" className="chat-recent__row" onClick={() => onPick(c.id)}>
-              <Icon name="message-square" size={14} className="chat-recent__icon" />
-              <span className="chat-recent__title">{conversationTitle(c)}</span>
-              {when > 0 && <span className="chat-recent__time">{fmtRelative(new Date(when))}</span>}
+            <button key={c.id} type="button" className="k-chat-recent__row" onClick={() => onPick(c.id)}>
+              <Icon name="message-square" size={14} className="k-chat-recent__icon" />
+              <span className="k-chat-recent__title">{conversationTitle(c)}</span>
+              {when > 0 && <span className="k-chat-recent__time">{fmtRelative(new Date(when))}</span>}
             </button>
           );
         })}

@@ -7,14 +7,14 @@
   touch-action: pan-y;
 }
 
-.carousel-pager {
+.k-carousel-pager {
   display: flex;
   align-items: center;
   gap: 2px;
 }
 
 /* Each mark is a thin bar in a target tall enough to be pressed. */
-.carousel-pager__mark {
+.k-carousel-pager__mark {
   display: flex;
   align-items: center;
   height: 20px;
@@ -24,13 +24,13 @@
   cursor: pointer;
 }
 
-.carousel-pager__mark:focus-visible {
+.k-carousel-pager__mark:focus-visible {
   outline: none;
   border-radius: var(--r-pill);
   box-shadow: var(--ring-focus);
 }
 
-.carousel-pager__bar {
+.k-carousel-pager__bar {
   position: relative;
   display: block;
   width: 8px;
@@ -41,29 +41,29 @@
   transition: width var(--d-base) var(--ease-out), background var(--d-base) var(--ease-out);
 }
 
-.carousel-pager__mark:hover .carousel-pager__bar {
+.k-carousel-pager__mark:hover .k-carousel-pager__bar {
   background: color-mix(in srgb, var(--fg-1) 55%, transparent);
 }
 
-.carousel-pager__mark[aria-current] .carousel-pager__bar {
+.k-carousel-pager__mark[aria-current] .k-carousel-pager__bar {
   width: 28px;
 }
 
 /* Slides that never turn by themselves show the shown mark whole; turning ones fill it over the slide's
    time, held where it is while the slides are held still. */
-.carousel-pager__fill {
+.k-carousel-pager__fill {
   position: absolute;
   inset: 0;
   border-radius: inherit;
   background: var(--fg-1);
 }
 
-.carousel-pager.is-auto .carousel-pager__fill {
+.k-carousel-pager.k-is-auto .k-carousel-pager__fill {
   transform-origin: left center;
   animation: k-carousel-fill linear both;
 }
 
-.carousel-pager.is-auto.is-held .carousel-pager__fill {
+.k-carousel-pager.k-is-auto.k-is-held .k-carousel-pager__fill {
   animation-play-state: paused;
 }
 
@@ -79,18 +79,18 @@
 
 /* ---- on a television ------------------------------------------------------- */
 
-:root[data-tv] .carousel-pager__mark {
+:root[data-tv] .k-carousel-pager__mark {
   height: auto;
   padding: 0 4px;
   cursor: default;
 }
 
-:root[data-tv] .carousel-pager__bar {
+:root[data-tv] .k-carousel-pager__bar {
   width: 12px;
   height: 6px;
   border-radius: var(--r-sm);
 }
 
-:root[data-tv] .carousel-pager__mark[aria-current] .carousel-pager__bar {
+:root[data-tv] .k-carousel-pager__mark[aria-current] .k-carousel-pager__bar {
   width: 44px;
 }

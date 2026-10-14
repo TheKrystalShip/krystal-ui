@@ -8,7 +8,7 @@ import { toolLabel } from "../chat/conversation.js";
 import { AssistantMemory } from "./AssistantMemory.jsx";
 
 // The pages a site hosting an assistant gives it beside the chat, each at a reading measure
-// (`.assistant-page`): its conversations, what it remembers, and what it can do. Each talks to the
+// (`.k-assistant-page`): its conversations, what it remembers, and what it can do. Each talks to the
 // assistant through `client` (`createAssistantClient`), stable across renders.
 
 // The conversations, as a page — a phone's tab of them. The list is the chat's own: `Chat` draws it
@@ -21,7 +21,7 @@ import { AssistantMemory } from "./AssistantMemory.jsx";
  */
 function AssistantChatsPage({ listRef, title = "Chats" }) {
   return (
-    <div className="assistant-page">
+    <div className="k-assistant-page">
       <PageHeader title={title} />
       <div ref={listRef} />
     </div>
@@ -36,7 +36,7 @@ function AssistantChatsPage({ listRef, title = "Chats" }) {
  */
 function AssistantMemoryPage({ title = "Memory", ...memory }) {
   return (
-    <div className="assistant-page">
+    <div className="k-assistant-page">
       <PageHeader title={title} />
       <AssistantMemory {...memory} />
     </div>
@@ -88,7 +88,7 @@ function AssistantSkillsPage({ client, onUse, title = "Skills" }) {
   }, [client]);
 
   return (
-    <div className="assistant-page">
+    <div className="k-assistant-page">
       <PageHeader title={title} />
 
       {error && <Notice tone="danger">{error}</Notice>}

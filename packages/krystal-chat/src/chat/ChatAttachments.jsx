@@ -53,9 +53,9 @@ function ChatLightbox({ src, name, onClose }) {
   const root = React.useRef(null);
   useModalBehaviour(root, { onClose });
   return createPortal(
-    <div ref={root} className="chat-lightbox" role="dialog" aria-modal="true" aria-label={name} onClick={onClose}>
-      <img className="chat-lightbox__img" src={src} alt={name} onClick={(e) => e.stopPropagation()} />
-      <IconButton className="chat-lightbox__close" icon="x" label="Close" variant="ghost" size="sm" onClick={onClose} />
+    <div ref={root} className="k-chat-lightbox" role="dialog" aria-modal="true" aria-label={name} onClick={onClose}>
+      <img className="k-chat-lightbox__img" src={src} alt={name} onClick={(e) => e.stopPropagation()} />
+      <IconButton className="k-chat-lightbox__close" icon="x" label="Close" variant="ghost" size="sm" onClick={onClose} />
     </div>,
     document.body,
   );
@@ -66,17 +66,17 @@ function SentPicture({ attachment, load }) {
   const [open, setOpen] = React.useState(false);
   if (failed || (!url && !load)) {
     return (
-      <span className="chat-attachment chat-attachment--sent" title={attachment.name}>
-        <Icon name="image" size={14} className="chat-attachment__icon" />
-        <span className="chat-attachment__name">{attachment.name}</span>
+      <span className="k-chat-attachment k-chat-attachment--sent" title={attachment.name}>
+        <Icon name="image" size={14} className="k-chat-attachment__icon" />
+        <span className="k-chat-attachment__name">{attachment.name}</span>
       </span>
     );
   }
   return (
     <>
-      <button type="button" className="chat-turn__picture" title={attachment.name} aria-label={"Open " + attachment.name}
+      <button type="button" className="k-chat-turn__picture" title={attachment.name} aria-label={"Open " + attachment.name}
         onClick={() => url && setOpen(true)}>
-        {url ? <img src={url} alt={attachment.name} loading="lazy" /> : <span className="chat-turn__picture-wait" />}
+        {url ? <img src={url} alt={attachment.name} loading="lazy" /> : <span className="k-chat-turn__picture-wait" />}
       </button>
       {open && url && <ChatLightbox src={url} name={attachment.name} onClose={() => setOpen(false)} />}
     </>
@@ -86,11 +86,11 @@ function SentPicture({ attachment, load }) {
 function SentFile({ attachment, load }) {
   const { url } = useAttachmentUrl(attachment, load);
   return (
-    <a className="chat-attachment chat-attachment--sent" href={url || undefined} target="_blank" rel="noreferrer"
+    <a className="k-chat-attachment k-chat-attachment--sent" href={url || undefined} target="_blank" rel="noreferrer"
       title={attachment.name} aria-disabled={!url}>
-      <Icon name="file-text" size={14} className="chat-attachment__icon" />
-      <span className="chat-attachment__name">{attachment.name}</span>
-      {attachment.size > 0 && <span className="chat-attachment__size">{sizeLabel(attachment.size)}</span>}
+      <Icon name="file-text" size={14} className="k-chat-attachment__icon" />
+      <span className="k-chat-attachment__name">{attachment.name}</span>
+      {attachment.size > 0 && <span className="k-chat-attachment__size">{sizeLabel(attachment.size)}</span>}
     </a>
   );
 }
@@ -106,14 +106,14 @@ function ChatMessageAttachments({ attachments, load }) {
   const pictures = attachments.filter(a => a.kind === "image");
   const files = attachments.filter(a => a.kind !== "image");
   return (
-    <div className="chat-turn__attachments">
+    <div className="k-chat-turn__attachments">
       {pictures.length > 0 && (
-        <div className="chat-turn__pictures">
+        <div className="k-chat-turn__pictures">
           {pictures.map(a => <SentPicture key={a.id || a.localUrl} attachment={a} load={load} />)}
         </div>
       )}
       {files.length > 0 && (
-        <div className="chat-turn__files">
+        <div className="k-chat-turn__files">
           {files.map(a => <SentFile key={a.id || a.name} attachment={a} load={load} />)}
         </div>
       )}
@@ -131,30 +131,30 @@ function ChatMessageAttachments({ attachments, load }) {
 function ComposerAttachments({ items, onRemove }) {
   if (!items || items.length === 0) return null;
   return (
-    <div className="chat-attachments" role="list" aria-label="Attachments">
+    <div className="k-chat-attachments" role="list" aria-label="Attachments">
       {items.map(item => {
         const working = item.status === "preparing" || item.status === "uploading";
         return (
           <div key={item.key} role="listitem"
-            className={"chat-attachment" + (item.status === "error" ? " chat-attachment--error" : "")
-              + (working ? " chat-attachment--working" : "")}
+            className={"k-chat-attachment" + (item.status === "error" ? " k-chat-attachment--error" : "")
+              + (working ? " k-chat-attachment--working" : "")}
             title={item.error || item.name}>
             {item.kind === "image" && item.previewUrl
-              ? <img className="chat-attachment__thumb" src={item.previewUrl} alt="" />
+              ? <img className="k-chat-attachment__thumb" src={item.previewUrl} alt="" />
               : <Icon name={item.status === "error" ? "triangle-alert" : item.kind === "image" ? "image" : "file-text"}
-                  size={14} className="chat-attachment__icon" />}
-            <span className="chat-attachment__text">
-              <span className="chat-attachment__name">{item.name}</span>
+                  size={14} className="k-chat-attachment__icon" />}
+            <span className="k-chat-attachment__text">
+              <span className="k-chat-attachment__name">{item.name}</span>
               {item.status === "error"
-                ? <span className="chat-attachment__error">{item.error.replace(/`/g, "")}</span>
+                ? <span className="k-chat-attachment__error">{item.error.replace(/`/g, "")}</span>
                 : working && (
-                  <span className="chat-attachment__progress" aria-label={item.status === "preparing" ? "Preparing" : "Uploading"}>
-                    <span className="chat-attachment__bar" style={{ width: Math.round((item.progress || 0) * 100) + "%" }} />
+                  <span className="k-chat-attachment__progress" aria-label={item.status === "preparing" ? "Preparing" : "Uploading"}>
+                    <span className="k-chat-attachment__bar" style={{ width: Math.round((item.progress || 0) * 100) + "%" }} />
                   </span>
                 )}
             </span>
             <IconButton icon="x" label={"Remove " + item.name} variant="ghost" size="xs"
-              className="chat-attachment__remove" onClick={() => onRemove(item.key)} />
+              className="k-chat-attachment__remove" onClick={() => onRemove(item.key)} />
           </div>
         );
       })}

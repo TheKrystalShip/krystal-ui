@@ -138,7 +138,7 @@ function AssistantMemory({
             title={m.summary || m.key}
             sub={(
               <>
-                <span className="settings-value settings-value--mono">{m.key}</span>
+                <span className="k-settings-value k-settings-value--mono">{m.key}</span>
                 {" · " + (byPerson(m) ? "Written by you" : "Learned in a conversation")}
                 {m.plugin ? " · " + m.plugin : ""}
                 {" " + written(m.writtenAt)}

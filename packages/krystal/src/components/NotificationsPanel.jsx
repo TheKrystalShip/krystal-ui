@@ -11,7 +11,7 @@ import { toast, toastStore, unreadCount, unreadTone } from "../lib/toasts.js";
 // A toast is gone in seconds by design; this is where you go when one left
 // before you read it. Opening it marks every row read.
 //
-// The entry is drawn as a sidebar row (`nav-item`), so the sidebar that holds it
+// The entry is drawn as a sidebar row (`k-nav-item`), so the sidebar that holds it
 // styles it, collapsed rail included, and it needs no markup of its own for either.
 // A row with a `subject` is a link: picking it calls `onOpen(subject)`.
 
@@ -45,9 +45,9 @@ function NotificationsPanel({ onOpen }) {
   const now = new Date();
 
   return (
-    <div className="notif" ref={ref}>
+    <div className="k-notifications" ref={ref}>
       <div
-        className={"nav-item" + (open ? " nav-item--active" : "")}
+        className={"k-nav-item" + (open ? " k-nav-item--active" : "")}
         onClick={toggle}
         role="button" tabIndex={0}
         onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } }}
@@ -56,46 +56,46 @@ function NotificationsPanel({ onOpen }) {
         aria-haspopup="menu" aria-expanded={open}
       >
         <Icon name="bell" size={16} />
-        <span className="nav-item__label">Notifications</span>
-        {unread > 0 && <span className={"nav-item__badge nav-item__badge--" + tone}>{unread}</span>}
+        <span className="k-nav-item__label">Notifications</span>
+        {unread > 0 && <span className={"k-nav-item__badge k-nav-item__badge--" + tone}>{unread}</span>}
       </div>
 
       {open && pos && createPortal(
-        <div className="notif__menu" role="menu" ref={menuRef} style={pos}>
-          <div className="notif__head">
-            <span className="notif__head-label">Notifications</span>
+        <div className="k-notifications__menu" role="menu" ref={menuRef} style={pos}>
+          <div className="k-notifications__head">
+            <span className="k-notifications__head-label">Notifications</span>
             {history.length > 0 && (
-              <button type="button" className="notif__clear" onClick={() => toast.clearHistory()}>Clear all</button>
+              <button type="button" className="k-notifications__clear" onClick={() => toast.clearHistory()}>Clear all</button>
             )}
           </div>
 
-          <div className="notif__list">
+          <div className="k-notifications__list">
             {history.length === 0 ? (
-              <div className="notif__empty">
+              <div className="k-notifications__empty">
                 <Icon name="bell-off" size={18} />
                 <span>Nothing yet.</span>
                 {/* Says which of the two lists this is, so it is never mistaken for Alerts. */}
-                <span className="notif__empty-sub">Actions you take here show up in this list.</span>
+                <span className="k-notifications__empty-sub">Actions you take here show up in this list.</span>
               </div>
             ) : history.map(t => (
               <div
                 key={t.id}
-                className={"notif__item notif__item--" + t.tone + (t.subject ? " notif__item--link" : "")}
+                className={"k-notifications__item k-notifications__item--" + t.tone + (t.subject ? " k-notifications__item--link" : "")}
                 onClick={() => pick(t)}
                 role={t.subject ? "button" : undefined}
                 tabIndex={t.subject ? 0 : undefined}
                 onKeyDown={t.subject ? (e => { if (e.key === "Enter") pick(t); }) : undefined}
               >
-                <span className="notif__icon"><Icon name={TONE_ICON[t.tone] || "info"} size={14} strokeWidth={2} /></span>
-                <div className="notif__body">
-                  <div className="notif__title">
+                <span className="k-notifications__icon"><Icon name={TONE_ICON[t.tone] || "info"} size={14} strokeWidth={2} /></span>
+                <div className="k-notifications__body">
+                  <div className="k-notifications__title">
                     {t.title}
-                    {t.count > 1 && <span className="notif__count">×{t.count}</span>}
+                    {t.count > 1 && <span className="k-notifications__count">×{t.count}</span>}
                   </div>
-                  {t.detail && <div className="notif__detail">{t.detail}</div>}
-                  <div className="notif__meta">
+                  {t.detail && <div className="k-notifications__detail">{t.detail}</div>}
+                  <div className="k-notifications__meta">
                     <span>{fmtRelative(new Date(t.ts), now)}</span>
-                    {t.code && <><span className="notif__dot">·</span><code className="notif__code">{t.code}</code></>}
+                    {t.code && <><span className="k-notifications__dot">·</span><code className="k-notifications__code">{t.code}</code></>}
                   </div>
                 </div>
               </div>

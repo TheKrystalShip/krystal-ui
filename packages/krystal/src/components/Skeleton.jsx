@@ -15,7 +15,7 @@
 export function Skeleton({ w = "100%", h = 12, r = 6, style, className }) {
   return (
     <span
-      className={"skel" + (className ? " " + className : "")}
+      className={"k-skeleton" + (className ? " " + className : "")}
       aria-hidden="true"
       style={{ width: w, height: h, borderRadius: r, ...style }} />
   );

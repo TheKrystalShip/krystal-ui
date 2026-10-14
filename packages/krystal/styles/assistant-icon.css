@@ -6,7 +6,7 @@
    (translate). Because they're different elements in the SVG DOM, they compose
    naturally — the eyes blink regardless of where they're looking.
    ============================================================================ */
-.assistant-icon__eye {
+.k-assistant-icon__eye {
   transform-box: fill-box;
   transform-origin: center;
   animation: assistant-icon-blink 3s ease-in-out infinite;
@@ -29,7 +29,7 @@
   }
 }
 
-.assistant-icon__eye-g {
+.k-assistant-icon__eye-g {
   will-change: translate;
   animation: assistant-icon-look 8s ease-in-out infinite;
 }
@@ -73,7 +73,7 @@
 /* Desktop: eyes follow cursor via CSS custom properties set by JS.
    On touch devices this block doesn't match, so the keyframe above stays active. */
 @media (hover: hover) {
-  .assistant-icon__eye-g {
+  .k-assistant-icon__eye-g {
     animation: none;
     translate: var(--eye-x, 0) var(--eye-y, 0);
     transition: translate 0.1s ease-out;

@@ -29,7 +29,7 @@ function ToastCard({ t }) {
 
   return (
     <div
-      className={"toast toast--" + t.tone}
+      className={"k-toast k-toast--" + t.tone}
       // An error is announced immediately; anything else waits its turn so a
       // background success can't talk over what someone is reading.
       role={t.tone === "error" ? "alert" : "status"}
@@ -38,20 +38,20 @@ function ToastCard({ t }) {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <span className="toast__icon"><Icon name={TONE_ICON[t.tone] || "info"} size={16} strokeWidth={2} /></span>
-      <div className="toast__body">
-        <div className="toast__title">
+      <span className="k-toast__icon"><Icon name={TONE_ICON[t.tone] || "info"} size={16} strokeWidth={2} /></span>
+      <div className="k-toast__body">
+        <div className="k-toast__title">
           {t.title}
-          {t.count > 1 && <span className="toast__count" title={t.count + " occurrences"}>×{t.count}</span>}
+          {t.count > 1 && <span className="k-toast__count" title={t.count + " occurrences"}>×{t.count}</span>}
         </div>
-        {t.detail && <div className="toast__detail">{t.detail}</div>}
+        {t.detail && <div className="k-toast__detail">{t.detail}</div>}
         {t.action && (
-          <button type="button" className="toast__action" onClick={() => { t.action.onClick(); dismiss(); }}>
+          <button type="button" className="k-toast__action" onClick={() => { t.action.onClick(); dismiss(); }}>
             {t.action.label}
           </button>
         )}
       </div>
-      <button type="button" className="toast__close" onClick={dismiss} aria-label="Dismiss">
+      <button type="button" className="k-toast__close" onClick={dismiss} aria-label="Dismiss">
         <Icon name="x" size={14} strokeWidth={2.2} />
       </button>
     </div>
@@ -67,7 +67,7 @@ function Toasts() {
     // arrives — a live region added at the same moment as its content is not
     // reliably announced. `data-inert-exempt` keeps the stack readable and pressable over an
     // open modal, which makes every other body child inert.
-    <div className="toasts" data-inert-exempt aria-live="polite" aria-relevant="additions">
+    <div className="k-toasts" data-inert-exempt aria-live="polite" aria-relevant="additions">
       {live.map(t => <ToastCard key={t.id} t={t} />)}
     </div>,
     document.body,

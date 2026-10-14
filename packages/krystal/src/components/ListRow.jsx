@@ -65,8 +65,8 @@ function ListRow({ lead, title, sub, meta, aside, actions, onOpen, href, selecte
   }
   return (
     <li {...rest}
-      className={"k-listrow" + (openable ? " k-listrow--open" : "") + (selected ? " is-selected" : "")
-        + (disabled ? " is-disabled" : "") + (tone ? " k-listrow--" + tone : "") + (className ? " " + className : "")}>
+      className={"k-listrow" + (openable ? " k-listrow--open" : "") + (selected ? " k-is-selected" : "")
+        + (disabled ? " k-is-disabled" : "") + (tone ? " k-listrow--" + tone : "") + (className ? " " + className : "")}>
       {lead != null && <span className="k-listrow__lead">{lead}</span>}
       <div className="k-listrow__main">
         {head}

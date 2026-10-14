@@ -45,10 +45,10 @@ function Toolbar({ children, className }) {
   });
 
   return (
-    <div className={"toolbar" + (className ? " " + className : "")}>
-      <div className="toolbar__col-search">{search}</div>
-      <div className="toolbar__col-filters">{filters}</div>
-      <div className="toolbar__col-rest">{rest}</div>
+    <div className={"k-toolbar" + (className ? " " + className : "")}>
+      <div className="k-toolbar__col-search">{search}</div>
+      <div className="k-toolbar__col-filters">{filters}</div>
+      <div className="k-toolbar__col-rest">{rest}</div>
     </div>
   );
 }
@@ -64,7 +64,7 @@ function Toolbar({ children, className }) {
  */
 function ToolbarSearch({ value, onChange, placeholder, pending, autoFocus, ariaLabel }) {
   return (
-    <div className="toolbar__search">
+    <div className="k-toolbar__search">
       <Icon name="search" size={16} />
       <input
         placeholder={placeholder || "Search…"}
@@ -74,10 +74,10 @@ function ToolbarSearch({ value, onChange, placeholder, pending, autoFocus, ariaL
         autoFocus={autoFocus}
         aria-label={ariaLabel || placeholder || "Search"} />
       {pending && (
-        <span className="toolbar__search-pending" title="Searching…"><Icon name="loader-2" size={14} /></span>
+        <span className="k-toolbar__search-pending" title="Searching…"><Icon name="loader-2" size={14} /></span>
       )}
       {value && !pending && (
-        <button className="toolbar__search-clear" onClick={() => onChange("")} title="Clear" aria-label="Clear search">
+        <button className="k-toolbar__search-clear" onClick={() => onChange("")} title="Clear" aria-label="Clear search">
           <Icon name="x" size={13} />
         </button>
       )}
@@ -85,7 +85,7 @@ function ToolbarSearch({ value, onChange, placeholder, pending, autoFocus, ariaL
   );
 }
 
-function ToolbarSpacer() { return <span className="toolbar__spacer" />; }
+function ToolbarSpacer() { return <span className="k-toolbar__spacer" />; }
 
 // ToolbarSort — the ordering control for card/tile grids that can't carry
 // sortable column headers. A single always-on popover: pick the sort key
@@ -127,46 +127,46 @@ function ToolbarSort({ value, dir = "desc", onChange, options, label = "Sort" })
   const setDir = (d) => { if (d !== dir) onChange(value, d); };
 
   return (
-    <div className="toolbar-filter toolbar-sort" ref={ref}>
+    <div className="k-toolbar-filter k-toolbar-sort" ref={ref}>
       <button
-        className={"toolbar-btn toolbar-filter__trigger" + (open ? " toolbar-btn--on" : "")}
+        className={"k-toolbar-btn k-toolbar-filter__trigger" + (open ? " k-toolbar-btn--on" : "")}
         onClick={() => setOpen(o => !o)}
         aria-haspopup="dialog" aria-expanded={open} title="Sort order">
         <Icon name="arrow-up-down" size={14} />
         <span>{label}{current ? ": " + current.label : ""}</span>
-        <Icon name={dir === "asc" ? "arrow-up" : "arrow-down"} size={13} strokeWidth={2.3} className="toolbar-sort__dir-ico" />
+        <Icon name={dir === "asc" ? "arrow-up" : "arrow-down"} size={13} strokeWidth={2.3} className="k-toolbar-sort__dir-ico" />
       </button>
 
       {open && (
-        <div className="toolbar-filter__menu toolbar-sort__menu" role="dialog" aria-label="Sort">
-          <div className="toolbar-filter__head">
-            <span className="toolbar-filter__head-label">{label} by</span>
-            <div className="toolbar-sort__dir" role="group" aria-label="Direction">
+        <div className="k-toolbar-filter__menu k-toolbar-sort__menu" role="dialog" aria-label="Sort">
+          <div className="k-toolbar-filter__head">
+            <span className="k-toolbar-filter__head-label">{label} by</span>
+            <div className="k-toolbar-sort__dir" role="group" aria-label="Direction">
               <button
-                className={"toolbar-sort__dir-btn" + (dir === "asc" ? " is-on" : "")}
+                className={"k-toolbar-sort__dir-btn" + (dir === "asc" ? " k-is-on" : "")}
                 onClick={() => setDir("asc")} aria-pressed={dir === "asc"} title="Ascending">
                 <Icon name="arrow-up" size={12} strokeWidth={2.4} /> Asc
               </button>
               <button
-                className={"toolbar-sort__dir-btn" + (dir === "desc" ? " is-on" : "")}
+                className={"k-toolbar-sort__dir-btn" + (dir === "desc" ? " k-is-on" : "")}
                 onClick={() => setDir("desc")} aria-pressed={dir === "desc"} title="Descending">
                 <Icon name="arrow-down" size={12} strokeWidth={2.4} /> Desc
               </button>
             </div>
           </div>
-          <div className="toolbar-filter__body">
-            <div className="toolbar-filter__opts">
+          <div className="k-toolbar-filter__body">
+            <div className="k-toolbar-filter__opts">
               {opts.map(o => {
                 const on = o.value === value;
                 return (
                   <button
                     key={o.value}
-                    className={"toolbar-filter__opt" + (on ? " toolbar-filter__opt--on" : "")}
+                    className={"k-toolbar-filter__opt" + (on ? " k-toolbar-filter__opt--on" : "")}
                     onClick={() => pick(o)}
                     role="radio" aria-checked={on}>
-                    <span className="toolbar-filter__radio" />
-                    <span className="toolbar-filter__opt-label">{o.label}</span>
-                    {on && <Icon name={dir === "asc" ? "arrow-up" : "arrow-down"} size={13} strokeWidth={2.4} className="toolbar-filter__opt-dir" />}
+                    <span className="k-toolbar-filter__radio" />
+                    <span className="k-toolbar-filter__opt-label">{o.label}</span>
+                    {on && <Icon name={dir === "asc" ? "arrow-up" : "arrow-down"} size={13} strokeWidth={2.4} className="k-toolbar-filter__opt-dir" />}
                   </button>
                 );
               })}
@@ -186,8 +186,8 @@ function ToolbarSort({ value, dir = "desc", onChange, options, label = "Sort" })
  * @param {import("react").ReactNode} [props.children] Replaces the "shown of total unit" text.
  */
 function ToolbarCount({ shown, total, unit, children }) {
-  if (children) return <span className="toolbar__count">{children}</span>;
-  return <span className="toolbar__count"><b>{shown}</b> of {total} {unit}</span>;
+  if (children) return <span className="k-toolbar__count">{children}</span>;
+  return <span className="k-toolbar__count"><b>{shown}</b> of {total} {unit}</span>;
 }
 
 /**
@@ -204,12 +204,12 @@ function ToolbarCount({ shown, total, unit, children }) {
 function ToolbarButton({ icon, children, onClick, disabled, title, spinning, active, ariaLabel }) {
   return (
     <button
-      className={"toolbar-btn" + (active ? " toolbar-btn--on" : "") + (children ? "" : " toolbar-btn--icon")}
+      className={"k-toolbar-btn" + (active ? " k-toolbar-btn--on" : "") + (children ? "" : " k-toolbar-btn--icon")}
       onClick={onClick}
       disabled={disabled}
       title={title}
       aria-label={ariaLabel || (typeof children === "string" ? children : title)}>
-      {icon && <Icon name={icon} size={children ? 13 : 15} className={spinning ? "is-spinning" : ""} />}
+      {icon && <Icon name={icon} size={children ? 13 : 15} className={spinning ? "k-is-spinning" : ""} />}
       {children && <span>{children}</span>}
     </button>
   );
@@ -262,14 +262,14 @@ function ToolbarFilters({ fields, onReset, label = "Filters" }) {
   };
 
   return (
-    <div className="toolbar-filter" ref={ref}>
+    <div className="k-toolbar-filter" ref={ref}>
       <button
-        className={"toolbar-btn toolbar-filter__trigger" + (open ? " toolbar-btn--on" : "")}
+        className={"k-toolbar-btn k-toolbar-filter__trigger" + (open ? " k-toolbar-btn--on" : "")}
         onClick={() => setOpen(o => !o)}
         aria-haspopup="dialog" aria-expanded={open} title="Filters">
         <Icon name="sliders-horizontal" size={14} />
         <span>{label}</span>
-        {active.length > 0 && <span className="toolbar-filter__badge">{active.length}</span>}
+        {active.length > 0 && <span className="k-toolbar-filter__badge">{active.length}</span>}
       </button>
 
       {/* inline active-filter chips — clearing the field, not just the chip */}
@@ -278,42 +278,42 @@ function ToolbarFilters({ fields, onReset, label = "Filters" }) {
         return (
           <button
             key={f.id}
-            className="toolbar-chip"
+            className="k-toolbar-chip"
             title={"Clear " + f.label.toLowerCase() + " filter"}
             onClick={() => f.onChange(f.default != null ? f.default : (f.options[0] && f.options[0].value))}>
-            <span className="toolbar-chip__key">{f.label}</span>
-            <span className="toolbar-chip__val">{opt ? opt.label : f.value}</span>
+            <span className="k-toolbar-chip__key">{f.label}</span>
+            <span className="k-toolbar-chip__val">{opt ? opt.label : f.value}</span>
             <Icon name="x" size={12} strokeWidth={2.4} />
           </button>
         );
       })}
 
       {open && (
-        <div className="toolbar-filter__menu" role="dialog" aria-label="Filters">
-          <div className="toolbar-filter__head">
-            <span className="toolbar-filter__head-label">{label}</span>
+        <div className="k-toolbar-filter__menu" role="dialog" aria-label="Filters">
+          <div className="k-toolbar-filter__head">
+            <span className="k-toolbar-filter__head-label">{label}</span>
             {active.length > 0 && (
-              <button className="toolbar-filter__reset" onClick={reset}>
+              <button className="k-toolbar-filter__reset" onClick={reset}>
                 <Icon name="rotate-ccw" size={12} /> Reset
               </button>
             )}
           </div>
-          <div className="toolbar-filter__body">
+          <div className="k-toolbar-filter__body">
             {visible.map(f => (
-              <div className="toolbar-filter__group" key={f.id}>
-                <div className="toolbar-filter__group-label">{f.label}</div>
-                <div className="toolbar-filter__opts">
+              <div className="k-toolbar-filter__group" key={f.id}>
+                <div className="k-toolbar-filter__group-label">{f.label}</div>
+                <div className="k-toolbar-filter__opts">
                   {(f.options || []).map(o => {
                     const on = o.value === f.value;
                     return (
                       <button
                         key={o.value}
-                        className={"toolbar-filter__opt" + (on ? " toolbar-filter__opt--on" : "")}
+                        className={"k-toolbar-filter__opt" + (on ? " k-toolbar-filter__opt--on" : "")}
                         onClick={() => f.onChange(o.value)}
                         role="radio" aria-checked={on}>
-                        <span className="toolbar-filter__radio" />
-                        <span className="toolbar-filter__opt-label">{o.label}</span>
-                        {o.count != null && <span className="toolbar-filter__opt-count">{o.count}</span>}
+                        <span className="k-toolbar-filter__radio" />
+                        <span className="k-toolbar-filter__opt-label">{o.label}</span>
+                        {o.count != null && <span className="k-toolbar-filter__opt-count">{o.count}</span>}
                       </button>
                     );
                   })}

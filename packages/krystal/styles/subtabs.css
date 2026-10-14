@@ -2,7 +2,7 @@
    subtabs.css — the in-page section switcher (<SubTabs>): a button strip on
    wide screens, a native <select> under its own label on phones.
    ============================================================================ */
-.subtabs {
+.k-subtabs {
   display: flex;
   gap: 4px;
   background: var(--surface-1);
@@ -12,7 +12,7 @@
   width: fit-content;
 }
 
-.subtab {
+.k-subtab {
   font-family: var(--font-ui);
   font-weight: 500;
   font-size: 13.5px;
@@ -27,23 +27,23 @@
   gap: 7px;
 }
 
-.subtab:hover {
+.k-subtab:hover {
   color: var(--fg-1);
 }
 
-.subtab--active {
+.k-subtab--active {
   background: var(--surface-3);
   color: var(--fg-1);
   font-weight: 600;
 }
 
 /* Mobile-only dropdown variant — hidden on desktop, swapped in at ≤768px. */
-.subtabs-mobile {
+.k-subtabs-mobile {
   display: none;
 }
 
 /* Sub-tab count badge; Pill draws it. */
-.subtab__badge {
+.k-subtab__badge {
   margin-left: 6px;
 }
 
@@ -51,11 +51,11 @@
 
   /* The button row is hidden and a styled <select> takes its place, so iOS and
      Android show their native picker. */
-  .subtabs {
+  .k-subtabs {
     display: none;
   }
 
-  .subtabs-mobile {
+  .k-subtabs-mobile {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -69,7 +69,7 @@
     color: var(--fg-1);
   }
 
-  .subtabs-mobile__label {
+  .k-subtabs-mobile__label {
     flex: 1;
     min-width: 0;
     font-family: var(--font-ui);
@@ -81,7 +81,7 @@
     white-space: nowrap;
   }
 
-  .subtabs-mobile select {
+  .k-subtabs-mobile select {
     position: absolute;
     inset: 0;
     opacity: 0;

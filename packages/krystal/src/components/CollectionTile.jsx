@@ -45,7 +45,7 @@ function CollectionTile({
 }) {
   const ref = React.useRef(/** @type {HTMLAnchorElement | null} */ (null));
   const near = useNear(ref);
-  const cls = "collection-tile collection-tile--" + variant + " collection-tile--" + size
+  const cls = "k-collection-tile k-collection-tile--" + variant + " k-collection-tile--" + size
     + (className ? " " + className : "");
   return (
     <a ref={ref} className={cls} aria-label={label || name} {...rest}>
@@ -59,7 +59,7 @@ function CollectionTile({
 
 /** @param {{ src: string }} props */
 function Art({ src }) {
-  return <img className="collection-tile__art" src={src} alt="" loading="lazy" decoding="async" />;
+  return <img className="k-collection-tile__art" src={src} alt="" loading="lazy" decoding="async" />;
 }
 
 /** @param {{ name: string, icon?: string, caption?: import("react").ReactNode, posters: (string | null | undefined)[], near: boolean }} props */
@@ -69,17 +69,17 @@ function Fan({ name, icon, caption, posters, near }) {
   const places = ["c", "b", "a"].slice(0, shown.length).reverse();
   return (
     <>
-      <span className="collection-tile__fan" aria-hidden="true">
+      <span className="k-collection-tile__fan" aria-hidden="true">
         {shown.map((src, i) => (
-          <span key={i} className={"collection-tile__poster collection-tile__poster--" + places[i]}>
+          <span key={i} className={"k-collection-tile__poster k-collection-tile__poster--" + places[i]}>
             {near && <Art src={src} />}
           </span>
         ))}
       </span>
-      {icon && <span className="collection-tile__mark" aria-hidden="true"><Icon name={icon} size={16} /></span>}
-      <span className="collection-tile__text">
-        <span className="collection-tile__name">{name}</span>
-        {caption && <span className="collection-tile__caption">{caption}</span>}
+      {icon && <span className="k-collection-tile__mark" aria-hidden="true"><Icon name={icon} size={16} /></span>}
+      <span className="k-collection-tile__text">
+        <span className="k-collection-tile__name">{name}</span>
+        {caption && <span className="k-collection-tile__caption">{caption}</span>}
       </span>
     </>
   );
@@ -95,25 +95,25 @@ function Strip({ name, caption, posters, total, watched, next, doneLabel, fit, n
   const state = done ? doneLabel : started ? (next || `${watched} / ${count}`) : caption;
   return (
     <>
-      <span className="collection-tile__strip" aria-hidden="true">
+      <span className="k-collection-tile__strip" aria-hidden="true">
         {shown.map((src, i) => (
           <span key={i}
-            className={"collection-tile__cell" + (started && !done && i >= watched ? " is-ahead" : "")}>
+            className={"k-collection-tile__cell" + (started && !done && i >= watched ? " k-is-ahead" : "")}>
             {src && near && <Art src={src} />}
-            <span className="collection-tile__num">{i + 1}</span>
+            <span className="k-collection-tile__num">{i + 1}</span>
           </span>
         ))}
-        {over && <span className="collection-tile__cell collection-tile__more">+{count - shown.length}</span>}
+        {over && <span className="k-collection-tile__cell k-collection-tile__more">+{count - shown.length}</span>}
       </span>
-      <span className="collection-tile__foot">
+      <span className="k-collection-tile__foot">
         {started && (
-          <span className="collection-tile__segs" aria-hidden="true">
-            {Array.from({ length: count }, (_, i) => <i key={i} className={i < watched ? "is-on" : undefined} />)}
+          <span className="k-collection-tile__segs" aria-hidden="true">
+            {Array.from({ length: count }, (_, i) => <i key={i} className={i < watched ? "k-is-on" : undefined} />)}
           </span>
         )}
-        <span className="collection-tile__line">
-          <span className="collection-tile__name">{name}</span>
-          {state && <span className={"collection-tile__state" + (started && !done ? " is-next" : "")}>{state}</span>}
+        <span className="k-collection-tile__line">
+          <span className="k-collection-tile__name">{name}</span>
+          {state && <span className={"k-collection-tile__state" + (started && !done ? " k-is-next" : "")}>{state}</span>}
         </span>
       </span>
     </>

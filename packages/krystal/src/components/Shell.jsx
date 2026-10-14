@@ -26,13 +26,13 @@ import { Icon } from "./Icon.jsx";
 function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, aside, tabBar, mainRef, children }) {
   return (
     <div
-      className={"app" + (tabBar ? " app--tabbed" : "")}
+      className={"k-app" + (tabBar ? " k-app--tabbed" : "")}
       style={/** @type {import("react").CSSProperties} */ ({ "--dock-push": dockPush + "px", ...(collapsed ? { "--sidebar-w": "64px" } : {}) })}>
       {sidebar}
       {drawerOpen
-        ? <div className="sidebar-scrim sidebar-scrim--open" onClick={() => onDrawer(false)} />
+        ? <div className="k-sidebar-scrim k-sidebar-scrim--open" onClick={() => onDrawer(false)} />
         : !tabBar && <MobileNavToggle onOpen={() => onDrawer(true)} />}
-      <main className="app__main" ref={mainRef}>{children}</main>
+      <main className="k-app__main" ref={mainRef}>{children}</main>
       {aside}
       {tabBar}
     </div>
@@ -61,19 +61,19 @@ function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, asid
  */
 function TabBar({ items, label = "Main" }) {
   return (
-    <nav className="tabbar" aria-label={label}>
+    <nav className="k-tabbar" aria-label={label}>
       {items.map((item) => (
         <button
           key={item.id || item.label}
           type="button"
-          className={"tabbar__tab" + (item.active ? " tabbar__tab--active" : "")}
+          className={"k-tabbar__tab" + (item.active ? " k-tabbar__tab--active" : "")}
           aria-current={item.active ? "page" : undefined}
           onClick={item.onClick}>
-          <span className="tabbar__icon">
+          <span className="k-tabbar__icon">
             <Icon name={item.icon} size={22} />
-            {item.badge > 0 && <Pill size="sm" tone={item.tone || "warn"} className={"tabbar__badge tabbar__badge--" + (item.tone || "warn")}>{item.badge}</Pill>}
+            {item.badge > 0 && <Pill size="sm" tone={item.tone || "warn"} className={"k-tabbar__badge k-tabbar__badge--" + (item.tone || "warn")}>{item.badge}</Pill>}
           </span>
-          <span className="tabbar__label">{item.label}</span>
+          <span className="k-tabbar__label">{item.label}</span>
         </button>
       ))}
     </nav>
@@ -99,22 +99,22 @@ function TabBar({ items, label = "Main" }) {
  */
 function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, closeNav, foot, children }) {
   return (
-    <aside className={"sidebar" + (open ? " sidebar--open" : "") + (collapsed ? " sidebar--rail" : "")}>
-      <div className="sidebar__brand">
+    <aside className={"k-sidebar" + (open ? " k-sidebar--open" : "") + (collapsed ? " k-sidebar--rail" : "")}>
+      <div className="k-sidebar__brand">
         <img src={mark} width="32" height="32" alt="" style={{ objectFit: "contain" }} />
-        <span className="sidebar__brand-wordmark">{wordmark}</span>
+        <span className="k-sidebar__brand-wordmark">{wordmark}</span>
         <button
           type="button"
-          className="sidebar__collapse"
+          className="k-sidebar__collapse"
           onClick={onToggleCollapse}
           data-tip={collapsed ? "Expand" : "Collapse"}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
           <Icon name={collapsed ? "panel-left-open" : "panel-left-close"} size={16} />
         </button>
       </div>
-      {top && <div className="sidebar__top">{top}</div>}
-      <nav className={"sidebar__nav" + (closeNav ? " sidebar__nav--closed" : "")}>{children}</nav>
-      {foot && <div className="sidebar__foot">{foot}</div>}
+      {top && <div className="k-sidebar__top">{top}</div>}
+      <nav className={"k-sidebar__nav" + (closeNav ? " k-sidebar__nav--closed" : "")}>{children}</nav>
+      {foot && <div className="k-sidebar__foot">{foot}</div>}
     </aside>
   );
 }
@@ -146,19 +146,19 @@ function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
   }, [open]);
   const name = user.display || user.name;
   return (
-    <div className="sidebar__account-wrap" ref={ref}>
+    <div className="k-sidebar__account-wrap" ref={ref}>
       {open && (
-        <div className="sidebar__account-menu" role="menu">
-          <div className="sidebar__account-menu__head">
-            <div className="sidebar__account-menu__name">{name}</div>
-            {detail && <div className="sidebar__account-menu__detail">{detail}</div>}
+        <div className="k-sidebar__account-menu" role="menu">
+          <div className="k-sidebar__account-menu__head">
+            <div className="k-sidebar__account-menu__name">{name}</div>
+            {detail && <div className="k-sidebar__account-menu__detail">{detail}</div>}
           </div>
           {items.map((item) => (
             <button
               key={item.label}
               type="button"
               role="menuitem"
-              className={"sidebar__account-menu__item" + (item.danger ? " sidebar__account-menu__item--danger" : "")}
+              className={"k-sidebar__account-menu__item" + (item.danger ? " k-sidebar__account-menu__item--danger" : "")}
               onClick={() => { setOpen(false); item.onClick && item.onClick(); }}>
               <Icon name={item.icon} size={14} />{item.label}
             </button>
@@ -167,7 +167,7 @@ function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
       )}
       <button
         type="button"
-        className={"sidebar__account" + (open ? " sidebar__account--open" : "")}
+        className={"k-sidebar__account" + (open ? " k-sidebar__account--open" : "")}
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="menu"
         aria-expanded={open}
@@ -176,11 +176,11 @@ function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
         <AccountAvatar user={user} size={28} />
         {!collapsed && (
           <>
-            <span className="sidebar__account__text">
-              <span className="sidebar__account__name">{name}</span>
-              {sub && <span className="sidebar__account__sub">{sub}</span>}
+            <span className="k-sidebar__account__text">
+              <span className="k-sidebar__account__name">{name}</span>
+              {sub && <span className="k-sidebar__account__sub">{sub}</span>}
             </span>
-            <Icon name="chevrons-up-down" size={14} className="sidebar__account__caret" />
+            <Icon name="chevrons-up-down" size={14} className="k-sidebar__account__caret" />
           </>
         )}
       </button>
@@ -198,8 +198,8 @@ function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
  */
 function SidebarGroup({ label, children }) {
   return (
-    <div className="sidebar__group">
-      {label && <div className="sidebar__group-label">{label}</div>}
+    <div className="k-sidebar__group">
+      {label && <div className="k-sidebar__group-label">{label}</div>}
       {children}
     </div>
   );
@@ -225,7 +225,7 @@ function NavItem({ icon, label, active, onClick, badge = 0, tone = "info", tip, 
   };
   return (
     <div
-      className={"nav-item" + (active ? " nav-item--active" : "")}
+      className={"k-nav-item" + (active ? " k-nav-item--active" : "")}
       onClick={onClick}
       onKeyDown={onKeyDown}
       role="link"
@@ -234,8 +234,8 @@ function NavItem({ icon, label, active, onClick, badge = 0, tone = "info", tip, 
       data-tip={tip || label}
       aria-label={label}>
       <Icon name={icon} size={iconSize} />
-      <span className="nav-item__label">{label}</span>
-      {badge > 0 && <Pill tone={tone === "info" ? "neutral" : tone} className={"nav-item__badge nav-item__badge--" + tone}>{badge}</Pill>}
+      <span className="k-nav-item__label">{label}</span>
+      {badge > 0 && <Pill tone={tone === "info" ? "neutral" : tone} className={"k-nav-item__badge k-nav-item__badge--" + tone}>{badge}</Pill>}
     </div>
   );
 }
@@ -244,7 +244,7 @@ function NavItem({ icon, label, active, onClick, badge = 0, tone = "info", tip, 
 /** @param {{ onOpen?: () => void }} props */
 function MobileNavToggle({ onOpen }) {
   return (
-    <button className="mnav mnav--edge" onClick={onOpen} aria-label="Open menu" title="Menu">
+    <button className="k-mobile-nav k-mobile-nav--edge" onClick={onOpen} aria-label="Open menu" title="Menu">
       <Icon name="chevron-right" size={16} />
     </button>
   );

@@ -20,21 +20,21 @@ export function SubTabs({ tabs, active, onChange }) {
   const current = tabs.find(t => t.id === active) || tabs[0];
   return (
     <>
-      <div className="subtabs">
+      <div className="k-subtabs">
         {tabs.map(t => (
           <button key={t.id}
-            className={"subtab" + (t.id === active ? " subtab--active" : "")}
+            className={"k-subtab" + (t.id === active ? " k-subtab--active" : "")}
             onClick={() => onChange(t.id)}
             title={t.title}>
             <Icon name={t.icon} size={14} />
             {t.label}
-            {t.badge > 0 && <Pill size="sm" tone={t.badgeTone && t.badgeTone !== "info" ? t.badgeTone : "neutral"} className={"subtab__badge subtab__badge--" + (t.badgeTone || "info")}>{t.badge}</Pill>}
+            {t.badge > 0 && <Pill size="sm" tone={t.badgeTone && t.badgeTone !== "info" ? t.badgeTone : "neutral"} className={"k-subtab__badge k-subtab__badge--" + (t.badgeTone || "info")}>{t.badge}</Pill>}
           </button>
         ))}
       </div>
-      <label className="subtabs-mobile" aria-label="Section">
+      <label className="k-subtabs-mobile" aria-label="Section">
         <Icon name={current.icon} size={16} />
-        <span className="subtabs-mobile__label">{current.label}</span>
+        <span className="k-subtabs-mobile__label">{current.label}</span>
         {/* The badge's noun is the tab's own, because a badge counts whatever that tab holds — alerts
             on one page and unanswered offers on another, and "2 alerts" over a list of offers would
             name something that is not there. */}

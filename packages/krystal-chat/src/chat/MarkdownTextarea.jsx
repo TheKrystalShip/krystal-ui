@@ -52,9 +52,9 @@ function MarkdownTextarea(
   };
 
   return (
-    <div className="chat-composer__field">
+    <div className="k-chat-composer__field">
       <div
-        className={"chat-composer__hl" + (composing ? " chat-composer__hl--off" : "")}
+        className={"k-chat-composer__hl" + (composing ? " k-chat-composer__hl--off" : "")}
         aria-hidden="true"
         ref={hlRef}>
         {highlightMarkdown(value)}
@@ -69,7 +69,7 @@ function MarkdownTextarea(
         onScroll={syncScroll}
         onCompositionStart={() => setComposing(true)}
         onCompositionEnd={() => setComposing(false)}
-        className={composing ? "is-composing" : undefined}
+        className={composing ? "k-chat-is-composing" : undefined}
       />
     </div>
   );

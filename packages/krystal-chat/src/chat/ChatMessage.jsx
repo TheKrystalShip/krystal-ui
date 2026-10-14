@@ -25,7 +25,7 @@ function TurnTime({ ts }) {
   if (!ts) return null;
   const d = new Date(ts);
   return (
-    <time className="chat-turn__time" dateTime={d.toISOString()} title={d.toLocaleString()}>
+    <time className="k-chat-turn__time" dateTime={d.toISOString()} title={d.toLocaleString()}>
       {d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
     </time>
   );
@@ -39,7 +39,7 @@ function CopyAnswer({ text }) {
     return () => clearTimeout(t);
   }, [copied]);
   return (
-    <IconButton variant="ghost" size="xs" className="chat-turn__copy"
+    <IconButton variant="ghost" size="xs" className="k-chat-turn__copy"
       icon={copied === true ? "check" : "copy"}
       label={copied === true ? "Copied" : copied === false ? "Couldn’t copy" : "Copy answer"}
       onClick={() => copyText(text).then(setCopied)} />
@@ -48,12 +48,12 @@ function CopyAnswer({ text }) {
 
 function UserTurn({ msg, loadAttachment }) {
   return (
-    <div className="chat-turn chat-turn--user">
+    <div className="k-chat-turn k-chat-turn--user">
       <ChatMessageAttachments attachments={msg.attachments} load={loadAttachment} />
       {(msg.voice || msg.content) && (
-        <div className={"chat-turn__bubble" + (msg.voice ? " chat-turn__bubble--voice" : "")}>
+        <div className={"k-chat-turn__bubble" + (msg.voice ? " k-chat-turn__bubble--voice" : "")}>
           {msg.voice && <VoiceNoteBubble voice={msg.voice} />}
-          {msg.content && <div className="chat-turn__said">{renderMarkdown(msg.content)}</div>}
+          {msg.content && <div className="k-chat-turn__said">{renderMarkdown(msg.content)}</div>}
         </div>
       )}
       <TurnTime ts={msg.ts} />
@@ -69,17 +69,17 @@ function AssistantTurn({ msg, assistantName, lead, renderCards, onRate, readOnly
   const finished = !msg.live && !!answer;
 
   return (
-    <div className={"chat-turn chat-turn--assistant" + (lead ? " chat-turn--lead" : "") + (msg.error ? " chat-turn--error" : "")}>
+    <div className={"k-chat-turn k-chat-turn--assistant" + (lead ? " k-chat-turn--lead" : "") + (msg.error ? " k-chat-turn--error" : "")}>
       {lead && (
-        <div className="chat-turn__head">
-          <span className="chat-turn__tile" aria-hidden="true"><Icon name="bot" size={13} strokeWidth={2} /></span>
-          <span className="chat-turn__name">{assistantName}</span>
+        <div className="k-chat-turn__head">
+          <span className="k-chat-turn__tile" aria-hidden="true"><Icon name="bot" size={13} strokeWidth={2} /></span>
+          <span className="k-chat-turn__name">{assistantName}</span>
         </div>
       )}
       <ChatActivity msg={msg} />
-      {answer && <div className="chat-turn__answer">{renderMarkdown(answer)}</div>}
+      {answer && <div className="k-chat-turn__answer">{renderMarkdown(answer)}</div>}
       {errorText && (
-        <div className="chat-turn__warning" role="alert">
+        <div className="k-chat-turn__warning" role="alert">
           <Icon name="alert-triangle" size={14} strokeWidth={2} />
           <span>{errorText}</span>
         </div>
@@ -87,7 +87,7 @@ function AssistantTurn({ msg, assistantName, lead, renderCards, onRate, readOnly
       {msg.cards && msg.cards.length > 0 && renderCards && renderCards(msg)}
       {/* Only a finished answer can be copied or judged: a turn still streaming has nothing to rate yet. */}
       {finished && (
-        <div className="chat-turn__meta">
+        <div className="k-chat-turn__meta">
           <CopyAnswer text={answer} />
           {/* Only an answer the assistant recorded as a turn can be rated; a command's reply has none. */}
           {(onRate || readOnlyFeedback) && msg.turnId != null && (

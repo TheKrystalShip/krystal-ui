@@ -33,19 +33,19 @@ function FooterLink({ link }) {
     link.onClick();
   } : undefined;
   return (
-    <a className={"kfoot__link" + (link.featured ? " kfoot__link--featured" : "")}
+    <a className={"k-footer__link" + (link.featured ? " k-footer__link--featured" : "")}
        href={link.href} onClick={onClick}
        {...(own ? {} : { target: "_blank", rel: "noreferrer noopener" })}>
-      <span className="kfoot__link-ico">
+      <span className="k-footer__link-ico">
         {link.glyph || <Icon name={link.icon || "link"} size={15} />}
       </span>
-      <span className="kfoot__link-text">
-        <span className="kfoot__link-name">
-          {link.scope && <span className="kfoot__link-scope">{link.scope}</span>}{link.name}
+      <span className="k-footer__link-text">
+        <span className="k-footer__link-name">
+          {link.scope && <span className="k-footer__link-scope">{link.scope}</span>}{link.name}
         </span>
-        {link.sub && <span className="kfoot__link-sub">{link.sub}</span>}
+        {link.sub && <span className="k-footer__link-sub">{link.sub}</span>}
       </span>
-      <span className="kfoot__link-arrow">
+      <span className="k-footer__link-arrow">
         <Icon name={own ? "arrow-right" : "arrow-up-right"} size={14} strokeWidth={2.2} />
       </span>
     </a>
@@ -79,28 +79,28 @@ function FooterLink({ link }) {
  */
 function Footer({ mark, wordmark, tagline, note, live = false, groups = [], copy, end }) {
   return (
-    <footer className="kfoot" role="contentinfo">
-      <div className="kfoot__inner">
-        <div className="kfoot__brand">
-          <div className="kfoot__brand-row">
-            {mark && <img src={mark} width="34" height="34" alt="" className="kfoot__mark" />}
-            <span className="kfoot__wordmark">{wordmark}</span>
+    <footer className="k-footer" role="contentinfo">
+      <div className="k-footer__inner">
+        <div className="k-footer__brand">
+          <div className="k-footer__brand-row">
+            {mark && <img src={mark} width="34" height="34" alt="" className="k-footer__mark" />}
+            <span className="k-footer__wordmark">{wordmark}</span>
           </div>
-          {tagline && <p className="kfoot__tagline">{tagline}</p>}
+          {tagline && <p className="k-footer__tagline">{tagline}</p>}
           {note && (
-            <div className="kfoot__note">
-              {live && <span className="kfoot__note-dot" />}
+            <div className="k-footer__note">
+              {live && <span className="k-footer__note-dot" />}
               {note}
             </div>
           )}
         </div>
 
-        <div className="kfoot__groups">
+        <div className="k-footer__groups">
           {groups.map((g) => (
-            <div key={g.label} className={"kfoot__group" + (g.mono ? " kfoot__group--mono" : "")}
+            <div key={g.label} className={"k-footer__group" + (g.mono ? " k-footer__group--mono" : "")}
                  style={/** @type {import("react").CSSProperties} */ ({ "--kfoot-columns": g.columns || 1 })}>
-              <div className="kfoot__group-label">{g.label}</div>
-              <div className="kfoot__group-links">
+              <div className="k-footer__group-label">{g.label}</div>
+              <div className="k-footer__group-links">
                 {g.links.map((l) => <FooterLink key={l.href} link={l} />)}
               </div>
             </div>
@@ -109,9 +109,9 @@ function Footer({ mark, wordmark, tagline, note, live = false, groups = [], copy
       </div>
 
       {(copy || end) && (
-        <div className="kfoot__bar">
-          <span className="kfoot__copy">{copy}</span>
-          {end && <span className="kfoot__end">{end}</span>}
+        <div className="k-footer__bar">
+          <span className="k-footer__copy">{copy}</span>
+          {end && <span className="k-footer__end">{end}</span>}
         </div>
       )}
     </footer>

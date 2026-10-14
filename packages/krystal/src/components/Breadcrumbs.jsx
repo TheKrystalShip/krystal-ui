@@ -22,18 +22,18 @@ export function Breadcrumbs({ items, onNavigate, className }) {
     onNavigate(href, e);
   };
   return (
-    <nav aria-label="Breadcrumb" className={"crumbs" + (className ? " " + className : "")}>
-      <ol className="crumbs__list">
+    <nav aria-label="Breadcrumb" className={"k-breadcrumbs" + (className ? " " + className : "")}>
+      <ol className="k-breadcrumbs__list">
         {items.map((it, i) => {
           const title = typeof it.label === "string" ? it.label : undefined;
           return (
-            <li key={i} className="crumbs__item">
+            <li key={i} className="k-breadcrumbs__item">
               {i === last ? (
-                <span className="crumbs__current" aria-current="page" title={title}>{it.label}</span>
+                <span className="k-breadcrumbs__current" aria-current="page" title={title}>{it.label}</span>
               ) : it.href ? (
-                <a className="crumbs__link" href={it.href} title={title} onClick={click(it.href)}>{it.label}</a>
+                <a className="k-breadcrumbs__link" href={it.href} title={title} onClick={click(it.href)}>{it.label}</a>
               ) : (
-                <span className="crumbs__text" title={title}>{it.label}</span>
+                <span className="k-breadcrumbs__text" title={title}>{it.label}</span>
               )}
             </li>
           );

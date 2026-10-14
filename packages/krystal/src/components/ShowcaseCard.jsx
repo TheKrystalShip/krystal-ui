@@ -50,49 +50,49 @@ function ShowcaseCard({ name, art, onPick, eyebrow, corner, badge, specs = [], s
   const open = () => { if (onPick) onPick(); };
   return (
     <article
-      className={"showcase-card" + (className ? " " + className : "")}
+      className={"k-showcase-card" + (className ? " " + className : "")}
       onClick={open}
       role="button" tabIndex={0}
       onKeyDown={e => { if ((e.key === "Enter" || e.key === " ") && e.target === e.currentTarget) { e.preventDefault(); open(); } }}
     >
       <div
-        className={"showcase-card__art" + (ribbon ? " showcase-card__art--ribbon" : "")}
+        className={"k-showcase-card__art" + (ribbon ? " k-showcase-card__art--ribbon" : "")}
         style={art ? { backgroundImage: art, backgroundSize: "cover", backgroundPosition: "center" } : undefined}
       >
         {ribbon && (
           <button
             type="button"
-            className={"showcase-card__ribbon" + (ribbon.on ? " is-on" : "")}
+            className={"k-showcase-card__ribbon" + (ribbon.on ? " k-is-on" : "")}
             aria-label={ribbon.label}
             aria-pressed={!!ribbon.on}
             title={ribbon.label}
             disabled={ribbon.disabled}
             onClick={e => { e.stopPropagation(); ribbon.onClick(e); }}
           >
-            <span className="showcase-card__ribbon-tab">
+            <span className="k-showcase-card__ribbon-tab">
               <Icon name={ribbon.on ? ribbon.iconOn || ribbon.icon : ribbon.icon} size={15} strokeWidth={2.1} />
             </span>
           </button>
         )}
         {corner && (
-          <span className="showcase-card__corner" title={corner.title}>
+          <span className="k-showcase-card__corner" title={corner.title}>
             {corner.icon && <Icon name={corner.icon} size={11} strokeWidth={2.1} />} {corner.label}
           </span>
         )}
         {badge && (
           <Pill tone={badge.tone || "accent"} dot={badge.dot ? (badge.dot === "live" ? "live" : true) : undefined}
-            dotClassName="showcase-card__badge-dot" title={badge.title}
-            className={"showcase-card__badge showcase-card__badge--" + (badge.tone || "accent")}>
+            dotClassName="k-showcase-card__badge-dot" title={badge.title}
+            className={"k-showcase-card__badge k-showcase-card__badge--" + (badge.tone || "accent")}>
             {badge.label}
           </Pill>
         )}
         {tools && tools.length > 0 && (
-          <div className={"showcase-card__tools" + (badge ? " showcase-card__tools--under" : "")}>
+          <div className={"k-showcase-card__tools" + (badge ? " k-showcase-card__tools--under" : "")}>
             {tools.map(t => (
               <button
                 key={t.label}
                 type="button"
-                className={"showcase-card__tool" + (t.on ? " is-on" : "") + (t.tone ? " showcase-card__tool--" + t.tone : "")}
+                className={"k-showcase-card__tool" + (t.on ? " k-is-on" : "") + (t.tone ? " k-showcase-card__tool--" + t.tone : "")}
                 aria-label={t.label}
                 aria-pressed={t.on === undefined ? undefined : t.on}
                 title={t.label}
@@ -103,61 +103,61 @@ function ShowcaseCard({ name, art, onPick, eyebrow, corner, badge, specs = [], s
             ))}
           </div>
         )}
-        <div className="showcase-card__veil"></div>
-        <div className="showcase-card__caption">
+        <div className="k-showcase-card__veil"></div>
+        <div className="k-showcase-card__caption">
           {eyebrow && (
-            <span className={"showcase-card__eyebrow" + (eyebrow.tone ? " showcase-card__eyebrow--" + eyebrow.tone : "")}>
+            <span className={"k-showcase-card__eyebrow" + (eyebrow.tone ? " k-showcase-card__eyebrow--" + eyebrow.tone : "")}>
               {eyebrow.icon && <Icon name={eyebrow.icon} size={12} strokeWidth={2.1} />}
               {eyebrow.label}
             </span>
           )}
-          <h3 className="showcase-card__name">{name}</h3>
+          <h3 className="k-showcase-card__name">{name}</h3>
         </div>
         {segments && segments.length > 0 ? (
-          <span className="showcase-card__segments" aria-hidden="true">
+          <span className="k-showcase-card__segments" aria-hidden="true">
             {segments.map((f, i) => (
               <span key={i}><span style={{ width: `${Math.round(100 * Math.min(1, Math.max(0, f)))}%` }}></span></span>
             ))}
           </span>
         ) : progress != null && (
-          <span className={"showcase-card__progress" + (progress >= 1 ? " is-done" : "")} aria-hidden="true">
+          <span className={"k-showcase-card__progress" + (progress >= 1 ? " k-is-done" : "")} aria-hidden="true">
             <span style={{ width: `${Math.round(100 * Math.min(1, Math.max(0, progress)))}%` }}></span>
           </span>
         )}
       </div>
 
       {specs.length > 0 && (
-        <div className="showcase-card__specs" style={{ gridTemplateColumns: `repeat(${specs.length}, 1fr)` }}>
+        <div className="k-showcase-card__specs" style={{ gridTemplateColumns: `repeat(${specs.length}, 1fr)` }}>
           {specs.map(s => (
-            <div key={s.label} className={"showcase-spec" + (s.value == null ? " showcase-spec--unknown" : "")}>
-              <span className="showcase-spec__val">
-                {s.icon && <span className="showcase-spec__ico"><Icon name={s.icon} size={12} strokeWidth={2} /></span>} {s.value ?? "—"}
+            <div key={s.label} className={"k-showcase-spec" + (s.value == null ? " k-showcase-spec--unknown" : "")}>
+              <span className="k-showcase-spec__val">
+                {s.icon && <span className="k-showcase-spec__ico"><Icon name={s.icon} size={12} strokeWidth={2} /></span>} {s.value ?? "—"}
               </span>
-              <span className="showcase-spec__lbl">{s.label}</span>
+              <span className="k-showcase-spec__lbl">{s.label}</span>
             </div>
           ))}
         </div>
       )}
 
-      <div className="showcase-card__foot">
+      <div className="k-showcase-card__foot">
         {status ? (
-          <span className={"showcase-card__status" + (status.tone ? " showcase-card__status--" + status.tone : "")} title={status.title}>
-            {status.live && <span className="showcase-card__livedot"></span>}
+          <span className={"k-showcase-card__status" + (status.tone ? " k-showcase-card__status--" + status.tone : "")} title={status.title}>
+            {status.live && <span className="k-showcase-card__livedot"></span>}
             {status.icon && <Icon name={status.icon} size={11} />}
             {status.label}
           </span>
-        ) : <span className="showcase-card__status"></span>}
+        ) : <span className="k-showcase-card__status"></span>}
         {action && (action.onClick ? (
           <button
             type="button"
-            className="showcase-card__cta showcase-card__cta--act"
+            className="k-showcase-card__cta k-showcase-card__cta--act"
             title={action.title}
             onClick={e => { e.stopPropagation(); action.onClick(); }}
           >
             {action.label} <Icon name="arrow-right" size={13} strokeWidth={2.2} />
           </button>
         ) : (
-          <span className="showcase-card__cta">
+          <span className="k-showcase-card__cta">
             {action.label} <Icon name="arrow-right" size={13} strokeWidth={2.2} />
           </span>
         ))}

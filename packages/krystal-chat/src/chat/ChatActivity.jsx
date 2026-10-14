@@ -63,13 +63,13 @@ function ActivityList({ id, msg }) {
   const tools = msg.tools || [];
   const steps = msg.steps || [];
   return (
-    <ol className="chat-activity__list" id={id}>
+    <ol className="k-chat-activity__list" id={id}>
       {msg.thinking && (
-        <li className="chat-activity__row">
-          <span className="chat-activity__mark"><Icon name="brain" size={11} strokeWidth={2} /></span>
-          <div className="chat-activity__row-body">
-            <span className="chat-activity__label">Thought</span>
-            <p className="chat-activity__thought">{msg.thinking}</p>
+        <li className="k-chat-activity__row">
+          <span className="k-chat-activity__mark"><Icon name="brain" size={11} strokeWidth={2} /></span>
+          <div className="k-chat-activity__row-body">
+            <span className="k-chat-activity__label">Thought</span>
+            <p className="k-chat-activity__thought">{msg.thinking}</p>
           </div>
         </li>
       )}
@@ -78,14 +78,14 @@ function ActivityList({ id, msg }) {
         const summary = t.summary || "";
         const long = !pending && isLong(summary);
         return (
-          <li key={(t.id || "t") + ":" + i} className={"chat-activity__row" + (pending ? " is-active" : " is-done")}>
-            <span className="chat-activity__mark">
+          <li key={(t.id || "t") + ":" + i} className={"k-chat-activity__row" + (pending ? " k-chat-is-active" : " k-is-done")}>
+            <span className="k-chat-activity__mark">
               {pending ? <Spinner size={10} /> : <Icon name="check" size={11} strokeWidth={2.4} />}
             </span>
-            <div className="chat-activity__row-body">
-              <span className="chat-activity__label">{t.label}</span>
-              {!pending && summary && !long && <span className="chat-activity__detail"> · {summary}</span>}
-              {long && <pre className="chat-activity__block">{summary}</pre>}
+            <div className="k-chat-activity__row-body">
+              <span className="k-chat-activity__label">{t.label}</span>
+              {!pending && summary && !long && <span className="k-chat-activity__detail"> · {summary}</span>}
+              {long && <pre className="k-chat-activity__block">{summary}</pre>}
             </div>
           </li>
         );
@@ -93,12 +93,12 @@ function ActivityList({ id, msg }) {
       {steps.map((s, i) => {
         const active = s.status === "active";
         return (
-          <li key={(s.key || "s") + ":" + i} className={"chat-activity__row" + (active ? " is-active" : " is-done")}>
-            <span className="chat-activity__mark">
+          <li key={(s.key || "s") + ":" + i} className={"k-chat-activity__row" + (active ? " k-chat-is-active" : " k-is-done")}>
+            <span className="k-chat-activity__mark">
               {active ? <Spinner size={10} /> : <Icon name="check" size={11} strokeWidth={2.4} />}
             </span>
-            <div className="chat-activity__row-body">
-              <span className="chat-activity__label">{s.label}</span>
+            <div className="k-chat-activity__row-body">
+              <span className="k-chat-activity__label">{s.label}</span>
             </div>
           </li>
         );
@@ -131,24 +131,24 @@ function ChatActivity({ msg }) {
     : <Icon name={open ? "chevron-down" : "chevron-right"} size={13} strokeWidth={2.2} />;
   const words = (
     <>
-      <span className="chat-activity__text" role={work ? "status" : undefined}>
+      <span className="k-chat-activity__text" role={work ? "status" : undefined}>
         {work ? work.label : summarize(thought, tools.length)}
       </span>
-      {work && work.count && <span className="chat-activity__aside">· {work.count}</span>}
-      {duration && <span className="chat-activity__aside">· {duration}</span>}
+      {work && work.count && <span className="k-chat-activity__aside">· {work.count}</span>}
+      {duration && <span className="k-chat-activity__aside">· {duration}</span>}
     </>
   );
 
   return (
-    <div className={"chat-activity" + (work ? " chat-activity--working" : "") + (open ? " chat-activity--open" : "")}>
+    <div className={"k-chat-activity" + (work ? " k-chat-activity--working" : "") + (open ? " k-chat-activity--open" : "")}>
       {hasList ? (
-        <Button variant="ghost" size="xs" className="chat-activity__toggle" icon={lead}
+        <Button variant="ghost" size="xs" className="k-chat-activity__toggle" icon={lead}
           aria-expanded={open} aria-controls={open ? listId : undefined}
           onClick={() => setOpen((o) => !o)}>
           {words}
         </Button>
       ) : (
-        <div className="chat-activity__toggle chat-activity__toggle--static">{lead}{words}</div>
+        <div className="k-chat-activity__toggle k-chat-activity__toggle--static">{lead}{words}</div>
       )}
       {open && hasList && <ActivityList id={listId} msg={msg} />}
     </div>

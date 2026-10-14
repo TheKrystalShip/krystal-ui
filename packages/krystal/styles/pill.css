@@ -80,7 +80,7 @@
   opacity: 0.7;
 }
 
-.k-pill__dot.is-live {
+.k-pill__dot.k-is-live {
   background: var(--success);
   opacity: 1;
 }

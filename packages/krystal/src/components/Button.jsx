@@ -65,7 +65,7 @@ const Button = React.forwardRef(function Button({
   const cls = "k-btn k-btn--" + variant + " k-btn--" + size
     + (tone ? " k-btn--tone-" + tone : "")
     + (wide ? " k-btn--wide" : "")
-    + (armed ? " is-armed" : "")
+    + (armed ? " k-is-armed" : "")
     + (children == null || children === false ? " k-btn--bare" : "")
     + (className ? " " + className : "");
   const body = (
@@ -122,7 +122,7 @@ const IconButton = React.forwardRef(function IconButton({
     <button ref={ref} type={type}
       className={"k-iconbtn k-iconbtn--" + variant + " k-iconbtn--" + size
         + (tone ? " k-iconbtn--tone-" + tone : "")
-        + (armed ? " is-armed" : "")
+        + (armed ? " k-is-armed" : "")
         + (className ? " " + className : "")}
       disabled={disabled || busy}
       aria-label={label}

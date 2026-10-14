@@ -3,11 +3,11 @@
    action card a proposal changes into as it runs, the one-line event rows and
    day separators, the /help and /tools cards, the write_file diff, and the
    label · value · verdict row every card body is written in.
-   The cards themselves are ChatCard (`.ev-card`, in chat.css).
+   The cards themselves are ChatCard (`.k-chat-card`, in chat.css).
    ============================================================================ */
 
 /* ---------- card rows ---------- */
-.chat-card-rows {
+.k-chat-card-rows {
   display: flex;
   flex-direction: column;
   padding: 2px 12px;
@@ -16,7 +16,7 @@
 /* Label and value hold the two named columns; a verdict mark or a button takes one more at the end.
    The label column is 150px so short labels line up down a card, and grows for a longer one: a label
    is often an identifier (a config key), and one broken mid-word no longer reads as itself. */
-.chat-card-row {
+.k-chat-card-row {
   display: grid;
   grid-template-columns: minmax(min(150px, 40%), auto) minmax(0, 1fr);
   grid-auto-flow: column;
@@ -29,92 +29,92 @@
   color: var(--fg-1);
 }
 
-.chat-card-row + .chat-card-row,
-.chat-cmds__group + .chat-cmds__group {
+.k-chat-card-row + .k-chat-card-row,
+.k-chat-cmds__group + .k-chat-cmds__group {
   border-top: 1px solid var(--border-subtle);
 }
 
 /* A row with no label: one sentence across both columns. */
-.chat-card-row--bare {
+.k-chat-card-row--bare {
   grid-template-columns: minmax(0, 1fr);
 }
 
-.chat-card-row__label {
+.k-chat-card-row__label {
   color: var(--fg-3);
   overflow-wrap: anywhere;
 }
 
-.chat-card-row__label--mono {
+.k-chat-card-row__label--mono {
   font-family: var(--font-mono);
   color: var(--fg-1);
 }
 
-.chat-card-row__value {
+.k-chat-card-row__value {
   min-width: 0;
   overflow-wrap: anywhere;
 }
 
-.chat-card-row__value--mono {
+.k-chat-card-row__value--mono {
   font-family: var(--font-mono);
   font-size: 12px;
 }
 
-.chat-card-row__verdict {
+.k-chat-card-row__verdict {
   display: inline-flex;
 }
 
-.chat-card-row--neutral .chat-card-row__verdict {
+.k-chat-card-row--neutral .k-chat-card-row__verdict {
   color: var(--fg-4);
 }
 
-.chat-card-row--ok .chat-card-row__verdict {
+.k-chat-card-row--ok .k-chat-card-row__verdict {
   color: var(--success-fg);
 }
 
-.chat-card-row--warn .chat-card-row__verdict {
+.k-chat-card-row--warn .k-chat-card-row__verdict {
   color: var(--warning-fg);
 }
 
-.chat-card-row--danger .chat-card-row__verdict,
-.chat-card-row--danger .chat-card-row__value {
+.k-chat-card-row--danger .k-chat-card-row__verdict,
+.k-chat-card-row--danger .k-chat-card-row__value {
   color: var(--danger-fg);
 }
 
 /* ---------- the action card ---------- */
 /* Its title is the outcome's sentence, which can run long: it wraps instead of clipping. */
-.chat-actcard .ev-card__title {
+.k-chat-actcard .k-chat-card__title {
   white-space: normal;
   overflow-wrap: break-word;
 }
 
-.chat-actcard__btns {
+.k-chat-actcard__btns {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
 /* The confirm press keeps its variant's fill, ringed, so a destructive confirm still reads as one. */
-.chat-actcard__btns .k-btn.is-armed,
-.chat-actcard__btns .k-btn.is-armed:hover:not(:disabled) {
+.k-chat-actcard__btns .k-btn.k-is-armed,
+.k-chat-actcard__btns .k-btn.k-is-armed:hover:not(:disabled) {
   animation: none;
 }
 
-.chat-actcard__btns .k-btn--primary.is-armed,
-.chat-actcard__btns .k-btn--primary.is-armed:hover:not(:disabled) {
+.k-chat-actcard__btns .k-btn--primary.k-is-armed,
+.k-chat-actcard__btns .k-btn--primary.k-is-armed:hover:not(:disabled) {
   background: var(--krystal-teal);
   color: var(--on-accent);
   box-shadow: 0 0 0 4px var(--krystal-teal-dim);
 }
 
-.chat-actcard__btns .k-btn--danger.is-armed,
-.chat-actcard__btns .k-btn--danger.is-armed:hover:not(:disabled) {
+.k-chat-actcard__btns .k-btn--danger.k-is-armed,
+.k-chat-actcard__btns .k-btn--danger.k-is-armed:hover:not(:disabled) {
   background: var(--danger);
   color: var(--on-danger);
   box-shadow: 0 0 0 4px var(--danger-bg);
 }
 
 /* The content a write_file proposal saves, when there is no current file to compare it with. */
-.chat-actcard__file {
+.k-chat-actcard__file {
   margin: 0;
   max-height: 320px;
   overflow: auto;
@@ -126,7 +126,7 @@
 }
 
 /* ---------- the write_file diff ---------- */
-.chat-diff {
+.k-chat-diff {
   max-height: 320px;
   overflow: auto;
   padding: 8px 0;
@@ -134,7 +134,7 @@
   font: 12px/1.7 var(--font-mono);
 }
 
-.chat-diff__line {
+.k-chat-diff__line {
   display: flex;
   min-width: max-content;
   padding: 0 12px;
@@ -142,23 +142,23 @@
   color: var(--fg-3);
 }
 
-.chat-diff__mark {
+.k-chat-diff__mark {
   flex: 0 0 2ch;
   user-select: none;
 }
 
-.chat-diff__line--del {
+.k-chat-diff__line--del {
   background: color-mix(in srgb, var(--danger) 10%, transparent);
   color: var(--danger-fg);
 }
 
-.chat-diff__line--add {
+.k-chat-diff__line--add {
   background: color-mix(in srgb, var(--success) 10%, transparent);
   color: var(--success-fg);
 }
 
 /* A folded run of unchanged lines. */
-.chat-diff__line--skip {
+.k-chat-diff__line--skip {
   padding-left: calc(12px + 2ch);
   font-family: var(--font-ui);
   font-size: 11.5px;
@@ -166,7 +166,7 @@
 }
 
 /* ---------- events ---------- */
-.chat-event {
+.k-chat-event {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,41 +178,41 @@
   text-align: center;
 }
 
-.chat-event__icon {
+.k-chat-event__icon {
   display: inline-flex;
   flex-shrink: 0;
 }
 
-.chat-event__icon--accent {
+.k-chat-event__icon--accent {
   color: var(--krystal-teal);
 }
 
-.chat-event__icon--warning {
+.k-chat-event__icon--warning {
   color: var(--warning-fg);
 }
 
-.chat-event__icon--success {
+.k-chat-event__icon--success {
   color: var(--success-fg);
 }
 
-.chat-event__text {
+.k-chat-event__text {
   min-width: 0;
   overflow-wrap: break-word;
 }
 
-.chat-event__time {
+.k-chat-event__time {
   flex-shrink: 0;
   color: var(--fg-4);
 }
 
 /* The assistant gone: the line changes what the person can do, so all of it carries the warning. */
-.chat-event--alert,
-.chat-event--alert .chat-event__time {
+.k-chat-event--alert,
+.k-chat-event--alert .k-chat-event__time {
   color: var(--warning-fg);
 }
 
 /* The reconnected mark. */
-.chat-event__dot {
+.k-chat-event__dot {
   width: 6px;
   height: 6px;
   margin: 0 4px;
@@ -220,17 +220,17 @@
   background: var(--success);
 }
 
-.chat-event--day {
+.k-chat-event--day {
   font-weight: var(--w-medium);
   color: var(--fg-3);
 }
 
 /* ---------- /help and /tools ---------- */
-.chat-cmds {
+.k-chat-cmds {
   container-type: inline-size;
 }
 
-.chat-cmds__grouphead {
+.k-chat-cmds__grouphead {
   padding: 8px 0 2px;
   font-size: 11px;
   font-weight: var(--w-semibold);
@@ -239,40 +239,40 @@
   color: var(--fg-4);
 }
 
-.chat-cmds .chat-card-row__value {
+.k-chat-cmds .k-chat-card-row__value {
   color: var(--fg-3);
 }
 
-.chat-cmds--tools .chat-card-row {
+.k-chat-cmds--tools .k-chat-card-row {
   grid-template-columns: minmax(0, 170px) minmax(0, 1fr);
 }
 
-.chat-cmds--tools .chat-card-row__label {
+.k-chat-cmds--tools .k-chat-card-row__label {
   color: var(--fg-1);
 }
 
 /* Narrow: the name and its Use share the first line, the description takes the second. */
 @container (max-width: 480px) {
-  .chat-cmds .chat-card-row,
-  .chat-cmds--tools .chat-card-row {
+  .k-chat-cmds .k-chat-card-row,
+  .k-chat-cmds--tools .k-chat-card-row {
     grid-template-columns: minmax(0, 1fr);
     grid-auto-flow: row;
     row-gap: 2px;
   }
 
-  .chat-cmds .chat-card-row__label {
+  .k-chat-cmds .k-chat-card-row__label {
     grid-area: 1 / 1;
   }
 
-  .chat-cmds__use {
+  .k-chat-cmds__use {
     grid-area: 1 / 2;
   }
 
-  .chat-cmds .chat-card-row__value {
+  .k-chat-cmds .k-chat-card-row__value {
     grid-area: 2 / 1 / 3 / -1;
   }
 
-  .chat-cmds .chat-card-row--bare .chat-card-row__value {
+  .k-chat-cmds .k-chat-card-row--bare .k-chat-card-row__value {
     grid-area: auto;
   }
 }
@@ -280,7 +280,7 @@
 /* ---------- questions ---------- */
 /* Asked and still waiting: one group per question, each option a row, a field for the person's own
    words, and one press to send. */
-.chat-questions {
+.k-chat-questions {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -291,14 +291,14 @@
   animation: chat-ctx-in var(--d-base) var(--ease-out);
 }
 
-.chat-questions__item {
+.k-chat-questions__item {
   display: flex;
   flex-direction: column;
   gap: 8px;
   min-width: 0;
 }
 
-.chat-questions__header {
+.k-chat-questions__header {
   align-self: flex-start;
   padding: 1px 8px;
   border: var(--edge);
@@ -307,7 +307,7 @@
   font-size: 11.5px;
 }
 
-.chat-questions__text {
+.k-chat-questions__text {
   margin: 0;
   color: var(--fg-1);
   font-size: 14.5px;
@@ -315,13 +315,13 @@
   overflow-wrap: break-word;
 }
 
-.chat-questions__foot {
+.k-chat-questions__foot {
   display: flex;
   justify-content: flex-end;
 }
 
 /* Asked and moved past: the questions as plain text, the answers being the message below them. */
-.chat-asked {
+.k-chat-asked {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -330,12 +330,12 @@
   line-height: 1.5;
 }
 
-.chat-asked__row {
+.k-chat-asked__row {
   margin: 0;
   overflow-wrap: break-word;
 }
 
-.chat-asked__header {
+.k-chat-asked__header {
   margin-right: 8px;
   color: var(--fg-4);
   font-size: 12px;

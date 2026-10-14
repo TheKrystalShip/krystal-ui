@@ -87,7 +87,7 @@ function ChatVerify({ msg, title, auto }) {
   const running = title || [action.label, action.serverName].filter(Boolean).join(" ");
   if (msg.state === "pending") {
     return (
-      <ChatCard className="chat-actcard" tone="accent" icon={<Spinner size={14} />}
+      <ChatCard className="k-chat-actcard" tone="accent" icon={<Spinner size={14} />}
         title={running} sub={msg.progress || "Waiting for the result"} subMono={false} />
     );
   }
@@ -100,7 +100,7 @@ function ChatVerify({ msg, title, auto }) {
   const who = (auto || msg.auto) ? "Auto-run" : "You confirmed";
   const sub = who + (at ? " · " + (tone === "ok" ? "verified " : tone === "warn" ? "checked " : "") + at : "");
   return (
-    <ChatCard className="chat-actcard" tone={tone}
+    <ChatCard className="k-chat-actcard" tone={tone}
       icon={tone === "ok" ? "circle-check" : tone === "warn" ? "alert-triangle" : "circle-x"}
       title={asTitle(r.headline)} sub={sub} subMono={false}>
       {lines.length > 0 && (
@@ -141,21 +141,21 @@ function ChatFileChange({ file }) {
   if (!rows) {
     return (
       <>
-        {omitted && <div className="chat-diff__line chat-diff__line--skip">{omitted}</div>}
-        <pre className="chat-actcard__file">{file.proposedContent}</pre>
+        {omitted && <div className="k-chat-diff__line k-chat-diff__line--skip">{omitted}</div>}
+        <pre className="k-chat-actcard__file">{file.proposedContent}</pre>
       </>
     );
   }
   return (
-    <div className="chat-diff" role="group" aria-label={"Changes to " + baseName(file.path)}>
+    <div className="k-chat-diff" role="group" aria-label={"Changes to " + baseName(file.path)}>
       {rows.map((r, i) => r.type === "skip"
-        ? <div key={i} className="chat-diff__line chat-diff__line--skip">{r.count + " unchanged line" + (r.count === 1 ? "" : "s")}</div>
+        ? <div key={i} className="k-chat-diff__line k-chat-diff__line--skip">{r.count + " unchanged line" + (r.count === 1 ? "" : "s")}</div>
         : (
-          <div key={i} className={"chat-diff__line chat-diff__line--" + r.type}>
-            <span className="chat-diff__mark" aria-label={r.type === "add" ? "added" : r.type === "del" ? "removed" : undefined}>
+          <div key={i} className={"k-chat-diff__line k-chat-diff__line--" + r.type}>
+            <span className="k-chat-diff__mark" aria-label={r.type === "add" ? "added" : r.type === "del" ? "removed" : undefined}>
               {r.type === "add" ? "+" : r.type === "del" ? "-" : " "}
             </span>
-            <span className="chat-diff__text">{r.text}</span>
+            <span className="k-chat-diff__text">{r.text}</span>
           </div>
         ))}
     </div>
@@ -221,13 +221,13 @@ function ChatCommand({
   if (outcome) return <ChatVerify msg={outcome} title={title} auto={msg.auto} />;
 
   if (msg.state === "confirmed") {
-    return <ChatCard className="chat-actcard" icon="check" title={title} sub="You confirmed" subMono={false} />;
+    return <ChatCard className="k-chat-actcard" icon="check" title={title} sub="You confirmed" subMono={false} />;
   }
   if (msg.state === "declined") {
-    return <ChatCard className="chat-actcard" tone="muted" icon="x" title={title} sub="Declined" subMono={false} />;
+    return <ChatCard className="k-chat-actcard" tone="muted" icon="x" title={title} sub="Declined" subMono={false} />;
   }
   if (msg.state === "expired" || lapsed) {
-    return <ChatCard className="chat-actcard" tone="muted" icon="clock" title={title} sub="Expired" subMono={false} />;
+    return <ChatCard className="k-chat-actcard" tone="muted" icon="clock" title={title} sub="Expired" subMono={false} />;
   }
 
   const body = file && <ChatFileChange file={file} />;
@@ -235,7 +235,7 @@ function ChatCommand({
 
   if (!runnable) {
     return (
-      <ChatCard className="chat-actcard" icon={file ? "file-pen" : meta.icon} title={title}
+      <ChatCard className="k-chat-actcard" icon={file ? "file-pen" : meta.icon} title={title}
         sub={file ? sub : unavailable} subMono={!!file}
         action={<Button size="sm" disabled title={unavailable}>{file ? "Save the file" : meta.label}</Button>}>
         {body}
@@ -247,10 +247,10 @@ function ChatCommand({
     // A confirm question that only restates the verb says nothing the title does not.
     const question = msg.confirm && msg.confirm !== title + "?" && msg.confirm !== meta.label + "?" ? msg.confirm : null;
     return (
-      <ChatCard className="chat-actcard" tone="warn" icon={file ? "file-pen" : meta.icon}
+      <ChatCard className="k-chat-actcard" tone="warn" icon={file ? "file-pen" : meta.icon}
         title={title + "?"} sub={question} subMono={false}
         action={(
-          <div className="chat-actcard__btns">
+          <div className="k-chat-actcard__btns">
             <Button ref={cancelRef} variant="ghost" size="sm" onClick={() => setArmed(false)}>Cancel</Button>
             <Button variant={meta.tone === "danger" ? "danger" : "primary"} size="sm" armed
               onClick={() => { setArmed(false); onRun(msg); }}>
@@ -264,10 +264,10 @@ function ChatCommand({
   }
 
   return (
-    <ChatCard className="chat-actcard" tone={msg.error ? "warn" : "accent"} icon={file ? "file-pen" : meta.icon} title={title}
+    <ChatCard className="k-chat-actcard" tone={msg.error ? "warn" : "accent"} icon={file ? "file-pen" : meta.icon} title={title}
       sub={file ? sub : msg.error || msg.summary || msg.reason} subMono={!!file}
       action={(
-        <div className="chat-actcard__btns">
+        <div className="k-chat-actcard__btns">
           {onDecline && <Button variant="ghost" size="sm" onClick={() => onDecline(msg)}>Decline</Button>}
           <Button variant="primary" size="sm" onClick={() => setArmed(true)}>
             {file ? "Save the file" : meta.label}
@@ -296,14 +296,14 @@ function ChatCommand({
 function ChatEventRow({ icon, tone, alert = false, at, className, children }) {
   const time = clockOf(entryTime({ at }));
   return (
-    <div className={"chat-event" + (alert ? " chat-event--alert" : "") + (className ? " " + className : "")}>
+    <div className={"k-chat-event" + (alert ? " k-chat-event--alert" : "") + (className ? " " + className : "")}>
       {icon && (
-        <span className={"chat-event__icon" + (tone ? " chat-event__icon--" + tone : "")}>
+        <span className={"k-chat-event__icon" + (tone ? " k-chat-event__icon--" + tone : "")}>
           {typeof icon === "string" ? <Icon name={icon} size={14} strokeWidth={2} /> : icon}
         </span>
       )}
-      <span className="chat-event__text">{children}</span>
-      {time && <span className="chat-event__time">{"· " + time}</span>}
+      <span className="k-chat-event__text">{children}</span>
+      {time && <span className="k-chat-event__time">{"· " + time}</span>}
     </div>
   );
 }
@@ -316,7 +316,7 @@ function ChatEventRow({ icon, tone, alert = false, at, className, children }) {
 function ChatDaySeparator({ at }) {
   const t = entryTime({ at });
   if (t == null) return null;
-  return <div className="chat-event chat-event--day" role="separator">{dayLabel(t)}</div>;
+  return <div className="k-chat-event k-chat-event--day" role="separator">{dayLabel(t)}</div>;
 }
 
 // An event entry in the transcript, worded from what it records — which switch moved and where it
@@ -353,7 +353,7 @@ function ChatEvent({ msg }) {
             The assistant stopped answering · messages wait until it’s back
           </ChatEventRow>
         )
-        : <ChatEventRow icon={<span className="chat-event__dot" />} at={at}>Reconnected</ChatEventRow>;
+        : <ChatEventRow icon={<span className="k-chat-event__dot" />} at={at}>Reconnected</ChatEventRow>;
     case "day":
       return <ChatDaySeparator at={at} />;
     default:

@@ -28,7 +28,7 @@ import { Icon } from "./Icon.jsx";
 function Pill({ tone = "neutral", icon, dot, size = "md", className, dotClassName, children, ...rest }) {
   return (
     <span {...rest} className={"k-pill k-pill--" + tone + " k-pill--" + size + (className ? " " + className : "")}>
-      {dot ? <span className={"k-pill__dot" + (dot === "live" ? " is-live" : "") + (dotClassName ? " " + dotClassName : "")} aria-hidden="true"></span>
+      {dot ? <span className={"k-pill__dot" + (dot === "live" ? " k-is-live" : "") + (dotClassName ? " " + dotClassName : "")} aria-hidden="true"></span>
         : icon ? <Icon name={icon} size={size === "sm" ? 10 : 12} className="k-pill__icon" /> : null}
       {children}
     </span>

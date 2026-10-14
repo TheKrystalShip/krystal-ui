@@ -101,7 +101,7 @@ function ChatThread({
     );
   });
 
-  return <div className="chat-thread">{out}</div>;
+  return <div className="k-chat-thread">{out}</div>;
 }
 
 export { ChatThread };

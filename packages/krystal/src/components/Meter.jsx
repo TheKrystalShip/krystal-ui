@@ -46,7 +46,7 @@ function Meter({ value, segments, max = 100, label, valueText, role, start, end,
       {parts.map((p, i) => (
         <span key={i}
           className={"k-meter__fill k-meter__fill--" + (p.tone || (segments ? "neutral" : "accent"))
-            + (p.value > 0 ? " is-some" : "")}
+            + (p.value > 0 ? " k-is-some" : "")}
           style={{ width: pct(p.value) + "%" }} />
       ))}
     </div>

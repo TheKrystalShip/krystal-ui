@@ -36,8 +36,8 @@ const Input = React.forwardRef(function Input(
     return <input ref={ref} className={cls} aria-invalid={invalid || undefined} {...rest} />;
   }
   return (
-    <span className={cls + " k-input--affixed" + (rest.disabled ? " is-disabled" : "")
-      + (invalid ? " is-invalid" : "")}>
+    <span className={cls + " k-input--affixed" + (rest.disabled ? " k-is-disabled" : "")
+      + (invalid ? " k-is-invalid" : "")}>
       {prefix != null && <span className="k-input__affix">{prefix}</span>}
       <input ref={ref} className="k-input__el" aria-invalid={invalid || undefined} {...rest} />
       {suffix != null && <span className="k-input__affix">{suffix}</span>}

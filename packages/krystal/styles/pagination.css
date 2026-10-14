@@ -1,7 +1,7 @@
 /* ============================================================================
    pagination.css — the page navigator under a paged list (<Pagination>).
    ============================================================================ */
-.pagination {
+.k-pagination {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -14,26 +14,26 @@
   border-radius: var(--r-sm);
 }
 
-.pagination__summary {
+.k-pagination__summary {
   font-size: 12px;
   color: var(--fg-3);
   white-space: nowrap;
 }
 
-.pagination__summary b {
+.k-pagination__summary b {
   color: var(--fg-1);
   font-weight: 600;
   font-family: var(--font-mono);
 }
 
-.pagination__controls {
+.k-pagination__controls {
   display: flex;
   align-items: center;
   gap: 4px;
   margin-left: auto;
 }
 
-.pagination__btn {
+.k-pagination__btn {
   min-width: 32px;
   height: 32px;
   padding: 0 9px;
@@ -53,30 +53,30 @@
     background var(--d-fast) var(--ease-out);
 }
 
-.pagination__btn:hover:not(:disabled):not(.is-current) {
+.k-pagination__btn:hover:not(:disabled):not(.k-is-current) {
   color: var(--fg-1);
   border-color: var(--border-strong);
   background: var(--surface-2);
 }
 
-.pagination__btn.is-current {
+.k-pagination__btn.k-is-current {
   background: var(--krystal-teal);
   border-color: var(--krystal-teal);
   color: var(--on-accent);
   cursor: default;
 }
 
-.pagination__btn:disabled {
+.k-pagination__btn:disabled {
   opacity: 0.35;
   cursor: default;
 }
 
-.pagination__btn--nav {
+.k-pagination__btn--nav {
   color: var(--fg-3);
   padding: 0;
 }
 
-.pagination__gap {
+.k-pagination__gap {
   min-width: 22px;
   text-align: center;
   color: var(--fg-4);
@@ -86,17 +86,17 @@
 }
 
 @media (max-width: 560px) {
-  .pagination {
+  .k-pagination {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
   }
 
-  .pagination__summary {
+  .k-pagination__summary {
     text-align: center;
   }
 
-  .pagination__controls {
+  .k-pagination__controls {
     margin-left: 0;
     justify-content: center;
     flex-wrap: wrap;

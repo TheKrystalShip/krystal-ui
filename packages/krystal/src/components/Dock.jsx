@@ -72,10 +72,10 @@ function useDock({ storageKey, defaultWidth = 420, minWidth = 320, maxWidth = 90
       document.removeEventListener("pointermove", onMove);
       document.removeEventListener("pointerup", onUp);
       document.body.style.userSelect = "";
-      handle.classList.remove("assistant-dock__resize--active");
+      handle.classList.remove("k-assistant-dock__resize--active");
     };
     document.body.style.userSelect = "none";
-    handle.classList.add("assistant-dock__resize--active");
+    handle.classList.add("k-assistant-dock__resize--active");
     document.addEventListener("pointermove", onMove);
     document.addEventListener("pointerup", onUp);
   }, [width, minWidth, maxWidth]);
@@ -127,10 +127,10 @@ function useDock({ storageKey, defaultWidth = 420, minWidth = 320, maxWidth = 90
  */
 function Dock({ dock, compactBelow = 550, className, children }) {
   return (
-    <aside className={"assistant-dock" + (dock.open ? " assistant-dock--open" : "") + (dock.pushing ? " assistant-dock--push" : "")
-        + (dock.width < compactBelow ? " assistant-dock--compact" : "") + (className ? " " + className : "")}
+    <aside className={"k-assistant-dock" + (dock.open ? " k-assistant-dock--open" : "") + (dock.pushing ? " k-assistant-dock--push" : "")
+        + (dock.width < compactBelow ? " k-assistant-dock--compact" : "") + (className ? " " + className : "")}
       style={{ width: dock.desktop ? dock.width : undefined }}>
-      {dock.open && <div className="assistant-dock__resize" onPointerDown={dock.startResize} title="Drag to resize"></div>}
+      {dock.open && <div className="k-assistant-dock__resize" onPointerDown={dock.startResize} title="Drag to resize"></div>}
       {children}
     </aside>
   );
@@ -144,7 +144,7 @@ function Dock({ dock, compactBelow = 550, className, children }) {
  */
 function DockFab({ onClick, label = "Open assistant" }) {
   return (
-    <button className="assistant-fab" onClick={onClick} title={label} aria-label={label}>
+    <button className="k-assistant-fab" onClick={onClick} title={label} aria-label={label}>
       <AssistantFabIcon size={22} />
     </button>
   );

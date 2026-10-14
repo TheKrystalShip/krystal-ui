@@ -33,9 +33,9 @@ const RING_C = 2 * Math.PI * RING_R;
  */
 function ContextRing({ pct }) {
   return (
-    <svg className="chat-ctxring" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
-      <circle className="chat-ctxring__track" cx="10" cy="10" r={RING_R} />
-      <circle className="chat-ctxring__fill" cx="10" cy="10" r={RING_R}
+    <svg className="k-chat-ctxring" viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
+      <circle className="k-chat-ctxring__track" cx="10" cy="10" r={RING_R} />
+      <circle className="k-chat-ctxring__fill" cx="10" cy="10" r={RING_R}
         strokeDasharray={((pct / 100) * RING_C).toFixed(2) + " " + RING_C.toFixed(2)}
         transform="rotate(-90 10 10)" />
     </svg>
@@ -90,33 +90,33 @@ function ChatContextMeter({ usage, onCompact }) {
   return (
     <>
       <Button ref={ref} variant="ghost" size="xs"
-        className={"chat-ctx-btn" + (ctx.warn ? " chat-ctx-btn--warn" : "")}
+        className={"k-chat-ctx-btn" + (ctx.warn ? " k-chat-ctx-btn--warn" : "")}
         icon={<ContextRing pct={ctx.pct} />}
         onClick={() => setOpen(o => !o)}
         aria-label={"Context used: " + ctx.pct + "%"}
         title={"Context window · " + fmt(ctx.used) + " of " + fmt(ctx.win) + " tokens"}
         aria-haspopup="dialog"
         aria-expanded={open}>
-        <span className="chat-ctx-btn__pct">{ctx.pct}%</span>
+        <span className="k-chat-ctx-btn__pct">{ctx.pct}%</span>
       </Button>
       {open && pos && createPortal(
-        <div className={"chat-ctxpop" + (ctx.warn ? " chat-ctxpop--warn" : "")} ref={menuRef} style={pos}
+        <div className={"k-chat-ctxpop" + (ctx.warn ? " k-chat-ctxpop--warn" : "")} ref={menuRef} style={pos}
           role="dialog" aria-label="Context window">
-          <div className="chat-ctxpop__head">
-            <span className="chat-ctxpop__pct">{ctx.pct}%</span>
-            <span className="chat-ctxpop__cap">of the context window used</span>
+          <div className="k-chat-ctxpop__head">
+            <span className="k-chat-ctxpop__pct">{ctx.pct}%</span>
+            <span className="k-chat-ctxpop__cap">of the context window used</span>
           </div>
-          <div className="chat-ctxpop__bar"><i style={{ width: ctx.pct + "%" }} /></div>
-          <dl className="chat-ctxpop__nums">
+          <div className="k-chat-ctxpop__bar"><i style={{ width: ctx.pct + "%" }} /></div>
+          <dl className="k-chat-ctxpop__nums">
             <dt>Used</dt><dd>{fmt(ctx.used)}</dd>
             <dt>Window</dt><dd>{fmt(ctx.win)}</dd>
           </dl>
-          <div className="chat-ctxpop__foot">
+          <div className="k-chat-ctxpop__foot">
             <Button variant="outline" size="sm" icon="rotate-ccw" busy={compact.compacting}
               disabled={!onCompact} onClick={compact.run}>
               Compact
             </Button>
-            {compact.note && <span className="chat-ctxpop__note">{compact.note}</span>}
+            {compact.note && <span className="k-chat-ctxpop__note">{compact.note}</span>}
           </div>
         </div>,
         document.body,

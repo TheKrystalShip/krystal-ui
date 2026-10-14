@@ -44,12 +44,12 @@ function ChatFeedback({ turnId, feedback, onRate, readOnly }) {
   if (readOnly) {
     if (!rating) return null;
     return (
-      <div className="chat-fb chat-fb--ro">
-        <span className={"chat-fb__verdict chat-fb__verdict--" + rating}>
+      <div className="k-chat-fb k-chat-fb--ro">
+        <span className={"k-chat-fb__verdict k-chat-fb__verdict--" + rating}>
           <Icon name={rating === "up" ? "thumbs-up" : "thumbs-down"} size={13} strokeWidth={2} />
           {rating === "up" ? "Marked helpful" : "Marked unhelpful"}
         </span>
-        {feedback.note && <span className="chat-fb__note">“{feedback.note}”</span>}
+        {feedback.note && <span className="k-chat-fb__note">“{feedback.note}”</span>}
       </div>
     );
   }
@@ -71,30 +71,30 @@ function ChatFeedback({ turnId, feedback, onRate, readOnly }) {
   const closeNote = () => { setNoteOpen(false); setNote(""); };
 
   return (
-    <div className={"chat-fb" + (rating ? " chat-fb--rated" : "")}>
+    <div className={"k-chat-fb" + (rating ? " k-chat-fb--rated" : "")}>
       <IconButton variant="ghost" size="xs" icon="thumbs-up"
-        className={"chat-fb__thumb chat-fb__thumb--up"}
+        className={"k-chat-fb__thumb k-chat-fb__thumb--up"}
         pressed={rating === "up"}
         label="This answer helped"
         title={rating === "up" ? "Undo" : "This answer helped"}
         onClick={() => rate("up")} />
       <IconButton variant="ghost" size="xs" icon="thumbs-down"
-        className={"chat-fb__thumb chat-fb__thumb--down"}
+        className={"k-chat-fb__thumb k-chat-fb__thumb--down"}
         pressed={rating === "down"}
         label="This answer didn’t help"
         title={rating === "down" ? "Undo" : "This answer didn’t help"}
         onClick={() => rate("down")} />
       {feedback && feedback.note && !noteOpen && (
-        <span className="chat-fb__note">“{feedback.note}”</span>
+        <span className="k-chat-fb__note">“{feedback.note}”</span>
       )}
       {rating === "down" && !noteOpen && !(feedback && feedback.note) && (
-        <Button variant="link" size="xs" className="chat-fb__ask" onClick={() => setNoteOpen(true)}>
+        <Button variant="link" size="xs" className="k-chat-fb__ask" onClick={() => setNoteOpen(true)}>
           Say what went wrong
         </Button>
       )}
 
       {noteOpen && (
-        <div className="chat-fb__note-form">
+        <div className="k-chat-fb__note-form">
           <Input size="sm" type="text"
             value={note}
             maxLength={NOTE_MAX}

@@ -26,26 +26,26 @@ import { conversationTitle } from "./conversation.js";
 function HistoryRows({ convos, activeId, onPick, onDelete, loading, close, role }) {
   return (
     <>
-      {convos.length === 0 && !loading && <div className="chat-hist__empty">No conversations yet</div>}
+      {convos.length === 0 && !loading && <div className="k-chat-hist__empty">No conversations yet</div>}
       {convos.map(c => {
         const when = c.lastActivity || c.created || 0;
         const lit = c.id === activeId;
         return (
-          <div key={c.id} className={"chat-hist__row" + (lit ? " chat-hist__row--active" : "")}>
-            <button type="button" role={role} className="chat-hist__open"
+          <div key={c.id} className={"k-chat-hist__row" + (lit ? " k-chat-hist__row--active" : "")}>
+            <button type="button" role={role} className="k-chat-hist__open"
               aria-current={lit ? "true" : undefined}
               onClick={() => { onPick(c.id); close(); }}>
-              <Icon name="message-square" size={14} className="chat-hist__icon" />
-              <span className="chat-hist__title">{conversationTitle(c)}</span>
-              {when > 0 && <span className="chat-hist__time">{fmtRelative(new Date(when))}</span>}
+              <Icon name="message-square" size={14} className="k-chat-hist__icon" />
+              <span className="k-chat-hist__title">{conversationTitle(c)}</span>
+              {when > 0 && <span className="k-chat-hist__time">{fmtRelative(new Date(when))}</span>}
             </button>
             <IconButton icon="trash-2" label={"Delete " + conversationTitle(c)} variant="ghost" size="xs"
-              tone="danger" className="chat-hist__del" onClick={(e) => onDelete(c.id, e)} />
+              tone="danger" className="k-chat-hist__del" onClick={(e) => onDelete(c.id, e)} />
           </div>
         );
       })}
       {loading && (
-        <div className="chat-hist__empty"><Spinner size={13} /> Loading</div>
+        <div className="k-chat-hist__empty"><Spinner size={13} /> Loading</div>
       )}
     </>
   );
@@ -67,17 +67,17 @@ function HistorySheet({ close, onNew, head, ...rows }) {
   const root = React.useRef(null);
   useModalBehaviour(root, { onClose: close });
   return createPortal(
-    <div ref={root} className="chat-sheet" role="dialog" aria-modal="true" aria-label="Chats">
-      <div className="chat-sheet__scrim" onClick={close} />
-      <div className="chat-sheet__panel">
-        <div className="chat-sheet__head">
-          <span className="chat-sheet__title">Chats</span>
+    <div ref={root} className="k-chat-sheet" role="dialog" aria-modal="true" aria-label="Chats">
+      <div className="k-chat-sheet__scrim" onClick={close} />
+      <div className="k-chat-sheet__panel">
+        <div className="k-chat-sheet__head">
+          <span className="k-chat-sheet__title">Chats</span>
           <IconButton icon="x" label="Close" variant="ghost" size="sm" onClick={close} />
         </div>
-        <div className="chat-sheet__new">
+        <div className="k-chat-sheet__new">
           <Button variant="outline" size="md" icon="square-pen" wide onClick={() => { onNew(); close(); }}>New chat</Button>
         </div>
-        <div className="chat-sheet__list">
+        <div className="k-chat-sheet__list">
           {head}
           <HistoryRows {...rows} close={close} />
         </div>
@@ -110,7 +110,7 @@ function ChatHistory({ convos, activeId, onPick, onDelete, onOpen, loading, shee
   const rows = { convos, activeId, onPick, onDelete, loading };
   if (sheet) {
     return (
-      <div className="chat-hist">
+      <div className="k-chat-hist">
         <IconButton ref={ref} icon="history" label="Chats" variant="ghost" size="sm"
           onClick={toggle} aria-haspopup="dialog" aria-expanded={open} />
         {open && <HistorySheet {...rows} close={close} onNew={onNew} head={head} />}
@@ -118,14 +118,14 @@ function ChatHistory({ convos, activeId, onPick, onDelete, onOpen, loading, shee
     );
   }
   return (
-    <div className="chat-hist">
+    <div className="k-chat-hist">
       <IconButton ref={ref} icon="history" label="Chat history" variant="ghost" size="sm"
         onClick={toggle} aria-haspopup="menu" aria-expanded={open} />
       {open && pos && createPortal(
-        <div className="chat-hist__menu" role="menu" aria-label="Chat history" ref={menuRef} style={pos}
+        <div className="k-chat-hist__menu" role="menu" aria-label="Chat history" ref={menuRef} style={pos}
           onKeyDown={(e) => { if (e.key === "Escape") setOpen(false); }}>
-          <div className="chat-hist__head">Chat history</div>
-          <div className="chat-hist__list">
+          <div className="k-chat-hist__head">Chat history</div>
+          <div className="k-chat-hist__list">
             {head}
             <HistoryRows {...rows} close={close} role="menuitem" />
           </div>

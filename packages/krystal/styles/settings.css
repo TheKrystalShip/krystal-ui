@@ -3,7 +3,7 @@
    A section is a briefing card (brief.css); a row is one of its items with a
    right-hand slot for its controls.
    ============================================================================ */
-.settings-row__controls {
+.k-settings-row__controls {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -12,12 +12,12 @@
 
 /* A read-only value sitting where a control sits, or named inside a row's line; `--mono` for an
    identifier. */
-.settings-value {
+.k-settings-value {
   color: var(--fg-2);
   font-size: 12.5px;
 }
 
-.settings-value--mono {
+.k-settings-value--mono {
   font-family: var(--font-mono);
   font-size: 11.5px;
 }

@@ -56,24 +56,24 @@ function ChatCommandMenu({ items, active, onPick, anchorRef }) {
   if (!items.length || !pos) return null;
 
   return createPortal(
-    <div className="chat-cmdmenu" ref={menuRef} style={pos} role="listbox" aria-label="Commands">
+    <div className="k-chat-cmdmenu" ref={menuRef} style={pos} role="listbox" aria-label="Commands">
       {items.map((item, i) => (
         <button
           key={item.key}
           type="button"
-          className={"chat-cmdmenu__row" + (i === active ? " chat-cmdmenu__row--active" : "")}
+          className={"k-chat-cmdmenu__row" + (i === active ? " k-chat-cmdmenu__row--active" : "")}
           data-active={i === active ? "true" : "false"}
           role="option"
           aria-selected={i === active}
           // Mouse-down rather than click: the textarea is focused, and a click would blur it first,
           // closing the menu out from under the press.
           onMouseDown={(e) => { e.preventDefault(); onPick(item); }}>
-          <code className="chat-cmdmenu__name">{item.label}</code>
-          <span className="chat-cmdmenu__desc">{item.detail || ""}</span>
-          {item.command && item.command.mutates && <span className="chat-cmdmenu__tag">changes it</span>}
+          <code className="k-chat-cmdmenu__name">{item.label}</code>
+          <span className="k-chat-cmdmenu__desc">{item.detail || ""}</span>
+          {item.command && item.command.mutates && <span className="k-chat-cmdmenu__tag">changes it</span>}
         </button>
       ))}
-      <div className="chat-cmdmenu__hint">
+      <div className="k-chat-cmdmenu__hint">
         <span>↑↓ choose</span><span>↵ insert</span><span>esc close</span>
       </div>
     </div>,

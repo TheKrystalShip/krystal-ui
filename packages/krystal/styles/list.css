@@ -50,15 +50,15 @@
 .k-listrow--warn::before { background: var(--warning); }
 .k-listrow--danger::before { background: var(--danger); }
 
-.k-listrow.is-selected {
+.k-listrow.k-is-selected {
   background: var(--krystal-teal-dim);
 }
 
-.k-listrow.is-selected::before {
+.k-listrow.k-is-selected::before {
   background: var(--krystal-teal);
 }
 
-.k-listrow--open:hover:not(.is-selected) {
+.k-listrow--open:hover:not(.k-is-selected) {
   background: var(--veil-1);
 }
 
@@ -67,7 +67,7 @@
   outline-offset: -2px;
 }
 
-.k-listrow.is-disabled {
+.k-listrow.k-is-disabled {
   opacity: 0.55;
 }
 

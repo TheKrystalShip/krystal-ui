@@ -3,7 +3,7 @@
    surface-1 card holding a list of rows, an empty state, or any body. <Rail>
    and the settings furniture are built on it.
    ============================================================================ */
-.chat-brief {
+.k-brief {
   box-sizing: border-box;
   width: 100%;
   text-align: left;
@@ -15,7 +15,7 @@
 }
 
 /* The empty state reads as all-clear by default. */
-.chat-brief__empty {
+.k-brief__empty {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,23 +28,23 @@
 
 /* Neutral variant — an absence that is neither good nor bad, so the icon is
    muted rather than success-green. */
-.chat-brief__empty--neutral {
+.k-brief__empty--neutral {
   color: var(--fg-3);
 }
 
-.chat-brief__empty-title {
+.k-brief__empty-title {
   font-size: 13px;
   font-weight: 600;
   color: var(--fg-2);
   margin-top: 4px;
 }
 
-.chat-brief__empty-sub {
+.k-brief__empty-sub {
   font-size: 11.5px;
   color: var(--fg-3);
 }
 
-.chat-brief__head {
+.k-brief__head {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -54,7 +54,7 @@
 
 /* Collapsible variant (BriefCard `collapsible`): the whole head is the toggle, so it is a
    <button> and has to shed the browser's button chrome to keep the card's look. */
-.chat-brief__head--toggle {
+.k-brief__head--toggle {
   width: 100%;
   background: none;
   border: none;
@@ -66,26 +66,26 @@
   cursor: pointer;
 }
 
-.chat-brief__head--toggle:hover {
+.k-brief__head--toggle:hover {
   background: var(--surface-2);
 }
 
-.chat-brief__chev {
+.k-brief__chev {
   margin-left: auto;
   flex: none;
   color: var(--fg-3);
   transition: transform var(--d-base) var(--ease-out);
 }
 
-.chat-brief--shut .chat-brief__chev {
+.k-brief--shut .k-brief__chev {
   transform: rotate(-90deg);
 }
 
-.chat-brief--shut .chat-brief__head--toggle {
+.k-brief--shut .k-brief__head--toggle {
   border-bottom: none;
 }
 
-.chat-brief__title {
+.k-brief__title {
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -97,7 +97,7 @@
   flex: 1;
 }
 
-.chat-brief__hide {
+.k-brief__hide {
   background: transparent;
   border: none;
   cursor: pointer;
@@ -106,12 +106,12 @@
   font-weight: 500;
 }
 
-.chat-brief__hide:hover {
+.k-brief__hide:hover {
   color: var(--fg-1);
 }
 
 /* Optional muted sub-strip under a BriefCard header (cadence, retention, …). */
-.chat-brief__meta {
+.k-brief__meta {
   padding: 8px 14px;
   font-size: 11.5px;
   color: var(--fg-3);
@@ -119,27 +119,27 @@
 }
 
 /* A static row carries no click and no severity, so it stays neutral; its buttons
-   are the interactive bits. Scoped to .chat-brief__list so these win over the base
-   .chat-brief__item rules declared below (equal specificity would otherwise lose). */
-.chat-brief__list .chat-brief__item--static {
+   are the interactive bits. Scoped to .k-brief__list so these win over the base
+   .k-brief__item rules declared below (equal specificity would otherwise lose). */
+.k-brief__list .k-brief__item--static {
   cursor: default;
 }
 
-.chat-brief__list .chat-brief__item--static:hover {
+.k-brief__list .k-brief__item--static:hover {
   background: transparent;
 }
 
-.chat-brief__item-title--mono .chat-brief__titletext {
+.k-brief__item-title--mono .k-brief__titletext {
   font-family: var(--font-mono);
   font-size: 12.5px;
 }
 
-.chat-brief__list {
+.k-brief__list {
   display: flex;
   flex-direction: column;
 }
 
-.chat-brief__item {
+.k-brief__item {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -148,27 +148,27 @@
   border-left: 2px solid transparent;
 }
 
-.chat-brief__item+.chat-brief__item {
+.k-brief__item+.k-brief__item {
   border-top: 1px solid var(--border-subtle);
 }
 
-.chat-brief__item:hover {
+.k-brief__item:hover {
   background: var(--surface-2);
 }
 
-.chat-brief__item--danger {
+.k-brief__item--danger {
   border-left-color: var(--danger);
 }
 
-.chat-brief__item--warn {
+.k-brief__item--warn {
   border-left-color: var(--warning);
 }
 
-.chat-brief__item--info {
+.k-brief__item--info {
   border-left-color: var(--info);
 }
 
-.chat-brief__icon {
+.k-brief__icon {
   width: 28px;
   height: 28px;
   border-radius: var(--r-sm);
@@ -180,22 +180,22 @@
   color: var(--fg-2);
 }
 
-.chat-brief__item--danger .chat-brief__icon {
+.k-brief__item--danger .k-brief__icon {
   background: var(--danger-bg);
   color: var(--danger-fg);
 }
 
-.chat-brief__item--warn .chat-brief__icon {
+.k-brief__item--warn .k-brief__icon {
   background: var(--warning-bg);
   color: var(--warning-fg);
 }
 
-.chat-brief__item--info .chat-brief__icon {
+.k-brief__item--info .k-brief__icon {
   background: var(--info-bg);
   color: var(--info-fg);
 }
 
-.chat-brief__body {
+.k-brief__body {
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -203,7 +203,7 @@
   flex: 1;
 }
 
-.chat-brief__item-title {
+.k-brief__item-title {
   font-size: 13px;
   font-weight: 600;
   color: var(--fg-1);
@@ -215,7 +215,7 @@
   gap: 6px;
 }
 
-.chat-brief__titletext {
+.k-brief__titletext {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -223,7 +223,7 @@
 }
 
 /* A row that needs a person — a filled danger mark that cannot be missed. */
-.chat-brief__needs-you {
+.k-brief__needs-you {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -238,11 +238,11 @@
   border-radius: var(--r-pill);
 }
 
-.chat-brief__item--escalated {
+.k-brief__item--escalated {
   background: color-mix(in srgb, var(--danger) 6%, transparent);
 }
 
-.chat-brief__detail {
+.k-brief__detail {
   font-size: 11.5px;
   color: var(--fg-3);
   overflow: hidden;
@@ -250,7 +250,7 @@
   white-space: nowrap;
 }
 
-.chat-brief__ask {
+.k-brief__ask {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -260,11 +260,11 @@
   flex-shrink: 0;
 }
 
-.chat-brief__item:hover .chat-brief__ask {
+.k-brief__item:hover .k-brief__ask {
   text-decoration: underline;
 }
 
-.chat-brief__dismiss {
+.k-brief__dismiss {
   background: transparent;
   border: none;
   cursor: pointer;
@@ -275,30 +275,30 @@
   display: inline-flex;
 }
 
-.chat-brief__dismiss:hover {
+.k-brief__dismiss:hover {
   color: var(--fg-1);
   background: var(--surface-3);
 }
 
-.chat-brief__item--success {
+.k-brief__item--success {
   border-left-color: var(--success);
 }
 
-.chat-brief__item--update {
+.k-brief__item--update {
   border-left-color: var(--update);
 }
 
-.chat-brief__item--success .chat-brief__icon {
+.k-brief__item--success .k-brief__icon {
   background: var(--success-bg);
   color: var(--success-fg);
 }
 
-.chat-brief__item--update .chat-brief__icon {
+.k-brief__item--update .k-brief__icon {
   background: var(--update-bg);
   color: var(--update-fg);
 }
 
-.chat-brief__item-title--wrap {
+.k-brief__item-title--wrap {
   white-space: normal;
   font-weight: 500;
   color: var(--fg-2);
@@ -308,24 +308,24 @@
   overflow: hidden;
 }
 
-.chat-brief__item-title--wrap b {
+.k-brief__item-title--wrap b {
   color: var(--fg-1);
   font-weight: 600;
 }
 
 /* A card whose body is free content (a grid, a form) pads it. */
-.chat-brief__body {
+.k-brief__body {
   padding: 14px;
 }
 
-/* …but the inner text column of a list item is also .chat-brief__body — it
+/* …but the inner text column of a list item is also .k-brief__body — it
    must not inherit that 14px or rows balloon. Keep item rows compact. */
-.chat-brief__item .chat-brief__body {
+.k-brief__item .k-brief__body {
   padding: 0;
 }
 
 /* The header's "view all" link. */
-.dash-section__more {
+.k-view-all {
   margin-left: auto;
   display: inline-flex;
   align-items: center;
@@ -340,6 +340,6 @@
   font-family: inherit;
 }
 
-.dash-section__more:hover {
+.k-view-all:hover {
   color: var(--krystal-teal-hover);
 }

@@ -14,7 +14,7 @@ import { useModalBehaviour } from "../hooks/useModalBehaviour.js";
 //     is in flight)
 //
 // The caller owns the inner content AND the scrim's visual class (`scrimClassName`), so each site
-// keeps its exact look (`.modal-scrim`, `.k-backdrop`, `.console-modal-scrim`, …). All of them are
+// keeps its exact look (`.k-modal-scrim`, `.k-backdrop`, `.console-modal-scrim`, …). All of them are
 // `position: fixed; inset: 0`, so portaling to <body> never shifts them; it lifts them out of any
 // `transform`/`overflow` ancestor that could clip them. Mark the element that should take focus on
 // open with `data-autofocus` (or React's `autoFocus`).
@@ -25,7 +25,7 @@ import { useModalBehaviour } from "../hooks/useModalBehaviour.js";
  * @param {string} [props.scrimClassName]
  * @param {import("react").ReactNode} [props.children]
  */
-function Modal({ onClose, canClose = true, scrimClassName = "modal-scrim", children }) {
+function Modal({ onClose, canClose = true, scrimClassName = "k-modal-scrim", children }) {
   const scrim = React.useRef(null);
   useModalBehaviour(scrim, { onClose, canClose });
 

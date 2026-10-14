@@ -1,7 +1,7 @@
 /* ============================================================================
    Footer — the brand block, the link groups beside it, and the bar under both
    ============================================================================ */
-.kfoot {
+.k-footer {
   /* Pins the footer to the bottom of the scrolling column when the page is short. */
   margin-top: auto;
   width: 100%;
@@ -9,7 +9,7 @@
   border-top: 1px solid var(--border-subtle);
 }
 
-.kfoot__inner {
+.k-footer__inner {
   max-width: var(--content-max);
   margin: 0 auto;
   box-sizing: border-box;
@@ -20,35 +20,35 @@
 }
 
 /* Brand block */
-.kfoot__brand {
+.k-footer__brand {
   max-width: 380px;
 }
 
-.kfoot__brand-row {
+.k-footer__brand-row {
   display: flex;
   align-items: center;
   gap: 11px;
 }
 
-.kfoot__mark {
+.k-footer__mark {
   object-fit: contain;
 }
 
-.kfoot__wordmark {
+.k-footer__wordmark {
   font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--fg-1);
 }
 
-.kfoot__tagline {
+.k-footer__tagline {
   margin: 8px 0 0;
   font-size: 12.5px;
   line-height: 1.5;
   color: var(--fg-3);
 }
 
-.kfoot__note {
+.k-footer__note {
   margin-top: 10px;
   display: inline-flex;
   align-items: center;
@@ -58,7 +58,7 @@
   color: var(--fg-3);
 }
 
-.kfoot__note-dot {
+.k-footer__note-dot {
   width: 7px;
   height: 7px;
   border-radius: var(--r-pill);
@@ -73,18 +73,18 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .kfoot__note-dot { animation: none; }
+  .k-footer__note-dot { animation: none; }
 }
 
 /* Link groups: side by side, each laid out in its own number of columns. */
-.kfoot__groups {
+.k-footer__groups {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
   gap: 24px;
 }
 
-.kfoot__group-label {
+.k-footer__group-label {
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -93,13 +93,13 @@
   margin-bottom: 7px;
 }
 
-.kfoot__group-links {
+.k-footer__group-links {
   display: grid;
   grid-template-columns: repeat(var(--kfoot-columns, 1), minmax(0, 1fr));
   gap: 4px 12px;
 }
 
-.kfoot__link {
+.k-footer__link {
   display: flex;
   align-items: center;
   gap: 11px;
@@ -113,12 +113,12 @@
     border-color var(--d-fast) var(--ease-out);
 }
 
-.kfoot__link:hover {
+.k-footer__link:hover {
   background: var(--surface-2);
   border-color: var(--border-subtle);
 }
 
-.kfoot__link-ico {
+.k-footer__link-ico {
   width: 28px;
   height: 28px;
   flex-shrink: 0;
@@ -132,18 +132,18 @@
   transition: color var(--d-fast) var(--ease-out), border-color var(--d-fast) var(--ease-out);
 }
 
-.kfoot__link:hover .kfoot__link-ico {
+.k-footer__link:hover .k-footer__link-ico {
   color: var(--krystal-teal-hover);
   border-color: var(--border-strong);
 }
 
-.kfoot__link--featured .kfoot__link-ico {
+.k-footer__link--featured .k-footer__link-ico {
   background: var(--krystal-teal-dim);
   border-color: var(--krystal-teal-ring);
   color: var(--krystal-teal);
 }
 
-.kfoot__link-text {
+.k-footer__link-text {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -151,7 +151,7 @@
   flex: 1;
 }
 
-.kfoot__link-name {
+.k-footer__link-name {
   font-size: 13.5px;
   font-weight: 600;
   color: var(--fg-1);
@@ -160,26 +160,26 @@
   text-overflow: ellipsis;
 }
 
-.kfoot__group--mono .kfoot__link-name {
+.k-footer__group--mono .k-footer__link-name {
   font-family: var(--font-mono);
   letter-spacing: -0.01em;
 }
 
-.kfoot__link--featured .kfoot__link-name {
+.k-footer__link--featured .k-footer__link-name {
   font-size: 14px;
 }
 
-.kfoot__link-scope {
+.k-footer__link-scope {
   color: var(--fg-4);
   font-weight: 500;
 }
 
-.kfoot__link-sub {
+.k-footer__link-sub {
   font-size: 12px;
   color: var(--fg-3);
 }
 
-.kfoot__link-arrow {
+.k-footer__link-arrow {
   flex-shrink: 0;
   color: var(--fg-4);
   opacity: 0;
@@ -187,14 +187,14 @@
   transition: opacity var(--d-fast) var(--ease-out), transform var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
 }
 
-.kfoot__link:hover .kfoot__link-arrow {
+.k-footer__link:hover .k-footer__link-arrow {
   opacity: 1;
   transform: none;
   color: var(--krystal-teal-hover);
 }
 
 /* Bottom bar */
-.kfoot__bar {
+.k-footer__bar {
   max-width: var(--content-max);
   margin: 0 auto;
   box-sizing: border-box;
@@ -209,16 +209,16 @@
 
 /* The dock's launcher floats over the bottom-right corner, where the bar ends once a page is
    scrolled to its foot; the bar keeps clear of it while it is there. */
-.app:has(.assistant-fab) .kfoot__bar {
+.k-app:has(.k-assistant-fab) .k-footer__bar {
   padding-right: 92px;
 }
 
-.kfoot__copy {
+.k-footer__copy {
   font-size: 12px;
   color: var(--fg-4);
 }
 
-.kfoot__end {
+.k-footer__end {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -226,7 +226,7 @@
   color: var(--fg-3);
 }
 
-.kfoot__end a {
+.k-footer__end a {
   color: var(--fg-3);
   display: inline-flex;
   align-items: center;
@@ -235,7 +235,7 @@
   border-bottom: 1px solid transparent;
 }
 
-.kfoot__end a:hover {
+.k-footer__end a:hover {
   color: var(--krystal-teal-hover);
   border-bottom-color: transparent;
 }
@@ -243,60 +243,60 @@
 /* The footer collapses on the main column's own width, not the viewport's, so it reflows when a
    pinned dock narrows the page. Widest first, so the narrowest matching rule wins. */
 @container appmain (max-width: 980px) {
-  .kfoot__inner {
+  .k-footer__inner {
     grid-template-columns: 1fr;
     gap: 20px;
   }
 
-  .kfoot__brand {
+  .k-footer__brand {
     max-width: none;
   }
 }
 
 @container appmain (max-width: 760px) {
-  .kfoot__inner {
+  .k-footer__inner {
     gap: 18px;
     padding: 16px 16px 12px;
   }
 
-  .kfoot__groups {
+  .k-footer__groups {
     grid-auto-flow: row;
     grid-template-columns: minmax(0, 1fr);
     gap: 16px;
   }
 
-  .kfoot__group-links {
+  .k-footer__group-links {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .kfoot__bar {
+  .k-footer__bar {
     padding: 14px 16px max(16px, env(safe-area-inset-bottom, 0));
   }
 }
 
 @supports not (container-type: inline-size) {
   @media (max-width: 760px) {
-    .kfoot__inner {
+    .k-footer__inner {
       grid-template-columns: 1fr;
       gap: 18px;
       padding: 16px 16px 12px;
     }
 
-    .kfoot__brand {
+    .k-footer__brand {
       max-width: none;
     }
 
-    .kfoot__groups {
+    .k-footer__groups {
       grid-auto-flow: row;
       grid-template-columns: minmax(0, 1fr);
       gap: 16px;
     }
 
-    .kfoot__group-links {
+    .k-footer__group-links {
       grid-template-columns: minmax(0, 1fr);
     }
 
-    .kfoot__bar {
+    .k-footer__bar {
       padding: 14px 16px max(16px, env(safe-area-inset-bottom, 0));
     }
   }

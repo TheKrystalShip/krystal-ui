@@ -52,13 +52,13 @@ function Pagination({ page, pageCount, total, pageSize, onPage, unit = "results"
   const seq = paginationWindow(page, pageCount, 1);
 
   return (
-    <nav className="pagination" aria-label="Pagination">
-      <span className="pagination__summary">
+    <nav className="k-pagination" aria-label="Pagination">
+      <span className="k-pagination__summary">
         Showing <b>{from.toLocaleString()}–{to.toLocaleString()}</b> of {total.toLocaleString()} {unit}
       </span>
-      <div className="pagination__controls">
+      <div className="k-pagination__controls">
         <button
-          className="pagination__btn pagination__btn--nav"
+          className="k-pagination__btn k-pagination__btn--nav"
           onClick={() => go(page - 1)}
           disabled={page === 0}
           aria-label="Previous page"
@@ -67,11 +67,11 @@ function Pagination({ page, pageCount, total, pageSize, onPage, unit = "results"
         </button>
         {seq.map(item =>
           item.gap ? (
-            <span key={item.key} className="pagination__gap" aria-hidden="true">…</span>
+            <span key={item.key} className="k-pagination__gap" aria-hidden="true">…</span>
           ) : (
             <button
               key={item.key}
-              className={"pagination__btn" + (item.page === page ? " is-current" : "")}
+              className={"k-pagination__btn" + (item.page === page ? " k-is-current" : "")}
               onClick={() => go(item.page)}
               aria-current={item.page === page ? "page" : undefined}
             >
@@ -80,7 +80,7 @@ function Pagination({ page, pageCount, total, pageSize, onPage, unit = "results"
           )
         )}
         <button
-          className="pagination__btn pagination__btn--nav"
+          className="k-pagination__btn k-pagination__btn--nav"
           onClick={() => go(page + 1)}
           disabled={page === pageCount - 1}
           aria-label="Next page"

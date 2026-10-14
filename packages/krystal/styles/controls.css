@@ -192,8 +192,8 @@
 }
 
 /* Armed: a confirm-first button waiting for its second press. A different state, not a hover. */
-.k-btn.is-armed,
-.k-btn.is-armed:hover:not(:disabled) {
+.k-btn.k-is-armed,
+.k-btn.k-is-armed:hover:not(:disabled) {
   background: var(--fg-1);
   border-color: transparent;
   color: var(--fg-inverse);
@@ -285,16 +285,16 @@
 }
 
 /* Armed, with no label to say so: the fill is most of what says the next press destroys something. */
-.k-iconbtn.is-armed,
-.k-iconbtn.is-armed:hover:not(:disabled) {
+.k-iconbtn.k-is-armed,
+.k-iconbtn.k-is-armed:hover:not(:disabled) {
   background: var(--danger-bg);
   border-color: var(--danger);
   color: var(--danger-fg);
 }
 
 /* What a success-toned action commits is a good thing (lifting a ban), so its armed state says so. */
-.k-iconbtn--tone-success.is-armed,
-.k-iconbtn--tone-success.is-armed:hover:not(:disabled) {
+.k-iconbtn--tone-success.k-is-armed,
+.k-iconbtn--tone-success.k-is-armed:hover:not(:disabled) {
   background: var(--success-bg);
   border-color: var(--success);
   color: var(--success-fg);
@@ -413,7 +413,7 @@
 }
 
 .k-input[aria-invalid="true"],
-.k-input.is-invalid {
+.k-input.k-is-invalid {
   border-color: var(--danger);
 }
 
@@ -425,7 +425,7 @@
   cursor: text;
 }
 
-.k-input--affixed.is-disabled {
+.k-input--affixed.k-is-disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -584,7 +584,7 @@
   border-top: 1px solid var(--border-subtle);
 }
 
-.k-optlist__row:hover:not(.is-disabled):not(.is-on),
+.k-optlist__row:hover:not(.k-is-disabled):not(.k-is-on),
 .k-optlist__more:hover:not(:disabled) {
   background: var(--surface-3);
 }
@@ -637,12 +637,12 @@
   border-radius: var(--r-sm);
 }
 
-.k-optlist--single .is-on .k-optlist__mark {
+.k-optlist--single .k-is-on .k-optlist__mark {
   border: 6px solid var(--krystal-teal);
   background: var(--on-accent);
 }
 
-.k-optlist--multiple .is-on .k-optlist__mark {
+.k-optlist--multiple .k-is-on .k-optlist__mark {
   border-color: var(--krystal-teal);
   background: var(--krystal-teal);
 }
@@ -681,21 +681,21 @@
 }
 
 /* The chosen row of a single choice is tinted with the accent, its edge included. */
-.k-optlist--single .k-optlist__row.is-on {
+.k-optlist--single .k-optlist__row.k-is-on {
   background: var(--krystal-teal-dim);
   box-shadow: inset 0 0 0 1px var(--border-accent);
 }
 
-.k-optlist--single .k-optlist__row.is-on :is(.k-optlist__label, .k-optlist__detail, .k-optlist__aside),
-.k-optlist--segmented .k-optlist__row.is-on :is(.k-optlist__label, .k-optlist__detail, .k-optlist__aside) {
+.k-optlist--single .k-optlist__row.k-is-on :is(.k-optlist__label, .k-optlist__detail, .k-optlist__aside),
+.k-optlist--segmented .k-optlist__row.k-is-on :is(.k-optlist__label, .k-optlist__detail, .k-optlist__aside) {
   color: var(--krystal-teal);
 }
 
-.k-optlist__row.is-disabled {
+.k-optlist__row.k-is-disabled {
   cursor: not-allowed;
 }
 
-.k-optlist__row.is-disabled > :not(.k-optlist__input) {
+.k-optlist__row.k-is-disabled > :not(.k-optlist__input) {
   opacity: 0.45;
 }
 
@@ -777,11 +777,11 @@
   border-radius: var(--r-sm);
 }
 
-.k-optlist--segmented .k-optlist__row:hover:not(.is-disabled):not(.is-on) {
+.k-optlist--segmented .k-optlist__row:hover:not(.k-is-disabled):not(.k-is-on) {
   background: var(--veil-2);
 }
 
-.k-optlist--segmented .k-optlist__row.is-on {
+.k-optlist--segmented .k-optlist__row.k-is-on {
   border-color: var(--border-accent);
   background: var(--krystal-teal-dim);
   box-shadow: none;
@@ -809,7 +809,7 @@
   transition: width var(--d-slow) var(--ease-out);
 }
 
-.k-meter__fill.is-some {
+.k-meter__fill.k-is-some {
   min-width: 4px;
 }
 

@@ -52,18 +52,18 @@ function ThemePicker() {
   const cvd = THEME_OPTS.filter((o) => o.cvd);
 
   return (
-    <div className="theme-picker">
+    <div className="k-theme-picker">
       {/* Auto first and on its own: it is not a palette, it is a rule about which of the two to
           follow, so it neither belongs in a group nor sorts among them. Its tile shows both halves
           because both are what it means. */}
-      <div className="theme-picker__grid">
+      <div className="k-theme-picker__grid">
         <ThemeSwatch opt={THEME_OPTS.find((o) => o.id === "auto")} selected={pref === "auto"} />
       </div>
 
       {groups.map((g) => (
         <div key={g.mode}>
-          <div className="theme-picker__group">{g.label}</div>
-          <div className="theme-picker__grid">
+          <div className="k-theme-picker__group">{g.label}</div>
+          <div className="k-theme-picker__grid">
             {THEME_OPTS.filter((o) => o.mode === g.mode && !o.cvd && !o.tribute).map((o) => (
               <ThemeSwatch key={o.id} opt={o} selected={pref === o.id} />
             ))}
@@ -72,13 +72,13 @@ function ThemePicker() {
       ))}
 
       <div>
-        <div className="theme-picker__group">Tributes</div>
-        <p className="theme-picker__note">
+        <div className="k-theme-picker__group">Tributes</div>
+        <p className="k-theme-picker__note">
           Palettes borrowed from screens you have already stared at. These are the only themes
           that change the shape of things as well as their colours &mdash; corners, borders and
           how fast things move. Hover one to see what it is quoting.
         </p>
-        <div className="theme-picker__grid">
+        <div className="k-theme-picker__grid">
           {tributes.map((o) => (
             <ThemeSwatch key={o.id} opt={o} selected={pref === o.id} />
           ))}
@@ -86,12 +86,12 @@ function ThemePicker() {
       </div>
 
       <div>
-        <div className="theme-picker__group">Colour-vision friendly</div>
-        <p className="theme-picker__note">
+        <div className="k-theme-picker__group">Colour-vision friendly</div>
+        <p className="k-theme-picker__note">
           Status colours held apart under a simulation of each deficiency, so running, warning
           and down never collapse into one another.
         </p>
-        <div className="theme-picker__grid">
+        <div className="k-theme-picker__grid">
           {cvd.map((o) => (
             <ThemeSwatch key={o.id} opt={o} selected={pref === o.id} />
           ))}
@@ -107,7 +107,7 @@ function ThemeSwatch({ opt, selected }) {
   return (
     <button
       type="button"
-      className={"theme-swatch" + (selected ? " theme-swatch--on" : "")}
+      className={"k-theme-swatch" + (selected ? " k-theme-swatch--on" : "")}
       aria-pressed={selected}
       title={
         opt.cvd
@@ -118,23 +118,23 @@ function ThemeSwatch({ opt, selected }) {
       }
       onClick={() => themeStore.set(opt.id)}
     >
-      <span className="theme-swatch__tile">
+      <span className="k-theme-swatch__tile">
         {isAuto
           ? (
             <>
-              <span className="theme-swatch__half theme-swatch__half--first"><Mini theme="dark" /></span>
-              <span className="theme-swatch__half"><Mini theme="light" /></span>
+              <span className="k-theme-swatch__half k-theme-swatch__half--first"><Mini theme="dark" /></span>
+              <span className="k-theme-swatch__half"><Mini theme="light" /></span>
             </>
           )
           : <Mini theme={opt.id} />}
         {opt.cvd && (
-          <span className="theme-swatch__badge"><Icon name="eye" size={10} strokeWidth={2.4} /></span>
+          <span className="k-theme-swatch__badge"><Icon name="eye" size={10} strokeWidth={2.4} /></span>
         )}
         {selected && (
-          <span className="theme-swatch__check"><Icon name="check" size={12} strokeWidth={3} /></span>
+          <span className="k-theme-swatch__check"><Icon name="check" size={12} strokeWidth={3} /></span>
         )}
       </span>
-      <span className="theme-swatch__label">{opt.label}</span>
+      <span className="k-theme-swatch__label">{opt.label}</span>
     </button>
   );
 }
@@ -153,25 +153,25 @@ function ThemeSwatch({ opt, selected }) {
 /** @param {{ theme: string }} props */
 function Mini({ theme }) {
   return (
-    <span className="theme-mini" data-theme={theme}>
-      <span className="theme-mini__rail">
-        <span className="theme-mini__brand" />
-        <span className="theme-mini__nav" />
-        <span className="theme-mini__nav" />
-        <span className="theme-mini__nav" />
+    <span className="k-theme-mini" data-theme={theme}>
+      <span className="k-theme-mini__rail">
+        <span className="k-theme-mini__brand" />
+        <span className="k-theme-mini__nav" />
+        <span className="k-theme-mini__nav" />
+        <span className="k-theme-mini__nav" />
       </span>
-      <span className="theme-mini__main">
-        <span className="theme-mini__title" />
-        <span className="theme-mini__kpis">
-          <span className="theme-mini__kpi"><span className="theme-mini__led theme-mini__led--ok" /></span>
-          <span className="theme-mini__kpi"><span className="theme-mini__led theme-mini__led--warn" /></span>
-          <span className="theme-mini__kpi"><span className="theme-mini__led theme-mini__led--bad" /></span>
+      <span className="k-theme-mini__main">
+        <span className="k-theme-mini__title" />
+        <span className="k-theme-mini__kpis">
+          <span className="k-theme-mini__kpi"><span className="k-theme-mini__led k-theme-mini__led--ok" /></span>
+          <span className="k-theme-mini__kpi"><span className="k-theme-mini__led k-theme-mini__led--warn" /></span>
+          <span className="k-theme-mini__kpi"><span className="k-theme-mini__led k-theme-mini__led--bad" /></span>
         </span>
-        <span className="theme-mini__card">
-          <span className="theme-mini__dot" />
-          <span className="theme-mini__lines">
-            <span className="theme-mini__line" />
-            <span className="theme-mini__line theme-mini__line--dim" />
+        <span className="k-theme-mini__card">
+          <span className="k-theme-mini__dot" />
+          <span className="k-theme-mini__lines">
+            <span className="k-theme-mini__line" />
+            <span className="k-theme-mini__line k-theme-mini__line--dim" />
           </span>
         </span>
       </span>
