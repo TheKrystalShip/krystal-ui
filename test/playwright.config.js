@@ -17,7 +17,7 @@ export default defineConfig({
   expect: { toHaveScreenshot: { animations: "disabled", caret: "hide", scale: "css", maxDiffPixelRatio: 0.001 } },
   use: { baseURL: ORIGIN, browserName: "chromium", reducedMotion: "reduce", colorScheme: "dark" },
   webServer: {
-    command: "npx vite playground --port " + PORT + " --strictPort",
+    command: "npm run docs:data && npx vite playground --port " + PORT + " --strictPort",
     cwd: "..",
     url: ORIGIN,
     reuseExistingServer: false,

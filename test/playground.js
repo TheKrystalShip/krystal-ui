@@ -5,7 +5,7 @@ export const PORT = 5231;
 export const ORIGIN = "http://127.0.0.1:" + PORT;
 
 /** The page that draws every section, one under another. */
-export const ALL_SECTIONS = "/";
+export const ALL_SECTIONS = "/#/all";
 
 /** The preference key `lib/theme.js` stores the palette under. */
 export const THEME_KEY = "krystal:theme";
