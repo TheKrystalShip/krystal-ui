@@ -2,7 +2,7 @@ import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Button, ConfirmDialog, Dialog, IconButton, Modal, Tooltip } from "@thekrystalship/krystal";
+import { Button, ConfirmDialog, Dialog, FormDialog, FormField, useForm, IconButton, Modal, Tooltip } from "@thekrystalship/krystal";
 
 function Opener({ children, nested }) {
   const [open, setOpen] = React.useState(false);
@@ -185,5 +185,45 @@ describe("Button", () => {
     render(<Button disabled onClick={onClick}>go</Button>);
     await user.click(screen.getByRole("button"));
     expect(onClick).not.toHaveBeenCalled();
+  });
+});
+
+describe("FormDialog", () => {
+  function Host({ onSubmit, onClose }) {
+    const form = useForm({ defaultValues: { name: "" }, rules: { name: { required: "Name it" } }, onSubmit });
+    return (
+      <FormDialog form={form} title="Add" onClose={onClose} submit="Create" busyLabel="Creating">
+        <FormField name="name" label="Name" control="input" />
+      </FormDialog>
+    );
+  }
+
+  it("submits with Enter, shows a field's rule, and shows the form's refusal", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn().mockResolvedValueOnce({ message: "Taken." }).mockResolvedValueOnce(undefined);
+    render(<Host onSubmit={onSubmit} onClose={vi.fn()} />);
+    await user.type(screen.getByRole("textbox", { name: "Name" }), "{Enter}");
+    expect(await screen.findByText("Name it")).toBeTruthy();
+    expect(onSubmit).not.toHaveBeenCalled();
+    await user.type(screen.getByRole("textbox", { name: "Name" }), "bob{Enter}");
+    expect(await screen.findByText("Taken.")).toBeTruthy();
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it("cancels with the Cancel button and Escape, and holds both while it submits", async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    let release;
+    const onSubmit = vi.fn(() => new Promise((r) => { release = r; }));
+    render(<Host onSubmit={onSubmit} onClose={onClose} />);
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(onClose).toHaveBeenCalledTimes(1);
+    await user.type(screen.getByRole("textbox", { name: "Name" }), "bob");
+    await user.click(screen.getByRole("button", { name: "Create" }));
+    expect(screen.getByRole("button", { name: "Cancel" }).hasAttribute("disabled")
+      || screen.getByRole("button", { name: "Cancel" }).getAttribute("aria-disabled") === "true").toBe(true);
+    await user.keyboard("{Escape}");
+    expect(onClose).toHaveBeenCalledTimes(1);
+    release();
   });
 });

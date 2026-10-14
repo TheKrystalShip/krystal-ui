@@ -51,7 +51,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `Combobox`, `OptionList`, `Meter`, `StatusDot` (a lit dot in a tone, always named by `label`; `pulse` for live, `caption` for the age or state beside it) |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
-| Overlays | `Dialog`, `ConfirmDialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle, touch pull-to-dismiss, and `back`, `action`, `contained`, `role` and `theme` for a menu over a frame), `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
+| Overlays | `Dialog`, `ConfirmDialog`, `FormDialog` (a dialog that is a `useForm` handle's form), `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle, touch pull-to-dismiss, and `back`, `action`, `contained`, `role` and `theme` for a menu over a frame), `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Page patterns | `ListPage` (heading, toolbar, rows, table or grid, pager and the loading, failed and empty states, from the site's data and flags), `DetailPage` (crumbs, a head or a Hero, tabs, an aside column and the whole-page loading, failed and not-found states), `SettingsPage` (sections of rows, a side nav that becomes a select at phone width, and a save bar that follows a form's dirty state), `SignInScreen` (the sign-in card: providers, a username and password form on the form layer, a refusal and a foot) |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Feeds | `useFollowTail` (keeps a scrolling feed pinned to its bottom while the reader is there, counts what arrives while they are parked) |
@@ -479,6 +479,17 @@ its children and a cancel and a confirm button (`tone="danger"` draws the confir
 Button). `onConfirm` returns a promise: resolving to nothing closes the dialog through `onClose`,
 resolving to `{ refusal }` or rejecting draws that text in a `Notice` and keeps it open. While it
 is pending the confirm is busy and the dialog cannot be dismissed.
+
+`FormDialog` is a `Dialog` that is the form of a `useForm` handle: its children are `FormField`s,
+Enter submits, the foot is Cancel and a `FormSubmit` (`submit` words it, `busyLabel` words the busy
+state, or `submit` is a node of the site's own), and nothing dismisses it while a submission runs.
+The form's refusal stands at the top of the body, or `notice` draws a node of the site's own there.
+
+```jsx
+<FormDialog form={form} title="Add an account" icon="user-plus" onClose={close} submit="Create" busyLabel="Creating…">
+  <FormField name="username" label="Username" control="input" />
+</FormDialog>
+```
 
 `Notice` is a line a page says about itself, in a `tone` of info, ok, warn or danger. `EmptyState`
 is what a place shows when it has nothing else to; with `page` it is the whole screen, on a card,

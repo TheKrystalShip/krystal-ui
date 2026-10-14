@@ -170,6 +170,13 @@ export const BEHAVIOUR = {
       "A press on the scrim closes it, held off by `canClose`.",
     ],
   },
+  "form-dialog": {
+    keys: [
+      ["Enter", "In a field, submits the form"],
+      ["Escape", "Cancels; held while the form is submitting"],
+    ],
+    semantics: ["A Dialog that is a `<form>` (`noValidate`): the handle's rules judge, the foot's Cancel and submit buttons are held while a submission runs."],
+  },
   "confirm-dialog": {
     keys: [["Escape", "Cancels; held while the confirmation is working"]],
     semantics: ["A Dialog: the confirm is a danger Button with the dialog's icon, and `busyLabel` replaces its label while it works."],

@@ -218,6 +218,10 @@ export const PAGES = [
     summary: "A question put to a person before a change that is hard to take back.",
   },
   {
+    id: "form-dialog", name: "FormDialog", group: "Overlays", exports: ["FormDialog"], examples: ["form-dialog"],
+    summary: "A dialog that is the form of a useForm handle: Enter submits, Cancel closes, and nothing dismisses it while it submits.",
+  },
+  {
     id: "drawer", name: "Drawer", group: "Overlays", exports: ["Drawer"], examples: ["drawer"],
     summary: "A modal sheet from the bottom, right or left edge, with Dialog's props, a drag handle and pull-to-dismiss.",
     versus: "Dialog on a desktop and Drawer on a phone is the usual pairing.",

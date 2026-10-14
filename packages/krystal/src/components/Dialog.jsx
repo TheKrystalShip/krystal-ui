@@ -15,7 +15,8 @@ import { Modal } from "./Modal.jsx";
 // inside a safe-area inset (edge to edge on a phone), keeping its head and close button; the body
 // scrolls, or with `fill` as well it clips so a child that sizes itself takes the room.
 //
-// `as="form"` makes the sheet a form, `onSubmit` its handler, so Enter in a field submits it.
+// `as="form"` makes the sheet a form (`noValidate`: a form's own rules judge), `onSubmit` its handler,
+// so Enter in a field submits it.
 // `label` names the dialog for a screen reader when `title` is not a string.
 /**
  * @param {object} props
@@ -45,7 +46,7 @@ function Dialog({
     <Modal onClose={onClose} canClose={canClose} scrimClassName="k-backdrop">
       <Sheet className={cls} role="dialog" aria-modal="true"
         aria-label={label || (typeof title === "string" ? title : undefined)}
-        onSubmit={onSubmit}>
+        onSubmit={onSubmit} noValidate={as === "form" || undefined}>
         {art && <div className="k-modal__art" style={{ backgroundImage: art }} />}
         <div className="k-modal__head">
           {icon && <span className="k-modal__icon"><Icon name={icon} size={16} /></span>}
