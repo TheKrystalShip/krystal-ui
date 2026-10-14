@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Button, ListPage, ListRow, Pill, ShowcaseCard, Toolbar, ToolbarCount, ToolbarSearch, ToolbarSort, ToolbarSpacer,
+  Button, ListPage, ListRow, Notice, Pill, ShowcaseCard, Toolbar, ToolbarCount, ToolbarSearch, ToolbarSort, ToolbarSpacer,
 } from "@thekrystalship/krystal";
 import { Section, Sub } from "../kit.jsx";
 
@@ -90,6 +90,8 @@ export default function PagesList() {
           <div style={{ height: 24 }} />
           <ListPage title="Empty" items={[]} emptyTitle="Nothing here yet" emptyBody="Add the first one." emptyIcon="inbox"
             emptyAction={<Button variant="primary">Add</Button>} />
+          <div style={{ height: 24 }} />
+          <ListPage title="Custom empty" items={[]} empty={<Notice tone="info">Nobody has joined yet.</Notice>} />
         </Frame>
       </Sub>
       <Sub title="Custom body (children)">

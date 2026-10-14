@@ -24,7 +24,8 @@ import { Tab, TabList, TabPanel, Tabs } from "./Tabs.jsx";
 // `aside` is a second column beside the body at wide widths and under it at phone width.
 //
 // `loading` and `error` replace the header, tabs and body, under the crumbs, and `isEmpty` with
-// `emptyTitle`, `emptyBody` and `emptyAction` is the record not being found; all draw through DataState.
+// `emptyTitle`, `emptyBody`, `emptyIcon` and `emptyAction` (or an `empty` node) is the record not being
+// found; all draw through DataState.
 /**
  * @typedef {object} DetailTab
  * @property {string | number} value The tab's key.
@@ -57,8 +58,10 @@ import { Tab, TabList, TabPanel, Tabs } from "./Tabs.jsx";
  * @property {() => void} [onRetry] Runs from the failure state's retry button.
  * @property {import("react").ReactNode} [skeleton] Drawn while loading, shaped like the body.
  * @property {boolean} [isEmpty] The record was not found.
+ * @property {import("react").ReactNode} [empty] The not-found state, in place of the one built from the `empty*` props.
  * @property {import("react").ReactNode} [emptyTitle] The not-found state's heading.
  * @property {import("react").ReactNode} [emptyBody] The not-found state's copy.
+ * @property {string} [emptyIcon] A Lucide name above the not-found state's heading.
  * @property {import("react").ReactNode} [emptyAction] The not-found state's control.
  * @property {string} [className] Class name added to the root element.
  * @property {import("react").ReactNode} [children] The body, when no `renderTab` draws one.
@@ -67,7 +70,7 @@ import { Tab, TabList, TabPanel, Tabs } from "./Tabs.jsx";
 /** @param {DetailPageProps} props */
 function DetailPage({
   crumbs, onNavigate, hero, title, sub, meta, actions, tabs, value, onChange, tabsKind = "sections", tabsLabel = "Sections",
-  tabsExtra, renderTab, aside, loading = false, error, onRetry, skeleton, isEmpty, emptyTitle, emptyBody, emptyAction,
+  tabsExtra, renderTab, aside, loading = false, error, onRetry, skeleton, isEmpty, empty, emptyTitle, emptyBody, emptyIcon, emptyAction,
   className, children, ...rest
 }) {
   const sections = tabs && tabsKind === "sections";
@@ -123,8 +126,8 @@ function DetailPage({
   return (
     <div {...rest} className={"k-detailpage" + (className ? " " + className : "")}>
       {crumbs && crumbs.length > 0 && <Breadcrumbs items={crumbs} onNavigate={onNavigate} />}
-      <DataState loading={loading} error={error} onRetry={onRetry} skeleton={skeleton} isEmpty={isEmpty}
-        emptyTitle={emptyTitle} emptyBody={emptyBody} emptyAction={emptyAction}>
+      <DataState loading={loading} error={error} onRetry={onRetry} skeleton={skeleton} isEmpty={isEmpty} empty={empty}
+        emptyTitle={emptyTitle} emptyBody={emptyBody} emptyIcon={emptyIcon} emptyAction={emptyAction}>
         {sections
           ? <Tabs value={current} onChange={onChange} className="k-detailpage__sections">{inner}</Tabs>
           : inner}

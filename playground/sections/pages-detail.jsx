@@ -79,7 +79,7 @@ export default function PagesDetail() {
           <div style={{ display: "grid", gap: 24 }}>
             <DetailPage crumbs={CRUMBS} loading />
             <DetailPage crumbs={CRUMBS} error="The host did not answer." onRetry={() => {}} />
-            <DetailPage crumbs={CRUMBS.slice(0, 2)} isEmpty emptyTitle="Not found" emptyBody="That record does not exist."
+            <DetailPage crumbs={CRUMBS.slice(0, 2)} isEmpty emptyIcon="search-x" emptyTitle="Not found" emptyBody="That record does not exist."
               emptyAction={<Button>Back to hosts</Button>} />
           </div>
         </Frame>

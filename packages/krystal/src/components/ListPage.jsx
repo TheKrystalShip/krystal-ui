@@ -29,7 +29,7 @@ import { Table } from "./Table.jsx";
 //
 // The body draws through DataState: `loading` shows `skeleton` (or lines), `error` a Notice with Retry
 // when `onRetry` is given, and no items the empty state from `emptyTitle`, `emptyBody`, `emptyIcon` and
-// `emptyAction`. The heading and toolbar stay drawn through all three, so a search box is still there
+// `emptyAction`, or the `empty` node in its place. The heading and toolbar stay drawn through all three, so a search box is still there
 // when its results are not. The pager is drawn when `pageCount` is above one and `onPageChange` is
 // given; pages are zero-based, and `total` with `pageSize` words its summary.
 /**
@@ -52,6 +52,7 @@ import { Table } from "./Table.jsx";
  * @property {() => void} [onRetry] Runs from the failure state's retry button.
  * @property {import("react").ReactNode} [skeleton] Drawn while loading, shaped like the body.
  * @property {boolean} [isEmpty] Says the body is empty when it is `children`, or overrides what `items` says.
+ * @property {import("react").ReactNode} [empty] Drawn when empty, in place of the empty state built from the `empty*` props.
  * @property {import("react").ReactNode} [emptyTitle] The empty state's heading.
  * @property {import("react").ReactNode} [emptyBody] The empty state's copy.
  * @property {string} [emptyIcon] A Lucide name.
@@ -70,7 +71,7 @@ import { Table } from "./Table.jsx";
 /** @param {ListPageProps} props */
 function ListPage({
   title, sub, actions, header, toolbar, notice, layout = "list", items, renderItem, columns, table, gridMin = 280,
-  label, loading = false, error, onRetry, skeleton, isEmpty, emptyTitle, emptyBody, emptyIcon, emptyAction,
+  label, loading = false, error, onRetry, skeleton, isEmpty, empty, emptyTitle, emptyBody, emptyIcon, emptyAction,
   page = 0, pageCount, onPageChange, total, pageSize, unit, foot, className, children, ...rest
 }) {
   const none = isEmpty != null ? isEmpty : children == null && (!items || items.length === 0);
@@ -88,7 +89,7 @@ function ListPage({
       {head}
       {toolbar}
       {notice}
-      <DataState loading={loading} error={error} onRetry={onRetry} skeleton={skeleton} isEmpty={none}
+      <DataState loading={loading} error={error} onRetry={onRetry} skeleton={skeleton} isEmpty={none} empty={empty}
         emptyTitle={emptyTitle} emptyBody={emptyBody} emptyIcon={emptyIcon} emptyAction={emptyAction}>
         <div className={"k-listpage__body k-listpage__body--" + (children != null ? "custom" : layout)}>{body}</div>
         {paged && (
