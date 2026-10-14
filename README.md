@@ -115,7 +115,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
-| Page patterns | `ListPage` (heading, toolbar, rows, table or grid, pager and the loading, failed and empty states, from the site's data and flags), `DetailPage` (crumbs, a head or a Hero, tabs, an aside column and the whole-page loading, failed and not-found states), `SettingsPage` (sections of rows, a side nav that becomes a select at phone width, and a save bar that follows a form's dirty state) |
+| Page patterns | `ListPage` (heading, toolbar, rows, table or grid, pager and the loading, failed and empty states, from the site's data and flags), `DetailPage` (crumbs, a head or a Hero, tabs, an aside column and the whole-page loading, failed and not-found states), `SettingsPage` (sections of rows, a side nav that becomes a select at phone width, and a save bar that follows a form's dirty state), `SignInScreen` (the sign-in card: providers, a username and password form on the form layer, a refusal and a foot) |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
@@ -394,6 +394,22 @@ Save submits, Revert resets. Without a form, `dirty`, `saving`, `onSave` and `on
     { id: "profile", title: "Profile", icon: "user", content: <FormField name="display" label="Name" /> },
     { id: "theme", title: "Appearance", icon: "palette", rows: [{ icon: "palette", title: "Theme", control: <ThemePicker /> }] },
   ]} />
+```
+
+`SignInScreen` is the sign-in card on `CardScreen` and signs nobody in: `onProvider(provider)` and
+`onSubmit(values)` are the site's. `providers` are ids (one is a full-width button in the provider's colour,
+several an even grid named for their provider), `busyProvider` marks the one being left for, and `password`
+draws a `username` and `password` form over the form layer whose `onSubmit` may return `{ message }` or
+`{ errors }` for a refusal. `tabs` with `tab` and `onTab` switch sign in and register, `extraFields` and
+`passwordAside` add to the form, `error` is a refusal about the whole card, and `children` follow under a
+rule for what is a site's own (a device code).
+
+```jsx
+<SignInScreen mark={mark} wordmark="The Krystal Ship" tagline="Sign in."
+  providers={context.providers} onProvider={(p) => leaveFor(p)} busyProvider={leaving}
+  password passwordAside={<Button variant="link" size="xs" onClick={forgot}>Forgot?</Button>}
+  onSubmit={async (v) => { const r = await post(v); if (!r.ok) return { message: r.error }; }}
+  error={unreachable} foot={<>Signing in to <b>{client}</b></>} />
 ```
 
 `StatTile` is one figure: `label`, `value`, `unit`, `delta`, `sub`, `tone`, an optional `icon` and a

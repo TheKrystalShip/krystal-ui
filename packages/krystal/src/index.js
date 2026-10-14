@@ -35,6 +35,7 @@ export { List, ListRow } from "./components/ListRow.jsx";
 export { ListPage } from "./components/ListPage.jsx";
 export { DetailPage } from "./components/DetailPage.jsx";
 export { SettingsPage } from "./components/SettingsPage.jsx";
+export { SignInScreen } from "./components/SignInScreen.jsx";
 export { CardScreen } from "./components/CardScreen.jsx";
 export { Combobox } from "./components/Combobox.jsx";
 export { CopyField } from "./components/CopyField.jsx";
