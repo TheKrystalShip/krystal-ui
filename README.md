@@ -119,6 +119,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Overlays | `Dialog`, `Modal`, `Popover`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
+| Overlays | `Dialog`, `Modal`, `Popover`, `Tooltip`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
@@ -500,6 +501,12 @@ panel is portaled to the body and placed by Floating UI.
   {({ close }) => (<><FilterForm /><Button onClick={close}>Done</Button></>)}
 </Popover>
 ```
+
+`Tooltip` is a text label for a control: `<Tooltip label="Delete"><IconButton … /></Tooltip>`. It shows
+when a mouse or pen rests on the child (after `delay`) and when the child takes keyboard focus, never
+for a touch, and hides on leave, blur, a press and Escape (marked handled, so a dialog around it
+stays open). The child is cloned with `aria-describedby` while the tip shows; the tip is text only
+and never a pointer target. `IconButton` draws its `label` through it.
 
 ## The frame
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { Icon } from "./Icon.jsx";
 import { Spinner } from "./Spinner.jsx";
+import { Tooltip } from "./Tooltip.jsx";
 
 // Button — the one push button every site draws. Variants say how loud it is, never what it does:
 //
@@ -89,7 +90,7 @@ const Button = React.forwardRef(function Button({
 });
 
 // IconButton — a square button holding one icon. It has no visible words, so `label` is required:
-// it is the accessible name and the tooltip. Variants: outline (a hairline square, the default),
+// it is the accessible name and the tooltip (a Tooltip, so keyboard focus shows it too). Variants: outline (a hairline square, the default),
 // ghost (no border until hover), secondary (the raised neutral fill). Sizes are Button's heights,
 // square: xs 26, sm 30, md 34, lg 38.
 // `tone` and `armed` are Button's; an armed button reads in the danger tint, or the success one when
@@ -108,7 +109,7 @@ const ICON_BTN_GLYPH = { xs: 13, sm: 14, md: 15, lg: 17 };
  * @property {boolean} [armed]
  * @property {"button" | "submit" | "reset"} [type]
  * @property {boolean} [disabled]
- * @property {string} [title] Overrides the tooltip, which is `label` otherwise.
+ * @property {string} [title] Overrides the tooltip text, which is `label` otherwise; empty draws none.
  * @property {string} [className]
  * @typedef {IconButtonOwnProps & Omit<import("react").ComponentPropsWithoutRef<"button">, keyof IconButtonOwnProps>} IconButtonProps
  */
@@ -118,7 +119,8 @@ const IconButton = React.forwardRef(function IconButton({
   type = "button", disabled, title, className, ...rest
 }, ref) {
   const s = ICON_BTN_GLYPH[size] || ICON_BTN_GLYPH.md;
-  return (
+  const tip = title === undefined ? label : title;
+  const button = (
     <button ref={ref} type={type}
       className={"k-iconbtn k-iconbtn--" + variant + " k-iconbtn--" + size
         + (tone ? " k-iconbtn--tone-" + tone : "")
@@ -126,13 +128,13 @@ const IconButton = React.forwardRef(function IconButton({
         + (className ? " " + className : "")}
       disabled={disabled || busy}
       aria-label={label}
-      title={title === undefined ? label : title}
       aria-busy={busy || undefined}
       aria-pressed={pressed === undefined ? undefined : !!pressed}
       {...rest}>
       {busy ? <Spinner size={s} /> : glyph(icon, s)}
     </button>
   );
+  return tip ? <Tooltip label={tip}>{button}</Tooltip> : button;
 });
 
 export { Button, IconButton };

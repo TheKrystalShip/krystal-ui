@@ -1,0 +1,31 @@
+/* ============================================================================
+   tooltip.css — <Tooltip>, a text label for a control. Portaled and placed by Floating UI; text only, never a
+   pointer target; above the popovers, below the toasts.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-tooltip {
+  z-index: 85;
+  box-sizing: border-box;
+  max-width: 260px;
+  padding: 5px 9px;
+  background: var(--surface-3);
+  border: var(--edge-strong);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  color: var(--fg-1);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  line-height: 1.35;
+  pointer-events: none;
+  animation: k-fade var(--d-fast) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-tooltip {
+    animation: none;
+  }
+}
+}

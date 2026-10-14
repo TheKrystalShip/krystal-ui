@@ -55,6 +55,7 @@ export { Tab, TabList, TabPanel, Tabs } from "./components/Tabs.jsx";
 export { ThemePicker } from "./components/ThemePicker.jsx";
 export { Toasts } from "./components/Toasts.jsx";
 export { Toggle } from "./components/Toggle.jsx";
+export { Tooltip } from "./components/Tooltip.jsx";
 export { TvBackdrop, TvBar, TvBarButton, TvCard, TvRow, TvSpotlight, TvTile } from "./components/Tv.jsx";
 export {
   Toolbar, ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, useFilters,

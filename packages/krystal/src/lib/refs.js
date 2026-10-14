@@ -7,9 +7,9 @@ import React from "react";
  * @param {import("react").ReactElement} element
  */
 function elementRef(element) {
-  const props = /** @type {any} */ (element.props);
-  if (props && props.ref !== undefined) return props.ref;
-  return Number.parseInt(React.version, 10) >= 19 ? null : /** @type {any} */ (element).ref;
+  return Number.parseInt(React.version, 10) >= 19
+    ? /** @type {any} */ (element.props).ref
+    : /** @type {any} */ (element).ref;
 }
 
 /**
