@@ -19,14 +19,14 @@ const COLUMNS = [
   { key: "load", header: "Load", align: "right", sortable: true, render: (p) => (p.load == null ? null : Math.round(p.load * 100) + "%") },
 ];
 
-function DataDemo() {
+export function TableExamples() {
   const [sort, setSort] = React.useState({ key: "name", dir: "asc" });
   const [open, setOpen] = React.useState(null);
   const [sort2, setSort2] = React.useState(null);
   const rows = sortRows(PEOPLE, COLUMNS, sort);
   const rows2 = sortRows(PEOPLE, COLUMNS, sort2);
   return (
-    <Section id="data" title="Data: Table, StatTile, Card, Avatar, DataState">
+    <>
       <Sub title="Table: sortable, rows open, row actions, selection">
         <p style={{ margin: "0 0 8px", fontSize: 12, opacity: 0.6 }}>Opened: {open || "none"}</p>
         <Table label="People" rows={rows} rowKey={(p) => p.id} columns={COLUMNS} sort={sort} onSortChange={setSort}
@@ -50,6 +50,13 @@ function DataDemo() {
           <Table label="Empty" rows={[]} columns={COLUMNS} emptyTitle="No people yet" emptyBody="Invite somebody to begin." />
         </div>
       </Sub>
+    </>
+  );
+}
+
+export function StatTileExamples() {
+  return (
+    <>
       <Sub title="StatTile: tones, unknown, spark, delta, small, open">
         <StatTiles>
           <StatTile icon="users" label="Online" value={12} unit="players" sub="of 40 seats" tone="info" delta="+3" deltaTone="ok" />
@@ -65,6 +72,13 @@ function DataDemo() {
           <div style={{ width: 150 }}><StatTile size="sm" label="Uptime" value={null} /></div>
         </div>
       </Sub>
+    </>
+  );
+}
+
+export function CardExamples() {
+  return (
+    <>
       <Sub title="Card">
         <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
           <Card title="Plain" sub="A title, a sub and a body" icon="package" actions={<Button size="sm">Act</Button>} foot="Updated today">Body text sits here.</Card>
@@ -80,6 +94,13 @@ function DataDemo() {
           <Card padding="none" onOpen={() => {}} label="Bare open card"><div style={{ padding: 16 }}>No title; labelled open.</div></Card>
         </div>
       </Sub>
+    </>
+  );
+}
+
+export function AvatarExamples() {
+  return (
+    <>
       <Sub title="Avatar">
         <div style={row}>
           {["xs", "sm", "md", "lg", "xl"].map((s) => <Avatar key={s} size={s} name="Ada Lovelace" />)}
@@ -99,6 +120,13 @@ function DataDemo() {
           <AccountAvatar user={null} />
         </div>
       </Sub>
+    </>
+  );
+}
+
+export function DataStateExamples() {
+  return (
+    <>
       <Sub title="DataState">
         <div style={{ ...col, maxWidth: 520 }}>
           <DataState loading>never</DataState>
@@ -108,6 +136,18 @@ function DataDemo() {
           <DataState data={[1, 2, 3]}>{(d) => <Pill>{d.length} loaded</Pill>}</DataState>
         </div>
       </Sub>
+    </>
+  );
+}
+
+function DataDemo() {
+  return (
+    <Section id="data" title="Data: Table, StatTile, Card, Avatar, DataState">
+      <TableExamples />
+      <StatTileExamples />
+      <CardExamples />
+      <AvatarExamples />
+      <DataStateExamples />
     </Section>
   );
 }

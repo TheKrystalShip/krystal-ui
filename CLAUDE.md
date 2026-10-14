@@ -83,11 +83,19 @@ npm run check:contract   # theme-contract.json describes tokens.css and every bu
 npm run check:palettes   # krystal-check-theme over the package's own tokens.css
 npm run check:types      # builds core, then tsc --checkJs over both packages, no emit
 npm run build     # core, then the chat: vite library build → packages/*/dist (one ES module per source file), then tsc emits one .d.ts beside each
-npm run play -- --port 5211   # the playground, both packages resolved to their sources
+npm run play -- --port 5211   # the documentation (the playground), both packages resolved to their sources
+npm run docs:data   # props from the JSDoc (scripts/docs-props.mjs) and tokens from tokens.css, into playground/generated/
+npm run build:docs  # the documentation as a static build, to check that it compiles
 npm publish -w @thekrystalship/krystal   # prepack builds; a published version is permanent (a re-publish is refused)
 npm publish -w @thekrystalship/krystal-chat   # after core: its peer names core's version
 npm publish -w <package> --tag dev   # a prerelease — npm refuses one without a tag, so `latest` stays a release
 ```
+
+**The playground is the documentation.** Each component has a page (`playground/docs/pages.js`) with its
+examples (`playground/examples.jsx` and `playground/sections/`), a props table generated from its JSDoc, and
+its keys and roles (`playground/docs/behaviour.js`); `#/all` draws every example on one page, and the
+guides are `docs/*.md`. A new component adds a page entry, an examples piece and, when it takes keys, a
+behaviour entry; a prop is documented by a `@property` description beside its type, never in the page.
 
 Sources stay `.jsx` and `.js`. The types are JSDoc: every exported component documents its props as a
 `@typedef` (the component's own props, intersected with the native element's attributes when it
