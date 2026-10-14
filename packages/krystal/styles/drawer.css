@@ -63,6 +63,12 @@
   padding-left: env(safe-area-inset-left);
 }
 
+/* Over a frame of its own rather than the viewport: the scrim fills the nearest positioned ancestor. */
+.k-drawer-scrim--contained { position: absolute; }
+.k-drawer--contained { max-height: 100%; }
+.k-drawer--right.k-drawer--contained,
+.k-drawer--left.k-drawer--contained { height: 100%; }
+
 .k-drawer--lg { max-width: 720px; }
 .k-drawer--xl { max-width: 960px; }
 
@@ -123,6 +129,19 @@
 }
 
 .k-drawer__close { margin-left: auto; }
+
+/* The action takes the head's free space, so the close button follows it. */
+.k-drawer__action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-left: auto;
+}
+
+.k-drawer__action + .k-drawer__close { margin-left: 0; }
+
+/* The back button is pulled into the head's padding, so its icon aligns with the head's edge. */
+.k-drawer__back { margin-left: calc(var(--s-2) * -1); flex-shrink: 0; }
 
 .k-drawer__sub {
   flex-shrink: 0;

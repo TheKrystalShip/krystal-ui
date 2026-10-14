@@ -114,7 +114,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `Combobox`, `OptionList`, `Meter`, `StatusDot` (a lit dot in a tone, always named by `label`; `pulse` for live, `caption` for the age or state beside it) |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
-| Overlays | `Dialog`, `ConfirmDialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
+| Overlays | `Dialog`, `ConfirmDialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle, touch pull-to-dismiss, and `back`, `action`, `contained`, `role` and `theme` for a menu over a frame), `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Page patterns | `ListPage` (heading, toolbar, rows, table or grid, pager and the loading, failed and empty states, from the site's data and flags), `DetailPage` (crumbs, a head or a Hero, tabs, an aside column and the whole-page loading, failed and not-found states), `SettingsPage` (sections of rows, a side nav that becomes a select at phone width, and a save bar that follows a form's dirty state), `SignInScreen` (the sign-in card: providers, a username and password form on the form layer, a refusal and a foot) |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Feeds | `useFollowTail` (keeps a scrolling feed pinned to its bottom while the reader is there, counts what arrives while they are parked) |
@@ -580,7 +580,13 @@ inside it takes the room and scrolls itself.
 
 `gap` is a step of the spacing scale (`--s-N`) or a name for one (`xs` 1, `sm` 2, `md` 4, `lg` 6, `xl` 8).
 A `Drawer` takes `side="right"` or `"left"` for a panel at the screen's edge; on touch its head is
-the grip a pull toward the edge closes it by.
+the grip a pull toward the edge closes it by. `back` (`{label, onClick}`) puts a back button before the
+title for a menu nested in another, `action` sits after the title, and `head` replaces the whole title
+row. `contained` draws the sheet and its scrim inside the nearest positioned ancestor instead of over
+the viewport, for menus that belong to a frame such as a video player; it still holds focus and closes
+on Escape or a press on the scrim, and the rest of the page stays live. `role="menu"` is for a sheet
+whose body is a list of items. `theme="dark"` (any palette name) draws the sheet in that palette
+whatever the page's, by setting `data-theme` on it; the document's `color-scheme` stays the page's.
 
 ## Panels that float
 
