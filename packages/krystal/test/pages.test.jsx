@@ -90,3 +90,25 @@ describe("StatTile aside", () => {
     expect(onOpen).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("StatTile head", () => {
+  it("draws the label in a head, an unknown value as a dash read as unknown, and the aside", () => {
+    const { container } = render(<StatTile label="Disk" value={null} aside={<i data-testid="dot" />} />);
+    expect(container.querySelector(".k-stat__head").textContent).toContain("Disk");
+    expect(screen.getByTestId("dot").closest(".k-stat__head")).toBeTruthy();
+    expect(container.querySelector(".k-stat__body").textContent).toContain("unknown");
+  });
+
+  it("draws View with its word, and at size sm the arrow alone named by the label", async () => {
+    const user = userEvent.setup();
+    const onView = vi.fn();
+    const { rerender } = render(<StatTile label="CPU" value={1} onView={onView} />);
+    await user.click(screen.getByRole("button", { name: "View" }));
+    expect(onView).toHaveBeenCalledTimes(1);
+    rerender(<StatTile label="CPU" size="sm" value={1} onView={onView} />);
+    const btn = screen.getByRole("button", { name: "View CPU" });
+    expect(btn.textContent.trim()).toBe("");
+    await user.click(btn);
+    expect(onView).toHaveBeenCalledTimes(2);
+  });
+});

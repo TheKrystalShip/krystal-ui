@@ -17,16 +17,13 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 8px;
   min-width: 0;
-  padding: 14px 16px;
   overflow: hidden;
   background: var(--surface-1);
   border: var(--edge);
   border-radius: var(--r-md);
 }
 
-.k-stat--sm { gap: 4px; padding: 9px 12px 11px; }
 
 .k-stat--warn::before,
 .k-stat--danger::before {
@@ -44,10 +41,47 @@
 .k-stat__head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   min-width: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
 }
+
+.k-stat--sm .k-stat__head { gap: 6px; padding: 7px 10px 6px; }
+
+.k-stat__body {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  padding: 14px 16px;
+}
+
+.k-stat--sm .k-stat__body { gap: 4px; padding: 9px 10px 11px; }
+
+.k-stat__view {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--krystal-teal);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.k-stat__view:hover { color: var(--krystal-teal-hover); }
+
+.k-stat__view:focus-visible { outline: none; box-shadow: var(--ring-focus); border-radius: var(--r-sm); }
+
+.k-stat--sm .k-stat__view { padding: 2px; gap: 0; }
 
 .k-stat__head > :first-child {
   flex: 1 1 auto;
@@ -68,12 +102,14 @@
   align-items: center;
   gap: 6px;
   min-width: 0;
-  color: var(--fg-3);
+  color: var(--fg-2);
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
+
+.k-stat--sm .k-stat__label { gap: 5px; font-size: 9.5px; letter-spacing: 0.05em; }
 
 .k-stat__label > svg { flex: none; }
 
