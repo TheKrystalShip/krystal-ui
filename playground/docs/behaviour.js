@@ -74,8 +74,9 @@ export const BEHAVIOUR = {
   "radio-group": {
     keys: [
       ["Tab", "One stop, on the chosen option"],
-      ["ArrowRight, ArrowDown", "Next option, chosen at once"],
-      ["ArrowLeft, ArrowUp", "Previous option, chosen at once"],
+      ["ArrowRight, ArrowLeft", "Next or previous option, chosen at once (ArrowDown, ArrowUp in a vertical group); the cross-axis arrows are the page's"],
+      ["Arrows on a television", "Spatial focus's: they reach each option without choosing it"],
+      ["Enter, Space", "Choose the focused option"],
     ],
     semantics: [
       "`role=\"radiogroup\"` of `role=\"radio\"` buttons with `aria-checked`; `label` names the group.",
@@ -110,6 +111,7 @@ export const BEHAVIOUR = {
       ["Home, End", "First and last tab"],
       ["Enter, Space", "Choose the focused tab when `activation=\"manual\"`"],
       ["Tab", "From the tab list into the chosen panel"],
+      ["Arrows on a television", "Spatial focus's: they reach each tab, and OK chooses it"],
     ],
     semantics: [
       "`role=\"tablist\"` named by `label`, `role=\"tab\"` with `aria-selected` and `aria-controls`, `role=\"tabpanel\"` labelled by its tab.",

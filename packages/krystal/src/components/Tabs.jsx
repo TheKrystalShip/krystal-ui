@@ -1,4 +1,5 @@
 import React from "react";
+import { onTelevision } from "../lib/television.js";
 import { Icon } from "./Icon.jsx";
 import { Pill } from "./Pill.jsx";
 
@@ -111,7 +112,8 @@ const TabList = React.forwardRef(function TabList({ label, className, children, 
 
   const keys = (e) => {
     if (onKeyDown) onKeyDown(e);
-    if (e.defaultPrevented) return;
+    // On a television the arrows are spatial focus's, which reaches each tab; OK chooses.
+    if (e.defaultPrevented || onTelevision()) return;
     const tabs = Array.from(listRef.current.querySelectorAll('[role="tab"]:not(:disabled)'));
     const at = tabs.indexOf(document.activeElement);
     if (at < 0) return;

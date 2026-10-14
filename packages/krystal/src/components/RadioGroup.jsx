@@ -1,10 +1,13 @@
 import React from "react";
+import { onTelevision } from "../lib/television.js";
 import { ColorInput } from "./ColorInput.jsx";
 import { Icon } from "./Icon.jsx";
 
 // RadioGroup — a small single choice drawn inline or stacked, each option a button with role radio
-// (WAI-ARIA radio group): one tab stop on the chosen option, arrow keys that move to the next
-// enabled option and choose it, wrapping at the ends.
+// (WAI-ARIA radio group): one tab stop on the chosen option, and the arrows along the group's line
+// (left and right in a row, up and down in a stack) move to the next enabled option and choose it,
+// wrapping at the ends. The cross-axis arrows are left to the page. On a television (`data-tv`) the
+// group takes no arrow at all: spatial focus reaches every radio, and OK chooses the focused one.
 //
 // OptionList is the other single choice: full-width rows with a detail and an aside, for a choice
 // that is a form field on its own. RadioGroup is the compact one, for a handful of short labels
@@ -70,8 +73,12 @@ const RadioGroup = React.forwardRef(function RadioGroup({
   const keys = (e) => {
     if (onKeyDown) onKeyDown(e);
     if (e.defaultPrevented) return;
-    const step = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1
-      : e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 0;
+    // Arrows along the group's own line move the choice; the cross-axis ones are left to the page,
+    // and on a television all four are spatial focus's, which reaches each radio and lets OK choose.
+    if (onTelevision()) return;
+    const vertical = orientation === "vertical";
+    const step = e.key === (vertical ? "ArrowDown" : "ArrowRight") ? 1
+      : e.key === (vertical ? "ArrowUp" : "ArrowLeft") ? -1 : 0;
     if (!step) return;
     const items = Array.from(own.current.querySelectorAll('[role="radio"]:not(:disabled)'));
     const at = items.indexOf(document.activeElement);

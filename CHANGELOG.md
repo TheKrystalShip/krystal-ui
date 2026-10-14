@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.37.1]
+
+### Fixed
+- **A radio group takes only the arrows along its own line**, left and right in a row and up and down in
+  a stack, and leaves the others to the page.
+- **On a television (`data-tv`), `RadioGroup` and `Tabs` take no arrow at all**: spatial focus reaches
+  each option and tab without choosing it, and OK chooses. A group no longer holds the remote's arrows,
+  so focus leaves it, and moving through it changes nothing.
+
 ## [0.37.0]
 
 ### Added

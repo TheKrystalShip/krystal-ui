@@ -145,6 +145,34 @@ describe("RadioGroup", () => {
     expect(screen.getByRole("radio", { name: "Gamma" }).getAttribute("aria-checked")).toBe("true");
   });
 
+  it("leaves the cross-axis arrows to the page, and every arrow on a television", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    const seen = [];
+    render(<div onKeyDown={(e) => seen.push(e.key + ":" + e.defaultPrevented)}>
+      <RadioGroup label="Letter" options={options} value="a" onChange={onChange} />
+    </div>);
+    const alpha = screen.getByRole("radio", { name: "Alpha" });
+    alpha.focus();
+    await user.keyboard("{ArrowDown}");
+    expect(onChange).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(alpha);
+    expect(seen).toContain("ArrowDown:false");
+
+    document.documentElement.setAttribute("data-tv", "");
+    try {
+      seen.length = 0;
+      await user.keyboard("{ArrowRight}");
+      expect(onChange).not.toHaveBeenCalled();
+      expect(seen).toContain("ArrowRight:false");
+      screen.getByRole("radio", { name: "Gamma" }).focus();
+      await user.keyboard("{Enter}");
+      expect(onChange).toHaveBeenCalledWith("c");
+    } finally {
+      document.documentElement.removeAttribute("data-tv");
+    }
+  });
+
   it("puts the tab stop on the first enabled radio when none is chosen", () => {
     render(<RadioGroup label="Letter" options={options} />);
     expect(screen.getAllByRole("radio").map((r) => r.tabIndex)).toEqual([0, -1, -1]);
