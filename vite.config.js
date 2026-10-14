@@ -3,7 +3,8 @@ import react from "@vitejs/plugin-react";
 
 // Library build: one ES module per source file (preserveModules), so a consumer's bundler
 // tree-shakes per component and the side-effectful modules named in package.json stay the
-// only ones it must keep. React, React DOM and Lucide are the consumer's own copies.
+// only ones it must keep. React, React DOM and Lucide are the consumer's own copies, and Floating UI is a dependency the
+// consumer's bundler resolves.
 export default defineConfig({
   plugins: [react()],
   build: {
@@ -16,7 +17,7 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: (id) => /^(react|react-dom|lucide-react)(\/|$)/.test(id),
+      external: (id) => /^(react|react-dom|lucide-react|@floating-ui\/react-dom)(\/|$)/.test(id),
       output: {
         preserveModules: true,
         preserveModulesRoot: "src",

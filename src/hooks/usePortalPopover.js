@@ -1,61 +1,64 @@
 // usePortalPopover — a generic hook for portaled popovers that float over the
 // page (z-indexed above any docked panel). Returns { pos, menuRef }: render via
-// createPortal(..., document.body) with style={pos} and attach menuRef.
-// Auto-places on both axes, and follows the button when the page moves it; outside-click closes.
+// createPortal(..., document.body) with style={pos} and attach menuRef (a callback ref).
+// Floating UI places it against the anchor — flipped to the side with room and shifted to stay inside
+// the window — and follows the anchor when the page moves it; outside-click closes.
+// `options.placement` overrides the side and alignment; by default the popover opens below the anchor,
+// lined up with the anchor's edge nearest the window's near side.
 
 import React from "react";
+import { useFloating, autoUpdate, offset, flip, shift, size } from "@floating-ui/react-dom";
 
-function usePortalPopover(open, setOpen, ref) {
-  const menuRef = React.useRef(null);
-  const [pos, setPos] = React.useState(null);
+const GAP = 8;
+const EDGE = 8;
+
+function usePortalPopover(open, setOpen, ref, options) {
+  const placement = options && options.placement;
+  const [side, setSide] = React.useState("bottom-start");
+  const { refs, floatingStyles, isPositioned } = useFloating({
+    open,
+    strategy: "fixed",
+    placement: placement || side,
+    transform: false,
+    middleware: [
+      offset(GAP),
+      flip({ padding: EDGE }),
+      shift({ padding: EDGE }),
+      size({
+        padding: EDGE,
+        apply({ availableWidth, elements }) {
+          elements.floating.style.maxWidth = Math.max(0, availableWidth) + "px";
+        },
+      }),
+    ],
+    whileElementsMounted: autoUpdate,
+  });
+  const menuEl = React.useRef(null);
+  const menuRef = React.useCallback((el) => {
+    menuEl.current = el;
+    refs.setFloating(el);
+  }, [refs]);
+  React.useLayoutEffect(() => {
+    if (!open || !ref.current) return;
+    const r = ref.current.getBoundingClientRect();
+    setSide((r.left + r.right) / 2 > window.innerWidth / 2 ? "bottom-end" : "bottom-start");
+    refs.setReference(ref.current);
+  }, [open, ref, refs]);
+
   React.useEffect(() => {
     if (!open) return;
     const h = (e) => {
       if (ref.current && ref.current.contains(e.target)) return;
-      if (menuRef.current && menuRef.current.contains(e.target)) return;
+      if (menuEl.current && menuEl.current.contains(e.target)) return;
       setOpen(false);
     };
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, [open, setOpen, ref]);
-  React.useLayoutEffect(() => {
-    if (!open) return;
-    let at = null;
-    const place = () => {
-      const el = ref.current;
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      at = r.top + "," + r.left;
-      const vw = window.innerWidth, vh = window.innerHeight;
-      const horiz = (r.left + r.right) / 2 > vw / 2
-        ? { right: Math.round(vw - r.right) }
-        : { left: Math.round(Math.max(0, r.left)) };
-      const vert = r.top > vh / 2
-        ? { bottom: Math.round(vh - r.top + 8) }
-        : { top: Math.round(r.bottom + 8) };
-      setPos({ ...horiz, ...vert });
-    };
-    place();
-    window.addEventListener("resize", place);
-    window.addEventListener("scroll", place, true);
-    // A layout change that is neither moves the button too (a bar coming back, a panel growing): each
-    // frame the popover is open compares where the button stands with where it was placed against.
-    let frame = 0;
-    const follow = () => {
-      const el = ref.current;
-      if (el) {
-        const r = el.getBoundingClientRect();
-        if (r.top + "," + r.left !== at) place();
-      }
-      frame = requestAnimationFrame(follow);
-    };
-    frame = requestAnimationFrame(follow);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("resize", place);
-      window.removeEventListener("scroll", place, true);
-    };
-  }, [open, ref]);
+
+  const { position, top, left } = floatingStyles;
+  // Hidden until the first measurement lands, so the popover never shows at the window's corner.
+  const pos = open ? { position, top, left, visibility: isPositioned ? "visible" : "hidden" } : null;
   return { pos, menuRef };
 }
 

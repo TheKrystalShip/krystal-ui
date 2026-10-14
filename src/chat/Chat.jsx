@@ -128,18 +128,11 @@ function pickGreeting() {
 
 // A popover the chat's chrome opens from one of its buttons: placed against that button, closed by a
 // click outside or Escape, which hands focus back to the button. `align="start"` lines its left edge
-// up with the button's, held inside the window — for a button at the start of a row, whose menu
-// would otherwise hang off to the side away from what it belongs to.
+// up with the button's — for a button at the start of a row, whose menu would otherwise hang off to
+// the side away from what it belongs to.
 function ChatMenu({ open, setOpen, anchorRef, role = "menu", label, align, className = "", children }) {
-  const { pos: placed, menuRef } = usePortalPopover(open, setOpen, anchorRef);
-  const [left, setLeft] = React.useState(null);
-  React.useLayoutEffect(() => {
-    if (!open || !placed || align !== "start" || !anchorRef.current || !menuRef.current) { setLeft(null); return; }
-    const r = anchorRef.current.getBoundingClientRect();
-    const w = menuRef.current.offsetWidth;
-    setLeft(Math.round(Math.max(8, Math.min(r.left, window.innerWidth - w - 8))));
-  }, [open, placed, align, anchorRef, menuRef]);
-  const pos = placed && left != null ? { top: placed.top, bottom: placed.bottom, left } : placed;
+  const { pos, menuRef } = usePortalPopover(open, setOpen, anchorRef,
+    align === "start" ? { placement: "bottom-start" } : undefined);
   React.useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => {

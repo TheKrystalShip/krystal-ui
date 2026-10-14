@@ -21,7 +21,8 @@ import "@thekrystalship/krystal-ui/styles.css";        // tokens, fonts and ever
 import { BriefCard, Icon, Rail, Toasts, toast } from "@thekrystalship/krystal-ui";
 ```
 
-React 18, React DOM and `lucide-react` are peer dependencies: the site's own copies are used.
+React 18, React DOM and `lucide-react` are peer dependencies: the site's own copies are used. The package
+depends on `@floating-ui/react-dom`, which places its popovers; a site never imports it.
 
 The modules under `lib/` (`store`, `theme`, `toasts`, `time`, `clipboard`, `pushBrowser`) are also
 addressable one at a time — `@thekrystalship/krystal-ui/lib/time` — for code that runs outside a
