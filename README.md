@@ -870,6 +870,10 @@ npm run check:contrast   # every --on-* ink reads on its fill at 4.5:1 in every 
 npm run check:contract   # theme-contract.json describes tokens.css and every built-in palette
 npm run check:palettes   # krystal-check-theme over the package's own tokens.css
 npm run check:types      # builds core, then tsc --checkJs over both packages
+npm test             # behaviour tests (Vitest, Testing Library, jsdom) in packages/*/test
+npm run test:a11y    # axe over every playground section in dark and light (`npx playwright install chromium` once)
+npm run test:visual  # every section at 1280 and 390 in dark, light and a tribute, against committed baselines
+npm run test:visual -- --update   # rewrite the baselines after an intended change to how something looks
 npm run build        # core, then the chat → packages/*/dist, one ES module per source file
 npm run play -- --port 5211   # the documentation: the playground with both packages from source
 npm run docs:data    # regenerate the props and token data the documentation reads

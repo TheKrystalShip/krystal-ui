@@ -306,3 +306,17 @@ describe("OptionList", () => {
     await waitFor(() => expect(document.activeElement).toBe(screen.getByRole("radio", { name: "Delta" })));
   });
 });
+
+describe("Tabs ids", () => {
+  it("names a tab's panel with one id even when the value holds a space", () => {
+    render(
+      <Tabs defaultValue="Danger zone">
+        <TabList label="x"><Tab value="Danger zone">Danger</Tab></TabList>
+        <TabPanel value="Danger zone">p</TabPanel>
+      </Tabs>,
+    );
+    const controls = screen.getByRole("tab").getAttribute("aria-controls");
+    expect(controls).not.toMatch(/\s/);
+    expect(screen.getByRole("tabpanel").id).toBe(controls);
+  });
+});

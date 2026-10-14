@@ -10,7 +10,11 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   reporter: [["list"]],
-  timeout: 180_000,
+  timeout: 300_000,
+  // One baseline set, kept beside the specs and named <palette>-<width>-<section>.png. The pixels are
+  // this machine's, so the set is refreshed with \`npm run test:visual -- --update\` and is not run in CI.
+  snapshotPathTemplate: "{testDir}/visual/__screenshots__/{arg}{ext}",
+  expect: { toHaveScreenshot: { animations: "disabled", caret: "hide", scale: "css", maxDiffPixelRatio: 0.001 } },
   use: { baseURL: ORIGIN, browserName: "chromium", reducedMotion: "reduce", colorScheme: "dark" },
   webServer: {
     command: "npx vite playground --port " + PORT + " --strictPort",

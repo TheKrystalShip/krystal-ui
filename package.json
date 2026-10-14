@@ -27,7 +27,7 @@
     "check:palettes": "node packages/krystal/bin/krystal-check-theme.mjs packages/krystal/styles/tokens.css",
     "test": "vitest run",
     "test:a11y": "playwright test --config test/playwright.config.js test/a11y",
-    "test:visual": "playwright test --config test/playwright.config.js test/visual"
+    "test:visual": "node scripts/test-visual.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

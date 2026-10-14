@@ -82,6 +82,10 @@ npm run check:contrast   # every --on-* ink reads on its fill at 4.5:1 in every 
 npm run check:contract   # theme-contract.json describes tokens.css and every built-in palette
 npm run check:palettes   # krystal-check-theme over the package's own tokens.css
 npm run check:types      # builds core, then tsc --checkJs over both packages, no emit
+npm test          # Vitest, Testing Library and jsdom over packages/*/test: behaviour by role and key
+npm run test:a11y # axe over every playground section in dark and light; needs `npx playwright install chromium` once
+npm run test:visual   # screenshots of every section at 1280 and 390 in dark, light and a tribute, against test/visual/__screenshots__
+npm run test:visual -- --update   # rewrites those baselines; they are this machine's pixels, so CI does not run them
 npm run build     # core, then the chat: vite library build → packages/*/dist (one ES module per source file), then tsc emits one .d.ts beside each
 npm run play -- --port 5211   # the documentation (the playground), both packages resolved to their sources
 npm run docs:data   # props from the JSDoc (scripts/docs-props.mjs) and tokens from tokens.css, into playground/generated/
