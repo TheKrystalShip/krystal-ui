@@ -39,7 +39,7 @@
   `scripts/codemod-k-prefix.mjs` rewrites a site: `node scripts/codemod-k-prefix.mjs <dir> [--write]`
   covers CSS selectors, `className` strings, `classList` and selector-method arguments, and reports as
   ambiguous each class the site both styles and emits itself, to be settled with `--assume-package`.
-  `h1.display` is no longer a selector; `.k-display` is the one rule.
+  The display heading is `.k-display`, on any element.
 - **The sheets sit in the cascade layers `krystal.tokens`, `krystal.base` and `krystal.components`**,
   ordered by the `@layer` statement each sheet opens with. A site's unlayered rules beat every layered
   rule whatever their specificity, so a restyle needs no raised specificity, and a site's own element
