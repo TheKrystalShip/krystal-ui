@@ -144,6 +144,7 @@ function ChatMenu({ open, setOpen, anchorRef, role = "menu", label, align, class
     if (!open) return undefined;
     const onKey = (e) => {
       if (e.key !== "Escape") return;
+      e.preventDefault();
       setOpen(false);
       if (anchorRef.current) anchorRef.current.focus();
     };

@@ -89,7 +89,7 @@ function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
   React.useEffect(() => {
     if (!open) return undefined;
     const away = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    const escape = (e) => { if (e.key === "Escape") setOpen(false); };
+    const escape = (e) => { if (e.key === "Escape") { e.preventDefault(); setOpen(false); } };
     document.addEventListener("mousedown", away);
     document.addEventListener("keydown", escape);
     return () => {

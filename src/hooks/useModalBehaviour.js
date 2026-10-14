@@ -6,7 +6,9 @@ import React from "react";
 //     focusable, else the sheet itself) and hands it back to whatever held it before, on close
 //   • keeps Tab and Shift+Tab inside the sheet
 //   • marks every other child of <body> `inert` while it is the topmost overlay
-//   • closes on Escape, only when it is the topmost overlay and `canClose` allows it
+//   • closes on Escape, only when it is the topmost overlay and `canClose` allows it. A popover
+//     open inside it handles Escape first, on `document`, and marks it handled (`preventDefault`),
+//     so one press closes the popover and leaves the dialog open
 //
 // Open overlays form a module-level stack. Only the top entry owns the inert background and the
 // Escape key, so a dialog opened from a dialog leaves its parent inert and a close of the child
