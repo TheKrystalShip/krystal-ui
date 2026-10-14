@@ -33,6 +33,7 @@ export { Pill } from "./components/Pill.jsx";
 export { Popover } from "./components/Popover.jsx";
 export { List, ListRow } from "./components/ListRow.jsx";
 export { CardScreen } from "./components/CardScreen.jsx";
+export { Combobox } from "./components/Combobox.jsx";
 export { CopyField } from "./components/CopyField.jsx";
 export { ProviderButton, ProviderMark, providerLabel } from "./components/ProviderMark.jsx";
 export { NotificationsPanel } from "./components/NotificationsPanel.jsx";

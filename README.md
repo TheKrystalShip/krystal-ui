@@ -115,6 +115,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked) |
 | Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked), `Slider` (one number along a line) |
 | Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked), `Slider` (one number along a line), `Disclosure` and `Accordion` (a summary that opens its content, and a group of them) |
+| Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `Combobox`, `OptionList`, `Meter` |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
@@ -525,6 +526,20 @@ account menu and the toolbar's sort menu are Menus.
   <MenuSeparator />
   <MenuItem icon="trash-2" tone="danger" onSelect={remove}>Delete</MenuItem>
 </Menu>
+```
+
+`Combobox` is a text field that filters a list and picks one (the editable combobox with a listbox
+popup). `options` are `{ value, label, detail, disabled }` (`label` is a string, shown in the field once
+chosen); `value` and `onChange(value, option)` hold the choice. A site that searches a server owns the
+text with `inputValue` and `onInputChange`, passes the matches back as `options`, and sets
+`filter={false}`; `loading` shows a spinner, `empty` words the no-match line. The input keeps focus
+and names the highlighted option with `aria-activedescendant`; ArrowDown and ArrowUp move it, Enter
+picks, Escape closes then clears. It takes `Input`'s `size`, `invalid`, `wide` and `className`.
+
+```jsx
+<Field label="Game">
+  <Combobox wide options={games} value={game} onChange={setGame} placeholder="Choose a game" />
+</Field>
 ```
 
 ## The frame

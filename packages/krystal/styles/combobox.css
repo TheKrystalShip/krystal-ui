@@ -1,0 +1,93 @@
+/* ============================================================================
+   combobox.css — <Combobox>. The field is an Input with a chevron or a spinner after what is typed;
+   the list is portaled under it at its width and placed by Floating UI, so no rule here positions it.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-combobox__chev {
+  color: var(--fg-3);
+  pointer-events: none;
+}
+
+.k-combobox__panel {
+  z-index: 80;
+  box-sizing: border-box;
+  max-height: min(60vh, 320px);
+  overflow: auto;
+  padding: 4px;
+  background: var(--surface-1);
+  border: var(--edge-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  animation: k-fade var(--d-fast) var(--ease-out);
+}
+
+.k-combobox__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 32px;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  color: var(--fg-2);
+  cursor: pointer;
+}
+
+.k-combobox__option.k-is-active {
+  background: var(--surface-2);
+  color: var(--fg-1);
+}
+
+.k-combobox__option[aria-selected="true"] {
+  color: var(--fg-1);
+}
+
+.k-combobox__option[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.k-combobox__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-combobox__detail {
+  flex-shrink: 0;
+  color: var(--fg-4);
+  font-size: 12px;
+}
+
+.k-combobox__check {
+  flex-shrink: 0;
+  color: var(--krystal-teal);
+}
+
+.k-combobox__empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  color: var(--fg-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-combobox__panel {
+    animation: none;
+  }
+}
+
+/* A phone raises an option to a 40px target. */
+@media (max-width: 768px) {
+  .k-combobox__option {
+    min-height: 40px;
+  }
+}
+}
