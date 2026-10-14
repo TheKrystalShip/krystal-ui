@@ -1,5 +1,58 @@
 # Changelog
 
+## [0.33.0]
+
+### Added
+- **Layout**: `Stack`, `Cluster`, `Grid` and `Container`, each polymorphic through `as`, their `gap` a
+  spacing step or a name (`xs` to `xl`). `Grid` fits columns of at least `min` (one column on a phone)
+  or takes `cols`; `Container` is the centred page column at `size` sm to xl or full, with the gutter.
+- **Overlays**: `Popover` (a non-modal panel on a trigger or an anchor), `Tooltip` (on hover after a delay
+  and on keyboard focus, never interactive), `Menu` with `MenuItem`, `MenuCheckboxItem`,
+  `MenuRadioGroup`/`MenuRadioItem`, `MenuGroup` and `MenuSeparator` (the menu button pattern: arrows,
+  Home/End, typeahead), `Combobox` (a field that filters a list and picks one, `inputValue` for a site
+  that searches a server) and `Drawer` (a modal sheet from the bottom, right or left, `Dialog`'s props,
+  a grab handle and a touch pull that closes it). Every panel is placed by Floating UI, closes on Escape
+  one layer at a time and on an outside press.
+- **Choice**: `Tabs` with `TabList`, `Tab` and `TabPanel` (panels within a page, `underline` or
+  `segmented`, automatic or manual activation), `RadioGroup` (a few short choices inline or stacked),
+  `Slider` (marks, a formatted value, `onChangeEnd` on release, pointer, touch and keys), `Disclosure`
+  and `Accordion` (single or multiple open).
+- **Data**: `Table` (columns with `render`, `sortable`, `align`, `mono` and `hideBelow`; controlled
+  `sort` with a `sortRows` helper; rows that open as a whole while their actions stay separate; on a phone
+  each row is a card), `DataState` (draws loading, an error with retry, empty, or its children from what
+  it is handed), `StatTile` and `StatTiles` (a figure with label, unit, delta, tone and a spark slot;
+  `value={null}` draws an unknown "—", never 0), `Card` (head, body, foot, `tone`, opening as a whole)
+  and `Avatar` (an image with initials to fall back on, sizes, shape, a status dot). `AccountAvatar`
+  draws through `Avatar`.
+- **Forms**: `useForm`, `Form`, `FormScope`, `FormField`, `FormError` and `FormSubmit`, over
+  react-hook-form (a dependency of core that a site never imports). Rules and sync or async `validate`
+  per field, errors shown from the first submit, an `onSubmit` that returns or throws `{ errors,
+  message }` to put a server's answer under its fields, focus on the first invalid field.
+  `FormField` binds an input, password, textarea, select, checkbox, toggle or option list, or a
+  render function; `FormScope` is the form for a `Dialog as="form"`.
+- **`Kbd`**: a key, or a chord of keys with a visible separator. A `MenuItem`'s `shortcut` draws
+  through it.
+- **`restrictedSyntax` and `restrictedImports`** from `@thekrystalship/krystal/eslint`, the config's
+  entries for a site that merges them into its own `no-restricted-syntax` and `no-restricted-imports` at
+  the severity it chooses.
+
+### Changed
+- **`IconButton`'s `label` draws through `Tooltip`**; `title` sets other text and `title=""` none.
+- **`ToolbarSort` is a `Menu`** (its keys and its direction as radio groups) and **`ToolbarFilters` a
+  `Popover`**; **`SidebarAccount`'s menu is a `Menu`**. Their old item classes
+  (`k-toolbar-sort__dir`, `k-toolbar-sort__dir-btn`, `k-toolbar-filter__opt-dir`,
+  `k-sidebar__account-menu__head`, `k-sidebar__account-menu__item` and its `--danger`) are not drawn;
+  the menus draw `k-menu` rows.
+- **`Field`** takes `hintId` and `errorId`, passes other props to its frame, and is a `group` only when it
+  has a label.
+- **The codemod** rewrites a site's own modifiers and elements of a package block (`.rail--posters` to
+  `.k-rail--posters`), counted apart.
+
+### Fixed
+- **An icon named glyph-first resolves**: `Icon` tries a name that does not resolve shape-first
+  (`x-circle` as `circle-x`, `check-circle-2` as `circle-check`), so `Notice`'s success and error icons
+  draw.
+
 ## [0.32.1]
 
 ### Fixed
