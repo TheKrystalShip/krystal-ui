@@ -110,6 +110,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Sign-in screens | `CardScreen` (the centred card on the page background), `CopyField` (a read-only value with a copy button) |
 | Sign-in | `ProviderMark`, `providerLabel`, `ProviderButton` (a provider's mark and name, and a button carrying them) |
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `OptionList`, `Meter` |
+| Forms | `useForm` (values, per-field rules and async `validate`, dirty and submitting state, server field errors from a returned or thrown `{ errors, message }`), `Form`, `FormScope`, `FormField`, `FormError`, `FormSubmit` |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
@@ -316,6 +317,45 @@ after a copy that worked, every other prop is `Input`'s.
 </CardScreen>
 <CopyField value={token} onCopied={() => toast("Copied")} />
 ```
+
+## Forms
+
+`useForm` holds a form's state and `Form` with its bound fields draws it. Fields are bound by `name`;
+a control's own props (`type`, `autoComplete`, `options`, `rows`) go on the `FormField`. Errors show
+on the first submit and clear as the value is fixed (`mode` moves the first showing to blur, to blur
+then change, or to change). A failed submit puts focus on the first invalid field.
+
+```jsx
+function SignIn({ signIn }) {
+  const form = useForm({
+    defaultValues: { username: "", password: "" },
+    rules: {
+      username: { required: "Enter your username" },
+      password: { required: "Enter your password" },
+    },
+    // A refusal returns { errors: { field: "text" }, message: "text" } or throws an error carrying
+    // them; a thrown error without `errors` shows its message as the form error.
+    onSubmit: async (values) => {
+      const r = await signIn(values);
+      if (!r.ok) return { message: r.error };
+    },
+  });
+  return (
+    <Form form={form}>
+      <FormField name="username" label="Username" autoComplete="username" />
+      <FormField name="password" label="Password" control="password" />
+      <FormSubmit busyLabel="Signing in…" wide>Sign in</FormSubmit>
+    </Form>
+  );
+}
+```
+
+`control` is `input` (the default), `password`, `textarea`, `select`, `checkbox`, `toggle` or `options`,
+or a function receiving `{ value, onChange, onBlur, invalid, describedBy }` for a custom control. The
+form-level error draws above the fields; `<FormError />` places it elsewhere. A dialog that is itself
+the form element wraps in `<FormScope form={form}>` and passes `onSubmit={form.submit}`. `FormSubmit`
+is busy while submitting, and with `requireDirty` waits for a change. `form.values`, `isDirty`,
+`isSubmitting`, `errors`, `setValue` and `reset` serve what a site draws around the fields.
 
 ## Pages and dialogs
 

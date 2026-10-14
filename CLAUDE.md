@@ -12,7 +12,9 @@ relative path. `README.md` covers using them. What the repository owns and who c
 
 A component belongs in core when it describes **how something looks and behaves**, and nothing about
 what any one site is for. The test is its imports and its words: it may import React, Lucide, Floating UI
-(positioning only) and this package, and nothing else; and nothing in it names a server, a node, a film or a fleet.
+(positioning only), react-hook-form (behind the form layer: `useForm`, `Form` and the bound fields are the
+only surface, and no site imports it) and this package, and nothing else; and nothing in it names a server,
+a node, a film or a fleet.
 Anything a site supplies comes in as a prop — a node for a header slot, an opaque `subject` a toast
 row hands back through `onOpen`, the label a toolbar counts in.
 
@@ -95,8 +97,8 @@ declarations, so the build runs vite first (its `emptyOutDir` would otherwise re
 `tsc` reads core's types from core's built `dist`, which is why core builds first.
 
 React, React DOM and `lucide-react` are externals and peer dependencies of both packages;
-`@floating-ui/react-dom` is an external and a regular dependency of core, resolved by the site's
-bundler. The chat's externals also include `@thekrystalship/krystal` and its subpaths, and it declares
+`@floating-ui/react-dom` and `react-hook-form` are externals and regular dependencies of core, resolved
+by the site's bundler. The chat's externals also include `@thekrystalship/krystal` and its subpaths, and it declares
 core as a peer dependency at its own exact version, so a site installs both and holds one copy of core.
 Each `package.json`'s `sideEffects` names the modules that do something on load — core's `lib/theme.js`
 applies the stored theme to the document, `lib/toasts.js` reads its history — so a bundler never drops
