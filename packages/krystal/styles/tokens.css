@@ -265,7 +265,7 @@
   /* primary text */
   --fg-2: #B8C2D0;
   /* secondary text */
-  --fg-3: #7C8899;
+  --fg-3: #8893A2;
   /* muted / labels */
   --fg-4: #515E70;
   /* placeholder / disabled */
@@ -483,14 +483,14 @@
   /* ---------- Borders ------------------------------------- */
   --border-subtle: rgba(0, 0, 0, 0.08);
   --border-strong: rgba(0, 0, 0, 0.15);
-  --border-accent: rgba(30, 126, 156, 0.55);
+  --border-accent: rgba(24, 101, 125, 0.55);
 
   /* ---------- Foreground --------------------------------- */
   --fg-1: #101826;
   /* primary text */
   --fg-2: #3C4858;
   /* secondary text */
-  --fg-3: #5F6B7A;
+  --fg-3: #5A6674;
   /* muted / labels */
   --fg-4: #97A2B0;
   /* placeholder / disabled */
@@ -504,11 +504,11 @@
   /* ---------- Brand & accent -----------------------------
      Brand teal darkened for AA-large contrast as link/active text
      on white; still reads as the same teal on accent buttons. */
-  --krystal-teal: #1E7E9C;
-  --krystal-teal-hover: #2A93B3;
-  --krystal-teal-press: #17647D;
-  --krystal-teal-dim: rgba(30, 126, 156, 0.12);
-  --krystal-teal-ring: rgba(30, 126, 156, 0.32);
+  --krystal-teal: #18657D;
+  --krystal-teal-hover: #1E7E9C;
+  --krystal-teal-press: #124F63;
+  --krystal-teal-dim: rgba(24, 101, 125, 0.12);
+  --krystal-teal-ring: rgba(24, 101, 125, 0.32);
   --krystal-ink: #0F1115;
 
   /* ---------- Semantic -----------------------------------
@@ -516,7 +516,7 @@
      shade — legible on light but less heavy than 700. */
   --success: #16A34A;
   --success-bg: rgba(22, 163, 74, 0.12);
-  --success-fg: #16A34A;
+  --success-fg: #0F6D32;
 
   --danger: #DC2626;
   --danger-bg: rgba(220, 38, 38, 0.10);
@@ -524,7 +524,7 @@
 
   --warning: #D97706;
   --warning-bg: rgba(217, 119, 6, 0.13);
-  --warning-fg: #B45309;
+  --warning-fg: #924507;
 
   --update: #EA580C;
   --update-bg: rgba(234, 88, 12, 0.12);
