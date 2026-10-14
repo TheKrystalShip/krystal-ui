@@ -114,9 +114,12 @@ function Menu({
       const now = Date.now();
       const text = (now - typed.current.at > 700 ? "" : typed.current.text) + e.key.toLowerCase();
       typed.current = { text, at: now };
-      const from = text.length === 1 ? at + 1 : Math.max(at, 0);
+      // The same key struck again steps through the items that start with it.
+      const cycle = text.length > 1 && [...text].every((c) => c === text[0]);
+      const needle = cycle ? text[0] : text;
+      const from = text.length === 1 || cycle ? at + 1 : Math.max(at, 0);
       const order = items.map((_, i) => items[(from + i) % items.length]);
-      const hit = order.find((i) => (i.textContent || "").trim().toLowerCase().startsWith(text));
+      const hit = order.find((i) => (i.textContent || "").trim().toLowerCase().startsWith(needle));
       if (hit) hit.focus({ preventScroll: true });
     }
   };
