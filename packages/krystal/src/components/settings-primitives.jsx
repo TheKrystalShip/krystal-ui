@@ -6,6 +6,7 @@ import { Icon } from "./Icon.jsx";
 
 // `tone` (success | warn | danger | info) tints the left rule + icon chip via the
 // shared brief-item modifiers — for a row that carries a verdict, not just a value.
+// A control that fits beside the words stays there; one that does not drops under them, full width.
 // Omitted, the row is the neutral one every existing caller renders.
 /**
  * @param {object} props
@@ -17,7 +18,7 @@ import { Icon } from "./Icon.jsx";
  */
 function SettingsRow({ icon, title, sub, tone, children }) {
   return (
-    <div className={"k-brief__item k-brief__item--static" + (tone ? " k-brief__item--" + tone : "")}>
+    <div className={"k-brief__item k-brief__item--static k-settings-row" + (tone ? " k-brief__item--" + tone : "")}>
       <span className="k-brief__icon"><Icon name={icon} size={14} /></span>
       <div className="k-brief__body">
         <span className="k-brief__item-title"><span className="k-brief__titletext">{title}</span></span>

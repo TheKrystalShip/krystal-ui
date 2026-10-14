@@ -6,11 +6,24 @@
 @layer krystal.tokens, krystal.base, krystal.components;
 
 @layer krystal.components {
+/* The words keep a floor of room; a control that cannot fit beside it wraps to its own line and
+   takes up to the whole row. */
+.k-settings-row {
+  flex-wrap: wrap;
+}
+
+.k-settings-row > .k-brief__body {
+  flex: 1 1 10rem;
+}
+
 .k-settings-row__controls {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-shrink: 0;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  margin-left: auto;
 }
 
 /* A read-only value sitting where a control sits, or named inside a row's line; `--mono` for an

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, FormField, SettingsPage, ThemePicker, Toggle, useForm } from "@thekrystalship/krystal";
+import { Button, FormField, Select, SettingsPage, ThemePicker, Toggle, useForm } from "@thekrystalship/krystal";
 import { Section, Sub } from "../kit.jsx";
 
 function Frame({ children }) {
@@ -29,8 +29,12 @@ function WithForm() {
   const sections = [
     { id: "profile", title: "Profile", icon: "user", description: "How you appear to others.", content: <div style={{ padding: 14, display: "grid", gap: 12 }}><Fields /></div> },
     { id: "notifications", title: "Notifications", icon: "bell", description: "What is sent to you.", content: <div style={{ padding: 14 }}><FormField name="notify" label="Send notices" control="toggle" /></div> },
-    { id: "appearance", title: "Appearance", icon: "palette", description: "Saved on this device.", content: <ThemePicker /> },
-    { id: "sessions", title: "Sessions", icon: "monitor-smartphone", rows: [{ icon: "laptop", title: "This browser", sub: "Signed in today", control: <Button size="sm" variant="outline">End</Button> }] },
+    { id: "appearance", title: "Appearance", icon: "palette", rows: [{ icon: "palette", title: "Theme", sub: "Saved on this device. A wide control drops under the words.", control: <ThemePicker /> }] },
+    { id: "sessions", title: "Sessions", icon: "monitor-smartphone", rows: [
+      { icon: "laptop", title: "This browser", sub: "Signed in today", control: <Button size="sm" variant="outline">End</Button> },
+      { icon: "globe", title: "Region", sub: "Narrow beside the words, wrapping on a phone.", control: <Select variant="inline" options={[{ value: "a", label: "Western Europe, Frankfurt" }, { value: "b", label: "North America" }]} /> },
+      { icon: "bell", title: "Quiet hours", control: <Toggle on onChange={() => {}} /> },
+    ] },
     { id: "danger", title: "Danger zone", icon: "triangle-alert", rows: [{ icon: "trash-2", tone: "danger", title: "Delete account", sub: "Removes it for good.", control: <Button size="sm" variant="danger">Delete</Button> }] },
   ];
   return (
