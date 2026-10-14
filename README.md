@@ -111,6 +111,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Sign-in | `ProviderMark`, `providerLabel`, `ProviderButton` (a provider's mark and name, and a button carrying them) |
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `OptionList`, `Meter` |
 | Forms | `useForm` (values, per-field rules and async `validate`, dirty and submitting state, server field errors from a returned or thrown `{ errors, message }`), `Form`, `FormScope`, `FormField`, `FormError`, `FormSubmit` |
+| Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs) |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
@@ -214,6 +215,25 @@ lays a short single choice side by side, each label over its `aside`.
 `segments` (`{ value, tone, label }`, `tone` one of neutral, accent, success, warn, danger) are parts
 laid end to end, a meter whose spoken value names each part unless `valueText` gives one, and a part
 above zero is never drawn narrower than a sliver. `start` and `end` are a monospace caption under it.
+
+`Tabs` switches panels that share one place in a page: `Tab`s in a `TabList`, a `TabPanel` per `value`,
+the chosen value held by `Tabs` (`value` and `onChange`, or `defaultValue`). It follows the WAI-ARIA
+tabs pattern: roving tabindex, arrow keys that move and choose (`activation="manual"` moves focus
+only), Home and End. `variant` is `underline` or `segmented`; a `Tab` takes an `icon` and a `count`
+drawn as a `Pill`; a row wider than its column scrolls with the chosen tab in view. A panel is
+unmounted while hidden unless it has `keepMounted`. `Tabs` never navigates: tabs that are links
+between pages are `SubTabs` (a link strip, a native select on a phone) or `TabBar`.
+
+```jsx
+<Tabs defaultValue="overview">
+  <TabList label="Sections">
+    <Tab value="overview" icon="info">Overview</Tab>
+    <Tab value="alerts" count={alerts.length}>Alerts</Tab>
+  </TabList>
+  <TabPanel value="overview">…</TabPanel>
+  <TabPanel value="alerts">…</TabPanel>
+</Tabs>
+```
 
 `PasswordInput` is an `Input` whose suffix is a ghost `IconButton` (eye, eye-off) that shows or hides
 what is typed; `revealLabel` is its accessible name in each state (`["Show password", "Hide

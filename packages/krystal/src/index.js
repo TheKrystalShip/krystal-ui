@@ -47,6 +47,7 @@ export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGro
 export { StatTile, StatTiles } from "./components/StatTile.jsx";
 export { SubTabs } from "./components/SubTabs.jsx";
 export { Table, sortRows } from "./components/Table.jsx";
+export { Tab, TabList, TabPanel, Tabs } from "./components/Tabs.jsx";
 export { ThemePicker } from "./components/ThemePicker.jsx";
 export { Toasts } from "./components/Toasts.jsx";
 export { Toggle } from "./components/Toggle.jsx";
