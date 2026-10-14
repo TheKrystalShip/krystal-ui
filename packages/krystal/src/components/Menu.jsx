@@ -1,6 +1,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "./Icon.jsx";
+import { Kbd } from "./Kbd.jsx";
 import { useOverlay } from "../hooks/useOverlay.js";
 import { useOpenState } from "../hooks/useOpenState.js";
 import { chain, elementRef, mergeRefs } from "../lib/refs.js";
@@ -37,6 +38,16 @@ const MenuContext = React.createContext({ close: (/** @type {boolean} */ _focus)
 const RadioContext = React.createContext(/** @type {{ value: any, onChange?: (value: any) => void } | null} */ (null));
 
 const ITEMS = "[role^='menuitem']:not([aria-disabled='true'])";
+
+/** @param {any} shortcut */
+function drawShortcut(shortcut) {
+  if (Array.isArray(shortcut)) return <Kbd size="sm" keys={shortcut} />;
+  if (typeof shortcut === "string") {
+    const keys = shortcut.split("+").map((k) => k.trim()).filter(Boolean);
+    return keys.length > 1 ? <Kbd size="sm" keys={keys} /> : <Kbd size="sm">{shortcut}</Kbd>;
+  }
+  return shortcut;
+}
 
 /**
  * @typedef {object} MenuOwnProps
@@ -155,7 +166,9 @@ function Menu({
  * @property {(event: import("react").MouseEvent<HTMLButtonElement>) => void} [onSelect] Runs on Enter, Space or a click; `preventDefault()` keeps the menu open.
  * @property {boolean} [disabled]
  * @property {"danger"} [tone]
- * @property {import("react").ReactNode} [shortcut] The item's keyboard shortcut, in monospace at the row's end.
+ * @property {string | string[] | import("react").ReactNode} [shortcut] The item's keyboard shortcut at the row's end,
+ *   drawn as keys: a string is split on "+" into a chord ("Ctrl+K"), an array is the chord's keys, any
+ *   other node is drawn as it is.
  * @property {import("react").ReactNode} [aside] At the row's end, in the accent.
  * @property {boolean} [closeOnSelect] Closes the menu after `onSelect`; true for an item.
  * @property {import("react").ReactNode} [children] The label.
@@ -189,7 +202,7 @@ function Row({
       {glyph != null && glyph !== false && <span className="k-menu__lead">{glyph}</span>}
       <span className="k-menu__label">{children}</span>
       {aside != null && <span className="k-menu__aside">{aside}</span>}
-      {shortcut != null && <span className="k-menu__shortcut">{shortcut}</span>}
+      {shortcut != null && <span className="k-menu__shortcut">{drawShortcut(shortcut)}</span>}
     </button>
   );
 }
