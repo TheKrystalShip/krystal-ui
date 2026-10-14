@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.37.0]
+
+### Added
+- **`SearchField`**: the large pill search, a `<form role="search">` with a leading icon, the field and a
+  submit button in one frame; `onChange` and `onSubmit` receive the value, `busy`, `actions` and `size`
+  `lg` or `xl`.
+- **`ColorInput`**, the native colour picker drawn as a swatch, and **`RadioGroup variant="swatch"`**,
+  each option a disc of its `color` named by its `label`, with `picker` adding a `ColorInput` after them.
+- **`Button variant="bare"`**: a button with no look of its own (no fill, border, padding or height in any
+  state) that keeps the focus ring, `disabled`, `busy` and `aria-pressed`, for a control a site's own class
+  shapes.
+- **`Avatar`** takes `tone` (a soft tint in place of the gradient), `letters={1}` and `size="css"` (the
+  site's sheet sets the diameter).
+- **`Menu` and `Popover`** take `container`, the element they portal into in place of the document body,
+  so they draw inside a fullscreen frame; menu items take `sub`, a second line, and `MenuRadioItem`
+  `readOnly`.
+
+### Changed
+- **Spatial focus reaches the unchosen radios of a radiogroup**, which sit at `tabindex=-1`.
+- **A button with no children is `k-btn--icon`**; `k-btn--bare` is the `bare` variant.
+
 ## [0.36.1]
 
 ### Fixed
