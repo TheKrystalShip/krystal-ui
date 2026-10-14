@@ -15,13 +15,13 @@ import { Icon } from "./Icon.jsx";
 // artwork, a solid fill on a corner pip. Anything else spreads onto the span.
 /**
  * @typedef {object} PillOwnProps
- * @property {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [tone]
+ * @property {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [tone] The colour family; neutral by default.
  * @property {string} [icon] A Lucide name drawn before the text.
  * @property {boolean | "live"} [dot] A leading status dot instead of an icon; "live" colours it as a running thing.
- * @property {"sm" | "md"} [size]
- * @property {string} [className]
+ * @property {"sm" | "md"} [size] `sm` or `md`; md by default.
+ * @property {string} [className] Class name added to the root element.
  * @property {string} [dotClassName] A class on the dot.
- * @property {import("react").ReactNode} [children]
+ * @property {import("react").ReactNode} [children] The label.
  * @typedef {PillOwnProps & Omit<import("react").ComponentPropsWithoutRef<"span">, keyof PillOwnProps>} PillProps
  */
 /** @param {PillProps} props */

@@ -24,12 +24,12 @@ import { Modal } from "./Modal.jsx";
 /**
  * @param {object} props
  * @param {boolean} [props.fullscreen] Moves the children's DOM into the modal.
- * @param {() => void} [props.onClose]
- * @param {string} [props.scrimClassName]
- * @param {string} [props.modalClassName]
- * @param {string} [props.ariaLabel]
+ * @param {() => void} [props.onClose] Called when Escape or a press on the scrim closes the modal.
+ * @param {string} [props.scrimClassName] The modal scrim's class; the modal primitive's own when left out.
+ * @param {string} [props.modalClassName] Class of the dialog box the children are moved into.
+ * @param {string} [props.ariaLabel] The dialog's accessible name.
  * @param {import("react").ReactNode} [props.placeholder] Shown in the inline slot while fullscreen.
- * @param {import("react").ReactNode} [props.children]
+ * @param {import("react").ReactNode} [props.children] The stateful subtree that stays mounted as it moves between the inline slot and the modal.
  */
 function ReversablePortal({
   fullscreen,

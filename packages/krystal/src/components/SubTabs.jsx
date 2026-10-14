@@ -12,9 +12,9 @@ import { Pill } from "./Pill.jsx";
 // role there). Everything else is unchanged.
 /**
  * @param {object} props
- * @param {{ id: string, label: import("react").ReactNode, icon?: string, title?: string, badge?: number, badgeTone?: "info" | "neutral" | "accent" | "ok" | "warn" | "danger" | "muted", badgeNoun?: string }[]} props.tabs
+ * @param {{ id: string, label: import("react").ReactNode, icon?: string, title?: string, badge?: number, badgeTone?: "info" | "neutral" | "accent" | "ok" | "warn" | "danger" | "muted", badgeNoun?: string }[]} props.tabs The tabs, each `{ id, label, icon, title, badge, badgeTone, badgeNoun }`; `title` is a hover hint and `badgeNoun` names what the badge counts.
  * @param {string} props.active The active tab's id.
- * @param {(id: string) => void} props.onChange
+ * @param {(id: string) => void} props.onChange Receives the id of the tab the person chose.
  */
 export function SubTabs({ tabs, active, onChange }) {
   const current = tabs.find(t => t.id === active) || tabs[0];

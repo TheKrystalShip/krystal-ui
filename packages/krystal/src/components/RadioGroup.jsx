@@ -29,15 +29,15 @@ import { Icon } from "./Icon.jsx";
  */
 /**
  * @typedef {object} RadioGroupOwnProps
- * @property {RadioGroupItem[]} options
+ * @property {RadioGroupItem[]} options The choices, each `{ value, label, icon, title, disabled }`.
  * @property {any} [value] The chosen value.
  * @property {(next: any) => void} [onChange] The next value.
- * @property {"horizontal" | "vertical"} [orientation]
- * @property {"radio" | "segmented"} [variant]
- * @property {"sm" | "md"} [size]
+ * @property {"horizontal" | "vertical"} [orientation] `horizontal` lays the options in a row; `vertical` stacks them.
+ * @property {"radio" | "segmented"} [variant] `radio` draws a dot before each label; `segmented` draws one framed strip with the chosen option filled.
+ * @property {"sm" | "md"} [size] `sm` or `md`.
  * @property {string} [label] The group's accessible name.
- * @property {boolean} [disabled]
- * @property {string} [className]
+ * @property {boolean} [disabled] Makes every option inert.
+ * @property {string} [className] Extra class names on the group.
  * @typedef {RadioGroupOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof RadioGroupOwnProps | "onChange">} RadioGroupProps
  */
 /** @type {import("react").ForwardRefExoticComponent<RadioGroupProps & import("react").RefAttributes<HTMLDivElement>>} */

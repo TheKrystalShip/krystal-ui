@@ -27,41 +27,41 @@ import { Tab, TabList, TabPanel, Tabs } from "./Tabs.jsx";
 // `emptyTitle`, `emptyBody` and `emptyAction` is the record not being found; all draw through DataState.
 /**
  * @typedef {object} DetailTab
- * @property {string | number} value
- * @property {import("react").ReactNode} label
+ * @property {string | number} value The tab's key.
+ * @property {import("react").ReactNode} label The tab's text.
  * @property {string} [icon] A Lucide name.
  * @property {number} [count] A pill after the label when above zero.
- * @property {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [countTone]
+ * @property {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [countTone] The count pill's tone.
  * @property {string} [title] A hover hint (routes tabs).
  * @property {string} [badgeNoun] What the count counts, for the phone select (routes tabs).
  */
 /**
  * @typedef {object} DetailPageOwnProps
- * @property {{ label: import("react").ReactNode, href?: string }[]} [crumbs]
- * @property {(href: string, event: import("react").MouseEvent<HTMLAnchorElement>) => void} [onNavigate]
+ * @property {{ label: import("react").ReactNode, href?: string }[]} [crumbs] The breadcrumb trail; the last has no `href`.
+ * @property {(href: string, event: import("react").MouseEvent<HTMLAnchorElement>) => void} [onNavigate] Receives a crumb's `href` and the click, for a client-side router.
  * @property {import("react").ReactNode} [hero] The header, in place of the plain head.
- * @property {import("react").ReactNode} [title]
- * @property {import("react").ReactNode} [sub]
+ * @property {import("react").ReactNode} [title] The record's name.
+ * @property {import("react").ReactNode} [sub] A line under the title.
  * @property {import("react").ReactNode} [meta] Pills under the title.
- * @property {import("react").ReactNode} [actions]
- * @property {DetailTab[]} [tabs]
+ * @property {import("react").ReactNode} [actions] Controls beside the title.
+ * @property {DetailTab[]} [tabs] The tabs, in order.
  * @property {string | number} [value] The chosen tab.
- * @property {(value: any) => void} [onChange]
- * @property {"sections" | "routes"} [tabsKind]
+ * @property {(value: any) => void} [onChange] Receives the value of the tab chosen.
+ * @property {"sections" | "routes"} [tabsKind] `sections` switches in-page panels, `routes` links to pages.
  * @property {string} [tabsLabel] The tab row's accessible name.
  * @property {import("react").ReactNode} [tabsExtra] At the end of the tab row.
  * @property {(value: any) => import("react").ReactNode} [renderTab] Draws the chosen tab's body.
- * @property {import("react").ReactNode} [aside]
- * @property {boolean} [loading]
- * @property {Error | string | null | false} [error]
- * @property {() => void} [onRetry]
- * @property {import("react").ReactNode} [skeleton]
+ * @property {import("react").ReactNode} [aside] A column beside the body.
+ * @property {boolean} [loading] Draws the skeleton in place of the body.
+ * @property {Error | string | null | false} [error] What went wrong; draws the failure state in place of the body.
+ * @property {() => void} [onRetry] Runs from the failure state's retry button.
+ * @property {import("react").ReactNode} [skeleton] Drawn while loading, shaped like the body.
  * @property {boolean} [isEmpty] The record was not found.
- * @property {import("react").ReactNode} [emptyTitle]
- * @property {import("react").ReactNode} [emptyBody]
- * @property {import("react").ReactNode} [emptyAction]
- * @property {string} [className]
- * @property {import("react").ReactNode} [children]
+ * @property {import("react").ReactNode} [emptyTitle] The not-found state's heading.
+ * @property {import("react").ReactNode} [emptyBody] The not-found state's copy.
+ * @property {import("react").ReactNode} [emptyAction] The not-found state's control.
+ * @property {string} [className] Class name added to the root element.
+ * @property {import("react").ReactNode} [children] The body, when no `renderTab` draws one.
  * @typedef {DetailPageOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof DetailPageOwnProps | "title" | "onChange">} DetailPageProps
  */
 /** @param {DetailPageProps} props */

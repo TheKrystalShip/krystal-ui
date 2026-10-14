@@ -16,13 +16,13 @@ import { IconButton } from "./Button.jsx";
 // the native input inside it is bare; the ref still reaches the input.
 /**
  * @typedef {object} InputOwnProps
- * @property {"sm" | "md" | "lg"} [size]
+ * @property {"sm" | "md" | "lg"} [size] Height step shared with Button: `sm`, `md` or `lg`.
  * @property {boolean} [mono] Monospace, for an identifier, a path, a port.
  * @property {boolean} [wide] Fills its container.
  * @property {boolean} [invalid] Danger border and aria-invalid.
  * @property {import("react").ReactNode} [prefix] Inside the frame, before what is typed.
  * @property {import("react").ReactNode} [suffix] Inside the frame, after what is typed.
- * @property {string} [className]
+ * @property {string} [className] Extra classes on the frame.
  * @typedef {InputOwnProps & Omit<import("react").ComponentPropsWithoutRef<"input">, keyof InputOwnProps>} InputProps
  */
 /** @type {import("react").ForwardRefExoticComponent<InputProps & import("react").RefAttributes<HTMLInputElement>>} */
@@ -72,10 +72,10 @@ const PasswordInput = React.forwardRef(function PasswordInput(
 // Textarea — Input's look over several lines. It grows by the person dragging it, vertically only.
 /**
  * @typedef {object} TextareaOwnProps
- * @property {boolean} [mono]
- * @property {boolean} [invalid]
- * @property {number} [rows]
- * @property {string} [className]
+ * @property {boolean} [mono] Monospace face.
+ * @property {boolean} [invalid] Danger border and aria-invalid.
+ * @property {number} [rows] Visible lines of text.
+ * @property {string} [className] Extra classes on the frame.
  * @typedef {TextareaOwnProps & Omit<import("react").ComponentPropsWithoutRef<"textarea">, keyof TextareaOwnProps>} TextareaProps
  */
 /** @type {import("react").ForwardRefExoticComponent<TextareaProps & import("react").RefAttributes<HTMLTextAreaElement>>} */
@@ -95,11 +95,11 @@ const Textarea = React.forwardRef(function Textarea(
 // the hit target. `onChange` receives the new checked state, not the event.
 /**
  * @typedef {object} CheckboxOwnProps
- * @property {boolean} [checked]
+ * @property {boolean} [checked] Whether the box is ticked.
  * @property {(checked: boolean) => void} [onChange] Receives the new checked state, not the event.
- * @property {boolean} [disabled]
+ * @property {boolean} [disabled] Blocks changes and dims the line.
  * @property {import("react").ReactNode} [children] The words beside the box.
- * @property {string} [className]
+ * @property {string} [className] Extra classes on the element.
  * @typedef {CheckboxOwnProps & Omit<import("react").ComponentPropsWithoutRef<"input">, keyof CheckboxOwnProps | "type">} CheckboxProps
  */
 /** @param {CheckboxProps} props */
@@ -122,15 +122,15 @@ function Checkbox({ checked, onChange, disabled = false, children, className, ..
 // lands on the frame.
 /**
  * @typedef {object} FieldOwnProps
- * @property {import("react").ReactNode} [label]
+ * @property {import("react").ReactNode} [label] The words naming the control.
  * @property {import("react").ReactNode} [aside]  After the label, quieter.
- * @property {import("react").ReactNode} [hint]
+ * @property {import("react").ReactNode} [hint] A line under the control, shown while there is no error.
  * @property {import("react").ReactNode} [error] Replaces the hint.
  * @property {string} [hintId] The hint line's id.
  * @property {string} [errorId] The error line's id.
  * @property {boolean} [group] A labelled group instead of a <label>, for several controls.
- * @property {string} [className]
- * @property {import("react").ReactNode} [children]
+ * @property {string} [className] Extra classes on the line.
+ * @property {import("react").ReactNode} [children] The control, or several in a `group`.
  * @typedef {FieldOwnProps & Omit<import("react").HTMLAttributes<HTMLElement>, keyof FieldOwnProps>} FieldProps
  */
 /** @param {FieldProps} props */

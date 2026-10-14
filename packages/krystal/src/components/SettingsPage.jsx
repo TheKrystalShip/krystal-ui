@@ -25,7 +25,7 @@ import { SettingsRow, SettingsSection } from "./settings-primitives.jsx";
 /**
  * @typedef {object} SettingsPageSection
  * @property {string} id Anchors the section and names it in the nav.
- * @property {import("react").ReactNode} title
+ * @property {import("react").ReactNode} title The section's heading.
  * @property {string} [icon] A Lucide name.
  * @property {import("react").ReactNode} [description] A muted line under the section's header.
  * @property {import("react").ReactNode} [meta] Used as the description when there is none.
@@ -35,10 +35,10 @@ import { SettingsRow, SettingsSection } from "./settings-primitives.jsx";
  */
 /**
  * @typedef {object} SettingsPageOwnProps
- * @property {import("react").ReactNode} [title]
- * @property {import("react").ReactNode} [sub]
- * @property {import("react").ReactNode} [actions]
- * @property {SettingsPageSection[]} [sections]
+ * @property {import("react").ReactNode} [title] The page's heading.
+ * @property {import("react").ReactNode} [sub] A line under the title.
+ * @property {import("react").ReactNode} [actions] Controls beside the title.
+ * @property {SettingsPageSection[]} [sections] The sections, in order.
  * @property {boolean} [nav] Forces the side nav on or off; by default it follows `navFrom`.
  * @property {number} [navFrom] The nav is drawn above this many sections.
  * @property {string} [navLabel] The nav's accessible name.
@@ -48,11 +48,11 @@ import { SettingsRow, SettingsSection } from "./settings-primitives.jsx";
  * @property {() => void} [onSave] Save, without a form.
  * @property {() => void} [onRevert] Revert, without a form.
  * @property {import("react").ReactNode} [dirtyLabel] The bar's words.
- * @property {import("react").ReactNode} [saveLabel]
- * @property {import("react").ReactNode} [savingLabel]
- * @property {import("react").ReactNode} [revertLabel]
- * @property {string} [className]
- * @property {import("react").ReactNode} [children]
+ * @property {import("react").ReactNode} [saveLabel] The save button's words.
+ * @property {import("react").ReactNode} [savingLabel] The save button's words while saving.
+ * @property {import("react").ReactNode} [revertLabel] The revert button's words.
+ * @property {string} [className] Class name added to the root element.
+ * @property {import("react").ReactNode} [children] Content after the sections.
  * @typedef {SettingsPageOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof SettingsPageOwnProps | "title">} SettingsPageProps
  */
 

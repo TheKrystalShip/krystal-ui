@@ -9,8 +9,8 @@
  * @param {string | number} [props.w] Width: any CSS length, a number is pixels.
  * @param {string | number} [props.h] Height: any CSS length, a number is pixels.
  * @param {string | number} [props.r] Corner radius.
- * @param {import("react").CSSProperties} [props.style]
- * @param {string} [props.className]
+ * @param {import("react").CSSProperties} [props.style] Inline styles on the block, beside `w`, `h` and `r`.
+ * @param {string} [props.className] Extra class names on the root element.
  */
 export function Skeleton({ w = "100%", h = 12, r = 6, style, className }) {
   return (

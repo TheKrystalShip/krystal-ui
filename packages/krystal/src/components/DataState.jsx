@@ -18,21 +18,21 @@ import { Skeleton } from "./Skeleton.jsx";
 // The loading state is announced politely as busy; the error is announced as an alert.
 /**
  * @typedef {object} DataStateOwnProps
- * @property {boolean} [loading]
+ * @property {boolean} [loading] Draws the skeleton in place of everything else.
  * @property {Error | string | null | false} [error] What failed.
  * @property {() => void} [onRetry] Draws a Retry button under the error.
- * @property {string} [retryLabel]
+ * @property {string} [retryLabel] The Retry button's label.
  * @property {unknown} [data] Handed to a function child; an empty array is empty.
  * @property {boolean} [isEmpty] Overrides the emptiness read from `data`.
  * @property {import("react").ReactNode} [skeleton] Drawn while loading.
  * @property {number} [skeletonLines] Lines of the default skeleton.
  * @property {import("react").ReactNode} [empty] Drawn when empty, in place of the EmptyState.
- * @property {import("react").ReactNode} [emptyTitle]
- * @property {import("react").ReactNode} [emptyBody]
+ * @property {import("react").ReactNode} [emptyTitle] The empty state's title.
+ * @property {import("react").ReactNode} [emptyBody] The empty state's explanation.
  * @property {string} [emptyIcon] A Lucide name.
- * @property {import("react").ReactNode} [emptyAction]
- * @property {import("react").ReactNode | ((data: any) => import("react").ReactNode)} [children]
- * @property {string} [className]
+ * @property {import("react").ReactNode} [emptyAction] An action under the empty state's text.
+ * @property {import("react").ReactNode | ((data: any) => import("react").ReactNode)} [children] The loaded content: a node, or a function of `data`.
+ * @property {string} [className] Extra classes on the root.
  * @typedef {DataStateOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof DataStateOwnProps>} DataStateProps
  */
 /** @param {DataStateProps} props */

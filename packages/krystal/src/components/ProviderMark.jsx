@@ -8,7 +8,7 @@ const PROVIDER_LABEL = { discord: "Discord", github: "GitHub", google: "Google",
 const BRANDED = Object.keys(PROVIDER_LABEL);
 
 /**
- * @param {string} provider
+ * @param {string} provider The provider's name.
  * @returns {string}
  */
 function providerLabel(provider) {
@@ -19,7 +19,7 @@ function providerLabel(provider) {
 // colour; google and microsoft keep their own colours.
 /**
  * @param {object} props
- * @param {string} props.provider
+ * @param {string} props.provider The provider's name as the daemon gives it (`discord`, `github`, `google`, `microsoft`); any other name draws the neutral `log-in` mark.
  * @param {number} [props.size] Pixels.
  */
 function ProviderMark({ provider, size = 20 }) {
@@ -69,8 +69,8 @@ function ProviderMark({ provider, size = 20 }) {
 // Every other prop is Button's.
 /**
  * @typedef {object} ProviderButtonOwnProps
- * @property {string} provider
- * @property {import("react").ReactNode} [children]
+ * @property {string} provider The provider's name; it picks the mark and, with `brand`, the fill.
+ * @property {import("react").ReactNode} [children] The button's words ("Continue with Discord", "Link", "Unlink").
  * @property {boolean} [brand] Fills with the provider's own colour for a known provider.
  * @typedef {ProviderButtonOwnProps & Omit<import("./Button.jsx").ButtonProps, keyof ProviderButtonOwnProps | "icon" | "iconRight">} ProviderButtonProps
  */

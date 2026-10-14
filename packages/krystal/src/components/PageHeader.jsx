@@ -2,10 +2,10 @@
 // controls — opposite the title, wrapping under it when the row runs out of room.
 /**
  * @param {object} props
- * @param {import("react").ReactNode} props.title
+ * @param {import("react").ReactNode} props.title The page's heading.
  * @param {import("react").ReactNode} [props.sub] A line under the title.
  * @param {import("react").ReactNode} [props.actions] Page-level controls opposite the title.
- * @param {string} [props.className]
+ * @param {string} [props.className] Extra class names on the root element.
  */
 function PageHeader({ title, sub, actions, className }) {
   return (

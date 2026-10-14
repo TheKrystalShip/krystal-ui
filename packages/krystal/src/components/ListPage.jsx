@@ -34,36 +34,36 @@ import { Table } from "./Table.jsx";
 // given; pages are zero-based, and `total` with `pageSize` words its summary.
 /**
  * @typedef {object} ListPageOwnProps
- * @property {import("react").ReactNode} [title]
+ * @property {import("react").ReactNode} [title] The page's heading.
  * @property {import("react").ReactNode} [sub] A line under the title.
  * @property {import("react").ReactNode} [actions] Page-level controls opposite the title.
  * @property {import("react").ReactNode} [header] Replaces the heading built from `title`, `sub` and `actions`.
  * @property {import("react").ReactNode} [toolbar] Drawn under the heading, usually a Toolbar.
  * @property {import("react").ReactNode} [notice] A line about the whole list, between the toolbar and the body.
  * @property {"list" | "grid" | "table"} [layout] How `items` are drawn; list by default.
- * @property {any[]} [items]
+ * @property {any[]} [items] The records to draw.
  * @property {(item: any, index: number) => import("react").ReactNode} [renderItem] Draws an item in the list and grid layouts.
  * @property {import("./Table.jsx").TableColumn[]} [columns] The table layout's columns.
  * @property {Record<string, any>} [table] More props for the Table.
  * @property {number | string} [gridMin] The grid layout's narrowest column.
  * @property {string} [label] The list's accessible name.
- * @property {boolean} [loading]
- * @property {Error | string | null | false} [error]
- * @property {() => void} [onRetry]
+ * @property {boolean} [loading] Draws the skeleton in place of the body.
+ * @property {Error | string | null | false} [error] What went wrong; draws the failure state in place of the body.
+ * @property {() => void} [onRetry] Runs from the failure state's retry button.
  * @property {import("react").ReactNode} [skeleton] Drawn while loading, shaped like the body.
  * @property {boolean} [isEmpty] Says the body is empty when it is `children`, or overrides what `items` says.
- * @property {import("react").ReactNode} [emptyTitle]
- * @property {import("react").ReactNode} [emptyBody]
+ * @property {import("react").ReactNode} [emptyTitle] The empty state's heading.
+ * @property {import("react").ReactNode} [emptyBody] The empty state's copy.
  * @property {string} [emptyIcon] A Lucide name.
- * @property {import("react").ReactNode} [emptyAction]
+ * @property {import("react").ReactNode} [emptyAction] The empty state's control.
  * @property {number} [page] The current page, zero-based.
- * @property {number} [pageCount]
- * @property {(page: number) => void} [onPageChange]
+ * @property {number} [pageCount] How many pages there are.
+ * @property {(page: number) => void} [onPageChange] Receives the zero-based page chosen.
  * @property {number} [total] Records across every page.
- * @property {number} [pageSize]
+ * @property {number} [pageSize] Records on a page.
  * @property {string} [unit] What the pager counts.
  * @property {import("react").ReactNode} [foot] Under the pager.
- * @property {string} [className]
+ * @property {string} [className] Class name added to the root element.
  * @property {import("react").ReactNode} [children] The body, in place of `items`.
  * @typedef {ListPageOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof ListPageOwnProps | "title">} ListPageProps
  */

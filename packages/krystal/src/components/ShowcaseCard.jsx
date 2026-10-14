@@ -30,20 +30,20 @@ import { Pill } from "./Pill.jsx";
 // A status left out still keeps its line, so a card with nothing to say is as tall as one that has.
 /**
  * @typedef {object} ShowcaseCardProps
- * @property {import("react").ReactNode} name
+ * @property {import("react").ReactNode} name The thing's name, set on the art.
  * @property {string} [art] A CSS background-image value.
  * @property {() => void} [onPick] Opens the thing.
  * @property {{ label: import("react").ReactNode, icon?: string, tone?: "accent" }} [eyebrow] What kind of thing it is, over the name.
  * @property {{ label: import("react").ReactNode, icon?: string, title?: string }} [corner] A caution chip on the art's top-left.
  * @property {{ label: import("react").ReactNode, tone?: "accent" | "info", dot?: "idle" | "live", title?: string }} [badge] The art's top-right.
  * @property {{ icon?: string, value: import("react").ReactNode | null, label: string }[]} [specs] A null value reads as an em-dash.
- * @property {{ label: import("react").ReactNode, icon?: string, tone?: "success" | "warning" | "notice" | "active", live?: boolean, title?: string }} [status]
+ * @property {{ label: import("react").ReactNode, icon?: string, tone?: "success" | "warning" | "notice" | "active", live?: boolean, title?: string }} [status] The foot's one status line; a card without one keeps the line's height.
  * @property {{ label: import("react").ReactNode, onClick?: () => void, title?: string }} [action] A button with `onClick`, otherwise the card's cue.
  * @property {{ icon: string, label: string, onClick: () => void, on?: boolean, tone?: "danger" }[]} [tools] Round buttons on the art's top-right.
  * @property {number} [progress] 0 to 1, a bar along the art's foot.
  * @property {number[]} [segments] Each 0 to 1, one short bar per part; takes the foot in place of `progress`.
  * @property {{ icon: string, iconOn?: string, on?: boolean, label: string, onClick: (event: import("react").MouseEvent<HTMLButtonElement>) => void, disabled?: boolean }} [ribbon] A keep switch hanging from the art's top-left edge.
- * @property {string} [className]
+ * @property {string} [className] Extra class names on the root element.
  */
 /** @param {ShowcaseCardProps} props */
 function ShowcaseCard({ name, art, onPick, eyebrow, corner, badge, specs = [], status, action, tools, progress, segments, ribbon, className }) {

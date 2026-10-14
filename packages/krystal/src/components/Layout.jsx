@@ -26,9 +26,9 @@ function classes(base, parts) {
  * @typedef {object} LayoutOwnProps
  * @property {import("react").ElementType} [as] The element drawn. Defaults to a `div`.
  * @property {"xs" | "sm" | "md" | "lg" | "xl" | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 10 | 12 | 16 | 20} [gap] A spacing step or its name.
- * @property {string} [className]
- * @property {import("react").CSSProperties} [style]
- * @property {import("react").ReactNode} [children]
+ * @property {string} [className] Class name added to the root element.
+ * @property {import("react").CSSProperties} [style] Inline style on the root element.
+ * @property {import("react").ReactNode} [children] The laid-out items.
  */
 
 /**

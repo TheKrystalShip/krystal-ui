@@ -7,7 +7,7 @@
  * @param {object} props
  * @param {number} [props.size] Diameter in pixels.
  * @param {string} [props.label] Announces the spinner as a status; without it the spinner is hidden from assistive technology.
- * @param {string} [props.className]
+ * @param {string} [props.className] Extra class names on the root element.
  */
 function Spinner({ size = 16, label, className }) {
   return (

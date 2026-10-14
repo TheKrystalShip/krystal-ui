@@ -33,7 +33,7 @@ import { useDebouncedValue } from "./Pagination.jsx";
 /**
  * @param {object} props
  * @param {import("react").ReactNode} [props.children] ToolbarSearch, ToolbarFilters and ToolbarSort are placed in their own columns; anything else follows.
- * @param {string} [props.className]
+ * @param {string} [props.className] Extra class names on the bar.
  */
 function Toolbar({ children, className }) {
   const search = [], filters = [], rest = [];
@@ -56,12 +56,12 @@ function Toolbar({ children, className }) {
 
 /**
  * @param {object} props
- * @param {string} props.value
- * @param {(value: string) => void} props.onChange
- * @param {string} [props.placeholder]
+ * @param {string} props.value The query text.
+ * @param {(value: string) => void} props.onChange Receives the next query text.
+ * @param {string} [props.placeholder] Hint text in the empty field.
  * @param {boolean} [props.pending] Shows a searching mark.
- * @param {boolean} [props.autoFocus]
- * @param {string} [props.ariaLabel]
+ * @param {boolean} [props.autoFocus] Focuses the field when it mounts.
+ * @param {string} [props.ariaLabel] The field's accessible name.
  */
 function ToolbarSearch({ value, onChange, placeholder, pending, autoFocus, ariaLabel }) {
   return (
@@ -102,10 +102,10 @@ function ToolbarSpacer() { return <span className="k-toolbar__spacer" />; }
 /**
  * @param {object} props
  * @param {string} props.value The current sort key.
- * @param {"asc" | "desc"} [props.dir]
- * @param {(key: string, dir: "asc" | "desc") => void} props.onChange
- * @param {{ value: string, label: import("react").ReactNode, defaultDir?: "asc" | "desc" }[]} props.options
- * @param {string} [props.label]
+ * @param {"asc" | "desc"} [props.dir] The current direction, `asc` or `desc`.
+ * @param {(key: string, dir: "asc" | "desc") => void} props.onChange Receives the chosen key and its direction.
+ * @param {{ value: string, label: import("react").ReactNode, defaultDir?: "asc" | "desc" }[]} props.options The sort keys, each `{ value, label, defaultDir }`; `defaultDir` applies when switching to that key.
+ * @param {string} [props.label] The control's words and accessible name.
  */
 function ToolbarSort({ value, dir = "desc", onChange, options, label = "Sort" }) {
   const [open, setOpen] = React.useState(false);
@@ -152,9 +152,9 @@ function ToolbarSort({ value, dir = "desc", onChange, options, label = "Sort" })
 
 /**
  * @param {object} props
- * @param {number} [props.shown]
- * @param {number} [props.total]
- * @param {string} [props.unit]
+ * @param {number} [props.shown] How many rows are shown.
+ * @param {number} [props.total] How many exist across the whole list.
+ * @param {string} [props.unit] The plural noun counted ("rows").
  * @param {import("react").ReactNode} [props.children] Replaces the "shown of total unit" text.
  */
 function ToolbarCount({ shown, total, unit, children }) {
@@ -165,13 +165,13 @@ function ToolbarCount({ shown, total, unit, children }) {
 /**
  * @param {object} props
  * @param {string} [props.icon] A Lucide name.
- * @param {import("react").ReactNode} [props.children]
- * @param {import("react").MouseEventHandler<HTMLButtonElement>} [props.onClick]
- * @param {boolean} [props.disabled]
- * @param {string} [props.title]
- * @param {boolean} [props.spinning]
- * @param {boolean} [props.active]
- * @param {string} [props.ariaLabel]
+ * @param {import("react").ReactNode} [props.children] The button's label.
+ * @param {import("react").MouseEventHandler<HTMLButtonElement>} [props.onClick] Called when the button is pressed.
+ * @param {boolean} [props.disabled] Makes the button inert.
+ * @param {string} [props.title] A hover hint.
+ * @param {boolean} [props.spinning] Spins the icon while work runs.
+ * @param {boolean} [props.active] Marks a setting that is on, in the accent.
+ * @param {string} [props.ariaLabel] The accessible name, for an icon-only button.
  */
 function ToolbarButton({ icon, children, onClick, disabled, title, spinning, active, ariaLabel }) {
   return (
@@ -200,19 +200,19 @@ function fieldActive(field) {
 // ToolbarFilters — single Filters popover + inline active-filter chips.
 /**
  * @typedef {object} ToolbarFilterField
- * @property {string} id
- * @property {string} label
- * @property {any} value
- * @property {(value: any) => void} onChange
+ * @property {string} id The field's key.
+ * @property {string} label The field's heading in the popover and on its chip.
+ * @property {any} value The chosen option's value.
+ * @property {(value: any) => void} onChange Receives the next value.
  * @property {any} [default] The value that counts as unfiltered; the first option's by default.
- * @property {{ value: any, label: import("react").ReactNode, count?: number }[]} options
- * @property {boolean} [hidden]
+ * @property {{ value: any, label: import("react").ReactNode, count?: number }[]} options The choices, each `{ value, label, count }`; `count` is how many rows it matches.
+ * @property {boolean} [hidden] Leaves the field out.
  */
 /**
  * @param {object} props
- * @param {ToolbarFilterField[]} props.fields
- * @param {() => void} [props.onReset]
- * @param {string} [props.label]
+ * @param {ToolbarFilterField[]} props.fields The filters, one radio group each.
+ * @param {() => void} [props.onReset] Draws a reset action that clears every filter.
+ * @param {string} [props.label] The Filters button's words.
  */
 function ToolbarFilters({ fields, onReset, label = "Filters" }) {
   const [open, setOpen] = React.useState(false);

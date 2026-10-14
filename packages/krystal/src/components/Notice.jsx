@@ -7,10 +7,10 @@ const ICONS = { info: "info", ok: "check-circle-2", warn: "alert-triangle", dang
 
 /**
  * @param {object} props
- * @param {"info" | "ok" | "warn" | "danger"} [props.tone]
+ * @param {"info" | "ok" | "warn" | "danger"} [props.tone] `info`, `ok`, `warn` or `danger`; info by default.
  * @param {string} [props.icon] A Lucide name; defaults to the tone's icon.
- * @param {string} [props.className]
- * @param {import("react").ReactNode} [props.children]
+ * @param {string} [props.className] Class name added to the root element.
+ * @param {import("react").ReactNode} [props.children] The message.
  */
 function Notice({ tone = "info", icon, className, children }) {
   return (

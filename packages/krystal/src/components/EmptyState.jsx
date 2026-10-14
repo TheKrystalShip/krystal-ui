@@ -10,13 +10,13 @@ import { Icon } from "./Icon.jsx";
 /**
  * @param {object} props
  * @param {string} [props.icon] A Lucide name.
- * @param {import("react").ReactNode} [props.title]
+ * @param {import("react").ReactNode} [props.title] The heading under the icon.
  * @param {"neutral" | "accent" | "warn" | "danger"} [props.tone] Colours the icon disc.
  * @param {import("react").ReactNode} [props.detail] Monospace text under the copy.
- * @param {import("react").ReactNode} [props.actions]
+ * @param {import("react").ReactNode} [props.actions] Controls beneath the copy.
  * @param {boolean} [props.page] Fills the whole screen on a card.
- * @param {string} [props.className]
- * @param {import("react").ReactNode} [props.children]
+ * @param {string} [props.className] Class name added to the root element.
+ * @param {import("react").ReactNode} [props.children] A line or two of copy under the title.
  */
 function EmptyState({ icon, title, tone = "neutral", detail, actions, page = false, className, children }) {
   const body = (

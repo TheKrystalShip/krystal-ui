@@ -36,38 +36,38 @@ import { ProviderButton, providerLabel } from "./ProviderMark.jsx";
 /**
  * @typedef {object} SignInScreenOwnProps
  * @property {string} [mark] An image URL.
- * @property {import("react").ReactNode} [wordmark]
- * @property {import("react").ReactNode} [tagline]
+ * @property {import("react").ReactNode} [wordmark] The site's name beside the mark.
+ * @property {import("react").ReactNode} [tagline] A line under the wordmark.
  * @property {import("react").ReactNode} [foot] Under the card.
- * @property {"sm" | "md"} [width]
+ * @property {"sm" | "md"} [width] `sm` or `md`; the card's width.
  * @property {string[]} [providers] Provider ids.
- * @property {(provider: string) => void} [onProvider]
+ * @property {(provider: string) => void} [onProvider] Receives the provider id pressed.
  * @property {string | null} [busyProvider] The provider being left for.
  * @property {(provider: string) => import("react").ReactNode} [providerText] The words on a provider's button; the provider's name in a grid, "Continue with <name>" alone.
  * @property {(provider: string) => import("react").ReactNode} [busyProviderText] The words while it is the busy one.
  * @property {boolean} [password] Draws the username and password form.
- * @property {(values: import("../hooks/useForm.js").FormValues) => void | import("../hooks/useForm.js").SubmitOutcome | Promise<void | import("../hooks/useForm.js").SubmitOutcome>} [onSubmit]
+ * @property {(values: import("../hooks/useForm.js").FormValues) => void | import("../hooks/useForm.js").SubmitOutcome | Promise<void | import("../hooks/useForm.js").SubmitOutcome>} [onSubmit] Receives the form's values; a returned `{ message }` or `{ errors }` is the form's refusal.
  * @property {import("../hooks/useForm.js").FormHandle} [form] A handle the card draws its fields in, in place of its own.
  * @property {import("../hooks/useForm.js").FormValues} [defaultValues] Starting values of `extraFields`.
- * @property {Record<string, import("../hooks/useForm.js").FieldRules>} [rules]
- * @property {import("../hooks/useForm.js").UseFormOptions["validate"]} [validate]
+ * @property {Record<string, import("../hooks/useForm.js").FieldRules>} [rules] Validation rules by field name, for the extra fields.
+ * @property {import("../hooks/useForm.js").UseFormOptions["validate"]} [validate] A form-wide check that runs after the rules.
  * @property {import("react").ReactNode} [extraFields] FormFields after the password.
  * @property {import("react").ReactNode} [passwordAside] Beside the password's label.
- * @property {string} [usernameLabel]
- * @property {string} [passwordLabel]
+ * @property {string} [usernameLabel] The username field's label.
+ * @property {string} [passwordLabel] The password field's label.
  * @property {string} [passwordAutoComplete] current-password (the default) or new-password.
- * @property {import("react").ReactNode} [submitLabel]
+ * @property {import("react").ReactNode} [submitLabel] The submit button's words.
  * @property {import("react").ReactNode} [busyLabel] The submit button's words while submitting.
  * @property {import("react").ReactNode} [divider] Between the providers and the form; "or" by default.
- * @property {{ value: string, label: import("react").ReactNode }[]} [tabs]
- * @property {string} [tab]
- * @property {(tab: string) => void} [onTab]
- * @property {string} [tabsLabel]
+ * @property {{ value: string, label: import("react").ReactNode }[]} [tabs] Tabs over the card's body, each a value and its label.
+ * @property {string} [tab] The chosen tab's value.
+ * @property {(tab: string) => void} [onTab] Receives the value of the tab chosen.
+ * @property {string} [tabsLabel] The tab row's accessible name.
  * @property {import("react").ReactNode} [error] A refusal about the whole card.
  * @property {import("react").ReactNode} [notice] A line above the providers.
  * @property {boolean} [busy] Makes the card inert.
- * @property {string} [className]
- * @property {import("react").ReactNode} [children]
+ * @property {string} [className] Class name added to the root element.
+ * @property {import("react").ReactNode} [children] Content in the card, after the form.
  * @typedef {SignInScreenOwnProps} SignInScreenProps
  */
 

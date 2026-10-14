@@ -37,10 +37,10 @@ function lookup(name) {
 /**
  * @param {object} props
  * @param {string} props.name A Lucide icon name in kebab-case.
- * @param {number} [props.size]
- * @param {number} [props.strokeWidth]
- * @param {string} [props.className]
- * @param {import("react").CSSProperties} [props.style]
+ * @param {number} [props.size] Width and height in pixels.
+ * @param {number} [props.strokeWidth] The glyph's line weight.
+ * @param {string} [props.className] Class name added to the root element.
+ * @param {import("react").CSSProperties} [props.style] Inline style on the glyph.
  */
 export function Icon({ name, size = 18, strokeWidth = 1.7, className, style }) {
   const Cmp = lookup(name);

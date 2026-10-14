@@ -19,21 +19,21 @@ import { Modal } from "./Modal.jsx";
 // `label` names the dialog for a screen reader when `title` is not a string.
 /**
  * @param {object} props
- * @param {import("react").ReactNode} props.title
- * @param {import("react").ReactNode} [props.sub]
+ * @param {import("react").ReactNode} props.title The head's title.
+ * @param {import("react").ReactNode} [props.sub] A line under the head.
  * @param {string} [props.icon] A Lucide name.
  * @param {string} [props.art] A CSS background-image value for the banner.
  * @param {string} [props.label] Accessible name when `title` is not a string.
- * @param {() => void} [props.onClose]
- * @param {boolean} [props.canClose]
- * @param {"md" | "lg" | "xl"} [props.size]
- * @param {boolean} [props.fill]
+ * @param {() => void} [props.onClose] Called on the close button, Escape and a press outside, unless `canClose` is false.
+ * @param {boolean} [props.canClose] False holds Escape, the scrim and the close button.
+ * @param {"md" | "lg" | "xl"} [props.size] The sheet's width: `md`, `lg` or `xl`.
+ * @param {boolean} [props.fill] A definite height, for a body that sizes itself to its container.
  * @param {boolean} [props.fullscreen] Fills the viewport inside a safe-area inset.
- * @param {"div" | "form"} [props.as]
- * @param {import("react").FormEventHandler<HTMLElement>} [props.onSubmit]
- * @param {import("react").ReactNode} [props.foot]
- * @param {string} [props.className]
- * @param {import("react").ReactNode} [props.children]
+ * @param {"div" | "form"} [props.as] `form` makes the sheet a form, so Enter in a field submits it.
+ * @param {import("react").FormEventHandler<HTMLElement>} [props.onSubmit] The form's submit handler when `as` is `form`.
+ * @param {import("react").ReactNode} [props.foot] The dialog's actions, ruled off from the body.
+ * @param {string} [props.className] Extra classes on the sheet.
+ * @param {import("react").ReactNode} [props.children] The body, which scrolls.
  */
 function Dialog({
   title, sub, icon, art, label, onClose, canClose = true, size = "md", fill = false, fullscreen = false,

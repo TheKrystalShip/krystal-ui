@@ -11,8 +11,8 @@ import { Icon } from "./Icon.jsx";
 /**
  * @param {object} props
  * @param {string} props.icon A Lucide name.
- * @param {import("react").ReactNode} props.title
- * @param {import("react").ReactNode} [props.sub]
+ * @param {import("react").ReactNode} props.title The row's label.
+ * @param {import("react").ReactNode} [props.sub] A quieter line under the title.
  * @param {"success" | "warn" | "danger" | "info"} [props.tone] Tints the row for a verdict.
  * @param {import("react").ReactNode} [props.children] The row's controls.
  */
@@ -32,10 +32,10 @@ function SettingsRow({ icon, title, sub, tone, children }) {
 /**
  * @param {object} props
  * @param {string} [props.icon] A Lucide name.
- * @param {import("react").ReactNode} props.title
- * @param {import("react").ReactNode} [props.meta]
- * @param {import("react").ReactNode} [props.action]
- * @param {string} [props.className]
+ * @param {import("react").ReactNode} props.title The section's heading.
+ * @param {import("react").ReactNode} [props.meta] A quiet node after the heading, such as a count or a status.
+ * @param {import("react").ReactNode} [props.action] A control at the heading's end.
+ * @param {string} [props.className] Extra class names on the root element.
  * @param {import("react").ReactNode} [props.children] SettingsRows.
  */
 function SettingsSection({ icon, title, meta, action, className, children }) {

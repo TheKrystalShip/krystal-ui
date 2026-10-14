@@ -21,9 +21,9 @@
 // title and `actions` stay at the end.
 /**
  * @param {object} props
- * @param {string} [props.label]
- * @param {string} [props.className]
- * @param {import("react").ReactNode} [props.children]
+ * @param {string} [props.label] The list's accessible name.
+ * @param {string} [props.className] Class name added to the root element.
+ * @param {import("react").ReactNode} [props.children] The rows.
  */
 function List({ label, children, className }) {
   return <ul className={"k-list" + (className ? " " + className : "")} aria-label={label}>{children}</ul>;
@@ -31,18 +31,18 @@ function List({ label, children, className }) {
 
 /**
  * @typedef {object} ListRowOwnProps
- * @property {import("react").ReactNode} [lead]
- * @property {import("react").ReactNode} title
- * @property {import("react").ReactNode} [sub]
+ * @property {import("react").ReactNode} [lead] A node before the title, such as an icon or avatar.
+ * @property {import("react").ReactNode} title The row's main text.
+ * @property {import("react").ReactNode} [sub] A quieter line under the title.
  * @property {import("react").ReactNode} [meta] Pills.
  * @property {import("react").ReactNode} [aside] Quiet monospace text at the end.
- * @property {import("react").ReactNode} [actions]
+ * @property {import("react").ReactNode} [actions] Controls at the row's end.
  * @property {(event: import("react").MouseEvent<HTMLElement>) => void} [onOpen] Makes the title a button.
  * @property {string} [href] Makes the title a link.
- * @property {boolean} [selected]
- * @property {boolean} [disabled]
- * @property {"ok" | "info" | "warn" | "danger" | "accent"} [tone]
- * @property {string} [className]
+ * @property {boolean} [selected] Marks the row as the chosen one.
+ * @property {boolean} [disabled] Dims the row and keeps it from opening.
+ * @property {"ok" | "info" | "warn" | "danger" | "accent"} [tone] Tints the row's lead edge with a status colour.
+ * @property {string} [className] Class name added to the root element.
  * @typedef {ListRowOwnProps & Omit<import("react").ComponentPropsWithoutRef<"li">, keyof ListRowOwnProps | "title">} ListRowProps
  */
 /** @param {ListRowProps} props */

@@ -14,15 +14,15 @@ import { Menu, MenuItem } from "./Menu.jsx";
 // edge by it so the page reflows rather than sitting under the dock.
 /**
  * @param {object} props
- * @param {import("react").ReactNode} [props.sidebar]
+ * @param {import("react").ReactNode} [props.sidebar] The sidebar node, normally a Sidebar.
  * @param {boolean} [props.collapsed] Icon-rail sidebar.
  * @param {boolean} [props.drawerOpen] The phone drawer.
- * @param {(open: boolean) => void} [props.onDrawer]
+ * @param {(open: boolean) => void} [props.onDrawer] Called with true when the edge handle opens the phone drawer and with false when the scrim closes it.
  * @param {number} [props.dockPush] Pixels a pinned dock takes from the page.
- * @param {import("react").ReactNode} [props.aside]
- * @param {import("react").ReactNode} [props.tabBar]
- * @param {import("react").Ref<HTMLElement>} [props.mainRef]
- * @param {import("react").ReactNode} [props.children]
+ * @param {import("react").ReactNode} [props.aside] A node drawn after the main column, such as a dock.
+ * @param {import("react").ReactNode} [props.tabBar] A TabBar for phones; when given, the bar replaces the drawer and its handle.
+ * @param {import("react").Ref<HTMLElement>} [props.mainRef] Ref to the scrolling main column.
+ * @param {import("react").ReactNode} [props.children] The page, drawn in the main column.
  */
 function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, aside, tabBar, mainRef, children }) {
   return (
@@ -47,18 +47,18 @@ function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, asid
 // home indicator of a phone that has one.
 /**
  * @typedef {object} TabBarItem
- * @property {string} [id]
+ * @property {string} [id] The tab's key; the label when left out.
  * @property {string} icon A Lucide name.
- * @property {string} label
- * @property {boolean} [active]
- * @property {() => void} [onClick]
+ * @property {string} label The words under the icon.
+ * @property {boolean} [active] Marks the current tab (`aria-current`).
+ * @property {() => void} [onClick] Called when the tab is pressed.
  * @property {number} [badge] Drawn on the icon when above zero.
- * @property {"info" | "warn" | "danger"} [tone]
+ * @property {"info" | "warn" | "danger"} [tone] `info`, `warn` or `danger`; colours the badge.
  */
 /**
  * @param {object} props
- * @param {TabBarItem[]} props.items
- * @param {string} [props.label]
+ * @param {TabBarItem[]} props.items The tabs, left to right.
+ * @param {string} [props.label] The bar's accessible name.
  */
 function TabBar({ items, label = "Main" }) {
   return (
@@ -89,13 +89,13 @@ function TabBar({ items, label = "Main" }) {
 /**
  * @param {object} props
  * @param {string} [props.mark] An image URL.
- * @param {import("react").ReactNode} [props.wordmark]
+ * @param {import("react").ReactNode} [props.wordmark] The brand name drawn beside the mark.
  * @param {boolean} [props.open] The phone drawer is open.
- * @param {boolean} [props.collapsed]
- * @param {() => void} [props.onToggleCollapse]
- * @param {import("react").ReactNode} [props.top]
+ * @param {boolean} [props.collapsed] Draws the icon rail.
+ * @param {() => void} [props.onToggleCollapse] Called when the collapse button is pressed.
+ * @param {import("react").ReactNode} [props.top] A node under the brand row, such as a search field.
  * @param {boolean} [props.closeNav] Rules off the last group too.
- * @param {import("react").ReactNode} [props.foot]
+ * @param {import("react").ReactNode} [props.foot] A node pinned to the bottom, such as a SidebarAccount.
  * @param {import("react").ReactNode} [props.children] Nav groups.
  */
 function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, closeNav, foot, children }) {
@@ -125,11 +125,11 @@ function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, close
 // what the menu's head says under the name. On the collapsed rail the row is the avatar alone.
 /**
  * @param {object} props
- * @param {{ display?: string, name?: string }} props.user
- * @param {import("react").ReactNode} [props.sub]
- * @param {import("react").ReactNode} [props.detail]
- * @param {{ icon: string, label: string, onClick?: () => void, danger?: boolean }[]} [props.items]
- * @param {boolean} [props.collapsed]
+ * @param {{ display?: string, name?: string }} props.user The signed-in person: `display` is the name shown, `name` the fallback.
+ * @param {import("react").ReactNode} [props.sub] A line under the name.
+ * @param {import("react").ReactNode} [props.detail] What the menu's head says under the name.
+ * @param {{ icon: string, label: string, onClick?: () => void, danger?: boolean }[]} [props.items] The menu's entries, each `{ icon, label, onClick, danger }`.
+ * @param {boolean} [props.collapsed] Draws the avatar alone, as on the collapsed rail.
  */
 function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
   const [open, setOpen] = React.useState(false);
@@ -178,8 +178,8 @@ function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
 // what they share on their own; the collapsed rail hides it.
 /**
  * @param {object} props
- * @param {import("react").ReactNode} [props.label]
- * @param {import("react").ReactNode} [props.children]
+ * @param {import("react").ReactNode} [props.label] The group's heading.
+ * @param {import("react").ReactNode} [props.children] The group's NavItems.
  */
 function SidebarGroup({ label, children }) {
   return (
@@ -196,13 +196,13 @@ function SidebarGroup({ label, children }) {
 /**
  * @param {object} props
  * @param {string} props.icon A Lucide name.
- * @param {string} props.label
- * @param {boolean} [props.active]
- * @param {(event: import("react").SyntheticEvent<HTMLElement>) => void} [props.onClick]
- * @param {number} [props.badge]
- * @param {"info" | "warn" | "danger"} [props.tone]
+ * @param {string} props.label The link's words; also its accessible name and the rail's tooltip.
+ * @param {boolean} [props.active] Marks the current page.
+ * @param {(event: import("react").SyntheticEvent<HTMLElement>) => void} [props.onClick] Called on a press, Enter or Space.
+ * @param {number} [props.badge] A count drawn after the label when above zero.
+ * @param {"info" | "warn" | "danger"} [props.tone] `info`, `warn` or `danger`; colours the badge.
  * @param {string} [props.tip] The rail tooltip; the label by default.
- * @param {number} [props.iconSize]
+ * @param {number} [props.iconSize] The icon's size in pixels.
  */
 function NavItem({ icon, label, active, onClick, badge = 0, tone = "info", tip, iconSize = 16 }) {
   const onKeyDown = (e) => {
@@ -226,7 +226,10 @@ function NavItem({ icon, label, active, onClick, badge = 0, tone = "info", tip, 
 }
 
 // The drawer's opener on phones: a slim handle on the left edge, where the swipe lives.
-/** @param {{ onOpen?: () => void }} props */
+/**
+ * @param {object} props
+ * @param {() => void} [props.onOpen] Called when the handle is pressed.
+ */
 function MobileNavToggle({ onOpen }) {
   return (
     <button className="k-mobile-nav k-mobile-nav--edge" onClick={onOpen} aria-label="Open menu" title="Menu">

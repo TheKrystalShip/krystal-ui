@@ -1,7 +1,10 @@
 import { Icon } from "./Icon.jsx";
 
 // GitHub's mark. Lucide carries no brand glyphs, and a link to github.com is recognised by this one.
-/** @param {{ size?: number }} props */
+/**
+ * @param {object} props
+ * @param {number} [props.size] Width and height in pixels.
+ */
 function GithubMark({ size = 16 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
@@ -15,13 +18,13 @@ function GithubMark({ size = 16 }) {
 // the site's (a client-side navigation) and a modified click still opens `href` the browser's way.
 /**
  * @typedef {object} FooterLinkItem
- * @property {import("react").ReactNode} name
- * @property {string} href
+ * @property {import("react").ReactNode} name The link's text.
+ * @property {string} href Where the link goes.
  * @property {string} [scope] A prefix before the name.
- * @property {import("react").ReactNode} [sub]
+ * @property {import("react").ReactNode} [sub] A quieter line under the name.
  * @property {string} [icon] A Lucide name.
  * @property {import("react").ReactNode} [glyph] A node drawn in place of the icon.
- * @property {boolean} [featured]
+ * @property {boolean} [featured] Draws the link as the group's lead entry.
  * @property {() => void} [onClick] A plain click is the site's; a modified click opens `href`.
  */
 /** @param {{ link: FooterLinkItem }} props */
@@ -61,21 +64,21 @@ function FooterLink({ link }) {
 // onClick? }`. The bar under both carries `copy` on the left and `end` on the right.
 /**
  * @typedef {object} FooterGroup
- * @property {string} label
- * @property {number} [columns]
+ * @property {string} label The group's heading.
+ * @property {number} [columns] How many columns the group's links flow into.
  * @property {boolean} [mono] Names set as code.
- * @property {FooterLinkItem[]} links
+ * @property {FooterLinkItem[]} links The group's links.
  */
 /**
  * @param {object} props
  * @param {string} [props.mark] An image URL.
- * @param {import("react").ReactNode} [props.wordmark]
- * @param {import("react").ReactNode} [props.tagline]
- * @param {import("react").ReactNode} [props.note]
+ * @param {import("react").ReactNode} [props.wordmark] The site's name beside the mark.
+ * @param {import("react").ReactNode} [props.tagline] A line under the wordmark.
+ * @param {import("react").ReactNode} [props.note] A line beneath the brand block.
  * @param {boolean} [props.live] A pulsing dot before the note.
- * @param {FooterGroup[]} [props.groups]
- * @param {import("react").ReactNode} [props.copy]
- * @param {import("react").ReactNode} [props.end]
+ * @param {FooterGroup[]} [props.groups] The columns of links beside the brand block.
+ * @param {import("react").ReactNode} [props.copy] The bar's left end, usually the copyright line.
+ * @param {import("react").ReactNode} [props.end] The bar's right end.
  */
 function Footer({ mark, wordmark, tagline, note, live = false, groups = [], copy, end }) {
   return (

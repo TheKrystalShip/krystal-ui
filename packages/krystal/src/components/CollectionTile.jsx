@@ -24,18 +24,18 @@ import { useNear } from "../hooks/useNear.js";
 // as a TvCard does.
 /**
  * @typedef {object} CollectionTileOwnProps
- * @property {"fan" | "strip"} [variant]
- * @property {string} name
+ * @property {"fan" | "strip"} [variant] `fan` for a set whose order means nothing, `strip` for a set in order; fan by default.
+ * @property {string} name The set's name.
  * @property {string} [icon] A Lucide name, on a fan.
- * @property {import("react").ReactNode} [caption]
+ * @property {import("react").ReactNode} [caption] A line under or beside the name, and on a strip what it says before any title is watched.
  * @property {(string | null | undefined)[]} [posters] Poster image URLs.
  * @property {number} [total] A strip's title count when larger than `posters`.
- * @property {number} [watched]
+ * @property {number} [watched] How many of the set's titles have been watched.
  * @property {import("react").ReactNode} [next] Names what to watch next, on a started strip.
- * @property {string} [doneLabel]
- * @property {"sm" | "md"} [size]
+ * @property {string} [doneLabel] What a strip says once every title is watched.
+ * @property {"sm" | "md"} [size] `sm` is the phone grid's shape, `md` the default.
  * @property {string} [label] Accessible name when `name` alone does not say enough.
- * @property {string} [className]
+ * @property {string} [className] Class name added to the root element.
  * @typedef {CollectionTileOwnProps & Omit<import("react").ComponentPropsWithoutRef<"a">, keyof CollectionTileOwnProps>} CollectionTileProps
  */
 /** @param {CollectionTileProps} props */

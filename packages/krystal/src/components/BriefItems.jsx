@@ -21,13 +21,13 @@ function BriefList({ className, children, ...rest }) {
  * @typedef {object} BriefItemOwnProps
  * @property {BriefTone} [tone] Colours the row's stripe and icon; omitted is neutral.
  * @property {string} [icon] A Lucide name, in the icon tile.
- * @property {import("react").ReactNode} title
+ * @property {import("react").ReactNode} title What the row is.
  * @property {boolean} [mono] Sets the title in the monospace face (a name, an id, a path).
  * @property {import("react").ReactNode} [detail] A muted line under the title.
  * @property {import("react").ReactNode} [action] A link-styled label at the row's end, with an arrow.
  * @property {() => void} [onClick] Makes the row a button.
  * @property {string} [href] Makes the row a link.
- * @property {string} [className]
+ * @property {string} [className] Extra classes on the row.
  * @property {import("react").ReactNode} [children] Trailing content at the row's end, before the action (buttons).
  * @typedef {BriefItemOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof BriefItemOwnProps>} BriefItemProps
  */
@@ -67,11 +67,11 @@ function BriefItem({ tone, icon, title, mono = false, detail, action, onClick, h
 
 /**
  * @typedef {object} BriefEmptyOwnProps
- * @property {import("react").ReactNode} title
+ * @property {import("react").ReactNode} title What there is nothing of.
  * @property {import("react").ReactNode} [body] The line under the title.
  * @property {string} [icon] A Lucide name above the title.
  * @property {"ok" | "neutral"} [tone] ok reads as all-clear (the default); neutral is an absence that is neither good nor bad.
- * @property {string} [className]
+ * @property {string} [className] Extra classes on the root.
  * @typedef {BriefEmptyOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof BriefEmptyOwnProps>} BriefEmptyProps
  */
 /** @param {BriefEmptyProps} props */
@@ -97,7 +97,7 @@ function BriefEmpty({ title, body, icon, tone = "ok", className, ...rest }) {
 /**
  * @typedef {object} FactListOwnProps
  * @property {(Fact | false | null | undefined)[]} rows Falsy entries are skipped.
- * @property {string} [className]
+ * @property {string} [className] Extra classes on the list.
  * @typedef {FactListOwnProps & Omit<import("react").ComponentPropsWithoutRef<"dl">, keyof FactListOwnProps>} FactListProps
  */
 /** @param {FactListProps} props */

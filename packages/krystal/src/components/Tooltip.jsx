@@ -18,9 +18,9 @@ import { chain, elementRef, mergeRefs } from "../lib/refs.js";
  * @typedef {object} TooltipProps
  * @property {import("react").ReactNode} label The text. Nothing shows when it is empty.
  * @property {import("react").ReactElement} children The control the tip belongs to; cloned.
- * @property {import("@floating-ui/react-dom").Placement} [placement]
+ * @property {import("@floating-ui/react-dom").Placement} [placement] Where the tip sits against the control, any Floating UI placement (`top`, `bottom-start`, …); it flips to stay on screen.
  * @property {number} [delay] Milliseconds a resting pointer waits before the tip shows.
- * @property {string} [className]
+ * @property {string} [className] Extra class names on the tip's panel.
  */
 /** @param {TooltipProps} props */
 function Tooltip({ label, children, placement = "top", delay = 450, className }) {

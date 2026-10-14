@@ -17,27 +17,27 @@ const PHONE_MAX = 768;
 /**
  * @typedef {object} DockOptions
  * @property {string} storageKey Prefix of the localStorage keys.
- * @property {number} [defaultWidth]
- * @property {number} [minWidth]
- * @property {number} [maxWidth]
+ * @property {number} [defaultWidth] Width in pixels before one is stored.
+ * @property {number} [minWidth] Narrowest width in pixels a resize reaches.
+ * @property {number} [maxWidth] Widest width in pixels a resize reaches.
  * @property {number} [contentFloor] Pixels the page must keep for a pinned dock to push it.
  */
 /**
  * @typedef {object} DockState
- * @property {boolean} open
- * @property {(open: boolean | ((open: boolean) => boolean)) => void} setOpen
+ * @property {boolean} open Whether the dock is shown.
+ * @property {(open: boolean | ((open: boolean) => boolean)) => void} setOpen Sets the open state, from a value or an updater.
  * @property {string | null} storedOpen What `:open` held at load: "1", "0" or null.
- * @property {number} width
- * @property {(width: number) => void} setWidth
+ * @property {number} width The dock's width in pixels.
+ * @property {(width: number) => void} setWidth Sets the width in pixels, within the minimum and maximum.
  * @property {(event: import("react").PointerEvent<HTMLElement>) => void} startResize Bound to the handle's pointerdown.
  * @property {boolean | null} pin Null until somebody chooses.
- * @property {(pin: boolean | null) => void} setPin
- * @property {boolean} pinned
- * @property {() => void} togglePin
- * @property {boolean} canPush
- * @property {number} vw
- * @property {boolean} desktop
- * @property {boolean} pushing
+ * @property {(pin: boolean | null) => void} setPin Sets the pin, or null to follow whether pushing is possible.
+ * @property {boolean} pinned Whether the dock is pinned beside the page.
+ * @property {() => void} togglePin Flips the pin.
+ * @property {boolean} canPush Whether the page keeps enough width for a pinned dock to push it.
+ * @property {number} vw The viewport width in pixels.
+ * @property {boolean} desktop Whether the viewport is wide enough to be a desktop rather than a phone.
+ * @property {boolean} pushing Whether the dock is pinned, open and pushing the page over.
  */
 /**
  * @param {DockOptions} [options]
@@ -120,10 +120,10 @@ function useDock({ storageKey, defaultWidth = 420, minWidth = 320, maxWidth = 90
 // that tightens at that width.
 /**
  * @param {object} props
- * @param {DockState} props.dock
+ * @param {DockState} props.dock The state `useDock` returned.
  * @param {number} [props.compactBelow] Width under which the dock carries `--compact`.
- * @param {string} [props.className]
- * @param {import("react").ReactNode} [props.children]
+ * @param {string} [props.className] Class name added to the root element.
+ * @param {import("react").ReactNode} [props.children] The dock's content.
  */
 function Dock({ dock, compactBelow = 550, className, children }) {
   return (
@@ -139,8 +139,8 @@ function Dock({ dock, compactBelow = 550, className, children }) {
 // The floating button that opens the dock, bottom-right.
 /**
  * @param {object} props
- * @param {() => void} [props.onClick]
- * @param {string} [props.label]
+ * @param {() => void} [props.onClick] Runs when the button is pressed; the site opens the dock.
+ * @param {string} [props.label] The button's accessible name.
  */
 function DockFab({ onClick, label = "Open assistant" }) {
   return (

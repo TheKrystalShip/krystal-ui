@@ -16,20 +16,20 @@ import { Icon } from "./Icon.jsx";
 // `as` picks the root element (section, article, li; div by default). Other props reach the root.
 /**
  * @typedef {object} CardOwnProps
- * @property {import("react").ReactNode} [title]
- * @property {import("react").ReactNode} [sub]
+ * @property {import("react").ReactNode} [title] The head's text.
+ * @property {import("react").ReactNode} [sub] A quieter line under the title.
  * @property {string} [icon] A Lucide name.
- * @property {import("react").ReactNode} [actions]
- * @property {import("react").ReactNode} [foot]
- * @property {"none" | "sm" | "md" | "lg"} [padding]
- * @property {"ok" | "info" | "warn" | "danger" | "accent"} [tone]
- * @property {(event: import("react").MouseEvent<HTMLElement>) => void} [onOpen]
- * @property {string} [href]
+ * @property {import("react").ReactNode} [actions] Buttons and IconButtons at the head's end.
+ * @property {import("react").ReactNode} [foot] A strip under the body, set off by a hairline.
+ * @property {"none" | "sm" | "md" | "lg"} [padding] The body's inset: `none` sits a List, a Table or artwork flush to the frame.
+ * @property {"ok" | "info" | "warn" | "danger" | "accent"} [tone] A thin edge on the card's leading side.
+ * @property {(event: import("react").MouseEvent<HTMLElement>) => void} [onOpen] Makes the whole card open: the title becomes a button whose hit area covers the card.
+ * @property {string} [href] Makes the whole card a link, as `onOpen` makes it a button.
  * @property {string} [label] The open control's accessible name when there is no title.
- * @property {boolean} [selected]
- * @property {"div" | "section" | "article" | "li" | "aside"} [as]
- * @property {string} [className]
- * @property {import("react").ReactNode} [children]
+ * @property {boolean} [selected] Draws the accent tint and edge.
+ * @property {"div" | "section" | "article" | "li" | "aside"} [as] The root element; `div` by default.
+ * @property {string} [className] Extra classes on the root.
+ * @property {import("react").ReactNode} [children] The body.
  * @typedef {CardOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof CardOwnProps | "title">} CardProps
  */
 /** @type {import("react").ForwardRefExoticComponent<CardProps & import("react").RefAttributes<HTMLElement>>} */

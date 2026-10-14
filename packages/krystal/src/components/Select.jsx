@@ -15,9 +15,9 @@ import { Icon } from "./Icon.jsx";
 // Button beside it.
 /**
  * @typedef {object} SelectOwnProps
- * @property {"field" | "inline" | "chip"} [variant]
- * @property {"sm" | "md" | "lg"} [size]
- * @property {string} [className]
+ * @property {"field" | "inline" | "chip"} [variant] `field` fills the width, `inline` is sized to its options, `chip` is a compact picker for a card header.
+ * @property {"sm" | "md" | "lg"} [size] `sm`, `md` or `lg`, the height of the Input or Button beside it.
+ * @property {string} [className] Extra class names on the select.
  * @property {{ value: string | number, label: import("react").ReactNode }[]} [options] Alternative to <option> children.
  * @property {import("react").ReactNode} [children] <option> elements.
  * @typedef {SelectOwnProps & Omit<import("react").ComponentPropsWithoutRef<"select">, keyof SelectOwnProps>} SelectProps

@@ -30,20 +30,20 @@ import { Pill } from "./Pill.jsx";
 /**
  * @param {object} props
  * @param {string} [props.icon] A Lucide name.
- * @param {import("react").ReactNode} props.title
+ * @param {import("react").ReactNode} props.title The header's label.
  * @param {import("react").ReactNode | false} [props.count] A pill after the title.
- * @param {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [props.countTone]
+ * @param {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [props.countTone] `neutral` for a quiet grey count pill; the accent when omitted.
  * @param {string} [props.countTitle] Tooltip on the count pill.
  * @param {import("react").ReactNode} [props.meta] A muted strip under the header.
  * @param {import("react").ReactNode} [props.pin] Header-right node before the action.
- * @param {() => void} [props.onViewAll]
- * @param {string} [props.viewAllLabel]
+ * @param {() => void} [props.onViewAll] Called by the "View all" affordance at the header's end.
+ * @param {string} [props.viewAllLabel] The text of the "View all" affordance.
  * @param {import("react").ReactNode} [props.action] Header-right node; wins over `onViewAll`, null for nothing.
- * @param {boolean} [props.collapsible]
+ * @param {boolean} [props.collapsible] Makes the whole header a toggle that unmounts the body when shut.
  * @param {boolean} [props.open] Controlled collapse state.
- * @param {() => void} [props.onToggle]
- * @param {string} [props.className]
- * @param {import("react").ReactNode} [props.children]
+ * @param {() => void} [props.onToggle] Called with the next state when a collapsible header is pressed.
+ * @param {string} [props.className] Extra classes on the card.
+ * @param {import("react").ReactNode} [props.children] The body: a `k-brief__list` of rows, a `k-brief__empty`, or any content.
  */
 function BriefCard({ icon, title, count, countTone, countTitle, meta, pin, onViewAll, viewAllLabel = "View all", action,
   collapsible = false, open = true, onToggle, className = "", children }) {

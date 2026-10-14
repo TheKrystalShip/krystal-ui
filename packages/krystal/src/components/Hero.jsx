@@ -6,8 +6,8 @@
 /**
  * @param {object} props
  * @param {string} [props.art] A CSS background-image value.
- * @param {string} [props.className]
- * @param {import("react").ReactNode} [props.children]
+ * @param {string} [props.className] Class name added to the root element.
+ * @param {import("react").ReactNode} [props.children] The content over the art.
  */
 function Hero({ art, className, children }) {
   return (

@@ -32,23 +32,23 @@ const PHONE_HIDDEN = { phone: " k-table__col--hide-phone", tablet: " k-table__co
 
 /**
  * @typedef {object} TableColumn
- * @property {string} key
- * @property {import("react").ReactNode} header
- * @property {(row: any) => import("react").ReactNode} [render]
- * @property {string | number} [width]
- * @property {"left" | "right" | "center"} [align]
- * @property {boolean} [sortable]
- * @property {(row: any) => unknown} [sortValue]
- * @property {boolean} [mono]
- * @property {"phone" | "tablet"} [hideBelow]
- * @property {boolean} [interactive]
+ * @property {string} key Names the column and, without `render`, the row field it shows.
+ * @property {import("react").ReactNode} header The column's heading.
+ * @property {(row: any) => import("react").ReactNode} [render] Draws the cell from the row.
+ * @property {string | number} [width] Any CSS length, on the header cell.
+ * @property {"left" | "right" | "center"} [align] `left`, `right` or `center`; right and center use tabular numerals.
+ * @property {boolean} [sortable] Makes the header a button.
+ * @property {(row: any) => unknown} [sortValue] What the column orders by; the row's `key` field when left out.
+ * @property {boolean} [mono] Draws the cell in monospace.
+ * @property {"phone" | "tablet"} [hideBelow] Leaves the column out at `phone` or `tablet` width and narrower.
+ * @property {boolean} [interactive] The cell holds its own controls, which sit above the row's open target.
  */
 /** @typedef {{ key: string, dir: "asc" | "desc" }} TableSort */
 
 /**
  * Orders rows by a sort over `columns`. A null, undefined or NaN value sorts last in both directions.
  * @param {any[]} rows
- * @param {TableColumn[]} columns
+ * @param {TableColumn[]} columns The columns whose `sortValue` reads each row.
  * @param {TableSort | null | undefined} sort
  * @returns {any[]}
  */
@@ -72,28 +72,28 @@ function sortRows(rows, columns, sort) {
 
 /**
  * @typedef {object} TableOwnProps
- * @property {TableColumn[]} columns
- * @property {any[]} [rows]
+ * @property {TableColumn[]} columns The columns, each `{ key, header, render, width, align, sortable, sortValue, mono, hideBelow, interactive }`.
+ * @property {any[]} [rows] The records, one per row.
  * @property {(row: any, index: number) => string | number} [rowKey] Defaults to `row.id`, then the index.
- * @property {TableSort | null} [sort]
- * @property {(sort: TableSort) => void} [onSortChange]
+ * @property {TableSort | null} [sort] The current ordering, `{ key, dir }`; null for none.
+ * @property {(sort: TableSort) => void} [onSortChange] Receives the next `{ key, dir }` when a sortable header is pressed.
  * @property {(row: any) => void} [onRowOpen] Makes the first column's content a button.
  * @property {(row: any) => string | undefined} [rowHref] Makes it a link.
  * @property {string | number | Array<string | number>} [selected] The key, or keys, of the selected rows.
  * @property {(row: any) => import("react").ReactNode} [rowActions] The row's own buttons, in a trailing cell.
  * @property {string} [actionsLabel] The trailing column's accessible header.
  * @property {(row: any) => "ok" | "info" | "warn" | "danger" | "accent" | undefined} [rowTone] A thin edge on the row's leading side.
- * @property {boolean} [dense]
+ * @property {boolean} [dense] Tighter row padding.
  * @property {string} [label] The table's accessible name.
- * @property {boolean} [loading]
- * @property {Error | string | null | false} [error]
- * @property {() => void} [onRetry]
- * @property {import("react").ReactNode} [skeleton]
- * @property {import("react").ReactNode} [empty]
- * @property {import("react").ReactNode} [emptyTitle]
- * @property {import("react").ReactNode} [emptyBody]
- * @property {import("react").ReactNode} [emptyAction]
- * @property {string} [className]
+ * @property {boolean} [loading] Draws the skeleton in place of the rows.
+ * @property {Error | string | null | false} [error] A failed read to show, with a retry, in place of the rows: an Error, a message, or false.
+ * @property {() => void} [onRetry] Called by the failed state's retry button.
+ * @property {import("react").ReactNode} [skeleton] The placeholder drawn while loading; a default one when left out.
+ * @property {import("react").ReactNode} [empty] A node that replaces the empty state.
+ * @property {import("react").ReactNode} [emptyTitle] The empty state's heading.
+ * @property {import("react").ReactNode} [emptyBody] The empty state's explanation.
+ * @property {import("react").ReactNode} [emptyAction] An action under the empty state's text.
+ * @property {string} [className] Extra class names on the root element.
  * @typedef {TableOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof TableOwnProps>} TableProps
  */
 /** @type {import("react").ForwardRefExoticComponent<TableProps & import("react").RefAttributes<HTMLDivElement>>} */

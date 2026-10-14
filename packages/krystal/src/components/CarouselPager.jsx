@@ -5,10 +5,10 @@
 // such as a television, where the slides are turned by time alone.
 /**
  * @param {object} props
- * @param {ReturnType<typeof import("../hooks/useCarousel.js").useCarousel>} props.carousel
+ * @param {ReturnType<typeof import("../hooks/useCarousel.js").useCarousel>} props.carousel The state `useCarousel` returned, whose slides the marks stand for.
  * @param {string[]} [props.labels] Each mark's accessible name.
  * @param {boolean} [props.indicator] Draw the marks only, not focusable.
- * @param {string} [props.className]
+ * @param {string} [props.className] Class name added to the root element.
  */
 function CarouselPager({ carousel, labels = [], indicator = false, className }) {
   const { index, count, interval, epoch, autoplay, running, go } = carousel;

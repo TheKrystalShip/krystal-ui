@@ -12,11 +12,11 @@
  * @param {object} props
  * @param {string} [props.mark] An image URL.
  * @param {import("react").ReactNode} [props.wordmark] The screen's heading.
- * @param {import("react").ReactNode} [props.tagline]
- * @param {import("react").ReactNode} [props.children]
+ * @param {import("react").ReactNode} [props.tagline] A line under the wordmark.
+ * @param {import("react").ReactNode} [props.children] The card's content.
  * @param {import("react").ReactNode} [props.foot] Under the card.
- * @param {"sm" | "md"} [props.width]
- * @param {string} [props.className]
+ * @param {"sm" | "md"} [props.width] The card's width: `sm` or `md`.
+ * @param {string} [props.className] Extra classes on the screen.
  */
 function CardScreen({ mark, wordmark, tagline, children, foot, width = "sm", className }) {
   const brand = mark || wordmark || tagline;

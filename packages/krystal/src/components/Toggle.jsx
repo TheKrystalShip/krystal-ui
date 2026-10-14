@@ -8,11 +8,11 @@
 // row around it says which.
 /**
  * @param {object} props
- * @param {boolean} [props.on]
+ * @param {boolean} [props.on] Whether the switch is on.
  * @param {(next: boolean) => void} [props.onChange] Receives the new state.
  * @param {boolean} [props.disabled] Inert and faded, still visible.
  * @param {string} [props.label] The accessible name.
- * @param {string} [props.className]
+ * @param {string} [props.className] Extra class names on the root element.
  */
 function Toggle({ on, onChange, disabled = false, label, className }) {
   return (

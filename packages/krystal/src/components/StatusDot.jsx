@@ -10,13 +10,13 @@ import React from "react";
 // group's readout; `label` still names the state.
 /**
  * @typedef {object} StatusDotOwnProps
- * @property {"neutral" | "ok" | "warn" | "danger" | "info" | "accent"} [tone]
+ * @property {"neutral" | "ok" | "warn" | "danger" | "info" | "accent"} [tone] `neutral`, `ok`, `warn`, `danger`, `info` or `accent`; colours the dot.
  * @property {string} label The state in words, for assistive technology and the title.
  * @property {boolean} [pulse] A ring breathing out of the dot; off under reduced motion.
- * @property {"sm" | "md" | "lg"} [size]
+ * @property {"sm" | "md" | "lg"} [size] `sm`, `md` or `lg`.
  * @property {import("react").ReactNode} [caption] Visible text beside the dot.
  * @property {"start" | "end"} [captionSide] Which side of the dot the caption sits.
- * @property {string} [className]
+ * @property {string} [className] Extra class names on the root element.
  * @typedef {StatusDotOwnProps & Omit<import("react").ComponentPropsWithoutRef<"span">, keyof StatusDotOwnProps>} StatusDotProps
  */
 /** @type {import("react").ForwardRefExoticComponent<StatusDotProps & import("react").RefAttributes<HTMLSpanElement>>} */

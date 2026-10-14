@@ -25,14 +25,14 @@ import { chain, elementRef, mergeRefs } from "../lib/refs.js";
  * @property {import("react").ReactElement} [trigger] The element that opens it; cloned.
  * @property {boolean} [open] Controlled open state.
  * @property {boolean} [defaultOpen] Initial open state when uncontrolled.
- * @property {(open: boolean) => void} [onOpenChange]
+ * @property {(open: boolean) => void} [onOpenChange] Receives the next open state.
  * @property {import("react").RefObject<HTMLElement>} [anchorRef] The element the panel hangs from, when there is no `trigger`.
  * @property {import("@floating-ui/react-dom").Placement} [placement] Preferred side and alignment; flips when there is no room.
  * @property {import("react").ReactNode} [title] The heading, drawn at the top and naming the panel.
  * @property {string} [label] The accessible name of a panel with no `title`.
  * @property {boolean} [matchWidth] The panel is at least as wide as its anchor.
- * @property {import("react").ReactNode | ((api: { close: () => void }) => import("react").ReactNode)} [children]
- * @property {string} [className]
+ * @property {import("react").ReactNode | ((api: { close: () => void }) => import("react").ReactNode)} [children] The panel's content; a function receives `close` to dismiss it.
+ * @property {string} [className] Class name added to the root element.
  * @typedef {PopoverOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof PopoverOwnProps>} PopoverProps
  */
 /** @param {PopoverProps} props */

@@ -16,19 +16,19 @@ import { Icon } from "./Icon.jsx";
 // `onOpen` or `href` makes the whole tile a button or a link.
 /**
  * @typedef {object} StatTileOwnProps
- * @property {import("react").ReactNode} label
+ * @property {import("react").ReactNode} label What the figure is, in small capitals.
  * @property {string} [icon] A Lucide name.
  * @property {import("react").ReactNode | null} [value] Null or undefined draws "unknown".
- * @property {import("react").ReactNode} [unit]
- * @property {import("react").ReactNode} [delta]
- * @property {"ok" | "warn" | "danger" | "muted"} [deltaTone]
- * @property {import("react").ReactNode} [sub]
- * @property {"ok" | "info" | "warn" | "danger" | "muted"} [tone]
- * @property {import("react").ReactNode} [spark]
- * @property {"sm" | "md"} [size]
- * @property {() => void} [onOpen]
- * @property {string} [href]
- * @property {string} [className]
+ * @property {import("react").ReactNode} [unit] A small trailing unit after the value.
+ * @property {import("react").ReactNode} [delta] A change drawn beside the value.
+ * @property {"ok" | "warn" | "danger" | "muted"} [deltaTone] `ok`, `warn`, `danger` or `muted`; colours the delta.
+ * @property {import("react").ReactNode} [sub] A quieter line under the figure.
+ * @property {"ok" | "info" | "warn" | "danger" | "muted"} [tone] Colours the value: `ok`, `info`, `warn`, `danger` or `muted`; `warn` and `danger` add a hairline along the top.
+ * @property {import("react").ReactNode} [spark] A node under the figure: a trace, a meter, whatever the figure's own shape is.
+ * @property {"sm" | "md"} [size] `sm` is the dense variant for a band of many; `md` otherwise.
+ * @property {() => void} [onOpen] Makes the whole tile a button; called when it is pressed.
+ * @property {string} [href] Makes the whole tile a link.
+ * @property {string} [className] Extra class names on the root element.
  * @typedef {StatTileOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof StatTileOwnProps>} StatTileProps
  */
 /** @param {StatTileProps} props */
@@ -65,8 +65,8 @@ function StatTile({ label, icon, value, unit, delta, deltaTone = "muted", sub, t
 /**
  * @typedef {object} StatTilesOwnProps
  * @property {string | number} [min] The narrowest a tile gets before the grid drops a column: a CSS length, a number is pixels.
- * @property {string} [className]
- * @property {import("react").ReactNode} [children]
+ * @property {string} [className] Extra class names on the grid.
+ * @property {import("react").ReactNode} [children] The StatTile cells.
  * @typedef {StatTilesOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof StatTilesOwnProps>} StatTilesProps
  */
 /** @param {StatTilesProps} props */

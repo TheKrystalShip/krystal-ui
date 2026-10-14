@@ -39,25 +39,25 @@ import { useSheetPull } from "../hooks/useSheetPull.js";
 /**
  * @typedef {object} DrawerOwnProps
  * @property {import("react").ReactNode} [title] Absent when `head` or `label` stands in for it.
- * @property {import("react").ReactNode} [sub]
+ * @property {import("react").ReactNode} [sub] A line under the head.
  * @property {string} [icon] A Lucide name.
  * @property {string} [label] Accessible name when `title` is not a string.
- * @property {() => void} [onClose]
+ * @property {() => void} [onClose] Called on the close button, Escape, the scrim and a pull-to-close, unless `canClose` is false.
  * @property {boolean} [canClose] False blocks Escape, scrim, close button and pull.
- * @property {"bottom" | "right" | "left"} [side]
+ * @property {"bottom" | "right" | "left"} [side] The edge it slides in from: `bottom`, `right` or `left`.
  * @property {"md" | "lg" | "xl"} [size] The sheet's widest, as Dialog's: md 520, lg 720, xl 960.
  * @property {boolean} [fill] A definite, tall sheet, for a body that sizes itself to its container.
  * @property {{ label: string, onClick: () => void }} [back] A back button before the title, named `label`.
  * @property {import("react").ReactNode} [action] Sits after the title, before the close button.
  * @property {import("react").ReactNode} [head] Replaces the title row: icon, back, title, action and close button.
  * @property {boolean} [contained] Draws inside the nearest positioned ancestor rather than over the viewport.
- * @property {"dialog" | "alertdialog" | "menu"} [role]
+ * @property {"dialog" | "alertdialog" | "menu"} [role] `dialog`, `alertdialog`, or `menu` for a body that is a list of items.
  * @property {string} [theme] A palette name (`data-theme`) the sheet is drawn in, whatever the page's.
- * @property {"div" | "form"} [as]
- * @property {import("react").FormEventHandler<HTMLElement>} [onSubmit]
- * @property {import("react").ReactNode} [foot]
- * @property {string} [className]
- * @property {import("react").ReactNode} [children]
+ * @property {"div" | "form"} [as] `form` makes the sheet a form, so Enter in a field submits it.
+ * @property {import("react").FormEventHandler<HTMLElement>} [onSubmit] The form's submit handler when `as` is `form`.
+ * @property {import("react").ReactNode} [foot] The sheet's actions, ruled off from the body.
+ * @property {string} [className] Extra classes on the sheet.
+ * @property {import("react").ReactNode} [children] The body, which scrolls.
  * @typedef {DrawerOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof DrawerOwnProps | "onSubmit">} DrawerProps
  */
 

@@ -18,25 +18,25 @@ import React from "react";
 // The fill is drawn in the accent, `size` is sm or md (a phone raises md to a 40px target).
 /**
  * @typedef {object} SliderMark
- * @property {number} value
+ * @property {number} value The mark's position on the line.
  * @property {import("react").ReactNode} [label]
  */
 /**
  * @typedef {object} SliderOwnProps
- * @property {number} [value]
- * @property {number} [defaultValue]
- * @property {(next: number) => void} [onChange]
- * @property {(final: number) => void} [onChangeEnd]
- * @property {number} [min]
- * @property {number} [max]
- * @property {number} [step]
- * @property {(number | SliderMark)[]} [marks]
- * @property {(value: number) => string} [format]
- * @property {boolean} [showValue]
+ * @property {number} [value] The chosen number, for a slider the site controls.
+ * @property {number} [defaultValue] The starting number when the slider holds its own.
+ * @property {(next: number) => void} [onChange] Receives each next value while the thumb moves.
+ * @property {(final: number) => void} [onChangeEnd] Receives the final value when a drag is let go and after each key press.
+ * @property {number} [min] The lowest value.
+ * @property {number} [max] The highest value.
+ * @property {number} [step] The grid values snap to, and the distance an arrow key moves.
+ * @property {(number | SliderMark)[]} [marks] Ticks along the line: numbers, or `{ value, label }` to word one.
+ * @property {(value: number) => string} [format] Words a value for a screen reader and `showValue` ("30%"); the number itself when left out.
+ * @property {boolean} [showValue] Draws the formatted value after the line.
  * @property {string} [label] The accessible name.
- * @property {boolean} [disabled]
- * @property {"sm" | "md"} [size]
- * @property {string} [className]
+ * @property {boolean} [disabled] Makes the slider inert.
+ * @property {"sm" | "md"} [size] `sm` or `md`; a phone raises `md` to a larger touch target.
+ * @property {string} [className] Extra class names on the root element.
  * @typedef {SliderOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof SliderOwnProps | "onChange" | "defaultValue">} SliderProps
  */
 /** @type {import("react").ForwardRefExoticComponent<SliderProps & import("react").RefAttributes<HTMLDivElement>>} */

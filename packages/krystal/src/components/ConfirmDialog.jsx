@@ -15,16 +15,16 @@ import { Notice } from "./Notice.jsx";
 // the confirm label for that time.
 /**
  * @typedef {object} ConfirmDialogOwnProps
- * @property {import("react").ReactNode} title
+ * @property {import("react").ReactNode} title The question, in the dialog's head.
  * @property {string} [icon] A Lucide name, before the title and on a danger confirm.
- * @property {"neutral" | "danger"} [tone]
+ * @property {"neutral" | "danger"} [tone] `danger` draws the confirm button as a danger Button; `neutral` otherwise.
  * @property {string} confirm The confirm button's label.
  * @property {string} [busyLabel] The confirm label while the change runs.
  * @property {string} [cancel] The cancel button's label.
- * @property {() => Promise<void | { refusal: string }>} onConfirm
+ * @property {() => Promise<void | { refusal: string }>} onConfirm The change itself; resolve with nothing for success or `{ refusal }` to keep the dialog open with the reason.
  * @property {() => void} onClose Called on cancel, Escape, the scrim and after a successful confirm.
- * @property {"md" | "lg"} [size]
- * @property {string} [className]
+ * @property {"md" | "lg"} [size] The sheet's width: `md` or `lg`.
+ * @property {string} [className] Extra classes on the sheet.
  * @property {import("react").ReactNode} [children] The consequence text.
  * @typedef {ConfirmDialogOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof ConfirmDialogOwnProps>} ConfirmDialogProps
  */

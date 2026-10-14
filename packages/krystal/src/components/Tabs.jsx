@@ -33,10 +33,10 @@ const panelId = (base, value) => base + "-panel-" + String(value);
  * @property {string | number} [value] The chosen tab's value.
  * @property {string | number} [defaultValue] The first chosen value when `value` is not given.
  * @property {(next: any) => void} [onChange] Receives the chosen tab's value.
- * @property {"underline" | "segmented"} [variant]
- * @property {"sm" | "md"} [size]
+ * @property {"underline" | "segmented"} [variant] `underline`, or `segmented` for the strip OptionList draws.
+ * @property {"sm" | "md"} [size] `sm` or `md`.
  * @property {"auto" | "manual"} [activation] Whether an arrow key chooses the tab it focuses.
- * @property {string} [className]
+ * @property {string} [className] Extra class names on the root element.
  * @property {import("react").ReactNode} [children] A TabList and the TabPanels.
  * @typedef {TabsOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof TabsOwnProps | "onChange">} TabsProps
  */
@@ -75,7 +75,7 @@ function useTabs() {
 /**
  * @typedef {object} TabListOwnProps
  * @property {string} [label] The list's accessible name.
- * @property {string} [className]
+ * @property {string} [className] Extra class names on the tab strip.
  * @property {import("react").ReactNode} [children] The Tabs.
  * @typedef {TabListOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof TabListOwnProps>} TabListProps
  */
@@ -139,8 +139,8 @@ const TabList = React.forwardRef(function TabList({ label, className, children, 
  * @property {string | number} value Pairs the tab with the TabPanel of the same value.
  * @property {string} [icon] A Lucide name drawn before the label.
  * @property {number} [count] A count drawn after the label as a Pill when above zero.
- * @property {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [countTone]
- * @property {string} [className]
+ * @property {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [countTone] Colours the count Pill.
+ * @property {string} [className] Extra class names on the tab.
  * @property {import("react").ReactNode} [children] The label.
  * @typedef {TabOwnProps & Omit<import("react").ComponentPropsWithoutRef<"button">, keyof TabOwnProps>} TabProps
  */
@@ -171,8 +171,8 @@ const Tab = React.forwardRef(function Tab({
  * @typedef {object} TabPanelOwnProps
  * @property {string | number} value The Tab's value.
  * @property {boolean} [keepMounted] Stay drawn, hidden, while not chosen.
- * @property {string} [className]
- * @property {import("react").ReactNode} [children]
+ * @property {string} [className] Extra class names on the panel.
+ * @property {import("react").ReactNode} [children] The panel's content.
  * @typedef {TabPanelOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof TabPanelOwnProps>} TabPanelProps
  */
 /** @type {import("react").ForwardRefExoticComponent<TabPanelProps & import("react").RefAttributes<HTMLDivElement>>} */

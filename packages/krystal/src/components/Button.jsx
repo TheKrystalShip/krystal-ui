@@ -41,8 +41,8 @@ function glyph(icon, size, className) {
 
 /**
  * @typedef {object} ButtonOwnProps
- * @property {"primary" | "secondary" | "outline" | "ghost" | "accent" | "danger" | "warning" | "link"} [variant]
- * @property {"xs" | "sm" | "md" | "lg" | "xl"} [size]
+ * @property {"primary" | "secondary" | "outline" | "ghost" | "accent" | "danger" | "warning" | "link"} [variant] How loud it is: `primary`, `secondary`, `outline`, `ghost`, `accent`, `danger`, `warning` or `link`.
+ * @property {"xs" | "sm" | "md" | "lg" | "xl"} [size] Height step shared with Input: `xs` to `xl`.
  * @property {"danger" | "warning" | "success"} [tone] A neutral variant's consequence colour on hover.
  * @property {string | import("react").ReactNode} [icon] A Lucide name or a node, before the label.
  * @property {string | import("react").ReactNode} [iconRight] A Lucide name or a node, after the label.
@@ -51,10 +51,10 @@ function glyph(icon, size, className) {
  * @property {boolean} [armed] A confirm-first button waiting for its second press.
  * @property {boolean} [wide] Fills its container.
  * @property {string} [href] Renders a link that looks like a button.
- * @property {"button" | "submit" | "reset"} [type]
- * @property {boolean} [disabled]
- * @property {string} [className]
- * @property {import("react").ReactNode} [children]
+ * @property {"button" | "submit" | "reset"} [type] The native button type.
+ * @property {boolean} [disabled] Blocks activation and dims the button.
+ * @property {string} [className] Extra classes on the element.
+ * @property {import("react").ReactNode} [children] The label; with none the button is a bare icon.
  * @typedef {ButtonOwnProps & Omit<import("react").ComponentPropsWithoutRef<"button">, keyof ButtonOwnProps>} ButtonProps
  */
 /** @type {import("react").ForwardRefExoticComponent<ButtonProps & import("react").RefAttributes<HTMLButtonElement>>} */
@@ -101,16 +101,16 @@ const ICON_BTN_GLYPH = { xs: 13, sm: 14, md: 15, lg: 17 };
  * @typedef {object} IconButtonOwnProps
  * @property {string | import("react").ReactNode} icon A Lucide name or a node.
  * @property {string} label The accessible name and tooltip.
- * @property {"outline" | "ghost" | "secondary"} [variant]
- * @property {"xs" | "sm" | "md" | "lg"} [size]
- * @property {"danger" | "warning" | "success"} [tone]
- * @property {boolean} [busy]
- * @property {boolean} [pressed]
- * @property {boolean} [armed]
- * @property {"button" | "submit" | "reset"} [type]
- * @property {boolean} [disabled]
+ * @property {"outline" | "ghost" | "secondary"} [variant] `outline`, `ghost` or `secondary`.
+ * @property {"xs" | "sm" | "md" | "lg"} [size] Square side, as Button's heights: `xs` to `lg`.
+ * @property {"danger" | "warning" | "success"} [tone] A consequence colour taken on hover, as Button's.
+ * @property {boolean} [busy] Swaps the icon for a spinner and holds the button disabled.
+ * @property {boolean} [pressed] Makes it a two-state button (aria-pressed).
+ * @property {boolean} [armed] A confirm-first button waiting for its second press.
+ * @property {"button" | "submit" | "reset"} [type] The native button type.
+ * @property {boolean} [disabled] Blocks activation and dims the button.
  * @property {string} [title] Overrides the tooltip text, which is `label` otherwise; empty draws none.
- * @property {string} [className]
+ * @property {string} [className] Extra classes on the element.
  * @typedef {IconButtonOwnProps & Omit<import("react").ComponentPropsWithoutRef<"button">, keyof IconButtonOwnProps>} IconButtonProps
  */
 /** @type {import("react").ForwardRefExoticComponent<IconButtonProps & import("react").RefAttributes<HTMLButtonElement>>} */

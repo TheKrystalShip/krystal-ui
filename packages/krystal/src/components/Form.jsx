@@ -33,7 +33,7 @@ function useScope() {
 /**
  * @typedef {object} FormScopeProps
  * @property {import("../hooks/useForm.js").FormHandle} form The handle from useForm().
- * @property {import("react").ReactNode} [children]
+ * @property {import("react").ReactNode} [children] The form's content.
  */
 /** @param {FormScopeProps} props */
 function FormScope({ form, children }) {
@@ -56,7 +56,7 @@ function ErrorNotice({ className }) {
 // FormError — where the form-level error is drawn, when it belongs somewhere other than the top.
 /**
  * @param {object} props
- * @param {string} [props.className]
+ * @param {string} [props.className] Class name added to the root element.
  */
 function FormError({ className }) {
   const { claim } = useScope();
@@ -72,8 +72,8 @@ function FormBody({ children }) {
 /**
  * @typedef {object} FormOwnProps
  * @property {import("../hooks/useForm.js").FormHandle} form The handle from useForm().
- * @property {string} [className]
- * @property {import("react").ReactNode} [children]
+ * @property {string} [className] Class name added to the root element.
+ * @property {import("react").ReactNode} [children] The form's fields and controls.
  * @typedef {FormOwnProps & Omit<import("react").ComponentPropsWithoutRef<"form">, keyof FormOwnProps | "onSubmit" | "noValidate">} FormProps
  */
 /** @param {FormProps} props */
@@ -116,11 +116,11 @@ const CONTROLS = {
 
 /**
  * @typedef {object} FieldBinding What a render-function control receives.
- * @property {string} name
- * @property {any} value
+ * @property {string} name The field's key in the form's values.
+ * @property {any} value The field's current value.
  * @property {(next: any) => void} onChange Takes the next value, not an event.
- * @property {() => void} onBlur
- * @property {boolean} invalid
+ * @property {() => void} onBlur Marks the field touched.
+ * @property {boolean} invalid Whether the field has an error to show.
  * @property {boolean} disabled True while the form submits.
  * @property {string | undefined} describedBy The id of the hint or error line, for aria-describedby.
  */

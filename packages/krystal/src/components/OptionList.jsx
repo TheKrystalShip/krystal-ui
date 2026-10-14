@@ -32,18 +32,18 @@ import { Icon } from "./Icon.jsx";
  */
 /**
  * @typedef {object} OptionListOwnProps
- * @property {OptionListItem[]} options
+ * @property {OptionListItem[]} options The choices, each `{ value, label, detail, aside, disabled }`.
  * @property {any} [value] The chosen value; with `multiple`, the array of chosen values.
  * @property {(next: any) => void} [onChange] The next value; with `multiple`, the next array in `options` order.
  * @property {boolean} [multiple] Checkboxes instead of a radio group.
  * @property {string} [label] The group's accessible name.
  * @property {string} [name] The inputs' form name.
- * @property {boolean} [disabled]
- * @property {"sm" | "md"} [size]
- * @property {"list" | "segmented"} [variant]
+ * @property {boolean} [disabled] Makes every row inert.
+ * @property {"sm" | "md"} [size] `sm` or `md` rows; a phone raises `sm`.
+ * @property {"list" | "segmented"} [variant] `list` stacks full-width rows; `segmented` lays the options side by side in one strip.
  * @property {number} [collapsedAfter] Rows shown before a reveal row.
- * @property {(hiddenCount: number) => string} [moreLabel]
- * @property {string} [className]
+ * @property {(hiddenCount: number) => string} [moreLabel] Words the reveal row from the number of hidden rows; "N more" when left out.
+ * @property {string} [className] Extra class names on the group.
  * @typedef {OptionListOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof OptionListOwnProps | "onChange">} OptionListProps
  */
 /** @param {OptionListProps} props */

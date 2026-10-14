@@ -35,14 +35,14 @@ const AccordionContext = React.createContext(null);
  * @property {string} [icon] A Lucide name drawn before the summary.
  * @property {import("react").ReactNode} [aside] At the row's end.
  * @property {1 | 2 | 3 | 4 | 5 | 6} [level] The heading level around the summary.
- * @property {boolean} [open]
- * @property {boolean} [defaultOpen]
- * @property {(open: boolean) => void} [onOpenChange]
+ * @property {boolean} [open] Controlled open state.
+ * @property {boolean} [defaultOpen] Initial open state when uncontrolled.
+ * @property {(open: boolean) => void} [onOpenChange] Receives the next open state.
  * @property {string | number} [value] The name inside an Accordion.
- * @property {boolean} [disabled]
- * @property {"start" | "end"} [caret]
- * @property {"framed" | "plain"} [variant]
- * @property {string} [className]
+ * @property {boolean} [disabled] Keeps the summary from toggling.
+ * @property {"start" | "end"} [caret] Where the chevron sits in the row; start by default.
+ * @property {"framed" | "plain"} [variant] `framed` is a bordered card, `plain` a section head with a rule under it; framed by default.
+ * @property {string} [className] Class name added to the root element.
  * @property {import("react").ReactNode} [children] The content.
  * @typedef {DisclosureOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof DisclosureOwnProps>} DisclosureProps
  */
@@ -94,11 +94,11 @@ const Disclosure = React.forwardRef(function Disclosure({
  * @typedef {object} AccordionOwnProps
  * @property {"single" | "multiple"} [type] One open at a time, or any number.
  * @property {string | number | null | (string | number)[]} [value] The open value; with `multiple`, the array of open values.
- * @property {string | number | null | (string | number)[]} [defaultValue]
+ * @property {string | number | null | (string | number)[]} [defaultValue] The open value on first render when uncontrolled.
  * @property {(next: any) => void} [onChange] The next open value, or array of values.
  * @property {boolean} [collapsible] With `single`, whether the open one can be closed (default true).
  * @property {"framed" | "plain"} [variant] Applies to every Disclosure inside.
- * @property {string} [className]
+ * @property {string} [className] Class name added to the root element.
  * @property {import("react").ReactNode} [children] Disclosures.
  * @typedef {AccordionOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof AccordionOwnProps | "onChange" | "defaultValue">} AccordionProps
  */

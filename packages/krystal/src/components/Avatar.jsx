@@ -24,12 +24,12 @@ function initials(name) {
  * @typedef {object} AvatarOwnProps
  * @property {string} [src] An image; the initials draw while it is absent or failing.
  * @property {string} [name] Whose avatar it is; the initials come from it.
- * @property {"xs" | "sm" | "md" | "lg" | "xl" | number} [size]
- * @property {"circle" | "rounded"} [shape]
- * @property {"ok" | "warn" | "danger" | "info" | "muted"} [status]
+ * @property {"xs" | "sm" | "md" | "lg" | "xl" | number} [size] Diameter: `xs`, `sm`, `md`, `lg`, `xl`, or a number of pixels for another size.
+ * @property {"circle" | "rounded"} [shape] `circle` or `rounded` corners.
+ * @property {"ok" | "warn" | "danger" | "info" | "muted"} [status] A dot on the lower corner that says a state by tone.
  * @property {string} [statusLabel] What the status dot says, read aloud.
  * @property {string} [label] An accessible name; without it the avatar is hidden from assistive technology.
- * @property {string} [className]
+ * @property {string} [className] Extra classes on the root.
  * @typedef {AvatarOwnProps & Omit<import("react").ComponentPropsWithoutRef<"span">, keyof AvatarOwnProps>} AvatarProps
  */
 /** @type {import("react").ForwardRefExoticComponent<AvatarProps & import("react").RefAttributes<HTMLSpanElement>>} */

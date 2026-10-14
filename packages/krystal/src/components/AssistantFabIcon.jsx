@@ -4,8 +4,8 @@ const MAX_EYE_PX = 2;
 
 /**
  * @param {object} props
- * @param {number} [props.size]
- * @param {string} [props.className]
+ * @param {number} [props.size] Side of the square mark in pixels.
+ * @param {string} [props.className] Extra classes on the svg.
  */
 export default function AssistantFabIcon({ size = 22, className = "" }) {
   const ref = useRef(null);

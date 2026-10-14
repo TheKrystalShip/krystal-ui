@@ -20,17 +20,17 @@ import { Icon } from "./Icon.jsx";
  * @template T
  * @param {object} props
  * @param {string} [props.icon] A Lucide name.
- * @param {string} props.title
- * @param {import("react").ReactNode} [props.count]
- * @param {import("react").ReactNode} [props.pin]
- * @param {() => void} [props.onViewAll]
- * @param {string} [props.viewAllLabel]
- * @param {T[]} props.items
- * @param {(item: T) => import("react").ReactNode} props.renderItem
+ * @param {string} props.title The shelf's heading; it also names the scroll arrows.
+ * @param {import("react").ReactNode} [props.count] A figure after the heading, such as the collection's size.
+ * @param {import("react").ReactNode} [props.pin] A node in the header beside the arrows.
+ * @param {() => void} [props.onViewAll] Draws a view-all button in the header; called when it is pressed.
+ * @param {string} [props.viewAllLabel] The view-all button's words.
+ * @param {T[]} props.items The collection the shelf scrolls through.
+ * @param {(item: T) => import("react").ReactNode} props.renderItem Draws one item as a card.
  * @param {(item: T) => string | number} [props.itemKey] Defaults to `item.id`, then the index.
- * @param {boolean} [props.disabled]
- * @param {string} [props.variant]
- * @param {string} [props.ariaLabel]
+ * @param {boolean} [props.disabled] Hides the arrows and leaves the row without horizontal swipe.
+ * @param {string} [props.variant] A modifier class, `k-rail--<variant>`, that a site's styles target.
+ * @param {string} [props.ariaLabel] The scroller's accessible name; the title when left out.
  */
 function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", items, renderItem, itemKey, disabled = false, variant, ariaLabel }) {
   const trackRef = React.useRef(null);

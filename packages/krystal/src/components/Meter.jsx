@@ -13,21 +13,21 @@
 // either alone is a one-sided caption.
 /**
  * @typedef {object} MeterSegment
- * @property {number} value
- * @property {"neutral" | "accent" | "success" | "warn" | "danger"} [tone]
- * @property {string} [label]
+ * @property {number} value The part's size, in the same units as the other parts.
+ * @property {"neutral" | "accent" | "success" | "warn" | "danger"} [tone] The part's fill; neutral by default.
+ * @property {string} [label] The part's name in the spoken value.
  */
 /**
  * @typedef {object} MeterOwnProps
  * @property {number} [value] One accent fill, out of `max`.
  * @property {MeterSegment[]} [segments] A measurement split into parts; overrides `value`.
- * @property {number} [max]
+ * @property {number} [max] The value that fills the bar; 100 by default.
  * @property {string} [label] The bar's accessible name.
- * @property {string} [valueText]
- * @property {string} [role]
+ * @property {string} [valueText] The spoken value, in place of the one built from `value` or the segments.
+ * @property {string} [role] The track's ARIA role; `progressbar` for a value and `meter` for segments by default.
  * @property {import("react").ReactNode} [start] Caption's left end.
  * @property {import("react").ReactNode} [end] Caption's right end.
- * @property {string} [className]
+ * @property {string} [className] Class name added to the root element.
  * @typedef {MeterOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof MeterOwnProps>} MeterProps
  */
 /** @param {MeterProps} props */

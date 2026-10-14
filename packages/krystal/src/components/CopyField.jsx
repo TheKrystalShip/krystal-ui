@@ -11,9 +11,9 @@ import { copyText } from "../lib/clipboard.js";
  * @typedef {object} CopyFieldOwnProps
  * @property {string} value The text shown and copied.
  * @property {string} [label] The copy button's accessible name.
- * @property {boolean} [mono]
- * @property {"sm" | "md" | "lg"} [size]
- * @property {boolean} [wide]
+ * @property {boolean} [mono] Sets the value in the monospace face.
+ * @property {"sm" | "md" | "lg"} [size] `sm`, `md` or `lg`, sharing Input's heights.
+ * @property {boolean} [wide] Fills its container.
  * @property {(value: string) => void} [onCopied] Runs after a copy that worked.
  * @typedef {CopyFieldOwnProps & Omit<import("./fields.jsx").InputProps, keyof CopyFieldOwnProps | "readOnly" | "suffix">} CopyFieldProps
  */

@@ -20,10 +20,10 @@ import { useModalBehaviour } from "../hooks/useModalBehaviour.js";
 // open with `data-autofocus` (or React's `autoFocus`).
 /**
  * @param {object} props
- * @param {() => void} [props.onClose]
+ * @param {() => void} [props.onClose] Runs when Escape or a press on the scrim asks to close.
  * @param {boolean} [props.canClose] False blocks Escape and scrim close.
- * @param {string} [props.scrimClassName]
- * @param {import("react").ReactNode} [props.children]
+ * @param {string} [props.scrimClassName] The scrim's own class, which gives it its look.
+ * @param {import("react").ReactNode} [props.children] The sheet, drawn over the scrim.
  */
 function Modal({ onClose, canClose = true, scrimClassName = "k-modal-scrim", children }) {
   const scrim = React.useRef(null);

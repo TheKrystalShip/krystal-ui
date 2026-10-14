@@ -31,32 +31,32 @@ import { mergeRefs } from "../lib/refs.js";
 /**
  * @template {string | number} [V=string | number]
  * @typedef {object} ComboboxOption
- * @property {V} value
- * @property {string} label
+ * @property {V} value What the option stands for.
+ * @property {string} label The option's text.
  * @property {import("react").ReactNode} [detail] A quieter word after the label, in the list.
- * @property {boolean} [disabled]
+ * @property {boolean} [disabled] Dims the option and keeps it from being chosen.
  */
 /**
  * @typedef {object} ComboboxOwnProps
- * @property {ComboboxOption[]} options
+ * @property {ComboboxOption[]} options The choices.
  * @property {any} [value] The chosen option's value; null or undefined for none.
  * @property {any} [defaultValue] The initial value when uncontrolled.
- * @property {(value: any, option: ComboboxOption | null) => void} [onChange]
+ * @property {(value: any, option: ComboboxOption | null) => void} [onChange] Receives the chosen value and its option, or null and null when cleared.
  * @property {string} [inputValue] The text in the field, when the caller owns it.
  * @property {(text: string) => void} [onInputChange] Receives every change of the text, typed or put back.
  * @property {false | ((option: ComboboxOption, query: string) => boolean)} [filter] How typing narrows `options`; false shows them as given.
  * @property {import("react").ReactNode} [empty] The line shown when nothing matches.
- * @property {boolean} [loading]
+ * @property {boolean} [loading] Shows `loadingText` while options are on their way.
  * @property {import("react").ReactNode} [loadingText] The line shown in the list while `loading` and there are no options.
- * @property {"sm" | "md" | "lg"} [size]
- * @property {boolean} [wide]
- * @property {boolean} [mono]
+ * @property {"sm" | "md" | "lg"} [size] `sm`, `md` or `lg`, sharing Input's heights.
+ * @property {boolean} [wide] Fills its container.
+ * @property {boolean} [mono] Sets the text in the monospace face.
  * @property {import("react").ReactNode} [prefix] Inside the frame, before what is typed.
- * @property {boolean} [invalid]
- * @property {boolean} [disabled]
+ * @property {boolean} [invalid] Marks the field as holding an error.
+ * @property {boolean} [disabled] Keeps the field from being used.
  * @property {string} [name] Adds a hidden input carrying the chosen value.
- * @property {string} [placeholder]
- * @property {string} [className]
+ * @property {string} [placeholder] The hint shown while the field is empty.
+ * @property {string} [className] Class name added to the root element.
  * @typedef {ComboboxOwnProps & Omit<import("react").ComponentPropsWithoutRef<"input">, keyof ComboboxOwnProps | "value" | "defaultValue" | "onChange" | "size">} ComboboxProps
  */
 /** The default filter: a case-insensitive match on the label and a text detail. */

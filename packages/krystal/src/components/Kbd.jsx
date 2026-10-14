@@ -11,9 +11,9 @@ import React from "react";
  * @typedef {object} KbdOwnProps
  * @property {string[]} [keys] The keys of a chord, in order. Without it `children` is the one key.
  * @property {import("react").ReactNode} [separator] Drawn between the keys of a chord. "+" by default.
- * @property {"sm" | "md"} [size]
- * @property {string} [className]
- * @property {import("react").ReactNode} [children]
+ * @property {"sm" | "md"} [size] `sm` or `md`; md by default.
+ * @property {string} [className] Class name added to the root element.
+ * @property {import("react").ReactNode} [children] The key's label when there is no `keys`.
  * @typedef {KbdOwnProps & Omit<import("react").ComponentPropsWithoutRef<"kbd">, keyof KbdOwnProps>} KbdProps
  */
 /** @param {KbdProps} props */

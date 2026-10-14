@@ -53,15 +53,15 @@ function drawShortcut(shortcut) {
  * @typedef {object} MenuOwnProps
  * @property {import("react").ReactElement} [trigger] The button that opens it; cloned.
  * @property {boolean} [open] Controlled open state.
- * @property {boolean} [defaultOpen]
- * @property {(open: boolean) => void} [onOpenChange]
+ * @property {boolean} [defaultOpen] Initial open state when uncontrolled.
+ * @property {(open: boolean) => void} [onOpenChange] Receives the next open state.
  * @property {import("react").RefObject<HTMLElement>} [anchorRef] The element the panel hangs from, when there is no `trigger`.
- * @property {import("@floating-ui/react-dom").Placement} [placement]
+ * @property {import("@floating-ui/react-dom").Placement} [placement] Preferred side and alignment of the panel; flips when there is no room.
  * @property {string} [label] The menu's accessible name; the trigger names it otherwise.
  * @property {import("react").ReactNode} [header] A line of context above the items.
  * @property {boolean} [matchWidth] The panel is at least as wide as its anchor.
  * @property {import("react").ReactNode} [children] MenuItem, MenuCheckboxItem, MenuRadioGroup, MenuGroup and MenuSeparator.
- * @property {string} [className]
+ * @property {string} [className] Class name added to the root element.
  * @typedef {MenuOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof MenuOwnProps>} MenuProps
  */
 /** @param {MenuProps} props */
@@ -164,15 +164,15 @@ function Menu({
  * @typedef {object} MenuItemOwnProps
  * @property {string | import("react").ReactNode} [icon] A Lucide name or a node, before the label.
  * @property {(event: import("react").MouseEvent<HTMLButtonElement>) => void} [onSelect] Runs on Enter, Space or a click; `preventDefault()` keeps the menu open.
- * @property {boolean} [disabled]
- * @property {"danger"} [tone]
+ * @property {boolean} [disabled] Dims the item and keeps it from being chosen.
+ * @property {"danger"} [tone] `danger` colours the item as a destructive one.
  * @property {string | string[] | import("react").ReactNode} [shortcut] The item's keyboard shortcut at the row's end,
  *   drawn as keys: a string is split on "+" into a chord ("Ctrl+K"), an array is the chord's keys, any
  *   other node is drawn as it is.
  * @property {import("react").ReactNode} [aside] At the row's end, in the accent.
  * @property {boolean} [closeOnSelect] Closes the menu after `onSelect`; true for an item.
  * @property {import("react").ReactNode} [children] The label.
- * @property {string} [className]
+ * @property {string} [className] Class name added to the root element.
  * @typedef {MenuItemOwnProps & Omit<import("react").ComponentPropsWithoutRef<"button">, keyof MenuItemOwnProps | "onSelect">} MenuItemProps
  */
 
@@ -214,7 +214,7 @@ function MenuItem(props) {
 
 /**
  * @typedef {object} MenuCheckboxItemOwnProps
- * @property {boolean} [checked]
+ * @property {boolean} [checked] Whether the item is ticked.
  * @property {(checked: boolean) => void} [onCheckedChange] Receives the new state.
  * @typedef {MenuCheckboxItemOwnProps & Omit<MenuItemProps, keyof MenuCheckboxItemOwnProps>} MenuCheckboxItemProps
  */
@@ -251,8 +251,8 @@ function MenuRadioItem({ value, onSelect, ...rest }) {
 /**
  * @typedef {object} MenuGroupProps
  * @property {import("react").ReactNode} [label] The group's heading and accessible name.
- * @property {import("react").ReactNode} [children]
- * @property {string} [className]
+ * @property {import("react").ReactNode} [children] The group's items.
+ * @property {string} [className] Class name added to the root element.
  */
 /** @param {MenuGroupProps} props */
 function MenuGroup({ label, children, className }) {
@@ -278,7 +278,10 @@ function MenuRadioGroup({ value, onChange, ...group }) {
   return <RadioContext.Provider value={ctx}><MenuGroup {...group} /></RadioContext.Provider>;
 }
 
-/** @param {{ className?: string }} props */
+/**
+ * @param {object} props
+ * @param {string} [props.className] Class name added to the separator.
+ */
 function MenuSeparator({ className }) {
   return <div role="separator" className={"k-menu__sep" + (className ? " " + className : "")} />;
 }

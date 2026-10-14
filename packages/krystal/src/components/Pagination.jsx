@@ -14,7 +14,7 @@ import { Icon } from "./Icon.jsx";
 // window around the current page.
 /**
  * @param {number} page Zero-based current page.
- * @param {number} pageCount
+ * @param {number} pageCount How many pages exist.
  * @param {number} [span] Pages shown each side of the current one.
  * @returns {{ gap?: boolean, page?: number, key: string }[]}
  */
@@ -37,11 +37,11 @@ function paginationWindow(page, pageCount, span = 1) {
 /**
  * @param {object} props
  * @param {number} props.page Zero-based.
- * @param {number} props.pageCount
+ * @param {number} props.pageCount How many pages exist; fewer than two draws nothing.
  * @param {number} [props.total] The count across every page; with `pageSize`, it words the summary.
- * @param {number} [props.pageSize]
- * @param {(page: number) => void} props.onPage
- * @param {string} [props.unit]
+ * @param {number} [props.pageSize] Rows on a page; with `total` it words the "Showing a–b of n" summary.
+ * @param {(page: number) => void} props.onPage Receives the zero-based page the person chose.
+ * @param {string} [props.unit] The plural noun the summary counts ("rows", "results").
  */
 function Pagination({ page, pageCount, total, pageSize, onPage, unit = "results" }) {
   if (!pageCount || pageCount <= 1) return null;

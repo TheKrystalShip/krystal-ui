@@ -10,7 +10,7 @@
  * @param {object} props
  * @param {{ label: import("react").ReactNode, href?: string }[]} props.items Root first, the current page last.
  * @param {(href: string, event: import("react").MouseEvent<HTMLAnchorElement>) => void} [props.onNavigate] Takes a plain left click.
- * @param {string} [props.className]
+ * @param {string} [props.className] Extra classes on the root.
  */
 export function Breadcrumbs({ items, onNavigate, className }) {
   if (!items || items.length === 0) return null;
