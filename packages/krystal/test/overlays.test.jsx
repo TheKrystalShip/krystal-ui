@@ -156,6 +156,20 @@ describe("ConfirmDialog", () => {
     expect(onConfirm).toHaveBeenCalledTimes(2);
   });
 
+  it("draws a refusal that is a node as given, and a rejection with an element the same", async () => {
+    const user = userEvent.setup();
+    const onConfirm = vi.fn()
+      .mockResolvedValueOnce({ refusal: <p data-testid="note">Sign in again. <a href="/signin">Sign in</a></p> })
+      .mockRejectedValueOnce(<p>Rejected note.</p>);
+    setup(onConfirm);
+    await user.click(screen.getByRole("button", { name: "Delete" }));
+    expect(await screen.findByTestId("note")).toBeTruthy();
+    expect(screen.getByRole("link", { name: "Sign in" })).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Delete" }));
+    expect(await screen.findByText("Rejected note.")).toBeTruthy();
+    expect(screen.queryByTestId("note")).toBeNull();
+  });
+
   it("draws a rejection's message the same way", async () => {
     const user = userEvent.setup();
     const onClose = setup(() => Promise.reject(new Error("Server said no.")));

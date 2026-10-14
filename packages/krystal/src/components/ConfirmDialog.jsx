@@ -9,8 +9,10 @@ import { Notice } from "./Notice.jsx";
 //
 // `onConfirm` is the change itself. It returns a promise: one that resolves to nothing succeeded
 // and the dialog calls `onClose`; one that resolves to `{ refusal }` was declined, and the refusal
-// is drawn in a Notice above the text with the dialog still open for another try; one that rejects
-// draws its message the same way. While the promise is pending the confirm is busy, cancel is
+// is drawn above the text with the dialog still open for another try; one that rejects draws its
+// message the same way. A refusal that is a string is drawn in a danger Notice; a node (a site's own
+// refusal note, with its reauthentication link) is drawn as given. A rejection with an element does
+// the same. While the promise is pending the confirm is busy, cancel is
 // disabled, and Escape, the scrim and the close button hold (`canClose` false). `busyLabel` replaces
 // the confirm label for that time.
 /**
@@ -21,7 +23,7 @@ import { Notice } from "./Notice.jsx";
  * @property {string} confirm The confirm button's label.
  * @property {string} [busyLabel] The confirm label while the change runs.
  * @property {string} [cancel] The cancel button's label.
- * @property {() => Promise<void | { refusal: string }>} onConfirm The change itself; resolve with nothing for success or `{ refusal }` to keep the dialog open with the reason.
+ * @property {() => Promise<void | { refusal: import("react").ReactNode }>} onConfirm The change itself; resolve with nothing for success or `{ refusal }` (a string, or a node drawn as given) to keep the dialog open with the reason.
  * @property {() => void} onClose Called on cancel, Escape, the scrim and after a successful confirm.
  * @property {"md" | "lg"} [size] The sheet's width: `md` or `lg`.
  * @property {string} [className] Extra classes on the sheet.
@@ -34,7 +36,7 @@ function ConfirmDialog({
   size = "md", className, children, ...rest
 }) {
   const [busy, setBusy] = React.useState(false);
-  const [refusal, setRefusal] = React.useState(/** @type {string | null} */ (null));
+  const [refusal, setRefusal] = React.useState(/** @type {import("react").ReactNode} */ (null));
   const live = React.useRef(true);
   React.useEffect(() => () => { live.current = false; }, []);
 
@@ -46,7 +48,7 @@ function ConfirmDialog({
     try {
       result = await onConfirm();
     } catch (e) {
-      result = { refusal: (e && e.message) || "That didn't go through." };
+      result = { refusal: React.isValidElement(e) ? e : (e && e.message) || "That didn't go through." };
     }
     if (!live.current) return;
     setBusy(false);
@@ -66,7 +68,7 @@ function ConfirmDialog({
         </>
       )}>
       <div className="k-confirm" {...rest}>
-        {refusal && <Notice tone="danger">{refusal}</Notice>}
+        {refusal && (typeof refusal === "string" ? <Notice tone="danger">{refusal}</Notice> : refusal)}
         <div className="k-confirm__text">{children}</div>
       </div>
     </Dialog>
