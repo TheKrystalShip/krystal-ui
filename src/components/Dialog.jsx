@@ -2,8 +2,9 @@ import { Icon } from "./Icon.jsx";
 import { IconButton } from "./Button.jsx";
 import { Modal } from "./Modal.jsx";
 
-// A dialog: a framed sheet over a blurred scrim, built on Modal's behaviour (Escape and a press
-// outside close it, both held off by `canClose`). The frame is a head with the title, an optional
+// A dialog: a framed sheet over a blurred scrim, built on Modal: focus is trapped in it and
+// returned on close, the page behind is inert, and Escape (the topmost dialog's only) and a press
+// outside close it, both held off by `canClose`. A dialog opened from a dialog stacks over it. The frame is a head with the title, an optional
 // `icon` before it and the close button after it; an optional `sub` line under the head; the body,
 // which scrolls; and an optional `foot` for the dialog's actions, ruled off from the body.
 //

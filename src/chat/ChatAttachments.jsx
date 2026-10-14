@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 
 import { IconButton } from "../components/Button.jsx";
 import { Icon } from "../components/Icon.jsx";
+import { useModalBehaviour } from "../hooks/useModalBehaviour.js";
 import { sizeLabel } from "./attachments.js";
 
 // Object URLs of attachments read back, by id. An attachment never changes under its id, so one read
@@ -41,15 +42,12 @@ function useAttachmentUrl(attachment, load) {
   return { url, failed };
 }
 
-// A picture full size, over everything, until it is closed.
+// A picture full size, over everything, until it is closed; it takes focus and makes the page inert.
 function ChatLightbox({ src, name, onClose }) {
-  React.useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  const root = React.useRef(null);
+  useModalBehaviour(root, { onClose });
   return createPortal(
-    <div className="chat-lightbox" role="dialog" aria-modal="true" aria-label={name} onClick={onClose}>
+    <div ref={root} className="chat-lightbox" role="dialog" aria-modal="true" aria-label={name} onClick={onClose}>
       <img className="chat-lightbox__img" src={src} alt={name} onClick={(e) => e.stopPropagation()} />
       <IconButton className="chat-lightbox__close" icon="x" label="Close" variant="ghost" size="sm" onClick={onClose} />
     </div>,

@@ -15,7 +15,7 @@ import { Modal } from "./Modal.jsx";
 // `children` is projected into a stable detached <div> via createPortal on every
 // render; a layout effect adopts that div into the inline or modal slot before
 // paint (so there is never a flash of an empty slot). The shared <Modal> primitive
-// still owns Esc + scrim-click close behaviour.
+// owns the dialog behaviour: focus trap and return, inert background, Esc + scrim-click close.
 //
 // Both slot divs and the stable host are `display: contents` (see kit/modal.css),
 // so the projected subtree participates in the slot parent's layout exactly as it

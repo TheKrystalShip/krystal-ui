@@ -342,6 +342,7 @@ function Dialogs() {
       <div style={row}>
         <Button onClick={() => setOpen("md")}>Dialog md</Button>
         <Button onClick={() => setOpen("lg")}>Dialog lg with foot</Button>
+        <Button onClick={() => setOpen("outer")}>Nested dialogs</Button>
       </div>
       {open === "md" && (
         <Dialog title="Medium dialog" sub="A sub line." icon="info" onClose={close}>
@@ -351,6 +352,18 @@ function Dialogs() {
       {open === "lg" && (
         <Dialog title="Large dialog" size="lg" icon="settings" onClose={close} foot={foot}>
           <Field label="Name"><Input /></Field>
+        </Dialog>
+      )}
+      {(open === "outer" || open === "inner") && (
+        <Dialog title="Outer dialog" sub="Escape closes the inner dialog first." icon="layers" onClose={close}
+          foot={<Button variant="primary" onClick={() => setOpen("inner")}>Open inner</Button>}>
+          <Field label="Outer field"><Input /></Field>
+        </Dialog>
+      )}
+      {open === "inner" && (
+        <Dialog title="Inner dialog" icon="info" onClose={() => setOpen("outer")}
+          foot={<Button variant="outline" onClick={() => setOpen("outer")}>Close inner</Button>}>
+          <Field label="Inner field"><Input data-autofocus /></Field>
         </Dialog>
       )}
     </Section>

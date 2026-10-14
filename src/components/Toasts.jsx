@@ -63,8 +63,9 @@ function Toasts() {
   return createPortal(
     // aria-live on the CONTAINER, which must exist in the DOM before a card
     // arrives — a live region added at the same moment as its content is not
-    // reliably announced.
-    <div className="toasts" aria-live="polite" aria-relevant="additions">
+    // reliably announced. `data-inert-exempt` keeps the stack readable and pressable over an
+    // open modal, which makes every other body child inert.
+    <div className="toasts" data-inert-exempt aria-live="polite" aria-relevant="additions">
       {live.map(t => <ToastCard key={t.id} t={t} />)}
     </div>,
     document.body,
