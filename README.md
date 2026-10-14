@@ -583,8 +583,27 @@ export default [
 ```
 
 The ESLint rules are core's `no-restricted-syntax` and `no-restricted-imports`; a later entry of the
-site's own config for either rule replaces these, so a site that sets its own restrictions lists them
-in the same entry. They report:
+site's own config for either rule replaces these. A site that sets its own restrictions merges the
+entries, which the config exports as `restrictedSyntax` (an array of `{ selector, message }`) and
+`restrictedImports` (`{ paths, patterns }`), so the rule carries one severity of the site's choosing:
+
+```js
+import { restrictedSyntax, restrictedImports } from "@thekrystalship/krystal/eslint";
+export default [
+  {
+    files: ["src/**/*.{js,jsx}"],
+    rules: {
+      "no-restricted-syntax": ["error", ...mySelectors, ...restrictedSyntax],
+      "no-restricted-imports": ["error", {
+        paths: [...myPaths, ...restrictedImports.paths],
+        patterns: [...myPatterns, ...restrictedImports.patterns],
+      }],
+    },
+  },
+];
+```
+
+The entries report:
 
 - a raw `<button>`, `<input>`, `<select>`, `<textarea>` or `<dialog>`, naming the component to use
   (Button or IconButton; Input, Checkbox or Toggle; Select; Textarea; Dialog or Modal);

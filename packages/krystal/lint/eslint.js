@@ -6,7 +6,17 @@
 //
 // `configs.recommended` (the default export) reports each finding as a warning; `configs.strict`
 // reports errors. The rules are `no-restricted-syntax` and `no-restricted-imports`, which a later
-// entry of a site's own config for the same rule replaces rather than extends.
+// entry of a site's own config for the same rule replaces rather than extends. A site that has
+// restrictions of its own merges the entries themselves, at the severity it chooses:
+//
+//   import { restrictedSyntax, restrictedImports } from "@thekrystalship/krystal/eslint";
+//   rules: {
+//     "no-restricted-syntax": ["error", ...mine, ...restrictedSyntax],
+//     "no-restricted-imports": ["error", {
+//       paths: [...myPaths, ...restrictedImports.paths],
+//       patterns: [...myPatterns, ...restrictedImports.patterns],
+//     }],
+//   }
 //
 // Not for the package's own sources: they are where the native elements are wrapped.
 
@@ -40,7 +50,7 @@ const NAMED_COLOURS =
 const LITERAL_COLOUR = `/^\\s*(?:#[0-9a-f]{3,8}|(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\\(.*|(?:${NAMED_COLOURS.split(" ").join("|")}))\\s*$/i`;
 const COLOUR_KEY = `/^(?:${COLOUR_PROPS.join("|")})$/`;
 
-const restrictedSyntax = [
+export const restrictedSyntax = [
   ...COMPONENTS.map(([tag, use]) => ({
     selector: `JSXOpeningElement[name.type="JSXIdentifier"][name.name="${tag}"]`,
     message: `A raw <${tag}> where the package has ${use}: use the component so the control takes the theme.`,
@@ -53,7 +63,7 @@ const restrictedSyntax = [
   },
 ];
 
-const restrictedImports = {
+export const restrictedImports = {
   patterns: [
     {
       group: ["@floating-ui/*"],
