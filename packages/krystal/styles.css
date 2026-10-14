@@ -1,0 +1,34 @@
+/* The whole package stylesheet, in cascade order. A site that interleaves the
+   package's sheets with its own imports them individually from styles/ instead. */
+@import "./styles/tokens.css";
+@import "./styles/motion.css";
+@import "./styles/scrollbar.css";
+@import "./styles/controls.css";
+@import "./styles/providers.css";
+@import "./styles/cardscreen.css";
+@import "./styles/page.css";
+@import "./styles/pill.css";
+@import "./styles/list.css";
+@import "./styles/shell.css";
+@import "./styles/subtabs.css";
+@import "./styles/hero.css";
+@import "./styles/select.css";
+@import "./styles/portal.css";
+@import "./styles/dialog.css";
+@import "./styles/toolbar.css";
+@import "./styles/pagination.css";
+@import "./styles/breadcrumbs.css";
+@import "./styles/brief.css";
+@import "./styles/rail.css";
+@import "./styles/toast.css";
+@import "./styles/settings.css";
+@import "./styles/assistant-icon.css";
+@import "./styles/dock.css";
+@import "./styles/theme-picker.css";
+@import "./styles/footer.css";
+@import "./styles/showcase.css";
+@import "./styles/collection-tile.css";
+@import "./styles/carousel.css";
+@import "./styles/tabbar.css";
+@import "./styles/skeleton.css";
+@import "./styles/tv.css";

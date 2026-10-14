@@ -1,0 +1,8 @@
+/* The chat package stylesheet, in cascade order. A site that interleaves the
+   package's sheets with its own imports them individually from styles/ instead. */
+@import "./styles/chat.css";
+@import "./styles/chat-chrome.css";
+@import "./styles/chat-turns.css";
+@import "./styles/chat-actions.css";
+@import "./styles/chat-composer.css";
+@import "./styles/assistant-pages.css";
