@@ -27,4 +27,5 @@ jobs:
       - run: npm run check:themes
       - run: npm run check:tokens
       - run: npm run check:contrast
+      - run: npm run check:types
       - run: npm run build
