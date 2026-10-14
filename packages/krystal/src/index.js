@@ -59,6 +59,7 @@ export { Spinner } from "./components/Spinner.jsx";
 export { StatusDot } from "./components/StatusDot.jsx";
 export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, TabBar } from "./components/Shell.jsx";
 export { StatTile, StatTiles } from "./components/StatTile.jsx";
+export { Steps } from "./components/Steps.jsx";
 export { SubTabs } from "./components/SubTabs.jsx";
 export { Table, sortRows } from "./components/Table.jsx";
 export { Tab, TabList, TabPanel, Tabs } from "./components/Tabs.jsx";

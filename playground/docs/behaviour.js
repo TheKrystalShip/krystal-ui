@@ -177,6 +177,16 @@ export const BEHAVIOUR = {
     ],
     semantics: ["A Dialog that is a `<form>` (`noValidate`): the handle's rules judge, the foot's Cancel and submit buttons are held while a submission runs."],
   },
+  steps: {
+    keys: [
+      ["Tab", "Moves between the steps"],
+      ["Enter, Space", "Chooses the step"],
+    ],
+    semantics: [
+      "A `<nav>` named by `label` holding one native button per step; the current one has `aria-current=\"step\"`.",
+      "A dot has no words, so it is named by its step's `label`.",
+    ],
+  },
   "confirm-dialog": {
     keys: [["Escape", "Cancels; held while the confirmation is working"]],
     semantics: ["A Dialog: the confirm is a danger Button with the dialog's icon, and `busyLabel` replaces its label while it works."],

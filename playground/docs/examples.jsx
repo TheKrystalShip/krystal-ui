@@ -46,6 +46,7 @@ export const EXAMPLES = {
   dialogs: E.DialogExamples,
   fullscreen: fromSection("fullscreen"),
   confirm: fromSection("confirm"),
+  steps: fromSection("steps"),
   "form-dialog": fromSection("form-dialog"),
   drawer: fromSection("drawer"),
   popover: fromSection("popover"),

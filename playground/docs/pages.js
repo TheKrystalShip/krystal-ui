@@ -79,6 +79,11 @@ export const PAGES = [
     versus: "SubTabs switches sections whose content the site renders itself and becomes a select at phone width; Tabs owns the panels and their ARIA wiring.",
   },
   {
+    id: "steps", name: "Steps", group: "Choices and navigation", exports: ["Steps"], examples: ["steps"],
+    summary: "Where somebody is in a sequence they can move around in: a numbered rail with each step's answer, or small dots.",
+    versus: "Tabs when each step is a panel the package should wire; CarouselPager for slides that turn by themselves.",
+  },
+  {
     id: "sub-tabs", name: "SubTabs", group: "Choices and navigation", exports: ["SubTabs"], examples: ["sub-tabs"],
     summary: "The in-page section switcher: a button strip on a wide screen and a select on a phone.",
     versus: "Tabs when the package should render the panels.",

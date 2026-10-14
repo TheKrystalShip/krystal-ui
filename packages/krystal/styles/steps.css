@@ -1,0 +1,173 @@
+/* ============================================================================
+   steps.css — <Steps>: where somebody is in a sequence they can move around in. `rail` is a column of
+   numbered, labelled steps; `dots` is a row of small marks, the current one long.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+.k-steps {
+  display: flex;
+  min-width: 0;
+}
+
+.k-steps__step {
+  margin: 0;
+  border: 1px solid transparent;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.k-steps__step:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+/* ---- rail ---- */
+.k-steps--rail {
+  flex-direction: column;
+  gap: 2px;
+}
+
+.k-steps--rail .k-steps__step {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 11px;
+  align-items: start;
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: var(--r-sm);
+  transition: background var(--d-fast) var(--ease-out);
+}
+
+.k-steps--rail .k-steps__step:hover,
+.k-steps--rail .k-steps__step[aria-current="step"] {
+  background: var(--surface-2);
+}
+
+.k-steps--rail .k-steps__step[aria-current="step"] {
+  border-color: var(--border-strong);
+}
+
+.k-steps__n {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: var(--edge-strong);
+  border-radius: var(--r-pill);
+  background: var(--surface-1);
+  color: var(--fg-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.k-steps__step.k-is-done .k-steps__n {
+  border-color: var(--krystal-teal);
+  background: var(--krystal-teal);
+  color: var(--fg-inverse);
+}
+
+.k-steps__step[aria-current="step"] .k-steps__n {
+  border-color: var(--krystal-teal);
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal);
+}
+
+.k-steps__text {
+  min-width: 0;
+}
+
+.k-steps__label {
+  display: block;
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.k-steps__step[aria-current="step"] .k-steps__label {
+  color: var(--fg-1);
+}
+
+.k-steps__detail {
+  display: block;
+  margin-top: 3px;
+  color: var(--fg-3);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.k-steps__step.k-is-done .k-steps__detail {
+  color: var(--krystal-teal);
+}
+
+/* ---- dots ---- */
+.k-steps--dots {
+  align-items: center;
+  gap: 2px;
+}
+
+.k-steps--dots .k-steps__step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 24px;
+  min-width: 18px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: var(--r-pill);
+}
+
+.k-steps--dots .k-steps__step::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-pill);
+  background: var(--fg-4);
+  opacity: 0.6;
+  transition: opacity var(--d-fast) var(--ease-out), background var(--d-fast) var(--ease-out), width var(--d-fast) var(--ease-out);
+}
+
+.k-steps--dots .k-steps__step:hover::before {
+  opacity: 1;
+}
+
+.k-steps--dots .k-steps__step[aria-current="step"]::before {
+  width: 16px;
+  background: var(--krystal-teal);
+  opacity: 1;
+}
+
+/* A rail on a phone is its numbers alone, in a row that scrolls sideways. */
+@media (max-width: 768px) {
+  .k-steps--rail {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: var(--s-1);
+    gap: var(--s-1);
+  }
+
+  .k-steps--rail .k-steps__step {
+    flex: none;
+    grid-template-columns: 22px;
+    width: auto;
+    padding: var(--s-2);
+  }
+
+  .k-steps__text {
+    display: none;
+  }
+
+  .k-steps--dots .k-steps__step {
+    height: 40px;
+    min-width: 28px;
+  }
+}
+}
