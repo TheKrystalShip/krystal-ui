@@ -29,7 +29,7 @@ function WithForm() {
   const sections = [
     { id: "profile", title: "Profile", icon: "user", description: "How you appear to others.", content: <div style={{ padding: 14, display: "grid", gap: 12 }}><Fields /></div> },
     { id: "notifications", title: "Notifications", icon: "bell", description: "What is sent to you.", content: <div style={{ padding: 14 }}><FormField name="notify" label="Send notices" control="toggle" /></div> },
-    { id: "appearance", title: "Appearance", icon: "palette", rows: [{ icon: "palette", title: "Theme", sub: "Saved on this device.", control: <ThemePicker /> }] },
+    { id: "appearance", title: "Appearance", icon: "palette", description: "Saved on this device.", content: <ThemePicker /> },
     { id: "sessions", title: "Sessions", icon: "monitor-smartphone", rows: [{ icon: "laptop", title: "This browser", sub: "Signed in today", control: <Button size="sm" variant="outline">End</Button> }] },
     { id: "danger", title: "Danger zone", icon: "triangle-alert", rows: [{ icon: "trash-2", tone: "danger", title: "Delete account", sub: "Removes it for good.", control: <Button size="sm" variant="danger">Delete</Button> }] },
   ];
