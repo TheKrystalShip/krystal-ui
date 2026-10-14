@@ -31,22 +31,22 @@ const MODES = { submit: "onSubmit", blur: "onBlur", touched: "onTouched", change
 
 /**
  * @typedef {object} RuleLimit
- * @property {number} value
- * @property {string} [message]
+ * @property {number} value The limit.
+ * @property {string} [message] Error text shown when the limit is broken; a plain one when left out.
  */
 /**
  * @typedef {object} PatternRule
- * @property {RegExp} value
- * @property {string} [message]
+ * @property {RegExp} value The RegExp the value must match.
+ * @property {string} [message] Error text shown when it does not match; a plain one when left out.
  */
 /**
  * @typedef {object} FieldRules
  * @property {boolean | string} [required] True, or the message to show.
- * @property {number | RuleLimit} [minLength]
- * @property {number | RuleLimit} [maxLength]
- * @property {number | RuleLimit} [min]
- * @property {number | RuleLimit} [max]
- * @property {RegExp | PatternRule} [pattern]
+ * @property {number | RuleLimit} [minLength] The fewest characters accepted: a number, or `{ value, message }`.
+ * @property {number | RuleLimit} [maxLength] The most characters accepted: a number, or `{ value, message }`.
+ * @property {number | RuleLimit} [min] The lowest number accepted: a number, or `{ value, message }`.
+ * @property {number | RuleLimit} [max] The highest number accepted: a number, or `{ value, message }`.
+ * @property {RegExp | PatternRule} [pattern] A RegExp the value must match, or `{ value, message }`.
  */
 /**
  * @typedef {Record<string, any>} FormValues
@@ -58,13 +58,13 @@ const MODES = { submit: "onSubmit", blur: "onBlur", touched: "onTouched", change
  */
 /**
  * @typedef {object} UseFormOptions
- * @property {FormValues} [defaultValues]
+ * @property {FormValues} [defaultValues] The starting values by field name, and what `reset()` returns to.
  * @property {FormValues} [values] A baseline the form re-seeds from whenever it changes.
- * @property {Record<string, FieldRules>} [rules]
- * @property {Record<string, (value: any, values: FormValues) => string | void | undefined | null | false | Promise<string | void | undefined | null | false>>} [validate]
- * @property {"submit" | "blur" | "touched" | "change"} [mode]
- * @property {(values: FormValues) => void | SubmitOutcome | Promise<void | SubmitOutcome>} [onSubmit]
- * @property {boolean} [resetOnSuccess]
+ * @property {Record<string, FieldRules>} [rules] Per-field rules: `required`, `minLength`, `maxLength`, `min`, `max` and `pattern`.
+ * @property {Record<string, (value: any, values: FormValues) => string | void | undefined | null | false | Promise<string | void | undefined | null | false>>} [validate] Per-field functions `(value, values)` that return an error string or nothing; they may be async and run after the field's rules pass.
+ * @property {"submit" | "blur" | "touched" | "change"} [mode] When a field first shows its error: on `submit`, on `blur`, once `touched` and then as it changes, or on every `change`.
+ * @property {(values: FormValues) => void | SubmitOutcome | Promise<void | SubmitOutcome>} [onSubmit] Called with the values once every field passes; it may return or throw `{ errors, message }` to put a refusal under fields and in the form-level error.
+ * @property {boolean} [resetOnSuccess] Returns every field to `defaultValues` after a successful submit.
  */
 /**
  * @typedef {object} FormHandle
@@ -76,7 +76,7 @@ const MODES = { submit: "onSubmit", blur: "onBlur", touched: "onTouched", change
  * @property {(name: string, value: any) => void} setValue Sets a field and marks it changed.
  * @property {(values?: FormValues) => void} reset Back to `defaultValues`, or to `values` as the new starting point.
  * @property {(errors: Record<string, string>) => void} setErrors Puts error text under fields.
- * @property {(message: string | null) => void} setFormError
+ * @property {(message: string | null) => void} setFormError Sets the form-level error; null clears it.
  * @property {(name: string) => void} focus Moves focus into a field.
  * @property {(event?: import("react").SyntheticEvent) => Promise<void>} submit Validates, then calls `onSubmit`.
  */

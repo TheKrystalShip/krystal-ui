@@ -33,25 +33,29 @@ const nextId = () => "t" + (++seq) + "_" + Date.now().toString(36);
 // null for it anyway. History rows are data; only live toasts carry behaviour.
 /**
  * @typedef {object} Toast
- * @property {string} id
- * @property {"error" | "success" | "info"} tone
- * @property {string} title
- * @property {string | null} detail
- * @property {string | null} code
+ * @property {string} id The toast's unique id.
+ * @property {"error" | "success" | "info"} tone `error`, `success` or `info`.
+ * @property {string} title The headline.
+ * @property {string | null} detail A second line giving the reason, or null.
+ * @property {string | null} code A machine code shown with the detail, or null.
  * @property {any} subject Opaque; handed back through NotificationsPanel's `onOpen`.
  * @property {{ label: import("react").ReactNode, onClick: () => void } | null} action Live toasts only.
- * @property {boolean} sticky
- * @property {number} count
- * @property {number} ts
- * @property {boolean} read
+ * @property {boolean} sticky Stays until dismissed instead of clearing itself.
+ * @property {number} count How many identical repeats the card folds.
+ * @property {number} ts Epoch milliseconds of the latest occurrence.
+ * @property {boolean} read Whether the person has seen it in the notifications panel.
  */
 /**
  * @typedef {object} ToastOptions
- * @property {string} [detail]
- * @property {string | number} [code]
- * @property {any} [subject]
- * @property {{ label: import("react").ReactNode, onClick: () => void }} [action]
- * @property {boolean} [sticky]
+ * @property {string} [detail] A second line giving the reason.
+ * @property {string | number} [code] A machine code shown with the detail.
+ * @property {any} [subject] An opaque value a site hands back through the notifications panel's `onOpen`.
+ * @property {{ label: import("react").ReactNode, onClick: () => void }} [action] A button on the live toast.
+ * @property {boolean} [sticky] Stays until dismissed; true by default for an error only.
+ */
+/**
+ * @typedef {object} ToastHistoryState
+ * @property {Toast[]} history The notification history, newest first.
  */
 /** @param {Toast} t */
 function persistable(t) {
@@ -85,7 +89,7 @@ function save(history) {
 /** @type {import("./store.js").Store<{ live: Toast[], history: Toast[] }>} */
 const toastStore = createStore({ live: [], history: load() });
 
-/** @param {{ history: Toast[] }} state @returns {number} */
+/** @param {ToastHistoryState} state @returns {number} */
 function unreadCount(state) {
   let n = 0;
   for (const t of state.history) if (!t.read) n++;
@@ -94,7 +98,7 @@ function unreadCount(state) {
 
 // "danger" the moment any unread one is an error, so the badge tells you whether
 // what you missed needs you.
-/** @param {{ history: Toast[] }} state @returns {"danger" | "info"} */
+/** @param {ToastHistoryState} state @returns {"danger" | "info"} */
 function unreadTone(state) {
   for (const t of state.history) if (!t.read && t.tone === "error") return "danger";
   return "info";
