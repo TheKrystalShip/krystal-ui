@@ -39,11 +39,11 @@ function Count({ n, max }) {
 /**
  * @param {object} props
  * @param {import("../chat/types.js").Memory | null} [props.memory] null is a new memory
- * @param {import("../chat/types.js").MemoryLimits | null} [props.limits]
- * @param {(key: string, memory: import("../chat/types.js").MemoryWrite) => Promise<unknown> | unknown} props.onSave
- * @param {() => void} props.onClose
- * @param {import("react").ComponentType<import("../chat/types.js").MemoryBodyEditorProps>} [props.BodyEditor]
- * @param {string} [props.keyPlaceholder]
+ * @param {import("../chat/types.js").MemoryLimits | null} [props.limits] The assistant's memory limits; the summary and body counters stop at them. Absent shows no counter.
+ * @param {(key: string, memory: import("../chat/types.js").MemoryWrite) => Promise<unknown> | unknown} props.onSave Called with the key and the written memory when the person saves; the editor stays open until its promise settles.
+ * @param {() => void} props.onClose Called when the person closes the editor, saved or not.
+ * @param {import("react").ComponentType<import("../chat/types.js").MemoryBodyEditorProps>} [props.BodyEditor] A component that edits the body in place of the plain textarea, given `MemoryBodyEditorProps`.
+ * @param {string} [props.keyPlaceholder] The placeholder in the key field of a new memory.
  */
 function AssistantMemoryEditor({
   memory, limits, onSave, onClose, BodyEditor = PlainBody, keyPlaceholder = "preferred-name",

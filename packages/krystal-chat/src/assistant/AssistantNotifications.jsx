@@ -40,7 +40,7 @@ const BLOCKED = {
 
 /**
  * @param {object} props
- * @param {Pick<import("../chat/types.js").AssistantClient, "pushKey" | "pushDevices" | "pushSubscribe" | "pushUnsubscribe">} props.client
+ * @param {Pick<import("../chat/types.js").AssistantClient, "pushKey" | "pushDevices" | "pushSubscribe" | "pushUnsubscribe">} props.client The assistant's client; its push calls read this browser's registration and change it.
  * @param {import("react").ReactNode} [props.offSub] the row's sentence when the assistant sends nothing at all
  * @param {import("react").ReactNode} [props.children] close the section
  */

@@ -17,7 +17,7 @@ import { AssistantMemory } from "./AssistantMemory.jsx";
 /**
  * @param {object} props
  * @param {import("react").Ref<HTMLDivElement>} [props.listRef] the element `Chat` draws its list into (its `listTarget`)
- * @param {string} [props.title]
+ * @param {string} [props.title] The page's heading.
  */
 function AssistantChatsPage({ listRef, title = "Chats" }) {
   return (
@@ -32,7 +32,11 @@ function AssistantChatsPage({ listRef, title = "Chats" }) {
 // to — to check what it believes and to correct it — rather than a preference set once. Every prop
 // besides `title` is AssistantMemory's.
 /**
- * @param {{ title?: string } & Parameters<typeof AssistantMemory>[0]} props every prop besides `title` is AssistantMemory's
+ * @typedef {object} AssistantMemoryPageOwnProps
+ * @property {string} [title] the page's heading
+ */
+/**
+ * @param {AssistantMemoryPageOwnProps & Parameters<typeof AssistantMemory>[0]} props every prop besides `title` is AssistantMemory's
  */
 function AssistantMemoryPage({ title = "Memory", ...memory }) {
   return (
@@ -66,9 +70,9 @@ function Rows({ n }) {
 // not offered.
 /**
  * @param {object} props
- * @param {Pick<import("../chat/types.js").AssistantClient, "commands" | "tools">} props.client
+ * @param {Pick<import("../chat/types.js").AssistantClient, "commands" | "tools">} props.client The assistant's client; its commands and tools calls give the two lists.
  * @param {(name: string) => void} props.onUse puts a command in the composer
- * @param {string} [props.title]
+ * @param {string} [props.title] The page's heading.
  */
 function AssistantSkillsPage({ client, onUse, title = "Skills" }) {
   const [commands, setCommands] = React.useState(null);

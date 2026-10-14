@@ -109,7 +109,7 @@ function ActivityList({ id, msg }) {
 
 /**
  * @param {object} props
- * @param {import("./types.js").Message} props.msg
+ * @param {import("./types.js").Message} props.msg The assistant message whose thinking, tool rows, steps and compaction state the line summarizes.
  */
 function ChatActivity({ msg }) {
   const [open, setOpen] = React.useState(false);

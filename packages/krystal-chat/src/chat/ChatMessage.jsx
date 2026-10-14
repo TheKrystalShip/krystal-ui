@@ -106,14 +106,14 @@ function AssistantTurn({ msg, assistantName, lead, renderCards, onRate, readOnly
 
 /**
  * @param {object} props
- * @param {import("./types.js").Message} props.msg
- * @param {string} [props.assistantName]
+ * @param {import("./types.js").Message} props.msg The user or assistant message to draw.
+ * @param {string} [props.assistantName] What the assistant's lead turn is named; `Assistant` by default.
  * @param {any} [props.user] the signed-in person; a thread passes it on and no part of the message draws it
  * @param {boolean} [props.lead] first assistant entry of a run: carries the assistant's mark and name
- * @param {(msg: import("./types.js").Message) => import("react").ReactNode} [props.renderCards]
- * @param {(turnId: number, rating: "up" | "down" | null, note?: string) => void} [props.onRate]
- * @param {boolean} [props.readOnlyFeedback]
- * @param {(attachment: import("./types.js").AttachmentInfo) => Promise<Blob>} [props.loadAttachment]
+ * @param {(msg: import("./types.js").Message) => import("react").ReactNode} [props.renderCards] Draws the cards under a finished answer, given the message.
+ * @param {(turnId: number, rating: "up" | "down" | null, note?: string) => void} [props.onRate] Called with the record id, the rating (null clears it) and an optional note when the person rates an answer.
+ * @param {boolean} [props.readOnlyFeedback] Shows the rating the answer carries without letting it change.
+ * @param {(attachment: import("./types.js").AttachmentInfo) => Promise<Blob>} [props.loadAttachment] Reads a sent attachment back as a Blob, for the pictures and files on a user turn.
  */
 function ChatMessage({ msg, assistantName = "Assistant", lead = true, renderCards, onRate, readOnlyFeedback, loadAttachment }) {
   if (msg.role === "user") return <UserTurn msg={msg} loadAttachment={loadAttachment} />;

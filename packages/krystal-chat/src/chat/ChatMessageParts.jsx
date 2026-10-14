@@ -78,7 +78,7 @@ function baseName(path) {
 /**
  * What a confirmed action came to, as the card's state.
  * @param {object} props
- * @param {import("./types.js").Message} props.msg
+ * @param {import("./types.js").Message} props.msg The `verify` message holding the outcome of a confirmed action.
  * @param {import("react").ReactNode} [props.title] names the action; defaults to its label and target
  * @param {boolean} [props.auto] ran without being asked
  */
@@ -129,7 +129,7 @@ const OMITTED = {
 /**
  * A proposal's file change: a line diff, or every line added for a file that does not exist yet.
  * @param {object} props
- * @param {import("./types.js").FileChange} props.file
+ * @param {import("./types.js").FileChange} props.file The file change to draw: its path, proposed content and, when held, the current content.
  */
 function ChatFileChange({ file }) {
   const omitted = file.currentOmitted ? (OMITTED[file.currentOmitted] || OMITTED.unavailable) : null;
@@ -191,15 +191,15 @@ function useLapsed(expiresAt) {
 /**
  * A proposed action's card, through its states: offered, armed, confirmed, declined, expired, and its outcome.
  * @param {object} props
- * @param {import("./types.js").Message} props.msg
- * @param {(msg: import("./types.js").Message) => void} props.onRun
+ * @param {import("./types.js").Message} props.msg The `command` message holding the proposed action.
+ * @param {(msg: import("./types.js").Message) => void} props.onRun Called with the message when the person confirms the action.
  * @param {(msg: import("./types.js").Message) => void} [props.onDecline] absent: no Decline button
- * @param {import("./types.js").ProposalView['meta']} props.meta
- * @param {string} [props.target]
+ * @param {import("./types.js").ProposalView['meta']} props.meta The action's label, icon and tone, from the profile's `proposal`.
+ * @param {string} [props.target] What the action is aimed at, named after the label in the title.
  * @param {string} [props.title] names the action when label and target do not read
- * @param {boolean} [props.runnable]
+ * @param {boolean} [props.runnable] False draws a disabled button instead of the confirm flow.
  * @param {string} [props.unavailable] why it cannot run here
- * @param {import("./types.js").Message} [props.verify]
+ * @param {import("./types.js").Message} [props.verify] The outcome message; when present the card draws it instead of the proposal.
  */
 function ChatCommand({
   msg, onRun, onDecline, meta, target, title: named, runnable = true, unavailable = "Not available here yet", verify,
@@ -287,11 +287,11 @@ function ChatCommand({
 /**
  * @param {object} props
  * @param {string | import("react").ReactNode} [props.icon] a Lucide name or a node
- * @param {"accent" | "warning" | "success"} [props.tone]
+ * @param {"accent" | "warning" | "success"} [props.tone] The icon's colour; accent, warning or success.
  * @param {boolean} [props.alert] sets the whole line in the warning colour
  * @param {number | null} [props.at] epoch ms
- * @param {string} [props.className]
- * @param {import("react").ReactNode} [props.children]
+ * @param {string} [props.className] Extra class on the row.
+ * @param {import("react").ReactNode} [props.children] The words of the event.
  */
 function ChatEventRow({ icon, tone, alert = false, at, className, children }) {
   const time = clockOf(entryTime({ at }));
@@ -324,7 +324,7 @@ function ChatDaySeparator({ at }) {
 /**
  * An event entry in the transcript, worded from what it records.
  * @param {object} props
- * @param {import("./types.js").Message} props.msg
+ * @param {import("./types.js").Message} props.msg The event message: a `toggle`, `scope`, `checkpoint`, `system` or `day` entry, or any entry with a `label`.
  */
 function ChatEvent({ msg }) {
   const at = entryTime(msg);

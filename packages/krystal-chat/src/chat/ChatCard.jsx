@@ -19,7 +19,7 @@ const CONFIDENCE = {
 
 /**
  * @param {object} props
- * @param {"confirmed" | "likely" | "possible"} [props.level]
+ * @param {"confirmed" | "likely" | "possible"} [props.level] confirmed (measured), likely (inferred from correlation) or possible (cannot be measured); anything else draws nothing.
  */
 function ConfidenceBadge({ level }) {
   const meta = CONFIDENCE[level];
@@ -34,16 +34,16 @@ function ConfidenceBadge({ level }) {
 /**
  * @param {object} props
  * @param {string | import("react").ReactNode} [props.icon] a Lucide name or a node
- * @param {"neutral" | "accent" | "ok" | "warn" | "danger" | "muted"} [props.tone]
- * @param {import("react").ReactNode} [props.title]
- * @param {import("react").ReactNode} [props.sub]
+ * @param {"neutral" | "accent" | "ok" | "warn" | "danger" | "muted"} [props.tone] The head's colour; `neutral` by default.
+ * @param {import("react").ReactNode} [props.title] The card's heading.
+ * @param {import("react").ReactNode} [props.sub] The line under the title, monospace unless `subMono` is false.
  * @param {boolean} [props.subMono] sets `sub` as code; false sets it as prose
- * @param {"confirmed" | "likely" | "possible"} [props.confidence]
+ * @param {"confirmed" | "likely" | "possible"} [props.confidence] Draws a dot and word saying how the figures were obtained: confirmed, likely or possible.
  * @param {() => void} [props.onOpen] the way to the full context
- * @param {string} [props.openLabel]
+ * @param {string} [props.openLabel] The words of the open button that `onOpen` shows; `Open` by default.
  * @param {import("react").ReactNode} [props.action] any other node for the head's right end; wins over `onOpen`
- * @param {string} [props.className]
- * @param {import("react").ReactNode} [props.children]
+ * @param {string} [props.className] Extra class on the card.
+ * @param {import("react").ReactNode} [props.children] The card's body.
  */
 function ChatCard({
   icon, tone = "neutral", title, sub, subMono = true, confidence, onOpen, openLabel = "Open", action,
@@ -95,13 +95,13 @@ const VERDICTS = {
 
 /**
  * @param {object} props
- * @param {import("react").ReactNode} [props.label]
- * @param {import("react").ReactNode} [props.value]
- * @param {"ok" | "warn" | "danger" | "neutral" | "skip"} [props.verdict]
- * @param {string} [props.verdictLabel]
+ * @param {import("react").ReactNode} [props.label] The row's name, set as code when `mono` is true.
+ * @param {import("react").ReactNode} [props.value] The row's figure, set as code when `valueMono` is true.
+ * @param {"ok" | "warn" | "danger" | "neutral" | "skip"} [props.verdict] The row's outcome, drawn as a mark: ok, warn, danger, neutral or skip.
+ * @param {string} [props.verdictLabel] The words that name the verdict for assistive technology.
  * @param {boolean} [props.mono] sets the label as code
  * @param {boolean} [props.valueMono] sets the value as code
- * @param {import("react").ReactNode} [props.action]
+ * @param {import("react").ReactNode} [props.action] A node at the row's right end.
  */
 function ChatCardRow({ label, value, verdict, verdictLabel, mono = false, valueMono = false, action }) {
   const tone = verdict === "skip" ? "neutral" : verdict;
@@ -124,7 +124,7 @@ function ChatCardRow({ label, value, verdict, verdictLabel, mono = false, valueM
 // The rows' frame under the card's head.
 /**
  * @param {object} props
- * @param {import("react").ReactNode} [props.children]
+ * @param {import("react").ReactNode} [props.children] The `ChatCardRow`s of the group.
  */
 function ChatCardRows({ children }) {
   return <div className="k-chat-card-rows">{children}</div>;

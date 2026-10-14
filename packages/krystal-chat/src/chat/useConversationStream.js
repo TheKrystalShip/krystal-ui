@@ -27,11 +27,11 @@ const MAX_RETRY_MS = 30000;
 /**
  * Holds the assistant's event stream open, reconnecting with backoff, and re-points it at the open conversation.
  * @param {object} options
- * @param {Pick<import("./types.js").AssistantClient, "events" | "streamId"> & Partial<Pick<import("./types.js").AssistantClient, "attach">> | null} options.client
+ * @param {Pick<import("./types.js").AssistantClient, "events" | "streamId"> & Partial<Pick<import("./types.js").AssistantClient, "attach">> | null} options.client The assistant client whose `events` opens the stream; its `attach`, when it has one, points the stream at the open conversation.
  * @param {string | null} options.clientKey names which assistant; changing it re-opens the stream
- * @param {boolean} options.enabled
+ * @param {boolean} options.enabled Whether the stream runs; false closes it.
  * @param {string | null} [options.conversationId] the conversation on screen
- * @param {(event: import("./types.js").EventFrame) => void} options.onEvent
+ * @param {(event: import("./types.js").EventFrame) => void} options.onEvent Called with every frame the stream delivers.
  * @param {() => void} [options.onResync] fires on every reconnection after the first connection
  */
 function useConversationStream({ client, clientKey, enabled, conversationId, onEvent, onResync }) {

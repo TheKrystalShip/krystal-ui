@@ -427,56 +427,56 @@ export {};
  * - `commandHelp`, `commandTools`: the cards `/help` and `/tools` leave: `commands`, `tools`.
  *
  * @typedef {object} Message
- * @property {string} role
- * @property {string} [content]
+ * @property {string} role which entry this is: `user`, `assistant`, `command`, `verify`, `question`, `system`, `scope`, `checkpoint`, `toggle`, `day`, `commandHelp`, `commandTools`, or a product's own
+ * @property {string} [content] the entry's text
  * @property {number} [ts] epoch ms
  * @property {number | string} [at] epoch ms, or an ISO string as a stored entry carries it
  * @property {boolean} [live] part of a turn still running
- * @property {AttachmentInfo[]} [attachments]
- * @property {VoiceMeta} [voice]
- * @property {string} [thinking]
+ * @property {AttachmentInfo[]} [attachments] the pictures and files a user turn carries
+ * @property {VoiceMeta} [voice] a voice note a user turn was spoken as
+ * @property {string} [thinking] the reasoning the assistant streamed ahead of its answer
  * @property {(ToolRow & Partial<ToolInfo>)[]} [tools] an answer's tool rows; `commandTools` lists the assistant's tools here
- * @property {StepRow[]} [steps]
+ * @property {StepRow[]} [steps] the progress steps of a stepping tool, checked off as they finish
  * @property {ChatCardData[]} [cards] cards drawn under the finished answer
  * @property {ChatCardData[]} [pendingCards] cards held back until the turn ends
- * @property {Usage} [usage]
+ * @property {Usage} [usage] what the context window held when the turn ended
  * @property {number} [turnId] the record id feedback names
- * @property {{ rating: "up" | "down", note: string | null } | null} [feedback]
- * @property {number} [startedAt]
- * @property {number} [endedAt]
- * @property {boolean} [error]
- * @property {string} [errorText]
+ * @property {{ rating: "up" | "down", note: string | null } | null} [feedback] the person's rating of the answer, with an optional note; null when unrated
+ * @property {number} [startedAt] epoch ms the turn began
+ * @property {number} [endedAt] epoch ms the turn ended; with `startedAt` it gives the duration the activity line shows
+ * @property {boolean} [error] the turn ended in failure; on a proposal, the action failed to run
+ * @property {string} [errorText] the reason a failed turn states under its text
  * @property {number} [waiting] turns ahead of this one
- * @property {"clearing" | "summarizing"} [compacting]
+ * @property {"clearing" | "summarizing"} [compacting] the stage of a context compaction in progress
  * @property {string} [cmdId] correlates a proposal with its outcome
- * @property {string} [verb]
- * @property {string} [subject]
- * @property {string | null} [subjectId]
- * @property {string} [subjectResource]
- * @property {string} [target]
- * @property {string} [summary]
+ * @property {string} [verb] what a proposed action does, as the assistant names it
+ * @property {string} [subject] what a proposed action acts on, as a name
+ * @property {string | null} [subjectId] the identifier of a proposal's subject
+ * @property {string} [subjectResource] the kind of resource a proposal's subject is
+ * @property {string} [target] where a proposed action lands, named for the person
+ * @property {string} [summary] the sentence that says what a proposed action will do
  * @property {string | null} [confirm] the sentence the action is offered with
- * @property {string | null} [reason]
- * @property {string | null} [instanceName]
- * @property {FileChange | null} [file]
+ * @property {string | null} [reason] why the assistant proposed the action
+ * @property {string | null} [instanceName] the name of the instance a proposal concerns
+ * @property {FileChange | null} [file] the file change a proposal would save
  * @property {string | null} [token] the handle that redeems the action
- * @property {string | null} [draftYaml]
- * @property {"proposed" | "verifying" | "verified" | "failed" | "superseded"} [bpState]
- * @property {string | null} [expiresAt]
+ * @property {string | null} [draftYaml] a draft's content a proposal offers for review
+ * @property {"proposed" | "verifying" | "verified" | "failed" | "superseded"} [bpState] where a blueprint proposal stands: proposed, being verified, verified, failed or replaced by a newer one
+ * @property {string | null} [expiresAt] when an unanswered proposal lapses, as an ISO string
  * @property {string} [state] a proposal's `proposed`, `confirmed`, `declined` or `expired`; a verify's `pending` or `done`; a question's `open`, `answered` or `asked`
  * @property {boolean} [auto] a proposal that ran without being asked
  * @property {Message} [verify] a proposal's outcome, folded in by the thread
- * @property {string | number} [id]
- * @property {{ label: string, verb?: string, serverName?: string }} [action]
- * @property {Verdict} [result]
+ * @property {string | number} [id] names a verify or question entry
+ * @property {{ label: string, verb?: string, serverName?: string }} [action] how an outcome names its action: the label, and optionally the verb and the server it ran against
+ * @property {Verdict} [result] what a confirmed action came to, in the product's words
  * @property {string | null} [progress] the latest step of a pending action
- * @property {Question[]} [questions]
+ * @property {Question[]} [questions] the questions an asked `question` entry holds
  * @property {string} [kind] `assistant-down` or `reconnected` on a `system` entry
- * @property {string} [label]
- * @property {string} [name]
- * @property {"thinking" | "actions"} [toggle]
- * @property {boolean} [on]
- * @property {CommandInfo[]} [commands]
+ * @property {string} [label] the words of an event line, or the heading of a `/help` or `/tools` card
+ * @property {string} [name] the assistant a `scope` entry names
+ * @property {"thinking" | "actions"} [toggle] which switch a `toggle` entry records
+ * @property {boolean} [on] where the switch a `toggle` entry records now stands
+ * @property {CommandInfo[]} [commands] the commands a `/help` card lists
  * @property {any} [field] a product's own fields ride on its own roles
  */
 
@@ -661,10 +661,10 @@ export {};
  * @property {(opts?: CallOptions) => Promise<MemoryLimits>} memoryLimits
  * @property {(key: string, memory: MemoryWrite) => Promise<Memory>} writeMemory
  * @property {(key: string) => Promise<null>} deleteMemory
- * @property {(opts?: CallOptions) => Promise<PushKey>} pushKey
- * @property {(opts?: CallOptions) => Promise<PushDevices>} pushDevices
- * @property {(body: PushSubscription) => Promise<null>} pushSubscribe
- * @property {(body: { endpoint: string }) => Promise<null>} pushUnsubscribe
+ * @property {(opts?: CallOptions) => Promise<PushKey>} pushKey the key a browser subscribes under, and whether the assistant sends pushes at all
+ * @property {(opts?: CallOptions) => Promise<PushDevices>} pushDevices the endpoints registered for the caller
+ * @property {(body: PushSubscription) => Promise<null>} pushSubscribe registers a browser's subscription with the assistant
+ * @property {(body: { endpoint: string }) => Promise<null>} pushUnsubscribe removes the registration of one endpoint
  * @property {(opts?: CallOptions) => Promise<any>} reviewUsers
  * @property {(query?: string, opts?: CallOptions) => Promise<any>} reviewStats
  * @property {(person: string, opts?: CallOptions) => Promise<any>} reviewConversations

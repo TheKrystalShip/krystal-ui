@@ -21,11 +21,11 @@ import { highlightMarkdown } from "./markdownHighlight.jsx";
 const MarkdownTextarea = React.forwardRef(/**
  * The composer's input: a highlight layer behind a real textarea.
  * @param {object} props
- * @param {string} [props.value]
- * @param {string} [props.placeholder]
- * @param {number} [props.rows]
- * @param {(event: import("react").ChangeEvent<HTMLTextAreaElement>) => void} [props.onChange]
- * @param {(event: import("react").KeyboardEvent<HTMLTextAreaElement>) => void} [props.onKeyDown]
+ * @param {string} [props.value] The composer's text.
+ * @param {string} [props.placeholder] The words shown while it is empty.
+ * @param {number} [props.rows] How many lines the textarea shows before it scrolls.
+ * @param {(event: import("react").ChangeEvent<HTMLTextAreaElement>) => void} [props.onChange] Called with the change event when the person edits the text.
+ * @param {(event: import("react").KeyboardEvent<HTMLTextAreaElement>) => void} [props.onKeyDown] Called with the key event for every key pressed in the textarea.
  * @param {import("react").ForwardedRef<HTMLTextAreaElement>} ref resolves to the textarea
  */
 function MarkdownTextarea(

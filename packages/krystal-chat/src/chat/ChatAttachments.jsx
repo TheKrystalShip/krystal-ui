@@ -45,9 +45,9 @@ function useAttachmentUrl(attachment, load) {
 // A picture full size, over everything, until it is closed; it takes focus and makes the page inert.
 /**
  * @param {object} props
- * @param {string} props.src
- * @param {string} [props.name]
- * @param {() => void} props.onClose
+ * @param {string} props.src The picture's URL.
+ * @param {string} [props.name] The picture's file name, its alternative text.
+ * @param {() => void} props.onClose Called when the person closes the lightbox.
  */
 function ChatLightbox({ src, name, onClose }) {
   const root = React.useRef(null);
@@ -98,7 +98,7 @@ function SentFile({ attachment, load }) {
 // The attachments of a sent message, pictures first as they read at a glance.
 /**
  * @param {object} props
- * @param {import("./types.js").AttachmentInfo[]} [props.attachments]
+ * @param {import("./types.js").AttachmentInfo[]} [props.attachments] The attachments a sent message carries; pictures draw as thumbnails and files as chips.
  * @param {(attachment: import("./types.js").AttachmentInfo) => Promise<Blob>} [props.load] reads a sent attachment back through the assistant's client
  */
 function ChatMessageAttachments({ attachments, load }) {
@@ -125,8 +125,8 @@ function ChatMessageAttachments({ attachments, load }) {
 // error? }`; `status` is "preparing", "uploading", "ready" or "error".
 /**
  * @param {object} props
- * @param {import("./types.js").ComposerAttachment[]} [props.items]
- * @param {(key: string) => void} [props.onRemove]
+ * @param {import("./types.js").ComposerAttachment[]} [props.items] The attachments waiting in the composer, each with its status and progress.
+ * @param {(key: string) => void} [props.onRemove] Called with an item's `key` when the person removes it.
  */
 function ComposerAttachments({ items, onRemove }) {
   if (!items || items.length === 0) return null;

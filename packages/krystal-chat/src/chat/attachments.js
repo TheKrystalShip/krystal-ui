@@ -34,7 +34,11 @@ const TEXT_ACCEPT = [
 // phone given pictures among its types opens its photo and camera chooser alone, which is why the chat
 // draws two pickers.
 /**
- * @param {{ images?: boolean } | null | undefined} limits
+ * @typedef {object} PickerLimits
+ * @property {boolean} [images] whether the assistant reads pictures; true adds `image/*` to the types offered
+ */
+/**
+ * @param {PickerLimits | null | undefined} limits
  * @returns {string}
  */
 function acceptFor(limits) {

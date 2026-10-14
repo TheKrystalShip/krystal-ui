@@ -21,17 +21,17 @@ const EVENT_ROLES = new Set(["system", "scope", "checkpoint", "toggle"]);
 
 /**
  * @param {object} props
- * @param {import("./types.js").Message[]} props.messages
- * @param {any} [props.user]
- * @param {string} [props.assistantName]
+ * @param {import("./types.js").Message[]} props.messages The conversation's entries, oldest first.
+ * @param {any} [props.user] The signed-in person, passed to the renderers.
+ * @param {string} [props.assistantName] What the assistant's turns are named.
  * @param {(msg: import("./types.js").Message, key: number) => import("react").ReactNode | undefined} [props.renderEntry] a product's own roles; `undefined` falls through to the shared ones
  * @param {(msg: import("./types.js").Message, key: number) => import("react").ReactNode} [props.renderCommand] draws a proposed action
- * @param {(msg: import("./types.js").Message) => import("react").ReactNode} [props.renderCards]
- * @param {(turnId: number, rating: "up" | "down" | null, note?: string) => void} [props.onRate]
- * @param {boolean} [props.readOnlyFeedback]
+ * @param {(msg: import("./types.js").Message) => import("react").ReactNode} [props.renderCards] Draws the cards under a finished answer, given the message.
+ * @param {(turnId: number, rating: "up" | "down" | null, note?: string) => void} [props.onRate] Called with the record id, the rating (null clears it) and an optional note when the person rates an answer.
+ * @param {boolean} [props.readOnlyFeedback] Shows each answer's rating without letting it change.
  * @param {(name: string) => void} [props.onUseCommand] given to the /help card's Use buttons
- * @param {(msg: import("./types.js").Message, answers: import("./types.js").Answer[]) => void} [props.onAnswer]
- * @param {(attachment: import("./types.js").AttachmentInfo) => Promise<Blob>} [props.loadAttachment]
+ * @param {(msg: import("./types.js").Message, answers: import("./types.js").Answer[]) => void} [props.onAnswer] Called with the question message and the person's answers when they answer an asked question.
+ * @param {(attachment: import("./types.js").AttachmentInfo) => Promise<Blob>} [props.loadAttachment] Reads a sent attachment back as a Blob.
  */
 function ChatThread({
   messages, user, assistantName, renderEntry, renderCommand, renderCards, onRate, readOnlyFeedback, onUseCommand,

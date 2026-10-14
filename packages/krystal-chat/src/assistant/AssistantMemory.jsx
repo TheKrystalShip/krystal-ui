@@ -42,11 +42,11 @@ function withWritten(rows, memory) {
 
 /**
  * @param {object} props
- * @param {import("../chat/types.js").AssistantClient | null} props.client
+ * @param {import("../chat/types.js").AssistantClient | null} props.client The assistant's client; its memory calls read, write and delete the rows. Null shows `unavailable`.
  * @param {import("react").ReactNode} [props.unavailable] the site's words for why there is nothing to show
  * @param {string} [props.whose] names the assistant in the section's line
- * @param {import("react").ComponentType<import("../chat/types.js").MemoryBodyEditorProps>} [props.BodyEditor]
- * @param {string} [props.keyPlaceholder]
+ * @param {import("react").ComponentType<import("../chat/types.js").MemoryBodyEditorProps>} [props.BodyEditor] A component that edits a memory's body in place of the plain textarea, given `MemoryBodyEditorProps`.
+ * @param {string} [props.keyPlaceholder] The placeholder in the editor's key field.
  */
 function AssistantMemory({
   client, unavailable = null, whose = "the assistant", BodyEditor, keyPlaceholder,

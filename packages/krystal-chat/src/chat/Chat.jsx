@@ -209,24 +209,24 @@ function ConversationOptions({ onCompact, onDelete }) {
  * @param {any} [props.user] the signed-in person, handed on to the renderers of the thread
  * @param {boolean} [props.docked] drawn in the dock's window
  * @param {{ prompt?: string, nonce?: number | string }} [props.seed] words put in the composer once per `nonce`
- * @param {() => void} [props.onClose]
- * @param {() => void} [props.onExpand]
+ * @param {() => void} [props.onClose] Called by the close button of a docked chat, and by the exit button of the full-screen one.
+ * @param {() => void} [props.onExpand] Called by the docked chat's expand button; absent hides the button.
  * @param {import("./types.js").AssistantHost} [props.assistantHost] the assistant addressed
  * @param {import("./types.js").AssistantHost[]} [props.assistantHosts] every assistant a picker offers
- * @param {(id: string, opts?: { chosen?: boolean }) => void} [props.onSelectAssistantHost]
- * @param {boolean} [props.showPin]
- * @param {boolean} [props.pinned]
- * @param {boolean} [props.pinDisabled]
- * @param {() => void} [props.onTogglePin]
+ * @param {(id: string, opts?: { chosen?: boolean }) => void} [props.onSelectAssistantHost] Called with the id of the assistant the person picked, `{ chosen: true }` for a pick and without it when the chat re-points itself at a stored choice.
+ * @param {boolean} [props.showPin] Draws the pin button in a docked chat's header.
+ * @param {boolean} [props.pinned] Whether the dock is pinned, pushing the page aside rather than floating over it.
+ * @param {boolean} [props.pinDisabled] Disables the pin button when the page has no room to be pushed aside.
+ * @param {() => void} [props.onTogglePin] Called by the pin button.
  * @param {import("./types.js").Review} [props.review] a conversation of another person under review: read-only, replaces the whole surface
- * @param {() => void} [props.onExitReview]
+ * @param {() => void} [props.onExitReview] Called by the buttons that leave a transcript under review.
  * @param {(hostId: string) => import("./types.js").AssistantClient} props.clientFor the client of the assistant with that id (`createAssistantClient`, or a site's own with the same methods)
  * @param {boolean} [props.authed] the site holds a session the assistant accepts
  * @param {import("./types.js").Connection} [props.connection] the header badge and the usable gate
  * @param {boolean} [props.canSeeActions] the caller may see proposed actions
  * @param {boolean} [props.canUseActions] the caller may run actions without confirming
  * @param {((hostId: string, conversationId: string) => Promise<{ entries: import("./types.js").HistoryEntry[] }>) | null} [props.loadTranscript] reads a conversation under review
- * @param {((hostId: string, conversationId: string, attachment: import("./types.js").AttachmentInfo) => Promise<Blob>) | null} [props.loadReviewAttachment]
+ * @param {((hostId: string, conversationId: string, attachment: import("./types.js").AttachmentInfo) => Promise<Blob>) | null} [props.loadReviewAttachment] Reads an attachment of a transcript under review as a Blob, given the host id, the conversation id and the attachment.
  * @param {import("react").ComponentType<import("./types.js").HostPickerProps> | null} [props.HostPicker] a picker among several assistants, in the header
  * @param {import("./types.js").ChatSlots} [props.slots] a site's blocks in the chat's frame
  * @param {string} [props.pageClass] an extra class on the page root
@@ -237,7 +237,7 @@ function ConversationOptions({ onCompact, onDelete }) {
  * @param {(() => void) | null} [props.onShowConversation] the person opened or started a conversation while the site shows something else
  * @param {boolean} [props.conversationShown] whether the chat is what is on screen
  * @param {string} [props.storageKey] where this browser caches the conversation list
- * @param {string} [props.assistantName]
+ * @param {string} [props.assistantName] What the thread calls the assistant on its turns.
  * @param {import("./types.js").Profile} [props.profile] what a product shows of its own: cards, and how a proposed action reads
  * @param {import("./types.js").ToggleCopy} [props.toggleCopy] what each switch means in the state it stands at
  * @param {import("./types.js").Suggestion[]} [props.suggestions] the empty screen's opening suggestions

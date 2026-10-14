@@ -290,9 +290,9 @@ function useVoiceRecorder({ transcribe } = {}) {
 /**
  * The in-composer recording UI.
  * @param {object} props
- * @param {import("./types.js").VoiceRecorder} props.rec
- * @param {() => void} props.onSend
- * @param {() => void} props.onCancel
+ * @param {import("./types.js").VoiceRecorder} props.rec The recorder whose phase, elapsed time and levels the bar draws.
+ * @param {() => void} props.onSend Called when the person sends the recording.
+ * @param {() => void} props.onCancel Called when the person discards the recording.
  */
 function VoiceComposerBar({ rec, onSend, onCancel }) {
   const { phase, seconds, levels, error, held } = rec;
@@ -346,7 +346,7 @@ function VoiceComposerBar({ rec, onSend, onCancel }) {
 // ---------- playback bubble (in-thread) ----------
 /**
  * @param {object} props
- * @param {import("./types.js").VoiceMeta} props.voice
+ * @param {import("./types.js").VoiceMeta} props.voice The saved voice note to play: its id, duration and waveform peaks.
  */
 function VoiceNoteBubble({ voice }) {
   const audioRef = React.useRef(null);

@@ -122,8 +122,8 @@ function ChatPrivacyNote() {
 /**
  * A site's block in the empty conversation's column: the column's width, its own content left-aligned.
  * @param {object} props
- * @param {string} [props.className]
- * @param {import("react").ReactNode} [props.children]
+ * @param {string} [props.className] Extra class on the block.
+ * @param {import("react").ReactNode} [props.children] The block's content.
  */
 function ChatBlock({ className = "", children }) {
   return <div className={"k-chat-start__block" + (className ? " " + className : "")}>{children}</div>;

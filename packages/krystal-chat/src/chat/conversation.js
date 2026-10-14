@@ -35,8 +35,12 @@ const NEW_CHAT_TITLE = "New chat";
 // What to put on a conversation row. One helper rather than a fallback repeated at each render, so
 // there is one answer to "what is this chat called".
 /**
+ * @typedef {object} Titled
+ * @property {string} [title] the conversation's own title; an empty or absent one reads as a new chat
+ */
+/**
  * What to put on a conversation row.
- * @param {{ title?: string } | null | undefined} convo
+ * @param {Titled | null | undefined} convo
  * @returns {string}
  */
 function conversationTitle(convo) {
