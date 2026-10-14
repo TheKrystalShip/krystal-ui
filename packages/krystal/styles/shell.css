@@ -101,7 +101,7 @@
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--fg-4);
+  color: var(--fg-3);
   font-weight: 600;
 }
 
@@ -278,7 +278,7 @@
 
 .k-sidebar__account__sub {
   font-size: 11px;
-  color: var(--fg-4);
+  color: var(--fg-3);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
