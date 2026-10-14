@@ -1,7 +1,5 @@
 // The playground's own layout pieces, shared by main.jsx and every file in sections/. A section file
 // draws one <Section id="<its file name>"> so the nav link generated from its name lands on it.
-import React from "react";
-
 export const row = { display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", marginBottom: 12 };
 export const col = { display: "grid", gap: 14, maxWidth: 420, marginBottom: 12 };
 
