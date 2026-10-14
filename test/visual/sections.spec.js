@@ -3,8 +3,9 @@ import { PALETTES, openPlayground, sectionIds } from "../playground.js";
 
 // Every playground section, screenshotted at a desktop and a phone width in three palettes: the
 // default dark, a light one and a tribute, which re-values corner radius, edge weight and elevation,
-// so a change to structure shows where a change of colour would not. Each is compared with the
-// committed baseline in __screenshots__/<palette>-<width>/<section>.png.
+// so a change to structure shows where a change of colour would not. Each is compared with this
+// machine's baseline in __screenshots__/<palette>-<width>/<section>.png, which `--update` writes and git
+// ignores: the pixels are the machine's fonts and rasteriser, so a baseline holds only where it was made.
 const WIDTHS = { 1280: 900, 390: 844 };
 
 // What still changes between two runs once the clock and Math.random are fixed and animation is off.

@@ -2,3 +2,4 @@ node_modules/
 dist/
 *.tgz
 playground/generated/
+test/visual/__screenshots__/
