@@ -43,6 +43,7 @@ export { Select } from "./components/Select.jsx";
 export { SettingsRow, SettingsSection } from "./components/settings-primitives.jsx";
 export { ShowcaseCard } from "./components/ShowcaseCard.jsx";
 export { Skeleton } from "./components/Skeleton.jsx";
+export { Slider } from "./components/Slider.jsx";
 export { Spinner } from "./components/Spinner.jsx";
 export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, TabBar } from "./components/Shell.jsx";
 export { StatTile, StatTiles } from "./components/StatTile.jsx";

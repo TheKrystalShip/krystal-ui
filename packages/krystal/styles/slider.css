@@ -1,0 +1,148 @@
+/* ============================================================================
+   slider.css — one value along a line (<Slider>): a rail with an accent fill, a thumb, optional ticks
+   and a value readout. The control is the pointer target, taller than the rail so a finger can
+   hold it.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-slider {
+  box-sizing: border-box;
+  --k-slider-thumb: 16px;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+  font-family: var(--font-ui);
+}
+
+.k-slider--sm {
+  --k-slider-thumb: 14px;
+}
+
+.k-slider__control {
+  box-sizing: border-box;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 calc(var(--k-slider-thumb) / 2);
+  cursor: pointer;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.k-slider--sm .k-slider__control {
+  height: 24px;
+}
+
+.k-slider--marked .k-slider__control {
+  margin-bottom: 18px;
+}
+
+.k-slider__track {
+  position: relative;
+  flex: 1;
+  height: 100%;
+}
+
+.k-slider__rail {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 4px;
+  transform: translateY(-50%);
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.k-slider__fill {
+  height: 100%;
+  background: var(--krystal-teal);
+}
+
+.k-slider__mark {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.k-slider__tick {
+  width: 2px;
+  height: 8px;
+  margin-top: -4px;
+  border-radius: var(--r-pill);
+  background: var(--fg-4);
+}
+
+.k-slider__mark.k-is-passed .k-slider__tick {
+  background: var(--on-accent);
+}
+
+.k-slider__mark-label {
+  margin-top: 6px;
+  font-size: 11.5px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--fg-3);
+}
+
+.k-slider__thumb {
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  width: var(--k-slider-thumb);
+  height: var(--k-slider-thumb);
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--krystal-teal);
+  border-radius: var(--r-pill);
+  background: var(--on-accent);
+  cursor: grab;
+  transition: box-shadow var(--d-fast) var(--ease-out);
+}
+
+.k-slider.k-is-active .k-slider__thumb {
+  cursor: grabbing;
+  box-shadow: var(--ring-focus);
+}
+
+.k-slider__thumb:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+.k-slider__value {
+  flex-shrink: 0;
+  min-width: 3ch;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-2);
+}
+
+.k-slider.k-is-disabled {
+  opacity: 0.45;
+}
+
+.k-slider.k-is-disabled .k-slider__control,
+.k-slider.k-is-disabled .k-slider__thumb {
+  cursor: not-allowed;
+}
+
+/* A phone raises the ordinary size to a 40px target; the compact one keeps its height. */
+@media (max-width: 768px) {
+  .k-slider--md .k-slider__control {
+    height: 40px;
+  }
+}
+}

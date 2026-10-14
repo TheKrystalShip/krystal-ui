@@ -113,6 +113,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Forms | `useForm` (values, per-field rules and async `validate`, dirty and submitting state, server field errors from a returned or thrown `{ errors, message }`), `Form`, `FormScope`, `FormField`, `FormError`, `FormSubmit` |
 | Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs) |
 | Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked) |
+| Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked), `Slider` (one number along a line) |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
@@ -248,6 +249,19 @@ to the next enabled option and choose it. Use it for a few short labels beside o
   options={[{ value: "auto", label: "Auto" }, { value: "720", label: "720p" }]} />
 <RadioGroup variant="segmented" size="sm" label="View" value={view} onChange={setView}
   options={[{ value: "list", label: "List", icon: "list" }, { value: "grid", label: "Grid", icon: "layout-grid" }]} />
+```
+
+`Slider` picks one number along a line (`min`, `max`, `step`, `value` and `onChange`, or `defaultValue`)
+and follows the WAI-ARIA slider pattern: arrows move by `step`, PageUp and PageDown by a tenth of the
+range, Home and End to the ends. A press or drag by mouse, pen or finger moves the thumb, and the page
+still scrolls vertically under a finger. `onChangeEnd` receives the final value when a drag is let go
+or a key is pressed, for a value too costly to apply on every move. `format(value)` words the value for
+`aria-valuetext` and for `showValue`; `marks` draws ticks (numbers, or `{ value, label }`).
+
+```jsx
+<Slider label="Volume" value={volume} onChange={setVolume} onChangeEnd={save} format={(v) => v + "%"} showValue />
+<Slider label="Memory" min={4} max={32} step={4} value={gb} onChange={setGb}
+  marks={[{ value: 4, label: "4" }, { value: 32, label: "32" }]} />
 ```
 
 `PasswordInput` is an `Input` whose suffix is a ghost `IconButton` (eye, eye-off) that shows or hides
