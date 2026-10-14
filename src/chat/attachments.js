@@ -33,6 +33,10 @@ const TEXT_ACCEPT = [
 // The `accept` of one picker for pictures and files: pictures only where the assistant reads them. A
 // phone given pictures among its types opens its photo and camera chooser alone, which is why the chat
 // draws two pickers.
+/**
+ * @param {{ images?: boolean } | null | undefined} limits
+ * @returns {string}
+ */
 function acceptFor(limits) {
   return (limits && limits.images ? "image/*," : "") + TEXT_ACCEPT;
 }
@@ -76,9 +80,9 @@ async function draw(bitmap, width, height) {
     ? bitmap
     : await createImageBitmap(bitmap, { resizeWidth: width, resizeHeight: height, resizeQuality: "high" });
   const clear = canvasOf(width, height);
-  clear.getContext("2d").drawImage(sized, 0, 0);
+  /** @type {CanvasRenderingContext2D} */ (clear.getContext("2d")).drawImage(sized, 0, 0);
   const white = canvasOf(width, height);
-  const ctx = white.getContext("2d");
+  const ctx = /** @type {CanvasRenderingContext2D} */ (white.getContext("2d"));
   ctx.fillStyle = "#fff";
   ctx.fillRect(0, 0, width, height);
   ctx.drawImage(sized, 0, 0);
@@ -106,6 +110,11 @@ async function shrink(bitmap, maxBytes) {
   }
 }
 
+/**
+ * @param {File} file
+ * @param {import("./types.js").AttachmentLimits} limits
+ * @returns {Promise<import("./types.js").PreparedOrError>}
+ */
 async function prepareImage(file, limits) {
   const name = file.name || "picture";
   if (!limits.images) return { error: "This assistant can’t read pictures." };
@@ -138,6 +147,11 @@ async function prepareImage(file, limits) {
   }
 }
 
+/**
+ * @param {File} file
+ * @param {import("./types.js").AttachmentLimits} limits
+ * @returns {Promise<import("./types.js").PreparedOrError>}
+ */
 async function prepareText(file, limits) {
   const name = file.name || "file.txt";
   const notText = "`" + name + "` isn’t a picture or a text file, so the assistant can’t read it.";
@@ -184,6 +198,12 @@ function unsupported(file) {
   return kind ? kind.why(name || "file") : null;
 }
 
+/**
+ * A file as it will be uploaded, or `{ error }`, a sentence for the person.
+ * @param {File} file
+ * @param {import("./types.js").AttachmentLimits} limits
+ * @returns {Promise<import("./types.js").PreparedOrError>}
+ */
 async function prepareAttachment(file, limits) {
   if (!file || file.size === 0) return { error: "`" + ((file && file.name) || "file") + "` is empty." };
   const refused = unsupported(file);
@@ -192,6 +212,12 @@ async function prepareAttachment(file, limits) {
 }
 
 // Whether the text files of a message, `tokens` each, come to more than it carries: the refusal, or null.
+/**
+ * Whether the text files of a message come to more than it carries: the refusal, or null.
+ * @param {{ kind?: string, tokens?: number }[]} attached
+ * @param {import("./types.js").AttachmentLimits | null | undefined} limits
+ * @returns {string | null}
+ */
 function textOverLimit(attached, limits) {
   const tokens = attached.reduce((sum, a) => sum + (a.kind === "text" ? a.tokens || 0 : 0), 0);
   return limits && limits.maxTextTokens && tokens > limits.maxTextTokens
@@ -199,6 +225,10 @@ function textOverLimit(attached, limits) {
     : null;
 }
 
+/**
+ * @param {number} bytes
+ * @returns {string}
+ */
 const sizeLabel = (bytes) => (bytes >= 1024 * 1024
   ? (bytes / (1024 * 1024)).toFixed(1) + " MB"
   : Math.max(1, Math.round(bytes / 1024)) + " KB");

@@ -63,6 +63,12 @@ function fmtClock(sec) {
 // `transcribe` is the assistant's recogniser: `(ArrayBuffer of 16kHz mono s16) → text`. Given one, it is
 // the only transcriber used. Given none, the browser's own is tried and the note may still be sent
 // with no words at all.
+/**
+ * Voice-message capture. `transcribe` is the assistant's recogniser; absent, the browser's own is tried.
+ * @param {object} [options]
+ * @param {(pcm: ArrayBuffer) => Promise<string>} [options.transcribe] words in a recording
+ * @returns {import("./types.js").VoiceRecorder}
+ */
 function useVoiceRecorder({ transcribe } = {}) {
   const [phase, setPhase]       = React.useState("idle"); // idle | requesting | recording | transcribing | error
   const [seconds, setSeconds]   = React.useState(0);
@@ -134,7 +140,7 @@ function useVoiceRecorder({ transcribe } = {}) {
 
     // AnalyserNode → live RMS levels
     try {
-      const AC = window.AudioContext || window.webkitAudioContext;
+      const AC = window.AudioContext || /** @type {any} */ (window).webkitAudioContext;
       const ctx = new AC();
       audioCtxRef.current = ctx;
       const src = ctx.createMediaStreamSource(stream);
@@ -166,7 +172,7 @@ function useVoiceRecorder({ transcribe } = {}) {
     // spells the assistant's names its own way and ships the audio to a third party to do it.
     const SR = transcribeRef.current
       ? null
-      : (window.SpeechRecognition || window.webkitSpeechRecognition);
+      : (/** @type {any} */ (window).SpeechRecognition || /** @type {any} */ (window).webkitSpeechRecognition);
     if (SR) {
       try {
         const recog = new SR();
@@ -239,7 +245,7 @@ function useVoiceRecorder({ transcribe } = {}) {
 
   // Finalize → resolves to a voice payload, or null if cancelled, empty, or not transcribed.
   // Called again after a failure, it retries the recording it is still holding.
-  const finish = React.useCallback(() => new Promise((resolve) => {
+  const finish = React.useCallback(() => /** @type {Promise<import("./types.js").VoicePayload | null>} */ (new Promise((resolve) => {
     if (heldRef.current) { settle(heldRef.current, resolve); return; }
 
     const rec = recRef.current;
@@ -260,7 +266,7 @@ function useVoiceRecorder({ transcribe } = {}) {
       settle({ id, duration: Math.max(0.4, dur), peaks, transcript: txt, blob }, resolve);
     };
     try { rec.stop(); } catch { cleanup(); setPhase("idle"); resolve(null); }
-  }), [cleanup, settle]);
+  })), [cleanup, settle]);
 
   const cancel = React.useCallback(() => {
     const rec = recRef.current;
@@ -281,6 +287,13 @@ function useVoiceRecorder({ transcribe } = {}) {
 // ---------- composer recording bar ----------
 // It is the composer box's whole content while it shows: the box keeps its frame and its place, and
 // what is inside says what the microphone is doing.
+/**
+ * The in-composer recording UI.
+ * @param {object} props
+ * @param {import("./types.js").VoiceRecorder} props.rec
+ * @param {() => void} props.onSend
+ * @param {() => void} props.onCancel
+ */
 function VoiceComposerBar({ rec, onSend, onCancel }) {
   const { phase, seconds, levels, error, held } = rec;
 
@@ -331,6 +344,10 @@ function VoiceComposerBar({ rec, onSend, onCancel }) {
 }
 
 // ---------- playback bubble (in-thread) ----------
+/**
+ * @param {object} props
+ * @param {import("./types.js").VoiceMeta} props.voice
+ */
 function VoiceNoteBubble({ voice }) {
   const audioRef = React.useRef(null);
   const [playing, setPlaying] = React.useState(false);

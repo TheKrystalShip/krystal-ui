@@ -10,6 +10,13 @@
 import React from "react";
 import { createPortal } from "react-dom";
 
+/**
+ * @param {object} props
+ * @param {import("./types.js").CommandSuggestion[]} props.items
+ * @param {number} props.active index of the highlighted item
+ * @param {(item: import("./types.js").CommandSuggestion) => void} props.onPick
+ * @param {import("react").RefObject<HTMLElement>} props.anchorRef the composer the list sits over
+ */
 function ChatCommandMenu({ items, active, onPick, anchorRef }) {
   const menuRef = React.useRef(null);
   const [pos, setPos] = React.useState(null);

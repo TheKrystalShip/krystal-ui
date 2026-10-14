@@ -14,6 +14,11 @@ import { AssistantMemory } from "./AssistantMemory.jsx";
 // The conversations, as a page — a phone's tab of them. The list is the chat's own: `Chat` draws it
 // into the element this page hands back through `listRef` (its `listTarget`), so what is listed,
 // opened and deleted here is exactly what the chat holds.
+/**
+ * @param {object} props
+ * @param {import("react").Ref<HTMLDivElement>} [props.listRef] the element `Chat` draws its list into (its `listTarget`)
+ * @param {string} [props.title]
+ */
 function AssistantChatsPage({ listRef, title = "Chats" }) {
   return (
     <div className="assistant-page">
@@ -26,6 +31,9 @@ function AssistantChatsPage({ listRef, title = "Chats" }) {
 // What the assistant has written down about you, as a page of its own: somewhere a person goes back
 // to — to check what it believes and to correct it — rather than a preference set once. Every prop
 // besides `title` is AssistantMemory's.
+/**
+ * @param {{ title?: string } & Parameters<typeof AssistantMemory>[0]} props every prop besides `title` is AssistantMemory's
+ */
 function AssistantMemoryPage({ title = "Memory", ...memory }) {
   return (
     <div className="assistant-page">
@@ -56,6 +64,12 @@ function Rows({ n }) {
 // A command is offered through `onUse(name)`, for the site to put in the composer: the person still
 // sends it, the same as one they typed. A tool is not something a person runs, so it is listed and
 // not offered.
+/**
+ * @param {object} props
+ * @param {Pick<import("../chat/types.js").AssistantClient, "commands" | "tools">} props.client
+ * @param {(name: string) => void} props.onUse puts a command in the composer
+ * @param {string} [props.title]
+ */
 function AssistantSkillsPage({ client, onUse, title = "Skills" }) {
   const [commands, setCommands] = React.useState(null);
   const [tools, setTools] = React.useState(null);

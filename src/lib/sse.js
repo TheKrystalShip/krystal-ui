@@ -1,13 +1,14 @@
 // sse.js — Server-Sent Events read from a fetch response. Imports nothing, so code that runs
 // outside a browser can load it (`@thekrystalship/krystal-ui/lib/sse`).
 
-/// Parse one SSE event block → its in-band JSON payload.
-/// Each frame carries a `data:` line with JSON; `:`-comment lines yield no data
-/// → returns null (heartbeats are ignored for free).
-/// Per the SSE spec, multiple `data:` lines concatenate with "\n" (the writer emits one).
 /**
- * @param {string} block One event block.
- * @returns {any} The parsed `data:` JSON, or null.
+ * Parse one SSE event block → its in-band JSON payload.
+ * Each frame carries a `data:` line with JSON; `:`-comment lines yield no data
+ * → returns null (heartbeats are ignored for free).
+ * Per the SSE spec, multiple `data:` lines concatenate with "\n" (the writer emits one).
+ *
+ * @param {string} block
+ * @returns {any | null}
  */
 export function parseSseEvent(block) {
   const data = [];
@@ -18,10 +19,11 @@ export function parseSseEvent(block) {
   try { return JSON.parse(data.join("\n")); } catch { return null; }
 }
 
-/// Read an SSE response body stream, calling `onEvent` for each parsed event.
-/// Uses `getReader()` + `TextDecoder` + split-on-`\n\n` loop. Stops on stream
-/// end, abort, or transport error. Returns when the stream is fully consumed.
 /**
+ * Read an SSE response body stream, calling `onEvent` for each parsed event.
+ * Uses `getReader()` + `TextDecoder` + split-on-`\n\n` loop. Stops on stream
+ * end, abort, or transport error. Returns when the stream is fully consumed.
+ *
  * @param {Response} res
  * @param {(event: any) => void} onEvent
  * @param {AbortSignal} [signal]

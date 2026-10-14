@@ -12,6 +12,11 @@
 
 // What a person typed, split into the command word and its argument. Null when the text is not a
 // command line at all, which is the common case and the one that must stay cheap.
+/**
+ * A typed line split into the command word and its argument; null when the text is not a command line.
+ * @param {string} text
+ * @returns {{ verb: string, argument: string | null, complete: boolean } | null}
+ */
 function parseCommandLine(text) {
   if (typeof text !== "string" || text.length < 1 || text[0] !== "/") return null;
 
@@ -28,6 +33,11 @@ function parseCommandLine(text) {
 
 // The fixed values an option offers, or null when it takes free text. The API emits `values: null`
 // for a free-text option rather than omitting the key, so both spellings mean the same thing.
+/**
+ * The fixed values a command's option offers, or null when it takes free text.
+ * @param {import("./types.js").CommandInfo | null | undefined} command
+ * @returns {string[] | null}
+ */
 function valuesOf(command) {
   const option = (command && command.options || []).find(o => o.values && o.values.length);
   return option ? option.values : null;
@@ -35,6 +45,11 @@ function valuesOf(command) {
 
 // How a command is typed, values included: `/think [on|off]`. Required options are angle-bracketed
 // and optional ones square-bracketed — the convention every command-line help uses.
+/**
+ * How a command is typed, values included: `/think [on|off]`.
+ * @param {import("./types.js").CommandInfo} command
+ * @returns {string}
+ */
 function usageOf(command) {
   const parts = (command.options || []).map((o) => {
     const inner = o.values && o.values.length ? o.values.join("|") : o.name;
@@ -53,6 +68,12 @@ function usageOf(command) {
 //
 // Empty means no match, and the composer closes rather than showing an empty box: a slash that
 // matches nothing is a message, and a popover hanging over it would say otherwise.
+/**
+ * The completion list for what is typed; empty means no match.
+ * @param {string} text
+ * @param {import("./types.js").CommandInfo[]} catalog
+ * @returns {import("./types.js").CommandSuggestion[]}
+ */
 function suggestFor(text, catalog) {
   const parsed = parseCommandLine(text);
   if (!parsed || !Array.isArray(catalog) || catalog.length === 0) return [];
@@ -95,6 +116,12 @@ function suggestFor(text, catalog) {
 // The command a line names, or null. This is what decides whether Enter runs a command or sends a
 // message, and it is deliberately stricter than the suggestion list: a prefix that merely NARROWS
 // the list ("/th") is not a command, only an exact name is.
+/**
+ * The command a line names, or null: only an exact name runs.
+ * @param {string} text
+ * @param {import("./types.js").CommandInfo[]} catalog
+ * @returns {{ command: import("./types.js").CommandInfo, argument: string | null } | null}
+ */
 function resolveCommand(text, catalog) {
   const parsed = parseCommandLine(text);
   if (!parsed || !Array.isArray(catalog)) return null;

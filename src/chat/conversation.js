@@ -34,6 +34,11 @@ const NEW_CHAT_TITLE = "New chat";
 
 // What to put on a conversation row. One helper rather than a fallback repeated at each render, so
 // there is one answer to "what is this chat called".
+/**
+ * What to put on a conversation row.
+ * @param {{ title?: string } | null | undefined} convo
+ * @returns {string}
+ */
 function conversationTitle(convo) {
   return (convo && convo.title) || NEW_CHAT_TITLE;
 }
@@ -41,6 +46,11 @@ function conversationTitle(convo) {
 // ---------- persistence ----------
 // This browser's copy of the conversation list, under a key the site chooses. It is a cache of what
 // the assistant holds, which is the record.
+/**
+ * This browser's copy of the conversation list under `key`; empty when storage has none or refuses.
+ * @param {string} key
+ * @returns {import("./types.js").Conversation[]}
+ */
 function loadConversations(key) {
   try {
     const raw = localStorage.getItem(key);
@@ -50,17 +60,31 @@ function loadConversations(key) {
 }
 // An attachment's `localUrl` is this page's copy of what it sent, which a reload does not keep: what
 // is stored reads the attachment back from the assistant instead.
+/**
+ * @param {string} key
+ * @param {import("./types.js").Conversation[]} convos
+ */
 function saveConversations(key, convos) {
   try {
     localStorage.setItem(key, JSON.stringify(convos, (k, v) => (k === "localUrl" ? undefined : v)));
   } catch { /* storage refused */ }
 }
 
+/**
+ * A short id for a message or card minted in this browser.
+ * @returns {string}
+ */
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 // The label a tool shows while it runs arrives ON the frame, from the tool's own catalog entry — the
 // assistant owns its tools, so it owns what they are called. A frame with no label gets the raw name
 // made readable.
+/**
+ * The words a tool shows while it runs: the frame's own label, else the tool's name made readable.
+ * @param {string | undefined} tool
+ * @param {string} [label]
+ * @returns {string}
+ */
 function toolLabel(tool, label) {
   if (label) return label;
   if (!tool) return "Working";
@@ -71,6 +95,11 @@ function toolLabel(tool, label) {
 // streaming its answer, then move to `bubble.cards` when the turn ends (done/error/dropped). The card
 // stays hidden until the streamed text is complete, so the thread reads top-to-bottom (answer, then
 // evidence) instead of the card popping in above the growing text.
+/**
+ * Moves a bubble's held-back cards to `cards` once its turn has ended.
+ * @param {import("./types.js").Message | undefined | null} bubble
+ * @returns {import("./types.js").Message | undefined | null}
+ */
 function promotePendingCards(bubble) {
   if (!bubble || !bubble.pendingCards || !bubble.pendingCards.length) return bubble;
   const { pendingCards, ...rest } = bubble;
@@ -89,6 +118,11 @@ function withoutCompacting(bubble) {
 // An action a tool proposed and left waiting on the person: the `proposal` frame of a live turn, and
 // the `confirmation` a stored turn's tool carries. Both name the action the same way — `verb`,
 // `subject`, `target`, `summary`, `expiresAt` — and the `handle` that redeems it, held as `token`.
+/**
+ * A proposal a tool left waiting on the person, as the transcript holds it: from a live `proposal` frame or a stored tool's `confirmation`.
+ * @param {import("./types.js").ProposalFrame | import("./types.js").StoredConfirmation} ev
+ * @returns {import("./types.js").Message}
+ */
 function waitingProposal(ev) {
   return {
     role: "command",
@@ -107,6 +141,14 @@ function waitingProposal(ev) {
 // Where a proposal stands once it has ended, as the transcript shows it: declined and expired are
 // states of the card itself, and an action that ran (or tried to) is the card plus its outcome. The
 // outcome is the product's `verdict` over `{ success, status, text }`.
+/**
+ * Where a proposal stands once it has ended: declined and expired are states of the card, and an action that ran is the card plus its outcome.
+ * @param {import("./types.js").Message[]} messages
+ * @param {string} handle the proposal's handle
+ * @param {import("./types.js").Resolution | null | undefined} resolution
+ * @param {import("./types.js").Profile} [profile]
+ * @returns {import("./types.js").Message[]}
+ */
 function settleProposal(messages, handle, resolution, profile = NO_PROFILE) {
   const at = messages.findIndex(m => m.role === "command" && m.token === handle);
   if (at < 0 || !resolution) return messages;
@@ -140,6 +182,12 @@ const ASK_QUESTION = "ask_question";
 
 // Questions the assistant put to the person. `state` is `open` while the person may still answer, and
 // `answered` once they have; the thread draws one that is no longer the last word as plain text.
+/**
+ * Questions the assistant put to the person; `state` is `open` while they may still answer.
+ * @param {{ id?: string | number, questions?: import("./types.js").Question[] }} ev
+ * @param {"open" | "answered" | "asked"} [state]
+ * @returns {import("./types.js").Message}
+ */
 function questionMessage(ev, state = "open") {
   return {
     role: "question",
@@ -159,6 +207,11 @@ function questionMessage(ev, state = "open") {
 
 // The answers as the assistant reads them in the person's message: one line, the question's header
 // (else its text), then what was picked and what was written.
+/**
+ * The answers as the assistant reads them in the person's message, on one line.
+ * @param {import("./types.js").Answer[] | undefined} answers
+ * @returns {string}
+ */
 function answersText(answers) {
   const parts = (answers || []).map(a => {
     const said = [...(a.labels || []), a.text].filter(s => s && String(s).trim()).map(s => String(s).replace(/\s+/g, " ").trim());
@@ -168,6 +221,13 @@ function answersText(answers) {
 }
 
 // ---------- the turn stream ----------
+/**
+ * What one frame of a turn stream does to the transcript: applied to the last entry, the live assistant bubble.
+ * @param {import("./types.js").Message[]} messages
+ * @param {import("./types.js").Frame} ev
+ * @param {import("./types.js").Profile} [profile]
+ * @returns {import("./types.js").Message[]}
+ */
 function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
   const msgs = messages.slice();
   const lastIdx = msgs.length - 1;
@@ -202,8 +262,10 @@ function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
       // loop re-entering a step) re-activates it in place rather than duplicating the row.
       const key = ev.key != null ? ev.key : (ev.id != null ? ev.id + ":" : "") + (ev.label || "");
       const prevSteps = bubble.steps || [];
+      /** @type {import("./types.js").StepRow[]} */
       const steps = prevSteps.map(s => s.status === "active" ? { ...s, status: "done" } : s);
       const idx = steps.findIndex(s => s.key === key);
+      /** @type {import("./types.js").StepRow} */
       const entry = { key, label: ev.label || "", status: "active" };
       if (idx >= 0) steps[idx] = entry; else steps.push(entry);
       msgs[lastIdx] = { ...bubble, steps };
@@ -304,6 +366,12 @@ function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
 // Built in ONE place on purpose. A restated proposal that rendered even slightly differently from a
 // live one would be a second answer to "what is this action", and the surface most likely to see the
 // restated form is the one arriving via a notification — the surface with the least context.
+/**
+ * One proposal card from a product's `command.proposed` frame or a conversation's restated pending proposal.
+ * @param {import("./types.js").CommandProposedFrame} ev
+ * @param {import("./types.js").Profile} [profile]
+ * @returns {import("./types.js").Message}
+ */
 function proposalMessage(ev, profile = NO_PROFILE) {
   return {
     role: "command",
@@ -334,6 +402,12 @@ function proposalMessage(ev, profile = NO_PROFILE) {
   };
 }
 
+/**
+ * A stored conversation's entries rebuilt into transcript messages.
+ * @param {import("./types.js").HistoryEntry[] | undefined} entries
+ * @param {import("./types.js").Profile} [profile]
+ * @returns {import("./types.js").Message[]}
+ */
 function scaffoldHistory(entries, profile = NO_PROFILE) {
   const out = [];
   if (!Array.isArray(entries)) return out;
@@ -349,6 +423,7 @@ function scaffoldHistory(entries, profile = NO_PROFILE) {
     if (Array.isArray(t.attachments) && t.attachments.length > 0) userMsg.attachments = t.attachments;
     if (e.startedAt) userMsg.ts = Date.parse(e.startedAt) || undefined;
     out.push(userMsg);
+    /** @type {import("./types.js").Message} */
     const bubble = { role: "assistant", content: t.final || "", ts: Date.parse(e.createdAt) || undefined };
     // How long the answer took, as the assistant recorded it: from the prompt arriving to the entry
     // being written.
@@ -367,6 +442,7 @@ function scaffoldHistory(entries, profile = NO_PROFILE) {
     // asked it is the turn's last word when nothing follows it.
     const calls = Array.isArray(t.tools) ? t.tools : [];
     const used = calls.filter(tl => tl && tl.tool !== ASK_QUESTION);
+    /** @type {import("./types.js").ToolRow[]} */
     const tools = used.map((tl, ti) => ({ id: "h" + ei + "_" + ti, label: toolLabel(tl.tool, tl.label), state: "done", summary: tl.summary || "" }));
     if (tools.length) bubble.tools = tools;
     const cards = used
@@ -405,6 +481,12 @@ function scaffoldHistory(entries, profile = NO_PROFILE) {
 // as the conversation's outstanding set, not as part of any turn's record, and a conversation runs one
 // turn at a time — so the last thing said is the thing they belong to. Placing them anywhere else
 // would mean inventing an association the assistant never stated.
+/**
+ * The transcript of a conversation read from the assistant, plus the proposals still waiting in it.
+ * @param {import("./types.js").ConversationDetail | null | undefined} data
+ * @param {import("./types.js").Profile} [profile]
+ * @returns {import("./types.js").Message[]}
+ */
 function scaffoldConversation(data, profile = NO_PROFILE) {
   const out = scaffoldHistory(data && data.entries, profile);
   const pending = (data && data.pending) || [];
@@ -412,6 +494,11 @@ function scaffoldConversation(data, profile = NO_PROFILE) {
   return out;
 }
 
+/**
+ * The usage of the newest assistant answer that carries one.
+ * @param {import("./types.js").Message[] | null | undefined} messages
+ * @returns {import("./types.js").Usage | null}
+ */
 function latestUsage(messages) {
   if (!Array.isArray(messages)) return null;
   for (let i = messages.length - 1; i >= 0; i--) {
@@ -427,6 +514,13 @@ function latestUsage(messages) {
 // The snapshot REPLACES whatever this surface was rendering for the live turn rather than being merged
 // into it: it is the assistant's own account of that turn, and reconciling two partial views is how a
 // duplicated tool row or a doubled sentence gets in. Everything before the live turn is untouched.
+/**
+ * A turn this surface did not watch from its start, rendered from the assistant's snapshot of it. The snapshot replaces the live turn.
+ * @param {import("./types.js").Message[]} messages
+ * @param {import("./types.js").TurnAttachFrame} attach
+ * @param {import("./types.js").Profile} [profile]
+ * @returns {import("./types.js").Message[]}
+ */
 function scaffoldLiveTurn(messages, attach, profile = NO_PROFILE) {
   const settled = messages.filter(m => !m.live);
   // When the turn began. The bubble this surface put up as it sent the prompt holds the moment it was
@@ -435,6 +529,7 @@ function scaffoldLiveTurn(messages, attach, profile = NO_PROFILE) {
   const prior = messages.find(m => m.live && m.role === "assistant");
   const empty = !attach.text && !attach.thinking && !(attach.tools && attach.tools.length);
   const startedAt = (prior && prior.startedAt) || (empty && attach.state === "running" ? Date.now() : undefined);
+  /** @type {import("./types.js").ToolRow[]} */
   const tools = (attach.tools || []).map(t => ({
     id: t.id,
     label: toolLabel(t.name, t.label),
@@ -445,6 +540,7 @@ function scaffoldLiveTurn(messages, attach, profile = NO_PROFILE) {
     .map(t => (t.card ? profile.adaptCard(t.card) : null))
     .filter(Boolean);
 
+  /** @type {import("./types.js").Message} */
   const bubble = {
     role: "assistant",
     live: true,
@@ -471,6 +567,12 @@ function scaffoldLiveTurn(messages, attach, profile = NO_PROFILE) {
 //
 // `loaded: false` marks the transcript as not yet fetched, which is true of both: a fresh chat has no
 // transcript and a listed one has not been read.
+/**
+ * One conversation as the assistant states it, turned into a row this surface holds.
+ * @param {import("./types.js").ConversationInfo} s
+ * @param {string} [hostId] the assistant that holds it
+ * @returns {import("./types.js").Conversation}
+ */
 function adoptServerConversation(s, hostId) {
   return {
     id: s.id,
@@ -487,6 +589,13 @@ function adoptServerConversation(s, hostId) {
   };
 }
 
+/**
+ * Reconciles this browser's list with the assistant's: the assistant's names, times, switches and turn counts overwrite; unknown conversations are adopted. Newest activity first.
+ * @param {import("./types.js").Conversation[]} local
+ * @param {import("./types.js").ConversationInfo[]} serverList
+ * @param {string} [hostId]
+ * @returns {import("./types.js").Conversation[]}
+ */
 function mergeServerConversations(local, serverList, hostId) {
   if (!Array.isArray(serverList) || serverList.length === 0) return local;
   const byId = new Map(local.map(c => [c.id, c]));

@@ -262,7 +262,7 @@ function renderBlock(b, key) {
     case "code":
       return <CodeBlock key={key} lang={b.lang} value={b.value} />;
     case "heading": {
-      const Tag = "h" + Math.min(b.level + 2, 6);
+      const Tag = /** @type {"h3" | "h4" | "h5" | "h6"} */ ("h" + Math.min(b.level + 2, 6));
       return <Tag key={key} className="chat-md__h">{renderInline(b.text, key)}</Tag>;
     }
     case "rule":
@@ -296,6 +296,11 @@ function renderBlock(b, key) {
   }
 }
 
+/**
+ * A message's Markdown as React nodes.
+ * @param {string} text
+ * @returns {import("react").ReactNode}
+ */
 function renderMarkdown(text) {
   if (!text) return null;
   return parseBlocks(String(text)).map((b, i) => renderBlock(b, String(i)));

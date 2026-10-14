@@ -38,6 +38,12 @@ const BLOCKED = {
   },
 };
 
+/**
+ * @param {object} props
+ * @param {Pick<import("../chat/types.js").AssistantClient, "pushKey" | "pushDevices" | "pushSubscribe" | "pushUnsubscribe">} props.client
+ * @param {import("react").ReactNode} [props.offSub] the row's sentence when the assistant sends nothing at all
+ * @param {import("react").ReactNode} [props.children] close the section
+ */
 function AssistantNotifications({
   client,
   offSub = "Switched off by whoever runs this assistant, so nothing would be sent.",

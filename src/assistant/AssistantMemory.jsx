@@ -20,6 +20,7 @@ import { AssistantMemoryEditor } from "./AssistantMemoryEditor.jsx";
 // `whose` names the assistant in the section's line ("What the assistant has written down…"), for a
 // site that talks to more than one. `BodyEditor` and `keyPlaceholder` pass to the editor.
 
+/** @type {Intl.DateTimeFormatOptions} */
 const WHEN = { hour: "2-digit", minute: "2-digit", hour12: false };
 
 // A memory the person wrote or rewrote by hand is `person` on the wire contract and `you` on an
@@ -39,6 +40,14 @@ function withWritten(rows, memory) {
   return [memory, ...rows.filter((m) => m.key !== memory.key)];
 }
 
+/**
+ * @param {object} props
+ * @param {import("../chat/types.js").AssistantClient | null} props.client
+ * @param {import("react").ReactNode} [props.unavailable] the site's words for why there is nothing to show
+ * @param {string} [props.whose] names the assistant in the section's line
+ * @param {import("react").ComponentType<import("../chat/types.js").MemoryBodyEditorProps>} [props.BodyEditor]
+ * @param {string} [props.keyPlaceholder]
+ */
 function AssistantMemory({
   client, unavailable = null, whose = "the assistant", BodyEditor, keyPlaceholder,
 }) {

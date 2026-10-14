@@ -25,6 +25,13 @@ import { Input } from "../components/fields.jsx";
 
 const NOTE_MAX = 400;
 
+/**
+ * @param {object} props
+ * @param {number} [props.turnId] the record id; absent draws nothing
+ * @param {{ rating?: "up" | "down", note?: string | null } | null} [props.feedback]
+ * @param {(rating: "up" | "down" | null, note?: string) => void} [props.onRate]
+ * @param {boolean} [props.readOnly]
+ */
 function ChatFeedback({ turnId, feedback, onRate, readOnly }) {
   // No id means the turn was never persisted, so there is nothing to attach a verdict to. Showing
   // controls that cannot record anything would be worse than showing none.

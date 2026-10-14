@@ -19,6 +19,20 @@ import { ChatQuestions } from "./ChatQuestions.jsx";
 
 const EVENT_ROLES = new Set(["system", "scope", "checkpoint", "toggle"]);
 
+/**
+ * @param {object} props
+ * @param {import("./types.js").Message[]} props.messages
+ * @param {any} [props.user]
+ * @param {string} [props.assistantName]
+ * @param {(msg: import("./types.js").Message, key: number) => import("react").ReactNode | undefined} [props.renderEntry] a product's own roles; `undefined` falls through to the shared ones
+ * @param {(msg: import("./types.js").Message, key: number) => import("react").ReactNode} [props.renderCommand] draws a proposed action
+ * @param {(msg: import("./types.js").Message) => import("react").ReactNode} [props.renderCards]
+ * @param {(turnId: number, rating: "up" | "down" | null, note?: string) => void} [props.onRate]
+ * @param {boolean} [props.readOnlyFeedback]
+ * @param {(name: string) => void} [props.onUseCommand] given to the /help card's Use buttons
+ * @param {(msg: import("./types.js").Message, answers: import("./types.js").Answer[]) => void} [props.onAnswer]
+ * @param {(attachment: import("./types.js").AttachmentInfo) => Promise<Blob>} [props.loadAttachment]
+ */
 function ChatThread({
   messages, user, assistantName, renderEntry, renderCommand, renderCards, onRate, readOnlyFeedback, onUseCommand,
   onAnswer, loadAttachment,

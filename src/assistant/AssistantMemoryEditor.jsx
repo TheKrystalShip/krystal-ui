@@ -36,6 +36,15 @@ function Count({ n, max }) {
   return <span className={"mem-editor__count" + (n > max ? " mem-editor__count--over" : "")}>{n} / {max}</span>;
 }
 
+/**
+ * @param {object} props
+ * @param {import("../chat/types.js").Memory | null} [props.memory] null is a new memory
+ * @param {import("../chat/types.js").MemoryLimits | null} [props.limits]
+ * @param {(key: string, memory: import("../chat/types.js").MemoryWrite) => Promise<unknown> | unknown} props.onSave
+ * @param {() => void} props.onClose
+ * @param {import("react").ComponentType<import("../chat/types.js").MemoryBodyEditorProps>} [props.BodyEditor]
+ * @param {string} [props.keyPlaceholder]
+ */
 function AssistantMemoryEditor({
   memory, limits, onSave, onClose, BodyEditor = PlainBody, keyPlaceholder = "preferred-name",
 }) {

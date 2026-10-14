@@ -15,7 +15,7 @@ const RATE = 16000;
 const MAX_SECONDS = 180;
 
 function contextClass() {
-  return window.OfflineAudioContext || window.webkitOfflineAudioContext || null;
+  return window.OfflineAudioContext || /** @type {any} */ (window).webkitOfflineAudioContext || null;
 }
 
 // Float samples in [-1, 1] → signed 16-bit little-endian.
@@ -61,10 +61,15 @@ function resampleByHand(buffer) {
 // Throws with a `reason` the caller can show. Every failure here is one the person can act on — the
 // recording is empty, it is too long, this browser cannot decode what it just wrote — so none of them
 // are swallowed into an empty transcript.
+/**
+ * Decodes a recording into the 16 kHz mono signed 16-bit samples the recogniser reads. Throws an Error carrying a `reason` the person can act on.
+ * @param {Blob} blob
+ * @returns {Promise<ArrayBuffer>}
+ */
 async function toPcm16k(blob) {
-  const Ctor = window.AudioContext || window.webkitAudioContext;
+  const Ctor = window.AudioContext || /** @type {any} */ (window).webkitAudioContext;
   if (!Ctor) {
-    const e = new Error("This browser has no audio decoder.");
+    const e = /** @type {Error & { reason?: string }} */ (new Error("This browser has no audio decoder."));
     e.reason = "unsupported";
     throw e;
   }
@@ -77,7 +82,7 @@ async function toPcm16k(blob) {
   try {
     decoded = await ctx.decodeAudioData(await blob.arrayBuffer());
   } catch {
-    const e = new Error("That recording could not be decoded.");
+    const e = /** @type {Error & { reason?: string }} */ (new Error("That recording could not be decoded."));
     e.reason = "undecodable";
     throw e;
   } finally {
@@ -85,12 +90,12 @@ async function toPcm16k(blob) {
   }
 
   if (!decoded || !decoded.length) {
-    const e = new Error("That recording is empty.");
+    const e = /** @type {Error & { reason?: string }} */ (new Error("That recording is empty."));
     e.reason = "empty";
     throw e;
   }
   if (decoded.duration > MAX_SECONDS) {
-    const e = new Error("That recording is too long — keep it under three minutes.");
+    const e = /** @type {Error & { reason?: string }} */ (new Error("That recording is too long — keep it under three minutes."));
     e.reason = "too-long";
     throw e;
   }

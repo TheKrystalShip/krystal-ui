@@ -107,6 +107,10 @@ function ActivityList({ id, msg }) {
   );
 }
 
+/**
+ * @param {object} props
+ * @param {import("./types.js").Message} props.msg
+ */
 function ChatActivity({ msg }) {
   const [open, setOpen] = React.useState(false);
   const listId = React.useId();
