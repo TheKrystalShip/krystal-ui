@@ -15,6 +15,7 @@ export { CarouselPager } from "./components/CarouselPager.jsx";
 export { CollectionTile } from "./components/CollectionTile.jsx";
 export { Dock, DockFab, useDock } from "./components/Dock.jsx";
 export { Footer, GithubMark } from "./components/Footer.jsx";
+export { Cluster, Container, Grid, Stack } from "./components/Layout.jsx";
 export { Hero } from "./components/Hero.jsx";
 export { Icon } from "./components/Icon.jsx";
 export { Meter } from "./components/Meter.jsx";

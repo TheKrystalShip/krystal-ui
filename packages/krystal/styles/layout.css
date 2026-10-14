@@ -1,0 +1,73 @@
+/* ============================================================================
+   layout.css — Stack, Cluster, Grid and Container: the flex and grid wrappers a page is arranged
+   with. The gap is the `--k-gap` custom property a box sets inline from its `gap` prop, `--s-4`
+   without one.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--k-gap, var(--s-4));
+  min-width: 0;
+}
+
+.k-stack--align-start { align-items: flex-start; }
+.k-stack--align-center { align-items: center; }
+.k-stack--align-end { align-items: flex-end; }
+
+.k-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--k-gap, var(--s-4));
+  min-width: 0;
+}
+
+.k-cluster--nowrap { flex-wrap: nowrap; }
+.k-cluster--align-start { align-items: flex-start; }
+.k-cluster--align-end { align-items: flex-end; }
+.k-cluster--align-baseline { align-items: baseline; }
+.k-cluster--align-stretch { align-items: stretch; }
+.k-cluster--justify-center { justify-content: center; }
+.k-cluster--justify-end { justify-content: flex-end; }
+.k-cluster--justify-between { justify-content: space-between; }
+
+.k-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--k-grid-min, 240px), 100%), 1fr));
+  gap: var(--k-gap, var(--s-4));
+  min-width: 0;
+  --k-grid-cols: 1;
+}
+
+.k-grid--fill {
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--k-grid-min, 240px), 100%), 1fr));
+}
+
+.k-grid--cols {
+  grid-template-columns: repeat(var(--k-grid-cols), minmax(0, 1fr));
+}
+
+.k-container {
+  box-sizing: border-box;
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  max-width: var(--content-max);
+}
+
+.k-container--sm { max-width: 640px; }
+.k-container--md { max-width: 880px; }
+.k-container--lg { max-width: 1120px; }
+.k-container--full { max-width: none; }
+.k-container--flush { padding-inline: 0; }
+
+@media (max-width: 768px) {
+  .k-container:not(.k-container--flush) {
+    padding-inline: var(--s-4);
+  }
+}
+}
