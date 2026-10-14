@@ -1,5 +1,7 @@
 import React from "react";
 import { Icon } from "./Icon.jsx";
+import { Menu, MenuRadioGroup, MenuRadioItem, MenuSeparator } from "./Menu.jsx";
+import { Popover } from "./Popover.jsx";
 import { useDebouncedValue } from "./Pagination.jsx";
 
 // Toolbar — the reusable filter / search / sort / action bar.
@@ -23,11 +25,10 @@ import { useDebouncedValue } from "./Pagination.jsx";
 //     <ToolbarButton icon="refresh-cw" onClick={refresh} spinning={busy}>Refresh</ToolbarButton>
 //   </Toolbar>
 //
-// ToolbarFilters owns the single "Filters" popover AND the inline active-filter
-// chips, so the two always stay in sync. ToolbarSort is the dedicated ordering
-// control that sits beside it — an always-active popover (sort key + asc/desc
-// direction), for a page whose rows are tiles or cards; a table sorts from its
-// own column headers instead.
+// ToolbarFilters owns the single "Filters" popover (a Popover holding one radio group per field)
+// AND the inline active-filter chips, so the two always stay in sync. ToolbarSort is the dedicated
+// ordering control that sits beside it — a Menu (sort key, then asc/desc direction as radio items),
+// for a page whose rows are tiles or cards; a table sorts from its own column headers instead.
 
 /**
  * @param {object} props
@@ -88,8 +89,8 @@ function ToolbarSearch({ value, onChange, placeholder, pending, autoFocus, ariaL
 function ToolbarSpacer() { return <span className="k-toolbar__spacer" />; }
 
 // ToolbarSort — the ordering control for card/tile grids that can't carry
-// sortable column headers. A single always-on popover: pick the sort key
-// (radio list) and the direction (Asc/Desc segmented toggle). Re-picking the
+// sortable column headers. A Menu of radio items: pick the sort key, then the
+// direction (a second group, which leaves the menu open). Re-picking the
 // active key flips direction, mirroring CardTable's header behaviour, so the
 // two sort surfaces feel identical across the app.
 //
@@ -108,18 +109,9 @@ function ToolbarSpacer() { return <span className="k-toolbar__spacer" />; }
  */
 function ToolbarSort({ value, dir = "desc", onChange, options, label = "Sort" }) {
   const [open, setOpen] = React.useState(false);
-  const ref = React.useRef(null);
-  React.useEffect(() => {
-    if (!open) return;
-    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    const onEsc = (e) => { if (e.key === "Escape") { e.preventDefault(); setOpen(false); } };
-    document.addEventListener("mousedown", onDoc);
-    document.addEventListener("keydown", onEsc);
-    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onEsc); };
-  }, [open]);
-
   const opts = options || [];
   const current = opts.find(o => o.value === value) || opts[0];
+  const arrow = dir === "asc" ? "arrow-up" : "arrow-down";
   const pick = (o) => {
     if (o.value === value) onChange(o.value, dir === "asc" ? "desc" : "asc");
     else onChange(o.value, o.defaultDir || "desc");
@@ -127,53 +119,33 @@ function ToolbarSort({ value, dir = "desc", onChange, options, label = "Sort" })
   const setDir = (d) => { if (d !== dir) onChange(value, d); };
 
   return (
-    <div className="k-toolbar-filter k-toolbar-sort" ref={ref}>
-      <button
-        className={"k-toolbar-btn k-toolbar-filter__trigger" + (open ? " k-toolbar-btn--on" : "")}
-        onClick={() => setOpen(o => !o)}
-        aria-haspopup="dialog" aria-expanded={open} title="Sort order">
-        <Icon name="arrow-up-down" size={14} />
-        <span>{label}{current ? ": " + current.label : ""}</span>
-        <Icon name={dir === "asc" ? "arrow-up" : "arrow-down"} size={13} strokeWidth={2.3} className="k-toolbar-sort__dir-ico" />
-      </button>
-
-      {open && (
-        <div className="k-toolbar-filter__menu k-toolbar-sort__menu" role="dialog" aria-label="Sort">
-          <div className="k-toolbar-filter__head">
-            <span className="k-toolbar-filter__head-label">{label} by</span>
-            <div className="k-toolbar-sort__dir" role="group" aria-label="Direction">
-              <button
-                className={"k-toolbar-sort__dir-btn" + (dir === "asc" ? " k-is-on" : "")}
-                onClick={() => setDir("asc")} aria-pressed={dir === "asc"} title="Ascending">
-                <Icon name="arrow-up" size={12} strokeWidth={2.4} /> Asc
-              </button>
-              <button
-                className={"k-toolbar-sort__dir-btn" + (dir === "desc" ? " k-is-on" : "")}
-                onClick={() => setDir("desc")} aria-pressed={dir === "desc"} title="Descending">
-                <Icon name="arrow-down" size={12} strokeWidth={2.4} /> Desc
-              </button>
-            </div>
-          </div>
-          <div className="k-toolbar-filter__body">
-            <div className="k-toolbar-filter__opts">
-              {opts.map(o => {
-                const on = o.value === value;
-                return (
-                  <button
-                    key={o.value}
-                    className={"k-toolbar-filter__opt" + (on ? " k-toolbar-filter__opt--on" : "")}
-                    onClick={() => pick(o)}
-                    role="radio" aria-checked={on}>
-                    <span className="k-toolbar-filter__radio" />
-                    <span className="k-toolbar-filter__opt-label">{o.label}</span>
-                    {on && <Icon name={dir === "asc" ? "arrow-up" : "arrow-down"} size={13} strokeWidth={2.4} className="k-toolbar-filter__opt-dir" />}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
+    <div className="k-toolbar-filter k-toolbar-sort">
+      <Menu open={open} onOpenChange={setOpen} label={label} matchWidth
+        trigger={(
+          <button type="button"
+            className={"k-toolbar-btn k-toolbar-filter__trigger" + (open ? " k-toolbar-btn--on" : "")}
+            title="Sort order">
+            <Icon name="arrow-up-down" size={14} />
+            <span>{label}{current ? ": " + current.label : ""}</span>
+            <Icon name={arrow} size={13} strokeWidth={2.3} className="k-toolbar-sort__dir-ico" />
+          </button>
+        )}>
+        <MenuRadioGroup label={label + " by"} value={value}>
+          {opts.map(o => (
+            <MenuRadioItem key={o.value} value={o.value} onSelect={() => pick(o)}
+              aside={o.value === value ? <Icon name={arrow} size={13} strokeWidth={2.4} /> : undefined}>
+              {o.label}
+            </MenuRadioItem>
+          ))}
+        </MenuRadioGroup>
+        <MenuSeparator />
+        <MenuRadioGroup label="Direction" value={dir}>
+          <MenuRadioItem value="asc" closeOnSelect={false} onSelect={() => setDir("asc")}
+            aside={<Icon name="arrow-up" size={13} strokeWidth={2.4} />}>Ascending</MenuRadioItem>
+          <MenuRadioItem value="desc" closeOnSelect={false} onSelect={() => setDir("desc")}
+            aside={<Icon name="arrow-down" size={13} strokeWidth={2.4} />}>Descending</MenuRadioItem>
+        </MenuRadioGroup>
+      </Menu>
     </div>
   );
 }
@@ -244,15 +216,7 @@ function fieldActive(field) {
  */
 function ToolbarFilters({ fields, onReset, label = "Filters" }) {
   const [open, setOpen] = React.useState(false);
-  const ref = React.useRef(null);
-  React.useEffect(() => {
-    if (!open) return;
-    const onDoc = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    const onEsc = (e) => { if (e.key === "Escape") { e.preventDefault(); setOpen(false); } };
-    document.addEventListener("mousedown", onDoc);
-    document.addEventListener("keydown", onEsc);
-    return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onEsc); };
-  }, [open]);
+  const name = React.useId();
 
   const visible = (fields || []).filter(f => !f.hidden);
   const active = visible.filter(fieldActive);
@@ -262,15 +226,48 @@ function ToolbarFilters({ fields, onReset, label = "Filters" }) {
   };
 
   return (
-    <div className="k-toolbar-filter" ref={ref}>
-      <button
-        className={"k-toolbar-btn k-toolbar-filter__trigger" + (open ? " k-toolbar-btn--on" : "")}
-        onClick={() => setOpen(o => !o)}
-        aria-haspopup="dialog" aria-expanded={open} title="Filters">
-        <Icon name="sliders-horizontal" size={14} />
-        <span>{label}</span>
-        {active.length > 0 && <span className="k-toolbar-filter__badge">{active.length}</span>}
-      </button>
+    <div className="k-toolbar-filter">
+      <Popover open={open} onOpenChange={setOpen} label={label} className="k-toolbar-filter__menu"
+        trigger={(
+          <button type="button"
+            className={"k-toolbar-btn k-toolbar-filter__trigger" + (open ? " k-toolbar-btn--on" : "")}
+            title="Filters">
+            <Icon name="sliders-horizontal" size={14} />
+            <span>{label}</span>
+            {active.length > 0 && <span className="k-toolbar-filter__badge">{active.length}</span>}
+          </button>
+        )}>
+        <div className="k-toolbar-filter__head">
+          <span className="k-toolbar-filter__head-label">{label}</span>
+          {active.length > 0 && (
+            <button type="button" className="k-toolbar-filter__reset" onClick={reset}>
+              <Icon name="rotate-ccw" size={12} /> Reset
+            </button>
+          )}
+        </div>
+        <div className="k-toolbar-filter__body">
+          {visible.map(f => (
+            <div className="k-toolbar-filter__group" key={f.id} role="radiogroup" aria-label={f.label}>
+              <div className="k-toolbar-filter__group-label" aria-hidden="true">{f.label}</div>
+              <div className="k-toolbar-filter__opts">
+                {(f.options || []).map(o => {
+                  const on = o.value === f.value;
+                  return (
+                    <label key={o.value}
+                      className={"k-toolbar-filter__opt" + (on ? " k-toolbar-filter__opt--on" : "")}>
+                      <input type="radio" className="k-toolbar-filter__input" name={name + f.id}
+                        checked={on} onChange={() => f.onChange(o.value)} />
+                      <span className="k-toolbar-filter__radio" aria-hidden="true" />
+                      <span className="k-toolbar-filter__opt-label">{o.label}</span>
+                      {o.count != null && <span className="k-toolbar-filter__opt-count">{o.count}</span>}
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Popover>
 
       {/* inline active-filter chips — clearing the field, not just the chip */}
       {active.map(f => {
@@ -287,42 +284,6 @@ function ToolbarFilters({ fields, onReset, label = "Filters" }) {
           </button>
         );
       })}
-
-      {open && (
-        <div className="k-toolbar-filter__menu" role="dialog" aria-label="Filters">
-          <div className="k-toolbar-filter__head">
-            <span className="k-toolbar-filter__head-label">{label}</span>
-            {active.length > 0 && (
-              <button className="k-toolbar-filter__reset" onClick={reset}>
-                <Icon name="rotate-ccw" size={12} /> Reset
-              </button>
-            )}
-          </div>
-          <div className="k-toolbar-filter__body">
-            {visible.map(f => (
-              <div className="k-toolbar-filter__group" key={f.id}>
-                <div className="k-toolbar-filter__group-label">{f.label}</div>
-                <div className="k-toolbar-filter__opts">
-                  {(f.options || []).map(o => {
-                    const on = o.value === f.value;
-                    return (
-                      <button
-                        key={o.value}
-                        className={"k-toolbar-filter__opt" + (on ? " k-toolbar-filter__opt--on" : "")}
-                        onClick={() => f.onChange(o.value)}
-                        role="radio" aria-checked={on}>
-                        <span className="k-toolbar-filter__radio" />
-                        <span className="k-toolbar-filter__opt-label">{o.label}</span>
-                        {o.count != null && <span className="k-toolbar-filter__opt-count">{o.count}</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

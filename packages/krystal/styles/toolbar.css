@@ -174,7 +174,6 @@
 
 /* Filters: trigger + popover + inline active chips */
 .k-toolbar-filter {
-  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -238,22 +237,11 @@
   color: var(--fg-3);
 }
 
+/* The filters panel is a Popover; this sizes it. */
 .k-toolbar-filter__menu {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  z-index: 40;
   width: 300px;
   max-width: 88vw;
-  background: var(--surface-1);
-  border: var(--edge-strong);
-  border-radius: var(--r-sm);
-  box-shadow: var(--shadow-2);
-  display: flex;
-  flex-direction: column;
-  max-height: 70vh;
   overflow: hidden;
-  animation: k-fade var(--d-fast) var(--ease-out);
 }
 
 .k-toolbar-filter__head {
@@ -323,6 +311,7 @@
 }
 
 .k-toolbar-filter__opt {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 9px;
@@ -346,6 +335,19 @@
 
 .k-toolbar-filter__opt--on {
   color: var(--fg-1);
+}
+
+.k-toolbar-filter__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.k-toolbar-filter__input:focus-visible + .k-toolbar-filter__radio {
+  box-shadow: var(--ring-focus);
 }
 
 .k-toolbar-filter__radio {
@@ -385,12 +387,7 @@
   color: var(--krystal-teal);
 }
 
-.k-toolbar-filter__opt-dir {
-  flex-shrink: 0;
-  color: var(--krystal-teal);
-}
-
-/* Sort: reuses the filter trigger + popover; adds a direction toggle. */
+/* Sort: reuses the filter trigger; the direction arrow follows the key. */
 .k-toolbar-sort__dir-ico {
   color: var(--fg-3);
   margin-left: -1px;
@@ -400,66 +397,10 @@
   color: var(--krystal-teal);
 }
 
-.k-toolbar-sort__dir {
-  display: inline-flex;
-  gap: 2px;
-  padding: 2px;
-  border-radius: var(--r-sm);
-  background: var(--surface-2);
-  border: var(--edge);
-}
-
-.k-toolbar-sort__dir-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  height: 24px;
-  padding: 0 9px;
-  border: none;
-  border-radius: var(--r-sm);
-  background: transparent;
-  color: var(--fg-3);
-  cursor: pointer;
-  font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: 600;
-  transition: background var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
-}
-
-.k-toolbar-sort__dir-btn:hover {
-  color: var(--fg-1);
-}
-
-.k-toolbar-sort__dir-btn.k-is-on {
-  background: var(--surface-1);
-  color: var(--krystal-teal);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
-}
-
 /* Mobile: 2 rows — search full-width on row 1, filters + rest on row 2 */
 @media (max-width: 860px) {
   .k-toolbar__col-search {
     flex: 0 0 100%;
-  }
-}
-
-/* A phone: a popover opened from the second row would hang its full width off its button, past the
-   screen's edge, so it hangs from the toolbar instead and spans it. */
-@media (max-width: 600px) {
-  .k-toolbar {
-    position: relative;
-  }
-
-  .k-toolbar-filter {
-    position: static;
-  }
-
-  .k-toolbar-filter__menu {
-    left: 0;
-    right: 0;
-    width: auto;
-    max-width: none;
-    max-height: min(70vh, 520px);
   }
 }
 }

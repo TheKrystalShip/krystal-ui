@@ -289,27 +289,9 @@
   flex-shrink: 0;
 }
 
+/* The account menu is a Menu opened upward; it is at least this wide even from the rail's avatar. */
 .k-sidebar__account-menu {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 0;
-  right: 0;
-  background: var(--surface-1);
-  border: var(--edge-strong);
-  border-radius: var(--r-sm);
-  box-shadow: var(--shadow-2);
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  z-index: 30;
-  animation: k-fade var(--d-fast) var(--ease-out);
-}
-
-.k-sidebar__account-menu__head {
-  padding: 8px 10px 10px;
-  border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: 4px;
+  min-width: 232px;
 }
 
 .k-sidebar__account-menu__name {
@@ -325,37 +307,6 @@
   font-size: 11px;
   color: var(--fg-3);
   margin-top: 3px;
-}
-
-.k-sidebar__account-menu__item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: var(--r-sm);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  font-size: 13px;
-  color: var(--fg-2);
-  font-family: var(--font-ui);
-  transition: background var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
-}
-
-.k-sidebar__account-menu__item:hover {
-  background: var(--surface-2);
-  color: var(--fg-1);
-}
-
-.k-sidebar__account-menu__item--danger {
-  color: var(--danger-fg);
-}
-
-.k-sidebar__account-menu__item--danger:hover {
-  background: var(--danger-bg);
-  color: var(--danger-fg);
 }
 
 /* ============= Collapsed rail (wide screens) =============
@@ -436,12 +387,6 @@
   .k-sidebar--rail .k-sidebar__account__text,
   .k-sidebar--rail .k-sidebar__account__caret {
     display: none;
-  }
-
-  .k-sidebar--rail .k-sidebar__account-menu {
-    left: 0;
-    right: auto;
-    min-width: 232px;
   }
 
   /* Nav items → centred icon, label hidden, count badge becomes a corner pip. */

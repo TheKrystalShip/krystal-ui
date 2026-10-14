@@ -1,0 +1,177 @@
+/* ============================================================================
+   menu.css — <Menu>, a list of commands opened from a button. Portaled and placed by Floating UI; above the dock
+   and the dialogs, below the toasts.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-menu {
+  z-index: 80;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+  max-height: min(70vh, 560px);
+  overflow: auto;
+  padding: 6px;
+  background: var(--surface-1);
+  border: var(--edge-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
+  font-family: var(--font-ui);
+  animation: k-fade var(--d-fast) var(--ease-out);
+}
+
+.k-menu:focus,
+.k-menu:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-2);
+}
+
+.k-menu__header {
+  padding: 8px 10px 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg-1);
+}
+
+.k-menu__item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 32px;
+  padding: 7px 10px;
+  background: transparent;
+  border: none;
+  border-radius: var(--r-sm);
+  color: var(--fg-2);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  transition: background var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
+}
+
+.k-menu__item:hover,
+.k-menu__item:focus {
+  background: var(--surface-2);
+  color: var(--fg-1);
+  outline: none;
+}
+
+.k-menu__item:focus-visible {
+  box-shadow: inset 0 0 0 1px var(--border-accent);
+}
+
+.k-menu__item[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.k-menu__item[aria-disabled="true"]:hover {
+  background: transparent;
+  color: var(--fg-2);
+}
+
+.k-menu__item--danger,
+.k-menu__item--danger:hover,
+.k-menu__item--danger:focus {
+  color: var(--danger-fg);
+}
+
+.k-menu__item--danger:hover:not([aria-disabled="true"]),
+.k-menu__item--danger:focus {
+  background: var(--danger-bg);
+}
+
+.k-menu__lead {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  color: var(--fg-3);
+}
+
+.k-menu__item[aria-checked="true"] .k-menu__lead {
+  color: var(--krystal-teal);
+}
+
+.k-menu__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.k-menu__aside,
+.k-menu__shortcut {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  color: var(--fg-4);
+  font-size: 12px;
+}
+
+.k-menu__shortcut {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+
+.k-menu__aside {
+  color: var(--krystal-teal);
+}
+
+.k-menu__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--border-strong);
+  box-sizing: border-box;
+}
+
+.k-menu__dot.k-is-on {
+  border-color: var(--krystal-teal);
+  background: var(--krystal-teal);
+}
+
+.k-menu__sep {
+  height: 1px;
+  margin: 4px 2px;
+  background: var(--border-subtle);
+  border: none;
+}
+
+.k-menu__group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.k-menu__group-label {
+  padding: 8px 10px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+
+/* A phone raises a menu row to a 40px target. */
+@media (max-width: 768px) {
+  .k-menu__item {
+    min-height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-menu {
+    animation: none;
+  }
+}
+}

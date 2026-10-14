@@ -120,6 +120,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Overlays | `Dialog`, `Modal`, `Popover`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Overlays | `Dialog`, `Modal`, `Popover`, `Tooltip`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
+| Overlays | `Dialog`, `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
@@ -507,6 +508,24 @@ when a mouse or pen rests on the child (after `delay`) and when the child takes 
 for a touch, and hides on leave, blur, a press and Escape (marked handled, so a dialog around it
 stays open). The child is cloned with `aria-describedby` while the tip shows; the tip is text only
 and never a pointer target. `IconButton` draws its `label` through it.
+
+`Menu` is a list of commands opened from a button (the menu button pattern): `trigger` is the button,
+the children are `MenuItem` (`icon`, `onSelect`, `disabled`, `tone="danger"`, `shortcut`, `aside`),
+`MenuCheckboxItem` (`checked`, `onCheckedChange`), `MenuRadioGroup` (`value`, `onChange`) of
+`MenuRadioItem`s (`value`), `MenuGroup` (`label`) and `MenuSeparator`. The arrows move with wrap,
+Home and End jump, a typed letter moves to the next label starting with it, Enter and Space select
+and close (a checkbox item stays open; `closeOnSelect` overrides; `event.preventDefault()` in
+`onSelect` keeps it open), Escape closes and returns focus to the trigger. `header` draws a line of
+context above the items and `matchWidth` makes the panel at least as wide as the trigger. The sidebar's
+account menu and the toolbar's sort menu are Menus.
+
+```jsx
+<Menu trigger={<Button variant="outline">Actions</Button>}>
+  <MenuItem icon="pencil" shortcut="R" onSelect={rename}>Rename</MenuItem>
+  <MenuSeparator />
+  <MenuItem icon="trash-2" tone="danger" onSelect={remove}>Delete</MenuItem>
+</Menu>
+```
 
 ## The frame
 

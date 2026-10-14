@@ -2,6 +2,7 @@ import React from "react";
 import { AccountAvatar } from "./AccountAvatar.jsx";
 import { Pill } from "./Pill.jsx";
 import { Icon } from "./Icon.jsx";
+import { Menu, MenuItem } from "./Menu.jsx";
 
 // The application frame: a sidebar beside a scrolling main column, with whatever floats over both
 // (a dock, its launcher, the toasts) after them. On wide screens the sidebar collapses to an icon
@@ -132,58 +133,42 @@ function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, close
  */
 function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
   const [open, setOpen] = React.useState(false);
-  const ref = React.useRef(null);
-  React.useEffect(() => {
-    if (!open) return undefined;
-    const away = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
-    const escape = (e) => { if (e.key === "Escape") { e.preventDefault(); setOpen(false); } };
-    document.addEventListener("mousedown", away);
-    document.addEventListener("keydown", escape);
-    return () => {
-      document.removeEventListener("mousedown", away);
-      document.removeEventListener("keydown", escape);
-    };
-  }, [open]);
   const name = user.display || user.name;
   return (
-    <div className="k-sidebar__account-wrap" ref={ref}>
-      {open && (
-        <div className="k-sidebar__account-menu" role="menu">
-          <div className="k-sidebar__account-menu__head">
+    <div className="k-sidebar__account-wrap">
+      <Menu open={open} onOpenChange={setOpen} placement="top-start" matchWidth label={name}
+        className="k-sidebar__account-menu"
+        header={(
+          <>
             <div className="k-sidebar__account-menu__name">{name}</div>
             {detail && <div className="k-sidebar__account-menu__detail">{detail}</div>}
-          </div>
-          {items.map((item) => (
-            <button
-              key={item.label}
-              type="button"
-              role="menuitem"
-              className={"k-sidebar__account-menu__item" + (item.danger ? " k-sidebar__account-menu__item--danger" : "")}
-              onClick={() => { setOpen(false); item.onClick && item.onClick(); }}>
-              <Icon name={item.icon} size={14} />{item.label}
-            </button>
-          ))}
-        </div>
-      )}
-      <button
-        type="button"
-        className={"k-sidebar__account" + (open ? " k-sidebar__account--open" : "")}
-        onClick={() => setOpen((o) => !o)}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-label={name}
-        data-tip={collapsed && !open ? name : undefined}>
-        <AccountAvatar user={user} size={28} />
-        {!collapsed && (
-          <>
-            <span className="k-sidebar__account__text">
-              <span className="k-sidebar__account__name">{name}</span>
-              {sub && <span className="k-sidebar__account__sub">{sub}</span>}
-            </span>
-            <Icon name="chevrons-up-down" size={14} className="k-sidebar__account__caret" />
           </>
         )}
-      </button>
+        trigger={(
+          <button
+            type="button"
+            className={"k-sidebar__account" + (open ? " k-sidebar__account--open" : "")}
+            aria-label={name}
+            data-tip={collapsed && !open ? name : undefined}>
+            <AccountAvatar user={user} size={28} />
+            {!collapsed && (
+              <>
+                <span className="k-sidebar__account__text">
+                  <span className="k-sidebar__account__name">{name}</span>
+                  {sub && <span className="k-sidebar__account__sub">{sub}</span>}
+                </span>
+                <Icon name="chevrons-up-down" size={14} className="k-sidebar__account__caret" />
+              </>
+            )}
+          </button>
+        )}>
+        {items.map((item) => (
+          <MenuItem key={item.label} icon={item.icon} tone={item.danger ? "danger" : undefined}
+            onSelect={() => item.onClick && item.onClick()}>
+            {item.label}
+          </MenuItem>
+        ))}
+      </Menu>
     </div>
   );
 }

@@ -25,6 +25,7 @@ export { Cluster, Container, Grid, Stack } from "./components/Layout.jsx";
 export { Hero } from "./components/Hero.jsx";
 export { Icon } from "./components/Icon.jsx";
 export { Kbd } from "./components/Kbd.jsx";
+export { Menu, MenuCheckboxItem, MenuGroup, MenuItem, MenuRadioGroup, MenuRadioItem, MenuSeparator } from "./components/Menu.jsx";
 export { Meter } from "./components/Meter.jsx";
 export { Modal } from "./components/Modal.jsx";
 export { Notice } from "./components/Notice.jsx";
