@@ -40,12 +40,14 @@
     "play": "vite playground",
     "lint": "eslint src scripts",
     "check:markdown": "node scripts/check-markdown-highlight.mjs",
-    "check:themes": "node scripts/check-themes.mjs"
+    "check:themes": "node scripts/check-themes.mjs",
+    "check:tokens": "node scripts/check-tokens.mjs",
+    "check:contrast": "node scripts/check-contrast.mjs"
   },
   "peerDependencies": {
     "lucide-react": ">=0.460.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^18.3.1 || ^19.0.0",
+    "react-dom": "^18.3.1 || ^19.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

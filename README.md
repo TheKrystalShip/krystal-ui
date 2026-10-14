@@ -21,8 +21,8 @@ import "@thekrystalship/krystal-ui/styles.css";        // tokens, fonts and ever
 import { BriefCard, Icon, Rail, Toasts, toast } from "@thekrystalship/krystal-ui";
 ```
 
-React 18, React DOM and `lucide-react` are peer dependencies: the site's own copies are used. The package
-depends on `@floating-ui/react-dom`, which places its popovers; a site never imports it.
+React (18.3 or 19), React DOM and `lucide-react` are peer dependencies: the site's own copies are used. The
+package depends on `@floating-ui/react-dom`, which places its popovers; a site never imports it.
 
 The modules under `lib/` (`store`, `theme`, `toasts`, `time`, `clipboard`, `pushBrowser`) are also
 addressable one at a time — `@thekrystalship/krystal-ui/lib/time` — for code that runs outside a
@@ -504,6 +504,11 @@ the memory editor, after `settings.css`.
 
 ```bash
 npm install
+npm run lint
+npm run check:markdown   # the composer's highlighter emits every character exactly once
+npm run check:themes     # native controls take the light scheme on exactly the light palettes
+npm run check:tokens     # every var() resolves; no literal colour or radius outside tokens.css
+npm run check:contrast   # every --on-* ink reads on its fill at 4.5:1 in every palette
 npm run build        # → dist/, one ES module per source file
 npm publish          # builds first (prepack); a published version is permanent
 npm publish --tag dev   # a prerelease
