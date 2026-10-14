@@ -25,8 +25,9 @@ import { Pill } from "./Pill.jsx";
 // panel whose state must survive a switch.
 const TabsContext = React.createContext(null);
 
-const tabId = (base, value) => base + "-tab-" + String(value);
-const panelId = (base, value) => base + "-panel-" + String(value);
+// A value is any string, and an id with a space in it is two names to aria-controls.
+const tabId = (base, value) => base + "-tab-" + encodeURIComponent(String(value));
+const panelId = (base, value) => base + "-panel-" + encodeURIComponent(String(value));
 
 /**
  * @typedef {object} TabsOwnProps
