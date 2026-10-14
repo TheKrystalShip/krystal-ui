@@ -115,7 +115,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
-| Page patterns | `ListPage` (heading, toolbar, rows, table or grid, pager and the loading, failed and empty states, from the site's data and flags), `DetailPage` (crumbs, a head or a Hero, tabs, an aside column and the whole-page loading, failed and not-found states) |
+| Page patterns | `ListPage` (heading, toolbar, rows, table or grid, pager and the loading, failed and empty states, from the site's data and flags), `DetailPage` (crumbs, a head or a Hero, tabs, an aside column and the whole-page loading, failed and not-found states), `SettingsPage` (sections of rows, a side nav that becomes a select at phone width, and a save bar that follows a form's dirty state) |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
@@ -379,6 +379,21 @@ the body at phone width, and `loading`, `error` and `isEmpty` replace the page u
   tabs={[{ value: "overview", label: "Overview" }, { value: "alerts", label: "Alerts", count: 3 }]}
   value={tab} onChange={setTab} renderTab={(t) => <Panel name={t} />} aside={<Card title="Connect">…</Card>}
   loading={!host} error={error} onRetry={reload} />
+```
+
+`SettingsPage` is a column of sections. `sections` are `{ id, title, icon, description, action, rows, content }`
+(`rows` are SettingsRow props with the controls in `control`; `content` replaces them), and `children` take
+sections of the site's own composition. With more than `navFrom` sections (four) a nav is drawn: sticky at
+wide widths, a select at phone width, scrolling to the section and moving focus into it. Pass `form`, a
+`useForm` handle, and the page is a `Form` over it, with a save bar that appears while `form.isDirty`:
+Save submits, Revert resets. Without a form, `dirty`, `saving`, `onSave` and `onRevert` drive the same bar.
+
+```jsx
+<SettingsPage title="Settings" form={form}
+  sections={[
+    { id: "profile", title: "Profile", icon: "user", content: <FormField name="display" label="Name" /> },
+    { id: "theme", title: "Appearance", icon: "palette", rows: [{ icon: "palette", title: "Theme", control: <ThemePicker /> }] },
+  ]} />
 ```
 
 `StatTile` is one figure: `label`, `value`, `unit`, `delta`, `sub`, `tone`, an optional `icon` and a

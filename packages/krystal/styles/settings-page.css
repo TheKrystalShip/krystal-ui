@@ -1,0 +1,147 @@
+/* ============================================================================
+   settings-page.css — SettingsPage: a column of sections beside an optional sticky nav (a select at
+   phone width) and the save bar stuck to the bottom edge while the form is dirty. The sections'
+   own look is brief.css and settings.css.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-settingspage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+.k-settingspage__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-6);
+  align-items: start;
+}
+
+.k-settingspage__layout--nav {
+  grid-template-columns: 200px minmax(0, 1fr);
+}
+
+.k-settingspage__content,
+.k-settingspage__form {
+  min-width: 0;
+}
+
+.k-settingspage__column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+.k-settingspage__section {
+  scroll-margin-top: var(--s-4);
+  outline: none;
+}
+
+.k-settingspage__section :where(.k-brief) {
+  margin-top: 0;
+}
+
+.k-settingspage__nav {
+  position: sticky;
+  top: var(--s-4);
+}
+
+.k-settingspage__navlist {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.k-settingspage__navitem {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 34px;
+  padding: 0 var(--s-3);
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--fg-3);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.k-settingspage__navitem:hover {
+  background: var(--surface-2);
+  color: var(--fg-1);
+}
+
+.k-settingspage__navitem.k-is-on {
+  background: var(--surface-3);
+  color: var(--fg-1);
+  font-weight: 600;
+}
+
+.k-settingspage__navitem:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--krystal-teal);
+}
+
+.k-settingspage__navselect {
+  display: none;
+}
+
+.k-settingspage__savebar {
+  position: sticky;
+  bottom: calc(var(--tabbar-h, 0px) + env(safe-area-inset-bottom, 0px) + var(--s-3));
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface-2);
+  border: var(--edge-strong);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-2);
+}
+
+.k-settingspage__savebar-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg-1);
+}
+
+.k-settingspage__savebar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .k-settingspage__layout--nav {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-4);
+  }
+
+  .k-settingspage__nav {
+    position: static;
+  }
+
+  .k-settingspage__navlist {
+    display: none;
+  }
+
+  .k-settingspage__navselect {
+    display: block;
+  }
+}
+
+}
