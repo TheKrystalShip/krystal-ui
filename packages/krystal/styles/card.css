@@ -1,0 +1,158 @@
+/* ============================================================================
+   card.css — <Card>: a framed surface with an optional head and foot. An openable card carries a
+   ::after over the whole card from its title control (the stretched link, as in list.css); the
+   head's actions sit above it. Sits after brief.css, whose BriefCard is the titled list frame.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-card {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--surface-1);
+  border: var(--edge);
+  border-radius: var(--r-md);
+  color: var(--fg-2);
+}
+
+.k-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: transparent;
+  pointer-events: none;
+}
+
+.k-card--accent::before { background: var(--krystal-teal); }
+.k-card--ok::before { background: var(--success); }
+.k-card--info::before { background: var(--info); }
+.k-card--warn::before { background: var(--warning); }
+.k-card--danger::before { background: var(--danger); }
+
+.k-card.k-is-selected { background: var(--krystal-teal-dim); }
+.k-card.k-is-selected::before { background: var(--krystal-teal); }
+
+.k-card--open:hover:not(.k-is-selected) { background: var(--surface-2); }
+
+.k-card--open:has(.k-card__open:focus-visible) {
+  outline: 2px solid var(--krystal-teal-ring);
+  outline-offset: -2px;
+}
+
+.k-card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px 0;
+}
+
+.k-card__heading {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.k-card__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  color: var(--fg-1);
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.k-card__icon { flex: none; color: var(--fg-3); }
+
+.k-card__title-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-card__open {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-card__open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.k-card__open--bare {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.k-card__sub {
+  margin-top: 2px;
+  color: var(--fg-3);
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+
+.k-card__actions {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.k-card__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.k-card--pad-sm .k-card__body { padding: 10px 12px; }
+.k-card--pad-md .k-card__body { padding: 14px 16px; }
+.k-card--pad-lg .k-card__body { padding: 20px 24px; }
+.k-card--pad-none .k-card__body { padding: 0; }
+
+.k-card__head + .k-card__body { padding-top: 10px; }
+
+.k-card--pad-none .k-card__head { padding-bottom: 12px; border-bottom: var(--edge); }
+.k-card--pad-none .k-card__head + .k-card__body { padding-top: 0; }
+
+.k-card__foot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: var(--edge);
+  color: var(--fg-3);
+  font-size: 12.5px;
+}
+
+@media (max-width: 768px) {
+  .k-card--pad-lg .k-card__body { padding: 16px; }
+}
+}

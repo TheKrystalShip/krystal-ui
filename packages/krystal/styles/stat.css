@@ -1,0 +1,168 @@
+/* ============================================================================
+   stat.css — <StatTile> and <StatTiles>: one figure in a framed tile, and the responsive grid
+   that holds several. The tile is calm; only a warn or danger tone draws a hairline on top.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--k-stats-min, 180px), 100%), 1fr));
+  gap: 12px;
+}
+
+.k-stat {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 14px 16px;
+  overflow: hidden;
+  background: var(--surface-1);
+  border: var(--edge);
+  border-radius: var(--r-md);
+}
+
+.k-stat--sm { gap: 4px; padding: 9px 12px 11px; }
+
+.k-stat--warn::before,
+.k-stat--danger::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 2px;
+}
+
+.k-stat--warn::before { background: var(--warning); }
+.k-stat--danger::before { background: var(--danger); }
+
+.k-stat__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--fg-3);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.k-stat__label > svg { flex: none; }
+
+.k-stat__label-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-stat__open {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.k-stat__open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.k-stat--open:hover { background: var(--surface-2); }
+
+.k-stat--open:has(.k-stat__open:focus-visible) {
+  outline: 2px solid var(--krystal-teal-ring);
+  outline-offset: -2px;
+}
+
+.k-stat__figure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  min-width: 0;
+}
+
+.k-stat__value {
+  color: var(--fg-1);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.k-stat--sm .k-stat__value { font-size: 21px; letter-spacing: -0.02em; }
+
+.k-stat__value.k-is-unknown { color: var(--fg-4); }
+
+.k-stat--ok .k-stat__value { color: var(--success-fg); }
+.k-stat--info .k-stat__value { color: var(--krystal-teal); }
+.k-stat--warn .k-stat__value { color: var(--warning-fg); }
+.k-stat--danger .k-stat__value { color: var(--danger-fg); }
+.k-stat--ok .k-stat__value.k-is-unknown,
+.k-stat--info .k-stat__value.k-is-unknown,
+.k-stat--warn .k-stat__value.k-is-unknown,
+.k-stat--danger .k-stat__value.k-is-unknown { color: var(--fg-4); }
+
+.k-stat__unit {
+  color: var(--fg-3);
+  font-size: var(--text-base);
+}
+
+.k-stat--sm .k-stat__unit { font-size: 11px; }
+
+.k-stat__delta {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.k-stat__delta--muted { color: var(--fg-3); }
+.k-stat__delta--ok { color: var(--success-fg); }
+.k-stat__delta--warn { color: var(--warning-fg); }
+.k-stat__delta--danger { color: var(--danger-fg); }
+
+.k-stat__sub {
+  color: var(--fg-3);
+  font-size: 11.5px;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-stat--sm .k-stat__sub { font-size: 10.5px; }
+
+.k-stat__spark { min-width: 0; }
+
+.k-stat__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .k-stat__value { font-size: 22px; }
+  .k-stats { grid-template-columns: repeat(auto-fill, minmax(min(var(--k-stats-min, 180px), 100%), 1fr)); gap: 8px; }
+}
+}

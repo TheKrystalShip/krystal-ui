@@ -1,0 +1,250 @@
+/* ============================================================================
+   table.css — <Table>: a real table in a framed surface. A row that opens carries a ::after over
+   the whole row from its first cell's control (the stretched link, as in list.css); interactive
+   cells and the actions cell sit above it. At phone width every row is a card and the sortable
+   headers are a strip of buttons above them. Sits after list.css.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-table {
+  box-sizing: border-box;
+  min-width: 0;
+  overflow-x: auto;
+  background: var(--surface-1);
+  border: var(--edge);
+  border-radius: var(--r-md);
+}
+
+.k-table--state {
+  padding: 16px 14px;
+}
+
+.k-table__grid {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 13px;
+  color: var(--fg-2);
+}
+
+.k-table__th {
+  padding: 9px 14px;
+  background: var(--surface-2);
+  border-bottom: var(--edge);
+  color: var(--fg-3);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.k-table__th--right { text-align: right; }
+.k-table__th--center { text-align: center; }
+.k-table__th--actions { width: 1%; }
+
+.k-table__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.k-table__sort:hover { color: var(--fg-2); }
+.k-table__sort:focus-visible { outline: none; box-shadow: var(--ring-focus); border-radius: var(--r-sm); }
+.k-table__sort.k-is-active { color: var(--fg-1); }
+
+.k-table__sort-icon {
+  flex: none;
+  opacity: 0.35;
+}
+
+.k-table__sort:hover .k-table__sort-icon { opacity: 0.7; }
+
+.k-table__sort.k-is-active .k-table__sort-icon {
+  opacity: 1;
+  color: var(--krystal-teal);
+}
+
+.k-table__row {
+  position: relative;
+}
+
+.k-table__row {
+  border-top: var(--edge);
+}
+
+.k-table__row:first-child { border-top: 0; }
+
+.k-table__cell {
+  box-sizing: border-box;
+  padding: 11px 14px;
+  min-width: 0;
+  vertical-align: middle;
+  text-align: left;
+}
+
+.k-table--dense .k-table__cell { padding: 6px 14px; }
+.k-table--dense .k-table__th { padding: 6px 14px; }
+
+.k-table__cell--right,
+.k-table__cell--center { font-variant-numeric: tabular-nums; }
+.k-table__cell--right { text-align: right; }
+.k-table__cell--center { text-align: center; }
+.k-table__cell--mono { font-family: var(--font-mono); font-size: 12px; }
+.k-table__cell--unknown { color: var(--fg-4); }
+
+.k-table__cell:first-child { color: var(--fg-1); font-weight: 600; }
+
+/* The leading edge: a tone, or the selection. */
+.k-table__row--accent > .k-table__cell:first-child { box-shadow: inset 3px 0 0 var(--krystal-teal); }
+.k-table__row--ok > .k-table__cell:first-child { box-shadow: inset 3px 0 0 var(--success); }
+.k-table__row--info > .k-table__cell:first-child { box-shadow: inset 3px 0 0 var(--info); }
+.k-table__row--warn > .k-table__cell:first-child { box-shadow: inset 3px 0 0 var(--warning); }
+.k-table__row--danger > .k-table__cell:first-child { box-shadow: inset 3px 0 0 var(--danger); }
+
+.k-table__row.k-is-selected {
+  background: var(--krystal-teal-dim);
+}
+
+.k-table__row.k-is-selected > .k-table__cell:first-child { box-shadow: inset 3px 0 0 var(--krystal-teal); }
+
+.k-table__row--open:hover:not(.k-is-selected) { background: var(--veil-1); }
+
+.k-table__open {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.k-table__open::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.k-table__row--open:has(.k-table__open:focus-visible) {
+  outline: 2px solid var(--krystal-teal-ring);
+  outline-offset: -2px;
+}
+
+.k-table__cell--interactive,
+.k-table__cell--actions {
+  position: relative;
+  z-index: 1;
+}
+
+.k-table__cell--actions { width: 1%; white-space: nowrap; }
+
+.k-table__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.k-table__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+  .k-table .k-table__col--hide-tablet { display: none; }
+}
+
+@media (max-width: 768px) {
+  .k-table .k-table__col--hide-phone { display: none; }
+
+  .k-table { overflow-x: visible; background: none; border: 0; border-radius: 0; }
+  .k-table--state { background: var(--surface-1); border: var(--edge); border-radius: var(--r-md); }
+
+  .k-table__grid,
+  .k-table__grid tbody { display: block; }
+
+  /* The sortable headers stay, as a strip of buttons above the cards. */
+  .k-table__grid thead { display: none; }
+  .k-table__grid--sortable thead { display: block; margin-bottom: 8px; }
+  .k-table__grid thead tr { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .k-table__th--static { display: none; }
+  .k-table__th { padding: 0; background: none; border: 0; }
+  .k-table__sort { min-height: 40px; }
+
+  .k-table__row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: var(--surface-1);
+    border: var(--edge);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+
+  .k-table__row:first-child { border-top: var(--edge); margin-top: 0; }
+
+  .k-table__cell,
+  .k-table--dense .k-table__cell {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0;
+    text-align: right;
+  }
+
+  .k-table__cell--center { text-align: right; }
+  .k-table__cell[data-label]::before {
+    content: attr(data-label);
+    flex: none;
+    color: var(--fg-3);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .k-table__cell:first-child { display: block; text-align: left; font-size: 14px; }
+  .k-table__row > .k-table__cell:first-child,
+  .k-table__row.k-is-selected > .k-table__cell:first-child,
+  .k-table__row--accent > .k-table__cell:first-child,
+  .k-table__row--ok > .k-table__cell:first-child,
+  .k-table__row--info > .k-table__cell:first-child,
+  .k-table__row--warn > .k-table__cell:first-child,
+  .k-table__row--danger > .k-table__cell:first-child { box-shadow: none; position: static; }
+
+  .k-table__row--accent { box-shadow: inset 3px 0 0 var(--krystal-teal); }
+  .k-table__row--ok { box-shadow: inset 3px 0 0 var(--success); }
+  .k-table__row--info { box-shadow: inset 3px 0 0 var(--info); }
+  .k-table__row--warn { box-shadow: inset 3px 0 0 var(--warning); }
+  .k-table__row--danger { box-shadow: inset 3px 0 0 var(--danger); }
+  .k-table__row.k-is-selected { box-shadow: inset 3px 0 0 var(--krystal-teal); }
+
+  .k-table__cell--actions { width: auto; justify-content: flex-end; padding-top: 4px; }
+}
+}

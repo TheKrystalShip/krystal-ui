@@ -1,20 +1,15 @@
-// AccountAvatar — a person, as a circle: a teal-gradient disc with their initial.
+import { Avatar } from "./Avatar.jsx";
+
+// AccountAvatar — a person, as a circle: a teal-gradient disc with their initial. An Avatar whose
+// `user` is the account record (`display`, else `name`) and whose `size` is a diameter in pixels.
 /**
  * @param {object} props
  * @param {{ display?: string, name?: string } | null} [props.user] The person; their initial is drawn.
  * @param {number} [props.size] Diameter in pixels.
  */
 function AccountAvatar({ user, size = 24 }) {
-  const initial = ((user && (user.display || user.name)) || "?")[0].toUpperCase();
-  return (
-    <span style={{
-      width: size, height: size, borderRadius: 999,
-      background: "linear-gradient(135deg, var(--krystal-teal-hover), var(--krystal-teal-press))",
-      display: "inline-flex", alignItems: "center", justifyContent: "center",
-      color: "var(--fg-inverse)", fontSize: size * 0.46, fontWeight: 700,
-      flexShrink: 0,
-    }}>{initial}</span>
-  );
+  const who = (user && (user.display || user.name)) || "";
+  return <Avatar name={who ? Array.from(who.trim())[0] : undefined} size={size} />;
 }
 
 export { AccountAvatar };

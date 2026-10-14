@@ -106,6 +106,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Labels | `Pill` (a count, a state or a kind as a small non-interactive label), `Kbd` (a key, or a chord with `keys`, in mono) |
 | Layout | `Stack` (a column), `Cluster` (a wrapping row), `Grid` (columns of a `min` width, or `cols`), `Container` (the centred page column, `size` sm to xl or full); each takes `gap` as a spacing step or `xs` to `xl`, and `as` |
 | Lists | `List`, `ListRow` (a framed list of rows with a lead, pills, an aside and actions) |
+| Data | `Table` (a real table with sortable headers, rows that open, row actions and a card per row at phone width), `sortRows`, `StatTile` and `StatTiles` (one measured figure, and the grid of them), `Card` (a framed surface with a head, a foot and an optional open target), `DataState` (draws loading, failed, empty or loaded from what the site says) |
 | Sign-in screens | `CardScreen` (the centred card on the page background), `CopyField` (a read-only value with a copy button) |
 | Sign-in | `ProviderMark`, `providerLabel`, `ProviderButton` (a provider's mark and name, and a button carrying them) |
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `OptionList`, `Meter` |
@@ -114,7 +115,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
-| Marks | `Icon` (Lucide, by kebab-case name), `AccountAvatar`, `AssistantFabIcon` |
+| Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
 | State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS` + `registerThemes`, `copyText`, `pushBrowser`, `fmtRelative` |
 
 `@thekrystalship/krystal-chat`:
@@ -251,6 +252,50 @@ thin leading edge. At phone width `meta` and `aside` wrap under the title. `data
     meta={<Pill size="sm" tone="info">Operator</Pill>} onOpen={() => open(user)}
     actions={<IconButton variant="ghost" icon="trash-2" label="Remove" onClick={() => remove(user)} />} />
 </List>
+```
+
+`DataState` draws a read's state and fetches nothing: `loading` draws the `skeleton` the site passes (or
+a few Skeleton lines), `error` a danger Notice with a Retry button when `onRetry` is given, an empty
+`data` array (or `isEmpty`) the `empty` node or an EmptyState from `emptyTitle` and `emptyBody`, and
+otherwise `children`, a node or a function of `data`.
+
+```jsx
+<DataState loading={q.loading} error={q.error} onRetry={q.retry} data={q.data}
+  emptyTitle="No people yet" emptyAction={<Button onClick={invite}>Invite</Button>}>
+  {(people) => <List>{people.map(…)}</List>}
+</DataState>
+```
+
+`Table` takes `columns` (`key`, `header`, `render`, `width`, `align`, `sortable`, `sortValue`, `mono`,
+`hideBelow`, `interactive`) and `rows`. Sorting is controlled through `sort` and `onSortChange`, and
+`sortRows(rows, columns, sort)` orders data a site holds whole, null values last. `onRowOpen` (or
+`rowHref`) makes the first column's content the row's open control with a hit area over the whole row;
+`rowActions` and `interactive` cells stay separate targets. `loading`, `error` and an empty `rows` draw
+through `DataState`. At phone width each row is a card with its header as an inline label.
+
+```jsx
+<Table label="People" rows={people} rowKey={(p) => p.id} sort={sort} onSortChange={setSort}
+  columns={[
+    { key: "name", header: "Name", sortable: true },
+    { key: "seen", header: "Last seen", sortable: true, mono: true, hideBelow: "tablet" },
+    { key: "role", header: "Role", render: (p) => <Pill>{p.role}</Pill> },
+  ]}
+  onRowOpen={open} rowActions={(p) => <IconButton variant="ghost" icon="trash-2" label="Remove" onClick={() => remove(p)} />} />
+```
+
+`StatTile` is one figure: `label`, `value`, `unit`, `delta`, `sub`, `tone`, an optional `icon` and a
+`spark` node under the figure. A `null` value draws "—", read as "unknown", never 0. `StatTiles` is the
+responsive grid (`min` is the narrowest tile). `Card` frames anything: `title`, `sub`, `icon`,
+`actions`, `foot`, `padding`, `tone`, and `onOpen` or `href` to make the whole card open. `Avatar`
+takes `src` or the initials of `name`, a `size` (xs to xl), a `shape` and a `status` dot.
+
+```jsx
+<StatTiles>
+  <StatTile icon="users" label="Online" value={count} sub="of 40 seats" tone="info" />
+  <StatTile label="Backup age" value={age} unit="h" tone={age > 24 ? "danger" : "ok"} />
+</StatTiles>
+<Card title="Release" sub="Stable channel" actions={<Button size="sm">Publish</Button>} foot="Updated today">…</Card>
+<Avatar src={user.photo} name={user.name} size="lg" status="ok" statusLabel="Online" />
 ```
 
 `CardScreen` is the centred card on the page background that sign-in, the wait for approval and a

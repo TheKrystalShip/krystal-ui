@@ -4,10 +4,13 @@
 
 export { AccountAvatar } from "./components/AccountAvatar.jsx";
 export { default as AssistantFabIcon } from "./components/AssistantFabIcon.jsx";
+export { Avatar } from "./components/Avatar.jsx";
 export { Breadcrumbs } from "./components/Breadcrumbs.jsx";
 export { BriefCard } from "./components/BriefCard.jsx";
 export { Button, IconButton } from "./components/Button.jsx";
+export { Card } from "./components/Card.jsx";
 export { Checkbox, Field, Input, PasswordInput, Textarea } from "./components/fields.jsx";
+export { DataState } from "./components/DataState.jsx";
 export { Dialog } from "./components/Dialog.jsx";
 export { Drawer } from "./components/Drawer.jsx";
 export { EmptyState } from "./components/EmptyState.jsx";
@@ -40,7 +43,9 @@ export { ShowcaseCard } from "./components/ShowcaseCard.jsx";
 export { Skeleton } from "./components/Skeleton.jsx";
 export { Spinner } from "./components/Spinner.jsx";
 export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, TabBar } from "./components/Shell.jsx";
+export { StatTile, StatTiles } from "./components/StatTile.jsx";
 export { SubTabs } from "./components/SubTabs.jsx";
+export { Table, sortRows } from "./components/Table.jsx";
 export { ThemePicker } from "./components/ThemePicker.jsx";
 export { Toasts } from "./components/Toasts.jsx";
 export { Toggle } from "./components/Toggle.jsx";

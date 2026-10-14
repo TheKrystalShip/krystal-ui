@@ -11,6 +11,9 @@
 @import "./styles/layout.css";
 @import "./styles/pill.css";
 @import "./styles/list.css";
+@import "./styles/avatar.css";
+@import "./styles/stat.css";
+@import "./styles/table.css";
 @import "./styles/shell.css";
 @import "./styles/subtabs.css";
 @import "./styles/hero.css";
@@ -23,6 +26,7 @@
 @import "./styles/pagination.css";
 @import "./styles/breadcrumbs.css";
 @import "./styles/brief.css";
+@import "./styles/card.css";
 @import "./styles/rail.css";
 @import "./styles/toast.css";
 @import "./styles/settings.css";

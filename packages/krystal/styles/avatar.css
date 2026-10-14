@@ -1,0 +1,53 @@
+/* ============================================================================
+   avatar.css — <Avatar>: an image, or initials on a teal-gradient disc, with an optional status
+   dot on the lower corner. Size and font size are set inline from the size ladder.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-avatar {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--krystal-teal-hover), var(--krystal-teal-press));
+  color: var(--fg-inverse);
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.k-avatar--circle,
+.k-avatar--circle .k-avatar__img { border-radius: var(--r-pill); }
+
+.k-avatar--rounded,
+.k-avatar--rounded .k-avatar__img { border-radius: var(--r-md); }
+
+.k-avatar__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.k-avatar__initials { letter-spacing: 0.02em; }
+
+.k-avatar__status {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  box-sizing: border-box;
+  border: 2px solid var(--surface-1);
+  border-radius: var(--r-pill);
+  background: var(--fg-4);
+}
+
+.k-avatar__status--ok { background: var(--success); }
+.k-avatar__status--warn { background: var(--warning); }
+.k-avatar__status--danger { background: var(--danger); }
+.k-avatar__status--info { background: var(--info); }
+}
