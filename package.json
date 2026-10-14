@@ -13,7 +13,9 @@
   ],
   "scripts": {
     "build": "npm run build -w @thekrystalship/krystal && npm run build -w @thekrystalship/krystal-chat",
-    "play": "vite playground",
+    "docs:data": "node scripts/docs-props.mjs && node scripts/docs-tokens.mjs",
+    "play": "npm run docs:data && vite playground",
+    "build:docs": "npm run docs:data && vite build playground",
     "lint": "eslint packages scripts playground",
     "check:types": "npm run build -w @thekrystalship/krystal && npm run check:types --workspaces",
     "check:markdown": "node scripts/check-markdown-highlight.mjs",
