@@ -118,6 +118,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
+| Overlays | `Dialog`, `Modal`, `Popover`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
@@ -481,6 +482,24 @@ with `onSubmit` makes the sheet a form, and `art` draws a banner above the head.
 `gap` is a step of the spacing scale (`--s-N`) or a name for one (`xs` 1, `sm` 2, `md` 4, `lg` 6, `xl` 8).
 A `Drawer` takes `side="right"` or `"left"` for a panel at the screen's edge; on touch its head is
 the grip a pull toward the edge closes it by.
+
+## Panels that float
+
+`Popover` is a non-modal panel anchored to a trigger, for content that is more than a list of
+commands: a filter form, a notification list. It is the non-modal dialog pattern. `trigger` is one
+element, which the Popover clones with its ref, `aria-expanded`, `aria-controls` and a toggling click;
+without one the caller controls `open` and `onOpenChange` and names the element in `anchorRef`.
+`title` is the heading and the accessible name (`label` names a panel with no heading), `placement` is
+the preferred side, and `children` may be a function receiving `{ close }`. Focus moves into the panel
+on open; Escape (marked handled, so a dialog around it stays open) closes it and returns focus to the
+trigger, and so does Tab past either end of the panel. A press outside closes it. Every floating
+panel is portaled to the body and placed by Floating UI.
+
+```jsx
+<Popover trigger={<Button variant="outline" icon="sliders-horizontal">Filters</Button>} title="Filters">
+  {({ close }) => (<><FilterForm /><Button onClick={close}>Done</Button></>)}
+</Popover>
+```
 
 ## The frame
 

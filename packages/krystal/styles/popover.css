@@ -1,0 +1,48 @@
+/* ============================================================================
+   popover.css — <Popover>, a non-modal floating panel anchored to a trigger. Portaled and placed by Floating UI,
+   so no rule here positions it; above the dock and the dialogs, below the toasts.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-popover {
+  z-index: 80;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  max-height: min(70vh, 560px);
+  overflow: auto;
+  background: var(--surface-1);
+  border: var(--edge-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
+  color: var(--fg-1);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  animation: k-fade var(--d-fast) var(--ease-out);
+}
+
+.k-popover:focus,
+.k-popover:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-2);
+}
+
+.k-popover__title {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-popover {
+    animation: none;
+  }
+}
+}
