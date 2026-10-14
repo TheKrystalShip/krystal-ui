@@ -101,7 +101,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
-| Cards and lists | `BriefCard`, `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art, a `ribbon` hanging from its top edge for keeping the thing, an `eyebrow` above the name saying what kind of thing it is, and along its foot a `progress` bar or one short bar per part in `segments`), `CollectionTile` (a set of titles as a link: `fan` draws three posters fanned beside its mark and name, `strip` its posters in order, numbered, and with `total` and `watched` follows somebody through it; it fills its slot at a fixed shape and takes a TvCard's focus on a television), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
+| Cards and lists | `BriefCard` (with `BriefList`, `BriefItem` (a row: `tone`, `icon`, `title`, `detail`, `action`, a button with `onClick` or a link with `href`), `BriefEmpty` and `FactList` for its body), `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art, a `ribbon` hanging from its top edge for keeping the thing, an `eyebrow` above the name saying what kind of thing it is, and along its foot a `progress` bar or one short bar per part in `segments`), `CollectionTile` (a set of titles as a link: `fan` draws three posters fanned beside its mark and name, `strip` its posters in order, numbered, and with `total` and `watched` follows somebody through it; it fills its slot at a fixed shape and takes a TvCard's focus on a television), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Slides | `useCarousel` (one of several slides at a time, turning by itself on an interval: held still under a mouse, under keyboard focus, on a hidden page and while `paused`, never turning by itself under reduced motion, its time started over by a key or a press in it, and turned by a swipe), `CarouselPager` (a mark a slide, the shown one filling over the slide's time; `indicator` for a television, where the marks are not focused) |
 | Labels | `Pill` (a count, a state or a kind as a small non-interactive label), `Kbd` (a key, or a chord with `keys`, in mono) |
 | Layout | `Stack` (a column), `Cluster` (a wrapping row), `Grid` (columns of a `min` width, or `cols`), `Container` (the centred page column, `size` sm to xl or full); each takes `gap` as a spacing step or `xs` to `xl`, and `as` |
@@ -511,6 +511,15 @@ is busy while submitting, and with `requireDirty` waits for a change. `form.valu
   onConfirm={async () => { const r = await remove(); if (!r.ok) return { refusal: r.message }; }}>
   <p>Anything signed in through it stops working.</p>
 </ConfirmDialog>
+```
+
+```jsx
+<BriefCard icon="bell" title="Needs a look" count={alerts.length}>
+  {alerts.length === 0
+    ? <BriefEmpty icon="circle-check" title="No active alerts" body="Everything is running clean." />
+    : <BriefList>{alerts.map((a) => <BriefItem key={a.id} tone="warn" icon="alert-triangle" title={a.title} detail={a.detail} action="Look" onClick={() => open(a)} />)}</BriefList>}
+</BriefCard>
+<BriefCard icon="info" title="Unit"><FactList rows={[{ label: "State", value: "active", tone: "ok" }, { label: "Unit", value: name, mono: true }]} /></BriefCard>
 ```
 
 `ConfirmDialog` asks before a change that is hard to take back: a `Dialog` with the consequence as
