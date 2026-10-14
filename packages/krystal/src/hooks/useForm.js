@@ -164,6 +164,9 @@ function useForm(options = {}) {
     return () => sub.unsubscribe();
   }, [rhf]);
 
+  // Focus waits for the fields to be enabled again: they are inert while a submission runs.
+  const pendingFocus = React.useRef(/** @type {string[] | null} */ (null));
+
   const focus = React.useCallback((name) => {
     const frames = document.querySelectorAll('[data-k-form="' + id + '"][data-k-field="' + name + '"]');
     for (const frame of frames) {
@@ -179,6 +182,14 @@ function useForm(options = {}) {
     const hit = frames.find((f) => names.includes(f.getAttribute("data-k-field")));
     if (hit) focus(hit.getAttribute("data-k-field"));
   }, [id, focus]);
+
+  React.useEffect(() => {
+    if (pendingFocus.current && !isSubmitting) {
+      const names = pendingFocus.current;
+      pendingFocus.current = null;
+      focusFirst(names);
+    }
+  });
 
   const setErrors = React.useCallback((byName) => {
     for (const [name, message] of Object.entries(byName || {})) {
@@ -214,11 +225,11 @@ function useForm(options = {}) {
         setErrors(Object.fromEntries(named.filter(([name]) => fields.current.has(name))));
         const message = outcome.message || (unplaced.length ? unplaced.join(" ") : null);
         if (message) setFormError(message);
-        focusFirst(named.map(([name]) => name));
+        pendingFocus.current = named.map(([name]) => name);
       },
-      (invalid) => focusFirst(Object.keys(flatten(invalid))),
+      (invalid) => { pendingFocus.current = Object.keys(flatten(invalid)); },
     )(event);
-  }, [rhf, setErrors, focusFirst]);
+  }, [rhf, setErrors]);
 
   const register = React.useCallback((name) => {
     fields.current.set(name, (fields.current.get(name) || 0) + 1);

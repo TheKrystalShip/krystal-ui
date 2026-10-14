@@ -1,0 +1,16 @@
+/* ============================================================================
+   form.css — the form layer's layout (Form): its fields stacked at one gap, the form-level error
+   above them. The controls themselves are controls.css. Sits after it.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+}
