@@ -1,4 +1,3 @@
-import React from "react";
 import { Icon } from "./Icon.jsx";
 
 // The furniture that goes inside a BriefCard: `BriefList` holds rows, `BriefItem` is one row (a tone

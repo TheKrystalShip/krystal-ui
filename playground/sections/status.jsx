@@ -1,4 +1,3 @@
-import React from "react";
 import { StatusDot } from "@thekrystalship/krystal";
 import { Section, Sub, row } from "../kit.jsx";
 
