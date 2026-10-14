@@ -7,6 +7,9 @@ import { ApiBlock } from "./ApiBlock.jsx";
 import { Behaviour } from "./Behaviour.jsx";
 import { EXAMPLES } from "./examples.jsx";
 
+/** A line of prose with its `backticked` spans drawn as code. */
+const inline = (text) => text.split(/`([^`]+)`/).map((part, i) => (i % 2 ? <code key={i} className="pg-code">{part}</code> : part));
+
 export function ComponentPage({ page }) {
   const entries = page.exports.filter((n) => api[n]).map((n) => [n, api[n]]);
   const packages = [...new Set(entries.map(([, e]) => e.package))];
@@ -17,8 +20,8 @@ export function ComponentPage({ page }) {
       <header className="pg-head">
         <p className="pg-eyebrow">{page.group}</p>
         <h1>{page.name}</h1>
-        <p className="pg-summary">{page.summary}</p>
-        {page.versus && <p className="pg-versus"><strong>Versus its neighbours.</strong> {page.versus}</p>}
+        <p className="pg-summary">{inline(page.summary)}</p>
+        {page.versus && <p className="pg-versus"><strong>Versus its neighbours.</strong> {inline(page.versus)}</p>}
         <p className="pg-dim">From {packages.map((p, i) => <React.Fragment key={p}>{i > 0 && ", "}<code className="pg-code">{p}</code></React.Fragment>)}.</p>
       </header>
       {page.examples.length > 0 && (
