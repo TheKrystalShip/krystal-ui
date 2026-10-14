@@ -160,4 +160,25 @@
     padding-top: env(safe-area-inset-top);
   }
 }
+
+/* ConfirmDialog's body: an optional refusal over the consequence text. */
+.k-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.k-confirm__text {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--fg-2);
+}
+
+.k-confirm__text > p {
+  margin: 0;
+}
+
+.k-confirm__text > p + p {
+  margin-top: 8px;
+}
 }

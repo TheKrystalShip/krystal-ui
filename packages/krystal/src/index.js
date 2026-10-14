@@ -11,6 +11,7 @@ export { Button, IconButton } from "./components/Button.jsx";
 export { Card } from "./components/Card.jsx";
 export { Checkbox, Field, Input, PasswordInput, Textarea } from "./components/fields.jsx";
 export { DataState } from "./components/DataState.jsx";
+export { ConfirmDialog } from "./components/ConfirmDialog.jsx";
 export { Dialog } from "./components/Dialog.jsx";
 export { Drawer } from "./components/Drawer.jsx";
 export { Accordion, Disclosure } from "./components/Disclosure.jsx";
