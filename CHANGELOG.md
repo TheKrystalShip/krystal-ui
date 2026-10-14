@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.35.0]
+
+### Added
+- **The documentation**: `npm run play` opens a page per component, grouped by family with a search, each
+  with its use against its neighbours, live examples, a props table generated from the JSDoc (every prop
+  described), and its keys and roles; a token reference that reads `tokens.css` live in the chosen
+  palette; and the guides, `docs/getting-started.md` and `docs/migrating-to-tks-krystal.md`. `#/all`
+  draws every example on one page.
+- **The test suite**: `npm test` (Vitest, Testing Library and jsdom over the components' behaviour, the
+  chat's conversation functions and the assistant client), `npm run test:a11y` (axe over every section in
+  a dark and a light palette) and `npm run test:visual` (screenshots against this machine's baselines).
+  CI runs the first two.
+
+### Changed
+- **The Krystal Blue palettes read at 4.5:1**: dark `--fg-3` is lighter; light `--fg-3`, `--success-fg`,
+  `--warning-fg` and the teal accent (with its hover, press, dim, ring and accent-edge steps) are darker.
+- **Quiet text that a person reads uses `--fg-3`**: a field's aside, a sidebar group's label and the
+  account line, a fact's hint and a key chord's separator. `--fg-4` is for placeholders and disabled text.
+- **Small targets reach 24px**: a checkbox row and a showcase card's action.
+- **The card screen's foot link is underlined.**
+
+### Fixed
+- **An armed `Button` reads in a light palette**: its ink is `--canvas` on its `--fg-1` fill.
+- **A `Menu`'s typeahead steps through the items that start with a letter struck again.**
+- **Revealing an `OptionList`'s collapsed rows focuses one that can take focus.**
+- **A `FormField`'s text control is named by its label alone**, not its label, hint and error.
+- **A `Tab` whose value has a space** names its panel with one id.
+
 ## [0.34.0]
 
 ### Added
