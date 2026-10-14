@@ -43,7 +43,7 @@ Each package ships its own type declarations (`dist/**/*.d.ts`, named by the `ty
 JavaScript too: each component's props, each hook's arguments and each store's state type are read from
 the JSDoc beside the source.
 
-The modules under core's `lib/` (`store`, `theme`, `toasts`, `time`, `clipboard`, `pushBrowser`, `sse`) are also
+The modules under core's `lib/` (`store`, `theme`, `toasts`, `time`, `clipboard`, `pushBrowser`, `sse`, `spatialFocus`) are also
 addressable one at a time — `@thekrystalship/krystal/lib/time` — for code that runs outside a
 browser and must not load React.
 
@@ -727,8 +727,25 @@ The parts a television page is built from, in `components/Tv.jsx`:
   nears it, so a page of rows styles and paints only what shows. `TvTile` ends a row: an icon over a few words, the cards' size.
 
 `--tv-margin-x` and `--tv-margin-y` are the margins a television may crop, and the card sizes are
-tokens beside them. Moving focus with the remote's arrows is the site's. `styles/tv.css` is the last
-sheet, after everything whose focus it overrides.
+tokens beside them. `styles/tv.css` is the last sheet, after everything whose focus it overrides.
+
+Moving focus with the remote's arrows is `lib/spatialFocus` (`createSpatialFocus`, or `useSpatialFocus`
+while a component is mounted): it takes the arrow keys, Enter and Escape for the document and moves
+focus to the drawn, focusable element that scores best in the arrow's direction, by geometry alone.
+It traps focus in the topmost `role="dialog"`, `role="menu"` or `aria-modal` element and hands it back
+when that goes, remembers the last element of each sideways-scrolling row and the control each page was
+left on, keeps a slider's Left and Right and a text field's caret, and picks up the nearest element
+when the focused one is removed. A page marks `data-tv-initial` on the control focus starts on,
+`data-tv-column` on a column that clips instead of scrolling, `data-tv-line` and `data-tv-row` to hold
+the focused row on one line of a column, `data-tv-top` on what takes the column back to its top, and
+`data-tv-preparing` on `main` while the next page is built out of sight. The site gives it the keys the
+remote has that never reach a page: `onBack` and `onMenu` answer whether the page used the key.
+
+```jsx
+const spatial = useSpatialFocus({ onBack: () => history.back() || true });
+// or, outside React: const spatial = createSpatialFocus({ pageKey: () => location.href }); spatial.start();
+// spatial.follow(() => spatial.recall(main) || spatial.initialIn(main)) puts focus on a page that was shown.
+```
 
 ## The assistant chat
 

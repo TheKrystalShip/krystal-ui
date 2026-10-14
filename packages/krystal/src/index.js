@@ -77,10 +77,12 @@ export { useForm } from "./hooks/useForm.js";
 export { useModalBehaviour } from "./hooks/useModalBehaviour.js";
 export { usePhone } from "./hooks/usePhone.js";
 export { usePortalPopover } from "./hooks/usePortalPopover.js";
+export { useSpatialFocus } from "./hooks/useSpatialFocus.js";
 export { useStoredFlag } from "./hooks/useStoredFlag.js";
 
 export { copyText } from "./lib/clipboard.js";
 export * as pushBrowser from "./lib/pushBrowser.js";
+export { createSpatialFocus, focusElement } from "./lib/spatialFocus.js";
 export { createStore, useStore } from "./lib/store.js";
 export { themeStore, useThemePref, useResolvedTheme, resolveTheme, registerThemes, THEME_KEY, THEME_OPTS } from "./lib/theme.js";
 export { fmtRelative } from "./lib/time.js";
