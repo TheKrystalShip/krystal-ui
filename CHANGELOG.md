@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.32.1]
+
+### Fixed
+- **`@thekrystalship/krystal/lib/sse` is in the package.** Every `lib/` module is a build entry of its own,
+  so each one `./lib/*` exports is emitted whether or not the index reaches it, and the chat's client,
+  which reads its event stream through it, resolves. `npm run check:exports` fails when a module the
+  exports map promises is missing from a build, and CI runs it after the build.
+
 ## [0.32.0]
 
 ### Added

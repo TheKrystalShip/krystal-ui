@@ -21,6 +21,7 @@
     "check:tokens": "node scripts/check-tokens.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:contract": "node scripts/check-contract.mjs",
+    "check:exports": "node scripts/check-exports.mjs",
     "check:palettes": "node packages/krystal/bin/krystal-check-theme.mjs packages/krystal/styles/tokens.css"
   },
   "devDependencies": {

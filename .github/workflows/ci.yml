@@ -31,3 +31,4 @@ jobs:
       - run: npm run check:palettes
       - run: npm run check:types
       - run: npm run build
+      - run: npm run check:exports
