@@ -1,0 +1,50 @@
+{
+  "name": "@thekrystalship/krystal-chat",
+  "version": "0.32.0-dev.0",
+  "description": "The Krystal assistant chat, the assistant's settings pages and the client of the assistant wire contract.",
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheKrystalShip/tks-krystal.git",
+    "directory": "packages/krystal-chat"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "files": [
+    "dist",
+    "styles",
+    "styles.css"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./lib/*": {
+      "types": "./dist/lib/*.d.ts",
+      "default": "./dist/lib/*.js"
+    },
+    "./styles.css": "./styles.css",
+    "./styles/*": "./styles/*",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "vite build && tsc",
+    "prepack": "npm run build",
+    "check:types": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@thekrystalship/krystal": "0.32.0-dev.0",
+    "lucide-react": ">=0.460.0",
+    "react": "^18.3.1 || ^19.0.0",
+    "react-dom": "^18.3.1 || ^19.0.0"
+  }
+}

@@ -3,9 +3,9 @@
 //
 //   npm run check:themes
 import { readFileSync } from "node:fs";
-import { THEME_OPTS } from "../src/lib/theme.js";
+import { THEME_OPTS } from "../packages/krystal/src/lib/theme.js";
 
-const css = readFileSync(new URL("../styles/tokens.css", import.meta.url), "utf8");
+const css = readFileSync(new URL("../packages/krystal/styles/tokens.css", import.meta.url), "utf8");
 const block = /((?::root\[data-theme="[^"]+"\],?\s*)+)\{\s*color-scheme:\s*light;/.exec(css);
 const listed = block ? [...block[1].matchAll(/data-theme="([^"]+)"/g)].map((m) => m[1]).sort() : [];
 const light = THEME_OPTS.filter((o) => o.mode === "light").map((o) => o.id).sort();

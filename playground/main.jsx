@@ -1,7 +1,7 @@
-// The krystal-ui playground: every component in its variants and states on one page, for looking
+// The Krystal playground: every component in its variants and states on one page, for looking
 // at a change and for the visual harness to shoot. Not packaged.
 // Run: npm run play -- --port 5211, then open http://127.0.0.1:5211/#controls (or #badges, #page,
-// #settings, #dialogs, #lists, #cardscreen, #frame).
+// #settings, #dialogs, #lists, #cardscreen, #frame, #chat).
 import React from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -9,9 +9,11 @@ import {
   Icon, List, ListRow, Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, ShowcaseCard,
   Sidebar, SidebarGroup, Skeleton, Spinner, SubTabs, Textarea, ThemePicker, Toggle, Toolbar,
   ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
-} from "../src/index.js";
-import tksMark from "../assets/tks-mark.png";
-import "../styles.css";
+} from "@thekrystalship/krystal";
+import { ChatCard, ChatCardRow, ChatCardRows } from "@thekrystalship/krystal-chat";
+import tksMark from "../packages/krystal/assets/tks-mark.png";
+import "@thekrystalship/krystal/styles.css";
+import "@thekrystalship/krystal-chat/styles.css";
 
 const row = { display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", marginBottom: 12 };
 const col = { display: "grid", gap: 14, maxWidth: 420, marginBottom: 12 };
@@ -493,13 +495,26 @@ function Frame() {
   );
 }
 
+function ChatPieces() {
+  return (
+    <Section id="chat" title="Chat">
+      <ChatCard icon="server" title="Factorio" sub="factorio-1" confidence="confirmed">
+        <ChatCardRows>
+          <ChatCardRow label="State" value="Running" verdict="ok" verdictLabel="Healthy" />
+          <ChatCardRow label="Players" value="3" />
+        </ChatCardRows>
+      </ChatCard>
+    </Section>
+  );
+}
+
 function App() {
   return (
     <div style={{ maxWidth: 1040, margin: "0 auto", padding: "24px 16px 80px" }}>
-      <h1 style={{ margin: "0 0 12px", fontSize: 22 }}>krystal-ui playground</h1>
+      <h1 style={{ margin: "0 0 12px", fontSize: 22 }}>Krystal playground</h1>
       <ThemePicker />
       <nav style={{ ...row, marginTop: 16 }}>
-        {["controls", "badges", "page", "settings", "dialogs", "lists", "cardscreen", "frame"].map((id) => (
+        {["controls", "badges", "page", "settings", "dialogs", "lists", "cardscreen", "frame", "chat"].map((id) => (
           <a key={id} href={"#" + id}>#{id}</a>
         ))}
       </nav>
@@ -511,6 +526,7 @@ function App() {
       <Lists />
       <CardScreens />
       <Frame />
+      <ChatPieces />
     </div>
   );
 }

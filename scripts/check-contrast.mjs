@@ -12,7 +12,7 @@
 import { readFileSync } from "node:fs";
 
 const MIN = 4.5;
-const css = readFileSync(new URL("../styles/tokens.css", import.meta.url), "utf8")
+const css = readFileSync(new URL("../packages/krystal/styles/tokens.css", import.meta.url), "utf8")
   .replace(/\/\*[\s\S]*?\*\//g, (c) => c.replace(/[^\n]/g, " "));
 
 // ---- Palettes -----------------------------------------------------------------------------------

@@ -25,7 +25,7 @@ import { createRequire } from "node:module";
 import { transformSync } from "esbuild";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const SRC = path.join(ROOT, "src", "chat", "markdownHighlight.jsx");
+const SRC = path.join(ROOT, "packages", "krystal-chat", "src", "chat", "markdownHighlight.jsx");
 
 // Transpile the JSX with esbuild behind a minimal React shim — createElement is all the
 // highlighter calls, and running it here keeps this check off jsdom and off a bundler.

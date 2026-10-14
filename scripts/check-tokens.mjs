@@ -1,4 +1,4 @@
-// check-tokens.mjs — the sheets under styles/ keep to the token contract:
+// check-tokens.mjs — the sheets under each package's styles/ keep to the token contract:
 //
 //   - every var(--x) names a custom property some sheet (or a component, through a style prop)
 //     defines. A fallback does not excuse it: it hides a missing token on every theme, which is the
@@ -22,13 +22,14 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const root = new URL("..", import.meta.url).pathname;
-const sheets = [
-  "styles.css",
-  ...readdirSync(join(root, "styles"))
+const packages = ["packages/krystal", "packages/krystal-chat"];
+const sheets = packages.flatMap((pkg) => [
+  pkg + "/styles.css",
+  ...readdirSync(join(root, pkg, "styles"))
     .filter((f) => f.endsWith(".css"))
     .sort()
-    .map((f) => "styles/" + f),
-];
+    .map((f) => pkg + "/styles/" + f),
+]);
 
 // Blank out comments and string/url contents, keeping offsets and newlines so line numbers hold.
 function mask(text) {
@@ -85,7 +86,7 @@ function walk(dir) {
     e.isDirectory() ? walk(join(dir, e.name)) : /\.(jsx?|mjs)$/.test(e.name) ? [join(dir, e.name)] : [],
   );
 }
-for (const file of walk(join(root, "src"))) {
+for (const file of packages.flatMap((pkg) => walk(join(root, pkg, "src")))) {
   for (const m of readFileSync(file, "utf8").matchAll(/["'`](--[\w-]+)["'`]\s*:|setProperty\(\s*["'`](--[\w-]+)/g)) {
     defined.add(m[1] ?? m[2]);
   }
@@ -98,7 +99,7 @@ for (const { path, text } of files) {
   for (const m of text.matchAll(/var\(\s*(--[\w-]+)/g)) {
     if (!defined.has(m[1]) && !(m[1].startsWith("--k-") && /^var\(\s*--[\w-]+\s*,/.test(text.slice(m.index, m.index + 80)))) report(path, text, m.index, `var(${m[1]}) names a custom property nothing defines`);
   }
-  if (path === "styles/tokens.css") continue;
+  if (path === "packages/krystal/styles/tokens.css") continue;
   const colourText = allowColours(text);
 
   for (const m of colourText.matchAll(/#[0-9a-fA-F]{3,8}\b/g)) report(path, text, m.index, `literal colour ${m[0]}`);
