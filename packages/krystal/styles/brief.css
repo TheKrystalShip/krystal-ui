@@ -253,6 +253,17 @@
   white-space: nowrap;
 }
 
+.k-brief__detail--wrap {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.k-brief__below {
+  margin-top: 8px;
+  min-width: 0;
+}
+
 .k-brief__ask {
   display: inline-flex;
   align-items: center;

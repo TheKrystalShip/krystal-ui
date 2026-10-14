@@ -1,7 +1,7 @@
 import { Icon } from "./Icon.jsx";
 
 // The furniture that goes inside a BriefCard: `BriefList` holds rows, `BriefItem` is one row (a tone
-// stripe, an icon, what it is and what about it, and a trailing action), `BriefEmpty` is the card's
+// stripe, an icon, what it is and what about it, a block below, and a trailing action), `BriefEmpty` is the card's
 // answer when there is nothing to list, and `FactList` is label/value pairs for a card that states a
 // handful of facts. They draw the `k-brief__*` markup, so a site restyles them through those classes.
 
@@ -23,7 +23,10 @@ function BriefList({ className, children, ...rest }) {
  * @property {string} [icon] A Lucide name, in the icon tile.
  * @property {import("react").ReactNode} title What the row is.
  * @property {boolean} [mono] Sets the title in the monospace face (a name, an id, a path).
+ * @property {import("react").ReactNode} [tags] Pills after the title text, inside the title line.
  * @property {import("react").ReactNode} [detail] A muted line under the title.
+ * @property {boolean} [wrapDetail] Lets the detail wrap onto several lines instead of ending in an ellipsis.
+ * @property {import("react").ReactNode} [below] A block under the detail, in the text column (fields, a preview). Controls here belong on a row that is not itself a button or a link.
  * @property {import("react").ReactNode} [action] A link-styled label at the row's end, with an arrow.
  * @property {() => void} [onClick] Makes the row a button.
  * @property {string} [href] Makes the row a link.
@@ -32,7 +35,7 @@ function BriefList({ className, children, ...rest }) {
  * @typedef {BriefItemOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof BriefItemOwnProps>} BriefItemProps
  */
 /** @param {BriefItemProps} props */
-function BriefItem({ tone, icon, title, mono = false, detail, action, onClick, href, className, children, ...rest }) {
+function BriefItem({ tone, icon, title, mono = false, tags, detail, wrapDetail = false, below, action, onClick, href, className, children, ...rest }) {
   const live = Boolean(onClick || href);
   const cls = "k-brief__item" + (tone ? " k-brief__item--" + tone : "") + (live ? "" : " k-brief__item--static")
     + (className ? " " + className : "");
@@ -42,8 +45,10 @@ function BriefItem({ tone, icon, title, mono = false, detail, action, onClick, h
       <div className="k-brief__body">
         <span className={"k-brief__item-title" + (mono ? " k-brief__item-title--mono" : "")}>
           <span className="k-brief__titletext">{title}</span>
+          {tags}
         </span>
-        {detail && <span className="k-brief__detail">{detail}</span>}
+        {detail && <span className={"k-brief__detail" + (wrapDetail ? " k-brief__detail--wrap" : "")}>{detail}</span>}
+        {below != null && <div className="k-brief__below">{below}</div>}
       </div>
       {children}
       {action && <span className="k-brief__ask">{action} <Icon name="arrow-right" size={12} strokeWidth={2.2} /></span>}
@@ -72,16 +77,18 @@ function BriefItem({ tone, icon, title, mono = false, detail, action, onClick, h
  * @property {string} [icon] A Lucide name above the title.
  * @property {"ok" | "neutral"} [tone] ok reads as all-clear (the default); neutral is an absence that is neither good nor bad.
  * @property {string} [className] Extra classes on the root.
+ * @property {import("react").ReactNode} [children] The body, after `body`: a node when the line under the title is more than text.
  * @typedef {BriefEmptyOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof BriefEmptyOwnProps>} BriefEmptyProps
  */
 /** @param {BriefEmptyProps} props */
-function BriefEmpty({ title, body, icon, tone = "ok", className, ...rest }) {
+function BriefEmpty({ title, body, icon, tone = "ok", className, children, ...rest }) {
   return (
     <div className={"k-brief__empty" + (tone === "neutral" ? " k-brief__empty--neutral" : "") + (className ? " " + className : "")}
       {...rest}>
       {icon && <Icon name={icon} size={20} />}
       <span className="k-brief__empty-title">{title}</span>
       {body && <span className="k-brief__empty-sub">{body}</span>}
+      {children}
     </div>
   );
 }

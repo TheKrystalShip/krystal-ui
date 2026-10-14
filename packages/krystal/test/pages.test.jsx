@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { DetailPage, FormField, ListPage, Notice, SignInScreen } from "@thekrystalship/krystal";
+import { BriefEmpty, BriefItem, DetailPage, FormField, ListPage, Notice, SignInScreen } from "@thekrystalship/krystal";
 
 describe("SignInScreen", () => {
   it("draws usernameExtra between the username and the password, and passwordHint inside the password's frame", () => {
@@ -43,5 +43,21 @@ describe("Notice action", () => {
     expect(notice.querySelector(".k-notice__text").compareDocumentPosition(screen.getByRole("button")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     rerender(<Notice tone="danger">Failed.</Notice>);
     expect(container.querySelector(".k-notice__action")).toBeNull();
+  });
+});
+
+describe("Brief furniture", () => {
+  it("BriefItem draws `below` in the text column after the detail, and tags in the title line", () => {
+    const { container } = render(
+      <BriefItem title="Rule" tags={<span>tag</span>} detail="What about it" below={<input aria-label="Warn at" />} />,
+    );
+    const body = container.querySelector(".k-brief__body");
+    expect(body.querySelector(".k-brief__item-title").textContent).toBe("Ruletag");
+    expect(body.querySelector(".k-brief__detail").nextElementSibling.contains(screen.getByLabelText("Warn at"))).toBe(true);
+  });
+
+  it("BriefEmpty draws its children after the body line", () => {
+    render(<BriefEmpty title="None" body="Nothing yet.">{<button>Add</button>}</BriefEmpty>);
+    expect(screen.getByText("Nothing yet.").nextElementSibling).toBe(screen.getByRole("button", { name: "Add" }));
   });
 });
