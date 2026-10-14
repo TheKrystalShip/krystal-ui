@@ -138,6 +138,7 @@ const CONTROLS = {
 function FormField({ name, label, aside, hint, control = "input", className, ...controlProps }) {
   const { form } = useScope();
   const { control: rhfControl, id: formId, rulesFor, register } = internalsOf(form);
+  const labelId = React.useId();
   const hintId = React.useId();
   const errorId = React.useId();
   React.useEffect(() => register(name), [register, name]);
@@ -149,7 +150,7 @@ function FormField({ name, label, aside, hint, control = "input", className, ...
         const describedBy = error ? errorId : hint != null ? hintId : undefined;
         const disabled = form.isSubmitting || !!controlProps.disabled;
         const frame = {
-          error, hint, hintId, errorId, className,
+          error, hint, labelId, hintId, errorId, className,
           "data-k-form": formId, "data-k-field": name,
         };
         /** @type {any} */
@@ -191,6 +192,7 @@ function FormField({ name, label, aside, hint, control = "input", className, ...
           );
         }
         const Control = CONTROLS[control];
+        if (Control && label != null) common["aria-labelledby"] = labelId;
         if (!Control) throw new Error("FormField: unknown control \"" + control + "\".");
         const wide = control === "input" || control === "password" ? { wide: true } : null;
         return (

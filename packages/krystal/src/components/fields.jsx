@@ -117,15 +117,17 @@ function Checkbox({ checked, onChange, disabled = false, children, className, ..
 // is a <label>, so a click on the words reaches the control without an id. A frame holding several
 // controls passes `group`, and becomes a labelled group instead.
 //
-// `aside` sits after the label in a quieter weight ("optional", a character count). `hintId` and
-// `errorId` name the hint and the error line, for a control's aria-describedby; every other prop
-// lands on the frame.
+// `aside` sits after the label in a quieter weight ("optional", a character count). `labelId`,
+// `hintId` and `errorId` name the label, the hint and the error line, for a control's aria-labelledby
+// and aria-describedby: a control named by its `labelId` is not also named by the hint or error that
+// sit inside the same <label>. Every other prop lands on the frame.
 /**
  * @typedef {object} FieldOwnProps
  * @property {import("react").ReactNode} [label] The words naming the control.
  * @property {import("react").ReactNode} [aside]  After the label, quieter.
  * @property {import("react").ReactNode} [hint] A line under the control, shown while there is no error.
  * @property {import("react").ReactNode} [error] Replaces the hint.
+ * @property {string} [labelId] The label's id.
  * @property {string} [hintId] The hint line's id.
  * @property {string} [errorId] The error line's id.
  * @property {boolean} [group] A labelled group instead of a <label>, for several controls.
@@ -134,14 +136,14 @@ function Checkbox({ checked, onChange, disabled = false, children, className, ..
  * @typedef {FieldOwnProps & Omit<import("react").HTMLAttributes<HTMLElement>, keyof FieldOwnProps>} FieldProps
  */
 /** @param {FieldProps} props */
-function Field({ label, aside, hint, error, hintId, errorId, group = false, className, children, ...rest }) {
+function Field({ label, aside, hint, error, labelId, hintId, errorId, group = false, className, children, ...rest }) {
   const Tag = group ? "div" : "label";
   return (
     <Tag className={"k-field" + (className ? " " + className : "")}
       {...(group && label != null ? { role: "group", "aria-label": typeof label === "string" ? label : undefined } : {})}
       {...rest}>
       {label != null && (
-        <span className="k-field__label">
+        <span id={labelId} className="k-field__label">
           {label}
           {aside != null && <span className="k-field__aside">{aside}</span>}
         </span>
