@@ -369,6 +369,9 @@ export function NoticeExamples() {
       <Sub title="Notice">
         <div style={{ display: "grid", gap: 10, maxWidth: 560 }}>
           {["info", "ok", "warn", "danger"].map((t) => <Notice key={t} tone={t}>A {t} notice.</Notice>)}
+          <Notice tone="danger" icon="circle-x" action={<Button variant="outline" size="xs" icon="rotate-cw">Retry</Button>}>
+            <b>Couldn't refresh.</b> Showing the last known state.
+          </Notice>
         </div>
       </Sub>
     </>

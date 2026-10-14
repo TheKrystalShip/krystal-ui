@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { DetailPage, FormField, ListPage, SignInScreen } from "@thekrystalship/krystal";
+import { DetailPage, FormField, ListPage, Notice, SignInScreen } from "@thekrystalship/krystal";
 
 describe("SignInScreen", () => {
   it("draws usernameExtra between the username and the password, and passwordHint inside the password's frame", () => {
@@ -32,5 +32,16 @@ describe("ListPage and DetailPage empty states", () => {
     rerender(<DetailPage isEmpty emptyTitle="Not found" emptyIcon="search-x" />);
     expect(screen.getByText("Not found")).toBeTruthy();
     expect(container.querySelector(".k-datastate--empty svg")).toBeTruthy();
+  });
+});
+
+describe("Notice action", () => {
+  it("draws the action after the text, and nothing without one", () => {
+    const { container, rerender } = render(<Notice tone="danger" action={<button>Retry</button>}>Failed.</Notice>);
+    const notice = screen.getByRole("alert");
+    expect(notice.querySelector(".k-notice__action button")).toBeTruthy();
+    expect(notice.querySelector(".k-notice__text").compareDocumentPosition(screen.getByRole("button")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    rerender(<Notice tone="danger">Failed.</Notice>);
+    expect(container.querySelector(".k-notice__action")).toBeNull();
   });
 });

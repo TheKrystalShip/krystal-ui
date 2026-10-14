@@ -64,6 +64,12 @@
   min-width: 0;
 }
 
+.k-notice__action {
+  flex-shrink: 0;
+  align-self: center;
+  margin-left: auto;
+}
+
 .k-notice--ok {
   color: var(--success-fg);
 }
