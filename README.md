@@ -1,8 +1,14 @@
-# krystal-ui
+# tks-krystal
 
-`@thekrystalship/krystal-ui` — the Krystal design system as React components, stores and
-stylesheets. Every TheKrystalShip web surface is built from it: the KGSM Control Panel and its
-companion pages (`kgsm-web`) and Krystal Cinema (`moviebot/web/site`).
+The Krystal design system, as two npm packages in one workspace:
+
+- `@thekrystalship/krystal` — React components, hooks, stores, stylesheets, fonts and themes.
+- `@thekrystalship/krystal-chat` — the assistant chat, the assistant's settings pages and
+  `createAssistantClient`, built on `@thekrystalship/krystal`.
+
+Every TheKrystalShip web surface is built from them: the KGSM Control Panel and its companion pages
+(`kgsm-web`) and Krystal Cinema (`moviebot/web/site`). The two packages share one version, one
+`CHANGELOG.md` and one `v<version>` tag.
 
 ## Using it
 
@@ -17,27 +23,37 @@ with `read:packages`; publishing needs `write:packages`). The registry asks for 
 install, so CI passes its `GITHUB_TOKEN` with `permissions: packages: read`.
 
 ```js
-import "@thekrystalship/krystal-ui/styles.css";        // tokens, fonts and every component's styles
-import { BriefCard, Icon, Rail, Toasts, toast } from "@thekrystalship/krystal-ui";
+import "@thekrystalship/krystal/styles.css";        // tokens, fonts and every component's styles
+import { BriefCard, Icon, Rail, Toasts, toast } from "@thekrystalship/krystal";
 ```
 
-React (18.3 or 19), React DOM and `lucide-react` are peer dependencies: the site's own copies are used. The
-package depends on `@floating-ui/react-dom`, which places its popovers; a site never imports it.
+A site with an assistant chat installs the chat package beside core. It takes core as a peer
+dependency at its own version, so the site has one copy of core:
 
-The package ships its own type declarations (`dist/**/*.d.ts`, named by the `types` condition of the
+```js
+import "@thekrystalship/krystal-chat/styles.css";      // the chat's and the assistant pages' styles
+import { Chat, createAssistantClient } from "@thekrystalship/krystal-chat";
+```
+
+React (18.3 or 19), React DOM and `lucide-react` are peer dependencies of both packages: the site's own copies are used. Core
+depends on `@floating-ui/react-dom`, which places its popovers; a site never imports it.
+
+Each package ships its own type declarations (`dist/**/*.d.ts`, named by the `types` condition of the
 `.` and `./lib/*` exports), so an editor completes component names and checks props in plain
 JavaScript too: each component's props, each hook's arguments and each store's state type are read from
 the JSDoc beside the source.
 
-The modules under `lib/` (`store`, `theme`, `toasts`, `time`, `clipboard`, `pushBrowser`) are also
-addressable one at a time — `@thekrystalship/krystal-ui/lib/time` — for code that runs outside a
+The modules under core's `lib/` (`store`, `theme`, `toasts`, `time`, `clipboard`, `pushBrowser`, `sse`) are also
+addressable one at a time — `@thekrystalship/krystal/lib/time` — for code that runs outside a
 browser and must not load React.
 
 A site that has its own stylesheet cascade imports the sheets one at a time from
-`@thekrystalship/krystal-ui/styles/` and places each where its rules have to sit; `styles.css`
+`@thekrystalship/krystal/styles/` (and `@thekrystalship/krystal-chat/styles/`) and places each where its rules have to sit; `styles.css`
 lists them in the order they assume.
 
 ## What is in it
+
+`@thekrystalship/krystal`:
 
 | Kind | Exports |
 |---|---|
@@ -45,7 +61,6 @@ lists them in the order they assume.
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
-| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatActivity`, `ChatCommand`, `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
 | Cards and lists | `BriefCard`, `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art, a `ribbon` hanging from its top edge for keeping the thing, an `eyebrow` above the name saying what kind of thing it is, and along its foot a `progress` bar or one short bar per part in `segments`), `CollectionTile` (a set of titles as a link: `fan` draws three posters fanned beside its mark and name, `strip` its posters in order, numbered, and with `total` and `watched` follows somebody through it; it fills its slot at a fixed shape and takes a TvCard's focus on a television), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Slides | `useCarousel` (one of several slides at a time, turning by itself on an interval: held still under a mouse, under keyboard focus, on a hidden page and while `paused`, never turning by itself under reduced motion, its time started over by a key or a press in it, and turned by a swipe), `CarouselPager` (a mark a slide, the shown one filling over the slide's time; `indicator` for a television, where the marks are not focused) |
 | Labels | `Pill` (a count, a state or a kind as a small non-interactive label) |
@@ -55,18 +70,25 @@ lists them in the order they assume.
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `OptionList`, `Meter` |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
-| Overlays | `Dialog`, `Modal`, `ReversablePortal`, `usePortalPopover` |
+| Overlays | `Dialog`, `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
-| The assistant's pages | `AssistantChatsPage`, `AssistantMemoryPage`, `AssistantSkillsPage`, `AssistantNotifications`, `AssistantMemory`, `AssistantMemoryEditor`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
 | Marks | `Icon` (Lucide, by kebab-case name), `AccountAvatar`, `AssistantFabIcon` |
 | State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS`, `copyText`, `pushBrowser`, `fmtRelative` |
 
-Stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
+`@thekrystalship/krystal-chat`:
+
+| Kind | Exports |
+|---|---|
+| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatActivity`, `ChatCommand`, `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
+| The assistant's pages | `AssistantChatsPage`, `AssistantMemoryPage`, `AssistantSkillsPage`, `AssistantNotifications`, `AssistantMemory`, `AssistantMemoryEditor`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
+
+Core stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
 theme, and the Inter / JetBrains Mono faces), `styles/motion.css` (shared keyframes),
 `styles/scrollbar.css` (the scrollbar every scrollable surface draws), `styles/controls.css` (the
 basic controls, below), `styles/page.css` (the page furniture), `styles/dialog.css`, and one sheet
-per component family. `assets/tks-mark.png` is the brand mark.
+per component family. `assets/tks-mark.png` is the brand mark. The chat package's sheets are `styles/chat*.css`
+and `styles/assistant-pages.css`.
 
 ## The controls
 
@@ -339,7 +361,7 @@ sheet, after everything whose focus it overrides.
 
 ## The assistant chat
 
-`Chat` is a conversation with one assistant over the assistant wire contract
+`@thekrystalship/krystal-chat` holds it. `Chat` is a conversation with one assistant over the assistant wire contract
 (`tks-assistant/docs/wire-contract.md`): turns streamed over Server-Sent Events, proposed actions
 confirmed or declined by their handle, questions the assistant asks answered as the next turn, the
 conversation list kept in step with the assistant's, voice notes, pictures and text files attached to
@@ -385,7 +407,7 @@ next turn. `clientFor` is called with the assistant's id, and must be stable acr
 
 **The client.** `createAssistantClient({ baseUrl, getToken, renewToken, canRenew })` is the one browser
 client of the wire contract, and is also an import-free subpath for code that runs outside a browser
-(`@thekrystalship/krystal-ui/lib/assistantClient`). `baseUrl` is a string or a function asked on every
+(`@thekrystalship/krystal-chat/lib/assistantClient`). `baseUrl` is a string or a function asked on every
 call, so a site that resolves where each assistant is throws its own error when there is none.
 `getToken` answers the bearer; `renewToken()` and `canRenew()`, when given, renew it as each call
 allows: a call that may be sent twice (a read, a delete, a memory write, a transcription, an
@@ -422,7 +444,7 @@ chips. A reviewed transcript shows its attachments through the site's
 `loadReviewAttachment(hostId, conversationId, attachment)`, beside `loadTranscript`, the conversation
 named as the site's review listing names it; the client's own is
 `reviewAttachment(person, conversationId, attachmentId)`. The rules are `wire-contract.md` §2.2, and the
-module that prepares a file is `src/chat/attachments.js`.
+functions that prepare a file are `prepareAttachment`, `acceptFor`, `textOverLimit` and `sizeLabel`.
 
 A site whose frame has a sidebar can keep the conversation list there: `railTarget` is the element
 the list is drawn into, and the chat takes the whole width. `pageClass="chat-page--framed"` makes the
@@ -508,16 +530,20 @@ the memory editor, after `settings.css`.
 ## Developing
 
 ```bash
-npm install
+npm install          # one install at the root links both packages
 npm run lint
 npm run check:markdown   # the composer's highlighter emits every character exactly once
 npm run check:themes     # native controls take the light scheme on exactly the light palettes
 npm run check:tokens     # every var() resolves; no literal colour or radius outside tokens.css
 npm run check:contrast   # every --on-* ink reads on its fill at 4.5:1 in every palette
-npm run build        # → dist/, one ES module per source file
-npm publish          # builds first (prepack); a published version is permanent
-npm publish --tag dev   # a prerelease
+npm run check:types      # builds core, then tsc --checkJs over both packages
+npm run build        # core, then the chat → packages/*/dist, one ES module per source file
+npm run play -- --port 5211   # the playground, both packages from source
 ```
 
-Iterate with prerelease versions (`0.2.0-dev.1`, `-dev.2`, …) and bump each consumer's pin to the
-one it was checked against.
+Publishing is per package, from its directory: `npm publish -w @thekrystalship/krystal`, then
+`-w @thekrystalship/krystal-chat` (each builds first through `prepack`; a published version is
+permanent). `npm publish --tag dev` is a prerelease.
+
+Iterate with prerelease versions (`0.2.0-dev.1`, `-dev.2`, …) and bump each consumer's pins to the
+one it was checked against. The chat's peer on core is the same version as its own.

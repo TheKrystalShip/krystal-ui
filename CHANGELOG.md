@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.32.0]
+
+### Changed
+- **The repository is `tks-krystal` and publishes two packages**, in lockstep (one version, one changelog,
+  one `v<version>` tag). `@thekrystalship/krystal` holds the tokens, themes, fonts, components, hooks,
+  stores and lib modules; `@thekrystalship/krystal-chat` holds the assistant chat, the assistant's pages
+  (`AssistantChatsPage`, `AssistantMemoryPage`, `AssistantSkillsPage`, `AssistantNotifications`,
+  `AssistantMemory`, `AssistantMemoryEditor`), the `assistantPush*` calls and `createAssistantClient`
+  (also at `@thekrystalship/krystal-chat/lib/assistantClient`). A site imports each by name and its
+  stylesheet beside it: `import "@thekrystalship/krystal/styles.css"` and, with a chat,
+  `import "@thekrystalship/krystal-chat/styles.css"`. The chat takes core as a peer dependency at its own
+  version. `AssistantFabIcon`, `pushBrowser` and `lib/sse` stay in core.
+- **Core exports `useModalBehaviour`**, which the chat's overlays use.
+
 ## [0.31.0]
 
 ### Added
