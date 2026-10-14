@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { render, screen } from "@testing-library/react";
-import { BriefEmpty, BriefItem, DetailPage, FormField, ListPage, ListRow, Notice, SignInScreen, StatTile } from "@thekrystalship/krystal";
+import { Avatar, BriefEmpty, BriefItem, DetailPage, FormField, ListPage, ListRow, Notice, SignInScreen, StatTile } from "@thekrystalship/krystal";
 
 describe("SignInScreen", () => {
   it("draws usernameExtra between the username and the password, and passwordHint inside the password's frame", () => {
@@ -110,5 +110,22 @@ describe("StatTile head", () => {
     expect(btn.textContent.trim()).toBe("");
     await user.click(btn);
     expect(onView).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("Avatar", () => {
+  it("draws one letter, a tone, and leaves the diameter to CSS with size=css", () => {
+    const { container } = render(<Avatar name="Ada Lovelace" letters={1} tone="info" size="css" />);
+    const el = container.querySelector(".k-avatar");
+    expect(el.textContent).toBe("A");
+    expect(el.className).toContain("k-avatar--info");
+    expect(el.className).toContain("k-avatar--fluid");
+    expect(el.style.width).toBe("");
+  });
+
+  it("keeps two letters and the gradient by default", () => {
+    const { container } = render(<Avatar name="Ada Lovelace" size="lg" />);
+    expect(container.querySelector(".k-avatar").textContent).toBe("AL");
+    expect(container.querySelector(".k-avatar").style.width).toBe("40px");
   });
 });

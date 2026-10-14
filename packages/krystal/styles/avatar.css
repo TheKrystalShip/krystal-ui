@@ -34,6 +34,31 @@
   object-fit: cover;
 }
 
+/* A tone is a soft tint of the colour, with its own ink. */
+.k-avatar--teal { background: var(--krystal-teal-dim); color: var(--krystal-teal); }
+.k-avatar--info { background: var(--info-bg); color: var(--info-fg); }
+.k-avatar--ok { background: var(--success-bg); color: var(--success-fg); }
+.k-avatar--warn { background: var(--warning-bg); color: var(--warning-fg); }
+.k-avatar--danger { background: var(--danger-bg); color: var(--danger-fg); }
+.k-avatar--muted { background: var(--surface-3); color: var(--fg-2); }
+
+/* A diameter from the site's CSS: the letters and the status dot scale with the avatar's own width. */
+.k-avatar--fluid {
+  container-type: inline-size;
+  width: 2em;
+  height: 2em;
+}
+
+.k-avatar--fluid .k-avatar__initials { font-size: 38cqw; }
+.k-avatar--fluid.k-avatar--single .k-avatar__initials { font-size: 46cqw; }
+
+.k-avatar--fluid .k-avatar__status {
+  width: 28cqw;
+  height: 28cqw;
+  min-width: 8px;
+  min-height: 8px;
+}
+
 .k-avatar__initials { letter-spacing: 0.02em; }
 
 .k-avatar__status {

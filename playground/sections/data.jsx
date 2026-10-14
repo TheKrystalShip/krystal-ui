@@ -118,6 +118,8 @@ export function AvatarExamples() {
           <Avatar size="lg" name="Bo" status="warn" />
           <Avatar size="lg" name="Cy" status="danger" />
           <Avatar size="lg" name="Di" status="muted" />
+          {["teal", "info", "ok", "warn", "danger", "muted"].map((t) => <Avatar key={t} tone={t} letters={1} size="lg" name={"Tint " + t} />)}
+          <Avatar size="css" name="Css Sized" status="ok" style={{ width: 48, height: 48 }} />
           <AccountAvatar user={{ display: "Margaret" }} size={32} />
           <AccountAvatar user={null} />
         </div>
