@@ -24,9 +24,10 @@ import { ProviderButton, providerLabel } from "./ProviderMark.jsx";
 //
 // `password` draws the form: `username` and `password` fields over the form layer, a submit button,
 // and the form-level refusal `onSubmit` returns (`{ message }` or `{ errors }`, as useForm reads it).
-// `extraFields` are more FormFields between the password and the button (a display name, a
-// confirmation), with `defaultValues`, `rules` and `validate` for them; `passwordAside` sits beside the
-// password's label (a "Forgot?" link). A site that owns its form passes `form`, a useForm handle,
+// `extraFields` are more FormFields between the password and the button (a confirmation), with
+// `defaultValues`, `rules` and `validate` for them; `usernameExtra` is a node (a display name field)
+// between the username and the password; `passwordAside` sits beside the password's label (a
+// "Forgot?" link) and `passwordHint` under the password field, inside its frame (a strength meter). A site that owns its form passes `form`, a useForm handle,
 // and the card draws its fields in that.
 //
 // `tabs` (`{ value, label }`) with `tab` and `onTab` draw a segmented switch above the providers, for
@@ -52,6 +53,8 @@ import { ProviderButton, providerLabel } from "./ProviderMark.jsx";
  * @property {Record<string, import("../hooks/useForm.js").FieldRules>} [rules] Validation rules by field name, for the extra fields.
  * @property {import("../hooks/useForm.js").UseFormOptions["validate"]} [validate] A form-wide check that runs after the rules.
  * @property {import("react").ReactNode} [extraFields] FormFields after the password.
+ * @property {import("react").ReactNode} [usernameExtra] FormFields between the username and the password.
+ * @property {import("react").ReactNode} [passwordHint] Under the password field, inside its frame, until the field has an error.
  * @property {import("react").ReactNode} [passwordAside] Beside the password's label.
  * @property {string} [usernameLabel] The username field's label.
  * @property {string} [passwordLabel] The password field's label.
@@ -99,7 +102,7 @@ function Providers({ providers, busyProvider, inert, onProvider, text, busyText 
 function SignInScreen({
   mark, wordmark, tagline, foot, width, providers = [], onProvider, busyProvider = null,
   providerText, busyProviderText,
-  password = false, onSubmit, form, defaultValues, rules, validate, extraFields, passwordAside,
+  password = false, onSubmit, form, defaultValues, rules, validate, extraFields, usernameExtra, passwordAside, passwordHint,
   usernameLabel = "Username", passwordLabel = "Password", passwordAutoComplete = "current-password",
   submitLabel = "Sign in", busyLabel, divider = "or", tabs, tab, onTab, tabsLabel = "Sign in or register",
   error, notice, busy = false, className, children,
@@ -131,7 +134,8 @@ function SignInScreen({
           <Form form={handle} className="k-signin__form">
             <FormField name="username" label={usernameLabel} control="input" disabled={inert}
               autoComplete="username" autoCapitalize="off" spellCheck="false" />
-            <FormField name="password" label={passwordLabel} aside={passwordAside} control="password" disabled={inert}
+            {usernameExtra}
+            <FormField name="password" label={passwordLabel} aside={passwordAside} hint={passwordHint} control="password" disabled={inert}
               autoComplete={passwordAutoComplete} />
             {extraFields}
             <FormSubmit size="lg" wide busyLabel={busyLabel} disabled={inert}>{submitLabel}</FormSubmit>

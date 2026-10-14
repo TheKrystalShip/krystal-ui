@@ -34,8 +34,10 @@ function Register() {
         providers={["discord"]} password
         submitLabel={tab === "register" ? "Create account" : "Sign in"} busyLabel="Working…"
         passwordAutoComplete={tab === "register" ? "new-password" : "current-password"}
-        defaultValues={{ displayName: "" }}
-        extraFields={tab === "register" ? <FormField name="displayName" label="Display name" aside="optional" control="input" autoComplete="nickname" /> : null}
+        defaultValues={{ displayName: "", confirm: "" }}
+        usernameExtra={tab === "register" ? <FormField name="displayName" label="Display name" aside="optional" control="input" autoComplete="nickname" /> : null}
+        passwordHint={tab === "register" ? "At least 12 characters." : null}
+        extraFields={tab === "register" ? <FormField name="confirm" label="Confirm password" control="password" autoComplete="new-password" /> : null}
         onSubmit={async () => { await new Promise((r) => setTimeout(r, 500)); }} />
     </div>
   );
@@ -45,7 +47,7 @@ export default function PagesSignin() {
   return (
     <Section id="pages-signin" title="Page patterns: SignInScreen">
       <Sub title="Four providers, password form with Forgot, a refusal from onSubmit, foot"><Password /></Sub>
-      <Sub title="One provider (brand), tabs, extra field"><Register /></Sub>
+      <Sub title="One provider (brand), tabs, a field before and after the password, a hint under it"><Register /></Sub>
       <Sub title="Provider busy (leaving), service error, device code under the form">
         <div style={box(640)}>
           <SignInScreen mark={tksMark} wordmark="Krystal Cinema" providers={["discord", "github"]} busyProvider="github"
