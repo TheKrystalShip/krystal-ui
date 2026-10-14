@@ -38,6 +38,7 @@
 @import "./styles/toolbar.css";
 @import "./styles/pagination.css";
 @import "./styles/list-page.css";
+@import "./styles/detail-page.css";
 @import "./styles/breadcrumbs.css";
 @import "./styles/brief.css";
 @import "./styles/card.css";

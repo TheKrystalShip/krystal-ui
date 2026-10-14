@@ -1,0 +1,83 @@
+/* ============================================================================
+   detail-page.css — DetailPage: crumbs, a header, a tab row, and a body beside an optional aside,
+   stacked at one gap. The aside drops under the body at phone width.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-detailpage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+.k-detailpage__sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.k-detailpage__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.k-detailpage__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.k-detailpage__tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.k-detailpage__tabs > .k-tabs__list {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.k-detailpage__tabs-extra {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-left: auto;
+}
+
+.k-detailpage__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-4);
+  align-items: start;
+}
+
+.k-detailpage__grid--aside {
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+}
+
+.k-detailpage__main,
+.k-detailpage__main > .k-tabs__panel,
+.k-detailpage__aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+@media (max-width: 768px) {
+  .k-detailpage__grid--aside {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+}

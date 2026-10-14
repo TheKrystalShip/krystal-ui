@@ -115,7 +115,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
-| Page patterns | `ListPage` (heading, toolbar, rows, table or grid, pager and the loading, failed and empty states, from the site's data and flags) |
+| Page patterns | `ListPage` (heading, toolbar, rows, table or grid, pager and the loading, failed and empty states, from the site's data and flags), `DetailPage` (crumbs, a head or a Hero, tabs, an aside column and the whole-page loading, failed and not-found states) |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
@@ -363,6 +363,22 @@ body for a shape of the site's own. `loading`, `error` with `onRetry`, and an em
   items={accounts} renderItem={(a) => <ListRow key={a.id} title={a.name} onOpen={() => open(a)} />}
   loading={!data} error={error} onRetry={reload} emptyTitle="No accounts"
   page={page} pageCount={pages} onPageChange={setPage} total={total} pageSize={50} unit="accounts" />
+```
+
+`DetailPage` is the page about one record. `crumbs` are Breadcrumbs items; the header is a `hero` node or a
+plain head from `title`, `sub`, `meta` (pills) and `actions`. `tabs` (`value`, `label`, `icon`, `count`)
+with `value` and `onChange` choose a section, and `tabsKind` says what they are: `sections` (the default)
+are in-page panels drawn as `Tabs`, with `renderTab(value)` or `TabPanel` children for the bodies;
+`routes` are pages of their own, drawn as `SubTabs` (a select at phone width), for a site whose router
+owns the choice. `tabsExtra` sits at the end of the tab row, `aside` is a second column that stacks under
+the body at phone width, and `loading`, `error` and `isEmpty` replace the page under the crumbs.
+
+```jsx
+<DetailPage crumbs={crumbs} onNavigate={go} title={host.name} sub="Running" meta={<Pill tone="ok">Up</Pill>}
+  actions={<Button variant="primary">Restart</Button>}
+  tabs={[{ value: "overview", label: "Overview" }, { value: "alerts", label: "Alerts", count: 3 }]}
+  value={tab} onChange={setTab} renderTab={(t) => <Panel name={t} />} aside={<Card title="Connect">…</Card>}
+  loading={!host} error={error} onRetry={reload} />
 ```
 
 `StatTile` is one figure: `label`, `value`, `unit`, `delta`, `sub`, `tone`, an optional `icon` and a
