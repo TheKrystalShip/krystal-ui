@@ -56,6 +56,7 @@ export {
 
 export { useCarousel } from "./hooks/useCarousel.js";
 export { useEdgeSwipe } from "./hooks/useEdgeSwipe.js";
+export { useForm } from "./hooks/useForm.js";
 export { useModalBehaviour } from "./hooks/useModalBehaviour.js";
 export { usePhone } from "./hooks/usePhone.js";
 export { usePortalPopover } from "./hooks/usePortalPopover.js";
