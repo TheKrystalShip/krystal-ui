@@ -78,7 +78,7 @@ function ActivityList({ id, msg }) {
         const summary = t.summary || "";
         const long = !pending && isLong(summary);
         return (
-          <li key={(t.id || "t") + ":" + i} className={"k-chat-activity__row" + (pending ? " k-chat-is-active" : " k-is-done")}>
+          <li key={(t.id || "t") + ":" + i} className={"k-chat-activity__row" + (pending ? " k-is-active" : " k-is-done")}>
             <span className="k-chat-activity__mark">
               {pending ? <Spinner size={10} /> : <Icon name="check" size={11} strokeWidth={2.4} />}
             </span>
@@ -93,7 +93,7 @@ function ActivityList({ id, msg }) {
       {steps.map((s, i) => {
         const active = s.status === "active";
         return (
-          <li key={(s.key || "s") + ":" + i} className={"k-chat-activity__row" + (active ? " k-chat-is-active" : " k-is-done")}>
+          <li key={(s.key || "s") + ":" + i} className={"k-chat-activity__row" + (active ? " k-is-active" : " k-is-done")}>
             <span className="k-chat-activity__mark">
               {active ? <Spinner size={10} /> : <Icon name="check" size={11} strokeWidth={2.4} />}
             </span>

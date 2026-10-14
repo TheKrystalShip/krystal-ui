@@ -636,7 +636,7 @@
 
 /* The textarea sits above the layer and paints no text of its own — the layer is what the caret
    rides over. `caret-color` is what remains visible of the text color, so the caret reads at the
-   same tone the field always did; IME composition brings the real color back (see .k-chat-is-composing). */
+   same tone the field always did; IME composition brings the real color back (see .k-is-composing). */
 .k-chat-composer__box textarea {
   position: relative;
   z-index: 1;
@@ -646,7 +646,7 @@
 
 /* During an IME composition the browser draws the pre-edit text in the element's own color, and
    that color is transparent here — so the textarea shows its text and the layer stands down. */
-.k-chat-composer__box textarea.k-chat-is-composing {
+.k-chat-composer__box textarea.k-is-composing {
   color: var(--fg-1);
 }
 

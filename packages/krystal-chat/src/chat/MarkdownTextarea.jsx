@@ -69,7 +69,7 @@ function MarkdownTextarea(
         onScroll={syncScroll}
         onCompositionStart={() => setComposing(true)}
         onCompositionEnd={() => setComposing(false)}
-        className={composing ? "k-chat-is-composing" : undefined}
+        className={composing ? "k-is-composing" : undefined}
       />
     </div>
   );

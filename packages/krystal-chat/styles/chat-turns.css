@@ -302,7 +302,7 @@
   color: var(--success-fg);
 }
 
-.k-chat-activity__row.k-chat-is-active .k-chat-activity__mark {
+.k-chat-activity__row.k-is-active .k-chat-activity__mark {
   background: var(--krystal-teal-dim);
 }
 
@@ -314,7 +314,7 @@
   color: var(--fg-2);
 }
 
-.k-chat-activity__row.k-chat-is-active .k-chat-activity__label {
+.k-chat-activity__row.k-is-active .k-chat-activity__label {
   color: var(--fg-1);
 }
 

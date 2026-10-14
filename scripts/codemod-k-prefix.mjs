@@ -88,11 +88,14 @@ function skipString(text, i) {
   return j + 1;
 }
 
-// Calls fn(name, absoluteStart, absoluteEnd) for each `.class` in a selector text that begins at
-// absolute offset `base`. Attribute selectors, strings and comments are skipped.
-function eachSelectorClass(sel, base, fn) {
+// The `.class` tokens of a selector text that begins at absolute offset `base`, each with the
+// compound selector (`group`) it sits in. Attribute selectors, strings and comments are skipped.
+function selectorClasses(sel, base) {
+  const out = [];
   const n = sel.length;
   let i = 0;
+  let group = 0;
+  let parens = 0;
   while (i < n) {
     const c = sel[i];
     if (c === "/" && sel[i + 1] === "*") {
@@ -119,12 +122,16 @@ function eachSelectorClass(sel, base, fn) {
     } else if (c === "." && /[A-Za-z_-]/.test(sel[i + 1] || "")) {
       let j = i + 1;
       while (j < n && /[\w-]/.test(sel[j])) j++;
-      fn(sel.slice(i + 1, j), base + i + 1, base + j);
+      out.push({ name: sel.slice(i + 1, j), s: base + i + 1, e: base + j, group });
       i = j;
     } else {
+      if (c === "(") parens++;
+      else if (c === ")") parens--;
+      else if (parens === 0 && /[\s>+~,]/.test(c)) group++;
       i++;
     }
   }
+  return out;
 }
 
 // ---- JS ------------------------------------------------------------------------------------
@@ -369,7 +376,9 @@ export class ClassMap {
     this.fragments = new Map();
     this.conflicts = new Set();
     for (const [frag, set] of candidates) {
-      if (set.size === 1) this.fragments.set(frag, [...set][0]);
+      // a state prefix ("is-" + x) builds the site's own states as often as the package's
+      if (isState(frag)) this.conflicts.add(frag);
+      else if (set.size === 1) this.fragments.set(frag, [...set][0]);
       else this.conflicts.add(frag);
     }
   }
@@ -381,28 +390,37 @@ export class ClassMap {
 // Rewrites the class tokens of one segment's text. `visit(old, neu, offset, whole)` returns the
 // replacement or null to hold it; offset is relative to the segment.
 function rewriteList(text, seg, cm, visit) {
+  const toks = text.split(/\s+/).filter(Boolean);
+  const companion = (tok) => toks.some((o) => o !== tok && isPackageClass(cm, o));
   return text.replace(/\S+/g, (tok, off) => {
     const atStart = off === 0;
     const atEnd = off + tok.length === text.length;
     if (atStart && seg.partialStart) return tok;
     if (atEnd && seg.partialEnd) {
-      if (cm.has(tok)) return visit(tok, cm.map[tok], off, false) ?? tok;
+      if (cm.has(tok)) return visit(tok, cm.map[tok], off, false, companion(tok)) ?? tok;
       if (cm.fragments.has(tok)) return visit(tok, cm.fragments.get(tok), off, true) ?? tok;
       if (cm.conflicts.has(tok)) visit(tok, null, off, true);
       return tok;
     }
-    if (cm.has(tok)) return visit(tok, cm.map[tok], off, false) ?? tok;
+    if (cm.has(tok)) return visit(tok, cm.map[tok], off, false, companion(tok)) ?? tok;
     return tok;
   });
 }
 
+// A state class (`is-on`) beside a package class in one compound selector or one class list is the
+// package's state; alone it may be the site's own.
+const isState = (name) => /^is-/.test(name);
+const isPackageClass = (cm, name) => name.startsWith("k-") || (cm.has(name) && !isState(name));
+
 function rewriteSelector(text, base, cm, visit) {
+  const found = selectorClasses(text, 0);
   const edits = [];
-  eachSelectorClass(text, 0, (name, s, e) => {
-    if (!cm.has(name)) return;
-    const r = visit(name, cm.map[name], s, false);
+  for (const { name, s, e, group } of found) {
+    if (!cm.has(name)) continue;
+    const companion = found.some((o) => o.group === group && o.name !== name && isPackageClass(cm, o.name));
+    const r = visit(name, cm.map[name], s, false, companion);
     if (r != null) edits.push([s, e, r]);
-  });
+  }
   let out = "";
   let last = 0;
   for (const [s, e, r] of edits) {
@@ -410,6 +428,15 @@ function rewriteSelector(text, base, cm, visit) {
     last = e;
   }
   return out + text.slice(last);
+}
+
+function noteEmitted(raw, cm, emitted) {
+  const toks = raw.split(/\s+/).filter(Boolean);
+  for (const tok of toks) {
+    if (!cm.has(tok)) continue;
+    if (isState(tok) && toks.some((o) => o !== tok && isPackageClass(cm, o))) continue;
+    emitted.add(tok);
+  }
 }
 
 function lineOf(text, index) {
@@ -429,13 +456,13 @@ export function transform(text, ext, cm, { hold = () => false, comments = false 
   let count = 0;
   const edits = []; // [start, end, replacement]
 
-  const mk = (absBase) => (old, neu, off, fragment) => {
+  const mk = (absBase) => (old, neu, off, fragment, companion) => {
     const abs = absBase + off;
     if (neu == null) {
       conflicts.push({ old, line: lineOf(text, abs) });
       return null;
     }
-    if (!fragment && hold(old)) {
+    if (!fragment && hold(old) && !(isState(old) && companion)) {
       held.push({ cls: old, line: lineOf(text, abs) });
       return null;
     }
@@ -447,9 +474,11 @@ export function transform(text, ext, cm, { hold = () => false, comments = false 
     const { selectors, comments: cmts } = scanCss(text);
     for (const [s, e] of selectors) {
       const sel = text.slice(s, e);
-      eachSelectorClass(sel, 0, (name) => {
-        if (cm.has(name)) cssNames.add(name);
-      });
+      const found = selectorClasses(sel, 0);
+      for (const { name, group } of found) {
+        const companion = found.some((o) => o.group === group && o.name !== name && isPackageClass(cm, o.name));
+        if (cm.has(name) && !(isState(name) && companion)) cssNames.add(name);
+      }
       const out = rewriteSelector(sel, s, cm, mk(s));
       if (out !== sel) edits.push([s, e, out]);
     }
@@ -460,10 +489,10 @@ export function transform(text, ext, cm, { hold = () => false, comments = false 
       const raw = text.slice(seg.start, seg.end);
       let out;
       if (seg.kind === "selector") {
-        eachSelectorClass(raw, 0, (name) => cm.has(name) && emitted.add(name));
+        selectorClasses(raw, 0).forEach(({ name }) => cm.has(name) && emitted.add(name));
         out = rewriteSelector(raw, seg.start, cm, mk(seg.start));
       } else {
-        raw.split(/\s+/).forEach((tok) => cm.has(tok) && emitted.add(tok));
+        noteEmitted(raw, cm, emitted);
         out = rewriteList(raw, seg, cm, mk(seg.start));
       }
       if (out !== raw) edits.push([seg.start, seg.end, out]);
@@ -474,7 +503,7 @@ export function transform(text, ext, cm, { hold = () => false, comments = false 
       const start = m.index + m[0].indexOf('"') + 1;
       const raw = m[1];
       const seg = { partialStart: false, partialEnd: false };
-      raw.split(/\s+/).forEach((tok) => cm.has(tok) && emitted.add(tok));
+      noteEmitted(raw, cm, emitted);
       const out = rewriteList(raw, seg, cm, mk(start));
       if (out !== raw) edits.push([start, start + raw.length, out]);
     }
@@ -576,7 +605,7 @@ function main() {
   console.log(`${opts.write ? "rewrote" : "would rewrite"} ${total} class tokens in ${perFile.length} of ${files.length} files under ${root}`);
   for (const [rel, n] of perFile) console.log(`  ${String(n).padStart(5)}  ${rel}`);
   if (conflictAll.length) {
-    console.log(`\nfragments with no single new prefix (rewrite by hand): ${conflictAll.length}`);
+    console.log(`\nfragments left to the site (a state prefix, or no single new prefix): ${conflictAll.length}`);
     for (const h of conflictAll) console.log(`  ${h.file}:${h.line}  ${h.old}`);
   }
   const unmatched = cssNames.size;
