@@ -5,7 +5,7 @@ one npm workspace: `@thekrystalship/krystal` (`packages/krystal`: tokens, themes
 hooks and stores) and `@thekrystalship/krystal-chat` (`packages/krystal-chat`: the assistant chat, the
 assistant's pages and `createAssistantClient`). Sites consume them as versioned packages and never by
 relative path. `README.md` covers using them. What the repository owns and who consumes it:
-`../kgsm-docs/components/krystal-ui.md`; the system: `../kgsm-docs/systems/design-system/README.md` and
+`../kgsm-docs/components/tks-krystal.md`; the system: `../kgsm-docs/systems/design-system/README.md` and
 `../kgsm-docs/decisions/0046-design-system-is-a-versioned-package.md`.
 
 ## What belongs here

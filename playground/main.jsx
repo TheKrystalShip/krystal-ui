@@ -14,27 +14,13 @@ import { ChatCard, ChatCardRow, ChatCardRows } from "@thekrystalship/krystal-cha
 import tksMark from "../packages/krystal/assets/tks-mark.png";
 import "@thekrystalship/krystal/styles.css";
 import "@thekrystalship/krystal-chat/styles.css";
+import { Section, Sub, col, row } from "./kit.jsx";
 
-const row = { display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", marginBottom: 12 };
-const col = { display: "grid", gap: 14, maxWidth: 420, marginBottom: 12 };
-
-function Section({ id, title, children }) {
-  return (
-    <section id={id} style={{ margin: "32px 0" }}>
-      <h2 style={{ margin: "0 0 14px", fontSize: 18 }}>{title}</h2>
-      {children}
-    </section>
-  );
-}
-
-function Sub({ title, children }) {
-  return (
-    <div style={{ marginBottom: 18 }}>
-      <h3 style={{ margin: "0 0 8px", fontSize: 12, textTransform: "uppercase", opacity: 0.6 }}>{title}</h3>
-      {children}
-    </div>
-  );
-}
+// A section of its own is a file in sections/ whose default export is a component drawing one
+// <Section>; every one is drawn after the built-in sections, in file-name order, and linked from the nav.
+const SECTIONS = Object.entries(import.meta.glob("./sections/*.jsx", { eager: true }))
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([path, mod]) => ({ id: path.replace(/^.*\/|\.jsx$/g, ""), Draw: mod.default }));
 
 const OPTIONS = [
   { value: "a", label: "Alpha", detail: "first", aside: "12 MB" },
@@ -514,7 +500,7 @@ function App() {
       <h1 style={{ margin: "0 0 12px", fontSize: 22 }}>Krystal playground</h1>
       <ThemePicker />
       <nav style={{ ...row, marginTop: 16 }}>
-        {["controls", "badges", "page", "settings", "dialogs", "lists", "cardscreen", "frame", "chat"].map((id) => (
+        {["controls", "badges", "page", "settings", "dialogs", "lists", "cardscreen", "frame", "chat", ...SECTIONS.map((x) => x.id)].map((id) => (
           <a key={id} href={"#" + id}>#{id}</a>
         ))}
       </nav>
@@ -527,6 +513,7 @@ function App() {
       <CardScreens />
       <Frame />
       <ChatPieces />
+      {SECTIONS.map(({ id, Draw }) => <Draw key={id} />)}
     </div>
   );
 }
