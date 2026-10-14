@@ -2,7 +2,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "@thekrystalship/krystal";
 import { Button, IconButton } from "@thekrystalship/krystal";
-import { EmptyState } from "@thekrystalship/krystal";
+import { EmptyState, useFollowTail } from "@thekrystalship/krystal";
 import { NavItem } from "@thekrystalship/krystal";
 import { Spinner } from "@thekrystalship/krystal";
 import { Toggle } from "@thekrystalship/krystal";
@@ -563,7 +563,7 @@ function Chat({
   // "I lost sight of it and am about to re-read what actually happened".
   const resumedRef = React.useRef(false);
   const taRef     = React.useRef(null);
-  const pinnedRef = React.useRef(true);
+  const follow = useFollowTail(scrollRef, { deps: [active?.messages, busy] });
 
   React.useEffect(() => { saveConversations(storageKey, convos); }, [storageKey, convos]);
 
@@ -994,24 +994,15 @@ function Chat({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- ref-based edge detector on the usable-flip; the extra values are read once at the transition, minimal deps keep the edge correct
   }, [assistantUsable, assistantHost && assistantHost.id, activeId]);
 
-  React.useEffect(() => {
-    const el = scrollRef.current;
-    if (el && pinnedRef.current) el.scrollTop = el.scrollHeight;
-  }, [active?.messages, busy]);
-
-  React.useEffect(() => {
-    pinnedRef.current = true;
-    const el = scrollRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [activeId]);
+  const { scrollToBottom, onScroll: followScroll } = follow;
+  React.useEffect(() => { scrollToBottom(); }, [activeId, scrollToBottom]);
 
   const onThreadScroll = React.useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-    pinnedRef.current = distanceFromBottom <= 80;
+    followScroll();
     setLifted(el.scrollTop > 0);
-  }, []);
+  }, [followScroll]);
 
   // A deliberate pick, which is a different act from the retarget below: this one is the person
   // choosing which assistant they talk to, so the surface is told to keep it.

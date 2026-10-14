@@ -117,6 +117,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Overlays | `Dialog`, `ConfirmDialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Page patterns | `ListPage` (heading, toolbar, rows, table or grid, pager and the loading, failed and empty states, from the site's data and flags), `DetailPage` (crumbs, a head or a Hero, tabs, an aside column and the whole-page loading, failed and not-found states), `SettingsPage` (sections of rows, a side nav that becomes a select at phone width, and a save bar that follows a form's dirty state), `SignInScreen` (the sign-in card: providers, a username and password form on the form layer, a refusal and a foot) |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
+| Feeds | `useFollowTail` (keeps a scrolling feed pinned to its bottom while the reader is there, counts what arrives while they are parked) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
 | State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS` + `registerThemes`, `copyText`, `pushBrowser`, `fmtRelative` |
@@ -520,6 +521,14 @@ is busy while submitting, and with `requireDirty` waits for a change. `form.valu
     : <BriefList>{alerts.map((a) => <BriefItem key={a.id} tone="warn" icon="alert-triangle" title={a.title} detail={a.detail} action="Look" onClick={() => open(a)} />)}</BriefList>}
 </BriefCard>
 <BriefCard icon="info" title="Unit"><FactList rows={[{ label: "State", value: "active", tone: "ok" }, { label: "Unit", value: name, mono: true }]} /></BriefCard>
+```
+
+```jsx
+const feed = useRef(null);
+const tail = useFollowTail(feed, { threshold: 80, deps: [messages] });
+// on arrival while parked: tail.onContentChange(1)
+<div ref={feed} onScroll={tail.onScroll}>{rows}</div>
+{!tail.atBottom && <Button onClick={tail.scrollToBottom}>{tail.unread} new</Button>}
 ```
 
 `ConfirmDialog` asks before a change that is hard to take back: a `Dialog` with the consequence as
