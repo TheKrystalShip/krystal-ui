@@ -6,10 +6,13 @@
    ============================================================ */
 
 /* ---- Brand fonts (local) -------------------------------------
-   Inter and JetBrains Mono ship as variable fonts in this package's
+   Inter and JetBrains Mono ship as WOFF2 variable fonts in this package's
    fonts/, referenced relatively so the consuming site's bundler emits
-   them beside its own assets. We map the full weight range so the rest
-   of the stylesheet can keep using normal font-weight numbers
+   them beside its own assets. Each face is subset to Latin, Latin
+   Extended-A, punctuation, currency, arrows, mathematical operators,
+   box drawing, geometric shapes and dingbats (its unicode-range), with
+   the OpenType layout features kept. We map the full weight range so the
+   rest of the stylesheet can keep using normal font-weight numbers
    (400 / 500 / 600 / 700).
    --------------------------------------------------------------- */
 @font-face {
@@ -17,7 +20,9 @@
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
-  src: url("../fonts/Inter-VariableFont_opsz_wght.ttf") format("truetype-variations");
+  src: url("../fonts/Inter-VariableFont_opsz_wght.woff2") format("woff2-variations"),
+    url("../fonts/Inter-VariableFont_opsz_wght.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0100-017F,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+0394,U+03A9,U+03BC,U+03C0,U+2000-206F,U+20A0-20CF,U+2100-214F,U+2190-21FF,U+2200-22FF,U+2300-23FF,U+2500-257F,U+2580-259F,U+25A0-25FF,U+2600-26FF,U+FEFF,U+FFFD,U+2700-27BF;
 }
 
 @font-face {
@@ -25,7 +30,9 @@
   font-style: italic;
   font-weight: 100 900;
   font-display: swap;
-  src: url("../fonts/Inter-Italic-VariableFont_opsz_wght.ttf") format("truetype-variations");
+  src: url("../fonts/Inter-Italic-VariableFont_opsz_wght.woff2") format("woff2-variations"),
+    url("../fonts/Inter-Italic-VariableFont_opsz_wght.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0100-017F,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+0394,U+03A9,U+03BC,U+03C0,U+2000-206F,U+20A0-20CF,U+2100-214F,U+2190-21FF,U+2200-22FF,U+2300-23FF,U+2500-257F,U+2580-259F,U+25A0-25FF,U+2600-26FF,U+FEFF,U+FFFD,U+2700-27BF;
 }
 
 @font-face {
@@ -33,7 +40,9 @@
   font-style: normal;
   font-weight: 100 800;
   font-display: swap;
-  src: url("../fonts/JetBrainsMono-VariableFont_wght.ttf") format("truetype-variations");
+  src: url("../fonts/JetBrainsMono-VariableFont_wght.woff2") format("woff2-variations"),
+    url("../fonts/JetBrainsMono-VariableFont_wght.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0100-017F,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+0394,U+03A9,U+03BC,U+03C0,U+2000-206F,U+20A0-20CF,U+2100-214F,U+2190-21FF,U+2200-22FF,U+2300-23FF,U+2500-257F,U+2580-259F,U+25A0-25FF,U+2600-26FF,U+FEFF,U+FFFD,U+2700-27BF;
 }
 
 @font-face {
@@ -41,7 +50,9 @@
   font-style: italic;
   font-weight: 100 800;
   font-display: swap;
-  src: url("../fonts/JetBrainsMono-Italic-VariableFont_wght.ttf") format("truetype-variations");
+  src: url("../fonts/JetBrainsMono-Italic-VariableFont_wght.woff2") format("woff2-variations"),
+    url("../fonts/JetBrainsMono-Italic-VariableFont_wght.woff2") format("woff2");
+  unicode-range: U+0000-00FF,U+0100-017F,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+0394,U+03A9,U+03BC,U+03C0,U+2000-206F,U+20A0-20CF,U+2100-214F,U+2190-21FF,U+2200-22FF,U+2300-23FF,U+2500-257F,U+2580-259F,U+25A0-25FF,U+2600-26FF,U+FEFF,U+FFFD,U+2700-27BF;
 }
 
 /* ============================================================
