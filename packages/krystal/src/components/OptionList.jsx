@@ -63,7 +63,7 @@ function OptionList({
   const cut = !expanded && collapsedAfter != null && options.length > collapsedAfter;
   const shown = cut ? options.filter((o, i) => i < collapsedAfter || isOn(o)) : options;
   const hidden = options.length - shown.length;
-  const firstRevealed = expanded ? options.find((o, i) => i >= collapsedAfter && !isOn(o)) : undefined;
+  const firstRevealed = expanded ? options.find((o, i) => i >= collapsedAfter && !isOn(o) && !o.disabled && !disabled) : undefined;
 
   React.useEffect(() => {
     if (expanded && focusReveal.current && revealRef.current) {
