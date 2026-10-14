@@ -1,0 +1,156 @@
+/* ============================================================================
+   radios.css — a small single choice (<RadioGroup>): options in a row or a column, each with a dot
+   before its label, or drawn as one framed strip with the chosen option filled.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-radios {
+  box-sizing: border-box;
+  display: flex;
+  min-width: 0;
+  font-family: var(--font-ui);
+}
+
+.k-radios--horizontal {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1) var(--s-4);
+}
+
+.k-radios--vertical {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-1);
+}
+
+.k-radios__item {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--fg-2);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  font-weight: var(--w-medium);
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out),
+    border-color var(--d-fast) var(--ease-out);
+}
+
+.k-radios--sm .k-radios__item {
+  min-height: 24px;
+  font-size: 12.5px;
+}
+
+.k-radios__item:hover:not(:disabled):not(.k-is-on) {
+  color: var(--fg-1);
+}
+
+.k-radios__item.k-is-on {
+  color: var(--fg-1);
+  font-weight: var(--w-semibold);
+}
+
+.k-radios__item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.k-radios__item:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+/* ---- Radio: a dot before the label -------------------------------------- */
+.k-radios__mark {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--fg-4);
+  border-radius: var(--r-pill);
+  transition: border var(--d-fast) var(--ease-out), background var(--d-fast) var(--ease-out);
+}
+
+.k-radios--sm .k-radios__mark {
+  width: 16px;
+  height: 16px;
+}
+
+.k-radios__item.k-is-on .k-radios__mark {
+  border: 5px solid var(--krystal-teal);
+  background: var(--on-accent);
+}
+
+/* ---- Segmented: one framed strip ---------------------------------------- */
+.k-radios--segmented {
+  width: fit-content;
+  max-width: 100%;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 2px;
+  padding: 3px;
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  background: var(--surface-0);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.k-radios--segmented::-webkit-scrollbar {
+  display: none;
+}
+
+.k-radios--segmented.k-radios--vertical {
+  align-items: stretch;
+}
+
+.k-radios--segmented .k-radios__item {
+  flex-shrink: 0;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 14px;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.k-radios--segmented.k-radios--sm .k-radios__item {
+  min-height: 30px;
+  padding: 0 10px;
+}
+
+.k-radios--segmented .k-radios__item:hover:not(:disabled):not(.k-is-on) {
+  background: var(--veil-2);
+}
+
+.k-radios--segmented .k-radios__item.k-is-on {
+  border-color: var(--border-accent);
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal);
+}
+
+.k-radios--segmented .k-radios__item:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--krystal-teal);
+}
+
+/* A phone raises the ordinary size to a 40px target; the compact one keeps its height. */
+@media (max-width: 768px) {
+  .k-radios--md:not(.k-radios--segmented) .k-radios__item {
+    min-height: 40px;
+  }
+
+  .k-radios--md.k-radios--segmented .k-radios__item {
+    min-height: 40px;
+  }
+}
+}

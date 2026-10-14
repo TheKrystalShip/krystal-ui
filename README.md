@@ -112,6 +112,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `OptionList`, `Meter` |
 | Forms | `useForm` (values, per-field rules and async `validate`, dirty and submitting state, server field errors from a returned or thrown `{ errors, message }`), `Form`, `FormScope`, `FormField`, `FormError`, `FormSubmit` |
 | Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs) |
+| Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked) |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
@@ -233,6 +234,20 @@ between pages are `SubTabs` (a link strip, a native select on a phone) or `TabBa
   <TabPanel value="overview">…</TabPanel>
   <TabPanel value="alerts">…</TabPanel>
 </Tabs>
+```
+
+`RadioGroup` is the compact single choice: `options` (`{ value, label, icon, title, disabled }`), `value`
+and `onChange`, `orientation` (`horizontal` or `vertical`), `size` (`sm` or `md`) and `variant`
+(`radio` draws a dot before each label, `segmented` one framed strip with the chosen option filled).
+It follows the WAI-ARIA radio group pattern: one tab stop on the chosen option, arrow keys that move
+to the next enabled option and choose it. Use it for a few short labels beside other controls;
+`OptionList` is the choice that is a field of its own, with full-width rows, a `detail` and an `aside`.
+
+```jsx
+<RadioGroup label="Quality" value={quality} onChange={setQuality}
+  options={[{ value: "auto", label: "Auto" }, { value: "720", label: "720p" }]} />
+<RadioGroup variant="segmented" size="sm" label="View" value={view} onChange={setView}
+  options={[{ value: "list", label: "List", icon: "list" }, { value: "grid", label: "Grid", icon: "layout-grid" }]} />
 ```
 
 `PasswordInput` is an `Input` whose suffix is a ghost `IconButton` (eye, eye-off) that shows or hides

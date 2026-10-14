@@ -36,6 +36,7 @@ export { NotificationsPanel } from "./components/NotificationsPanel.jsx";
 export { OptionList } from "./components/OptionList.jsx";
 export { PageHeader } from "./components/PageHeader.jsx";
 export { Pagination, paginationWindow, useDebouncedValue } from "./components/Pagination.jsx";
+export { RadioGroup } from "./components/RadioGroup.jsx";
 export { Rail } from "./components/Rail.jsx";
 export { ReversablePortal } from "./components/ReversablePortal.jsx";
 export { Select } from "./components/Select.jsx";
