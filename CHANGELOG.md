@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.36.1]
+
+### Fixed
+- **`Rail`'s count and `NotificationsPanel`'s unread count are pills**, drawn through `Pill` as
+  `BriefCard`'s count and `NavItem`'s badge are; `k-brief__count` and `k-nav-item__badge` place a pill and
+  give it no look of their own.
+
 ## [0.36.0]
 
 ### Added

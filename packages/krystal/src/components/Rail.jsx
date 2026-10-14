@@ -1,5 +1,6 @@
 import React from "react";
 import { Icon } from "./Icon.jsx";
+import { Pill } from "./Pill.jsx";
 
 // Rail — a horizontal, scroll-snapped shelf inside a brief card, so one row can
 // reach a WHOLE collection instead of rendering only what fits.
@@ -76,7 +77,7 @@ function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", i
       <div className="k-brief__head">
         <span className="k-brief__title">
           {icon ? <Icon name={icon} size={13} /> : null} {title}
-          {count != null && <span className="k-brief__count k-brief__count--neutral">{count}</span>}
+          {count != null && <Pill size="sm" tone="muted" className="k-brief__count k-brief__count--neutral">{count}</Pill>}
         </span>
         <div className="k-rail__nav">
           {pin}

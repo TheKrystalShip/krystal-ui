@@ -1,6 +1,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "./Icon.jsx";
+import { Pill } from "./Pill.jsx";
 import { usePortalPopover } from "../hooks/usePortalPopover.js";
 import { fmtRelative } from "../lib/time.js";
 import { useStore } from "../lib/store.js";
@@ -57,7 +58,7 @@ function NotificationsPanel({ onOpen }) {
       >
         <Icon name="bell" size={16} />
         <span className="k-nav-item__label">Notifications</span>
-        {unread > 0 && <span className={"k-nav-item__badge k-nav-item__badge--" + tone}>{unread}</span>}
+        {unread > 0 && <Pill tone={tone === "info" ? "neutral" : tone} className={"k-nav-item__badge k-nav-item__badge--" + tone}>{unread}</Pill>}
       </div>
 
       {open && pos && createPortal(
