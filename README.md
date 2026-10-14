@@ -229,7 +229,13 @@ after a copy that worked, every other prop is `Input`'s.
 is what a place shows when it has nothing else to; with `page` it is the whole screen, on a card,
 for a site with nothing else to draw. `ErrorBoundary` catches what throws while its children
 render and shows `fallback` (a node, or `(reset, error) => node`), or without one a whole-screen
-crash with a reload. `Dialog` is a framed sheet on `Modal`: `size` is md (520px), lg (720px) or xl
+crash with a reload. `Modal` is the overlay primitive: a portaled scrim whose content is a dialog. Focus moves into it
+(the `data-autofocus` or `autoFocus` element, else the first focusable, else the sheet) and Tab stays
+inside it; focus returns to the opener on close; every other child of `<body>` is `inert` while it is
+the topmost modal (a body child marked `data-inert-exempt` stays live, as the toast region does);
+Escape and a press on the scrim close it unless `canClose` is false. Open modals stack, so Escape closes
+only the topmost, and the chat's history sheet and picture viewer behave the same way. `Dialog` is a
+framed sheet on `Modal`: `size` is md (520px), lg (720px) or xl
 (960px), `fill` gives it a definite height for a body that sizes itself to its container, `as="form"`
 with `onSubmit` makes the sheet a form, and `art` draws a banner above the head.
 

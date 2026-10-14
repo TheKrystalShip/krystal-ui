@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import { Icon } from "../components/Icon.jsx";
 import { Button, IconButton } from "../components/Button.jsx";
 import { Spinner } from "../components/Spinner.jsx";
+import { useModalBehaviour } from "../hooks/useModalBehaviour.js";
 import { usePortalPopover } from "../hooks/usePortalPopover.js";
 import { fmtRelative } from "../lib/time.js";
 import { conversationTitle } from "./conversation.js";
@@ -40,15 +41,12 @@ function HistoryRows({ convos, activeId, onPick, onDelete, loading, close, role 
   );
 }
 
-/** The sheet: the screen's full height from its left edge, over a scrim that closes it, as Escape does. */
+/** The sheet: the screen's full height from its left edge, over a scrim that closes it, as Escape does; focus stays in it and the screen behind is inert. */
 function HistorySheet({ close, onNew, head, ...rows }) {
-  React.useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") close(); };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [close]);
+  const root = React.useRef(null);
+  useModalBehaviour(root, { onClose: close });
   return createPortal(
-    <div className="chat-sheet" role="dialog" aria-modal="true" aria-label="Chats">
+    <div ref={root} className="chat-sheet" role="dialog" aria-modal="true" aria-label="Chats">
       <div className="chat-sheet__scrim" onClick={close} />
       <div className="chat-sheet__panel">
         <div className="chat-sheet__head">

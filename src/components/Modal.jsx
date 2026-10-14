@@ -1,34 +1,33 @@
 import React from "react";
 import { createPortal } from "react-dom";
+import { useModalBehaviour } from "../hooks/useModalBehaviour.js";
 
-// Modal — the shared overlay primitive. Portals a fixed, full-viewport scrim to
-// <body> and centralizes the three things every modal in this app used to
-// hand-roll (an Escape effect + a scrim + a click-outside check, copied ~8×):
-//   • close on Escape (window keydown)
-//   • close on scrim mouse-down *outside* the content (target === currentTarget,
-//     so a press that starts inside the box — e.g. a text drag — never closes)
-//   • both gated by `canClose` (pass false to block close while a request is
-//     in flight, replacing the old per-modal `!busy` guards)
+// Modal — the shared overlay primitive. Portals a fixed, full-viewport scrim to <body> and gives
+// its content the behaviour of a dialog (see hooks/useModalBehaviour.js):
+//   • focus moves into the sheet, Tab and Shift+Tab stay in it, and focus returns to the opener
+//     on close
+//   • the rest of the document is `inert` while it is the topmost modal
+//   • Escape closes the topmost modal only, so a dialog opened from a dialog leaves its parent open
+//   • a mouse-down on the scrim *outside* the content closes it (target === currentTarget, so a
+//     press that starts inside the box, such as a text drag, never closes)
+//   • Escape and the scrim are both gated by `canClose` (pass false to block close while a request
+//     is in flight)
 //
-// This primitive is BEHAVIOUR-ONLY: the caller owns the inner content AND the
-// scrim's visual class (`scrimClassName`), so each migrated site keeps its exact
-// look (`.modal-scrim`, `.k-backdrop`, `.console-modal-scrim`, …). All three are
-// `position: fixed; inset: 0`, so portaling to <body> never shifts them — it just
-// lifts them out of any `transform`/`overflow` ancestor that could clip them.
+// The caller owns the inner content AND the scrim's visual class (`scrimClassName`), so each site
+// keeps its exact look (`.modal-scrim`, `.k-backdrop`, `.console-modal-scrim`, …). All of them are
+// `position: fixed; inset: 0`, so portaling to <body> never shifts them; it lifts them out of any
+// `transform`/`overflow` ancestor that could clip them. Mark the element that should take focus on
+// open with `data-autofocus` (or React's `autoFocus`).
 function Modal({ onClose, canClose = true, scrimClassName = "modal-scrim", children }) {
-  React.useEffect(() => {
-    if (!onClose) return undefined;
-    const onKey = (e) => { if (e.key === "Escape" && canClose) onClose(); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose, canClose]);
+  const scrim = React.useRef(null);
+  useModalBehaviour(scrim, { onClose, canClose });
 
   const onScrimDown = (e) => {
     if (e.target === e.currentTarget && canClose && onClose) onClose();
   };
 
   return createPortal(
-    <div className={scrimClassName} onMouseDown={onScrimDown}>
+    <div ref={scrim} className={scrimClassName} onMouseDown={onScrimDown}>
       {children}
     </div>,
     document.body,
