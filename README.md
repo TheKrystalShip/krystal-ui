@@ -111,7 +111,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Sign-in | `ProviderMark`, `providerLabel`, `ProviderButton` (a provider's mark and name, and a button carrying them) |
 | Forms | `useForm` (values, per-field rules and async `validate`, dirty and submitting state, server field errors from a returned or thrown `{ errors, message }`), `Form`, `FormScope`, `FormField`, `FormError`, `FormSubmit` |
 | Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked), `Slider` (one number along a line), `Disclosure` and `Accordion` (a summary that opens its content, and a group of them) |
-| Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `Combobox`, `OptionList`, `Meter` |
+| Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `Combobox`, `OptionList`, `Meter`, `StatusDot` (a lit dot in a tone, always named by `label`; `pulse` for live, `caption` for the age or state beside it) |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `ConfirmDialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
@@ -529,6 +529,12 @@ const tail = useFollowTail(feed, { threshold: 80, deps: [messages] });
 // on arrival while parked: tail.onContentChange(1)
 <div ref={feed} onScroll={tail.onScroll}>{rows}</div>
 {!tail.atBottom && <Button onClick={tail.scrollToBottom}>{tail.unread} new</Button>}
+```
+
+```jsx
+<StatusDot tone="ok" pulse label="Live" caption="live" />
+<StatusDot tone="danger" label="No signal" caption="3m ago" />
+<StatusDot tone="neutral" label="Offline" caption="Offline" captionSide="end" />
 ```
 
 `ConfirmDialog` asks before a change that is hard to take back: a `Dialog` with the consequence as

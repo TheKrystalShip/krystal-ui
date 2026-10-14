@@ -55,6 +55,7 @@ export { ShowcaseCard } from "./components/ShowcaseCard.jsx";
 export { Skeleton } from "./components/Skeleton.jsx";
 export { Slider } from "./components/Slider.jsx";
 export { Spinner } from "./components/Spinner.jsx";
+export { StatusDot } from "./components/StatusDot.jsx";
 export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, TabBar } from "./components/Shell.jsx";
 export { StatTile, StatTiles } from "./components/StatTile.jsx";
 export { SubTabs } from "./components/SubTabs.jsx";

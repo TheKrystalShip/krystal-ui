@@ -1,0 +1,93 @@
+/* ============================================================================
+   dot.css — the status dot (<StatusDot>): a lit dot in a tone, optionally
+   breathing, optionally grouped with a caption beside it.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+.k-dot {
+  --k-dot: var(--fg-3);
+  display: inline-block;
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: var(--r-pill);
+  background: var(--k-dot);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--k-dot) 16%, transparent),
+    0 0 7px color-mix(in srgb, var(--k-dot) 50%, transparent);
+}
+
+.k-dot--sm {
+  width: 7px;
+  height: 7px;
+}
+
+.k-dot--lg {
+  width: 12px;
+  height: 12px;
+}
+
+.k-dot--ok {
+  --k-dot: var(--success);
+}
+
+.k-dot--warn {
+  --k-dot: var(--warning);
+}
+
+.k-dot--danger {
+  --k-dot: var(--danger);
+}
+
+.k-dot--info {
+  --k-dot: var(--info);
+}
+
+.k-dot--accent {
+  --k-dot: var(--krystal-teal);
+}
+
+/* A neutral dot is a state with nothing lit: no halo. */
+.k-dot--neutral {
+  box-shadow: none;
+}
+
+.k-dot.k-is-pulsing {
+  animation: k-dot-pulse 1.8s ease-out infinite;
+}
+
+@keyframes k-dot-pulse {
+  0% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--k-dot) 30%, transparent),
+      0 0 0 0 color-mix(in srgb, var(--k-dot) 45%, transparent);
+  }
+
+  70%,
+  100% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--k-dot) 16%, transparent),
+      0 0 0 9px color-mix(in srgb, var(--k-dot) 0%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-dot.k-is-pulsing {
+    animation: none;
+  }
+}
+
+/* The dot and its caption grouped tight ("3m ago ●"). */
+.k-dot-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.k-dot-group__caption {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fg-3);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+}
