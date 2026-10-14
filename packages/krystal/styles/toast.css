@@ -112,7 +112,7 @@
   background: none;
   border: none;
   border-radius: var(--r-sm);
-  color: var(--fg-4);
+  color: var(--fg-3);
   cursor: pointer;
 }
 
@@ -184,7 +184,7 @@
 
 .k-notifications__empty-sub {
   font-size: 11.5px;
-  color: var(--fg-4);
+  color: var(--fg-3);
 }
 
 .k-notifications__item {
@@ -234,13 +234,13 @@
   gap: 5px;
   margin-top: 2px;
   font-size: 10.5px;
-  color: var(--fg-4);
+  color: var(--fg-3);
 }
 
 .k-notifications__code {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--fg-4);
+  color: var(--fg-3);
 }
 
 /* ---- phones -------------------------------------------------------------- */

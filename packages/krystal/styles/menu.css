@@ -113,7 +113,7 @@
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  color: var(--fg-4);
+  color: var(--fg-3);
   font-size: 12px;
 }
 

@@ -386,7 +386,7 @@
 
 /* A fact nobody stated is an em-dash, muted rather than read as a measured figure. */
 .k-showcase-spec--unknown .k-showcase-spec__val {
-  color: var(--fg-4);
+  color: var(--fg-3);
 }
 
 .k-showcase-card__foot {

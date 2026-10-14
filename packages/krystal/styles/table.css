@@ -103,7 +103,7 @@
 .k-table__cell--right { text-align: right; }
 .k-table__cell--center { text-align: center; }
 .k-table__cell--mono { font-family: var(--font-mono); font-size: 12px; }
-.k-table__cell--unknown { color: var(--fg-4); }
+.k-table__cell--unknown { color: var(--fg-3); }
 
 .k-table__cell:first-child { color: var(--fg-1); font-weight: 600; }
 

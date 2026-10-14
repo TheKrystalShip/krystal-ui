@@ -65,7 +65,7 @@
   margin: 8px auto 0;
   font-size: 11px;
   line-height: 1.4;
-  color: var(--fg-4);
+  color: var(--fg-3);
   text-align: center;
   text-wrap: balance;
 }
@@ -496,7 +496,7 @@
   padding: 7px 12px;
   border-top: 1px solid var(--border-subtle);
   font-size: 11px;
-  color: var(--fg-4);
+  color: var(--fg-3);
 }
 
 /* ---- phones ---- */
@@ -584,7 +584,7 @@
 .k-chat-attachment__size {
   flex-shrink: 0;
   font-size: 11.5px;
-  color: var(--fg-4);
+  color: var(--fg-3);
 }
 
 .k-chat-attachment__progress {

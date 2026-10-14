@@ -82,7 +82,7 @@
 .k-pagination__gap {
   min-width: 22px;
   text-align: center;
-  color: var(--fg-4);
+  color: var(--fg-3);
   font-family: var(--font-mono);
   font-size: 13px;
   user-select: none;

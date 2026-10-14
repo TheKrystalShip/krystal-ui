@@ -327,7 +327,7 @@
   background: transparent;
   border: none;
   border-radius: var(--r-sm);
-  color: var(--fg-4);
+  color: var(--fg-3);
   cursor: pointer;
   transition: background var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
 }
@@ -567,7 +567,7 @@
   -webkit-backdrop-filter: blur(8px);
   border: var(--edge);
   border-left: none;
-  color: var(--fg-4);
+  color: var(--fg-3);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   box-shadow: 3px 0 14px rgba(0, 0, 0, 0.35);

@@ -80,7 +80,7 @@
   border: none;
   border-radius: var(--r-sm);
   background: none;
-  color: var(--fg-4);
+  color: var(--fg-3);
   cursor: pointer;
   opacity: 0;
   transition: opacity var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
@@ -227,7 +227,7 @@
 }
 
 .k-chat-rail__empty {
-  color: var(--fg-4);
+  color: var(--fg-3);
   font-size: 12.5px;
   text-align: center;
   padding: 20px 8px;
@@ -265,7 +265,7 @@
 .k-chat-rail__del {
   background: transparent;
   border: none;
-  color: var(--fg-4);
+  color: var(--fg-3);
   cursor: pointer;
   padding: 2px;
   opacity: 0;
@@ -701,7 +701,7 @@
    break the alignment the shared rule above exists to hold. Palette is existing tokens, so every
    theme (dark, tribute light, the monospace ones) comes along without a second definition. */
 .k-chat-composer__hl .k-chat-md-delim {
-  color: var(--fg-4);
+  color: var(--fg-3);
 }
 
 .k-chat-composer__hl .k-chat-md-fence-lang {
@@ -851,7 +851,7 @@
   flex: 1 1 auto;
   min-width: 0;
   font-size: 11.5px;
-  color: var(--fg-4);
+  color: var(--fg-3);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -869,7 +869,7 @@
   border-top: 1px solid var(--border-subtle);
   margin-top: 4px;
   font-size: 10.5px;
-  color: var(--fg-4);
+  color: var(--fg-3);
 }
 
 .k-chat-cmdmenu__hint kbd {
@@ -1032,7 +1032,7 @@
 
 .k-chat-fb__note {
   font-size: var(--text-xs);
-  color: var(--fg-4);
+  color: var(--fg-3);
   font-style: italic;
   min-width: 0;
   overflow-wrap: anywhere;

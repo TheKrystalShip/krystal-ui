@@ -60,7 +60,7 @@
 
 .k-chat-turn__time {
   font-size: 11.5px;
-  color: var(--fg-4);
+  color: var(--fg-3);
   white-space: nowrap;
 }
 
@@ -266,7 +266,7 @@
 
 .k-chat-activity__aside {
   flex-shrink: 0;
-  color: var(--fg-4);
+  color: var(--fg-3);
 }
 
 .k-chat-activity__list {

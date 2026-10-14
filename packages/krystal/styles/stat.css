@@ -130,7 +130,7 @@
 
 .k-stat--sm .k-stat__value { font-size: 21px; letter-spacing: -0.02em; }
 
-.k-stat__value.k-is-unknown { color: var(--fg-4); }
+.k-stat__value.k-is-unknown { color: var(--fg-3); }
 
 .k-stat--ok .k-stat__value { color: var(--success-fg); }
 .k-stat--info .k-stat__value { color: var(--krystal-teal); }
@@ -139,7 +139,7 @@
 .k-stat--ok .k-stat__value.k-is-unknown,
 .k-stat--info .k-stat__value.k-is-unknown,
 .k-stat--warn .k-stat__value.k-is-unknown,
-.k-stat--danger .k-stat__value.k-is-unknown { color: var(--fg-4); }
+.k-stat--danger .k-stat__value.k-is-unknown { color: var(--fg-3); }
 
 .k-stat__unit {
   color: var(--fg-3);

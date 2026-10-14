@@ -61,7 +61,7 @@
 
 .k-combobox__detail {
   flex-shrink: 0;
-  color: var(--fg-4);
+  color: var(--fg-3);
   font-size: 12px;
 }
 

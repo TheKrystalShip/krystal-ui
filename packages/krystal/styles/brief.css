@@ -282,7 +282,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--fg-4);
+  color: var(--fg-3);
   padding: 4px;
   border-radius: var(--r-sm);
   flex-shrink: 0;
