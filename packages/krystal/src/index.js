@@ -40,6 +40,7 @@ export { DetailPage } from "./components/DetailPage.jsx";
 export { SettingsPage } from "./components/SettingsPage.jsx";
 export { SignInScreen } from "./components/SignInScreen.jsx";
 export { CardScreen } from "./components/CardScreen.jsx";
+export { ColorInput } from "./components/ColorInput.jsx";
 export { Combobox } from "./components/Combobox.jsx";
 export { CopyField } from "./components/CopyField.jsx";
 export { ProviderButton, ProviderMark, providerLabel } from "./components/ProviderMark.jsx";

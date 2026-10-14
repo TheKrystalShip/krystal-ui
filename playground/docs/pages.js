@@ -49,7 +49,7 @@ export const PAGES = [
     versus: "RadioGroup is the compact single choice for a handful of short labels; OptionList is the form field with detail and asides.",
   },
   {
-    id: "radio-group", name: "RadioGroup", group: "Controls", exports: ["RadioGroup"], examples: ["radio-group"],
+    id: "radio-group", name: "RadioGroup", group: "Controls", exports: ["RadioGroup", "ColorInput"], examples: ["radio-group"],
     summary: "A small single choice drawn inline or stacked, each option a button with role radio.",
     versus: "OptionList for longer labels with detail; Tabs for choices that switch panels; Select for many options.",
   },

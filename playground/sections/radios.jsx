@@ -14,10 +14,18 @@ const ICONS = [
   { value: "cols", label: "Columns", icon: "columns-3" },
 ];
 
+const SWATCHES = [
+  { value: "#ffffff", label: "White", color: "#ffffff" },
+  { value: "#ffd400", label: "Yellow", color: "#ffd400" },
+  { value: "#00e5ff", label: "Cyan", color: "#00e5ff" },
+  { value: "#ff4081", label: "Pink", color: "#ff4081" },
+];
+
 export default function RadiosSection() {
   const [a, setA] = React.useState("auto");
   const [b, setB] = React.useState("1080");
   const [c, setC] = React.useState("grid");
+  const [hue, setHue] = React.useState("#ffd400");
   return (
     <Section id="radios" title="RadioGroup">
       <Sub title="Radio, horizontal (md and sm)">
@@ -33,6 +41,11 @@ export default function RadiosSection() {
         <div style={row}><RadioGroup variant="segmented" label="Nothing chosen" options={ICONS} /></div>
         <div style={row}><RadioGroup disabled label="Disabled" options={OPTS} value="auto" /></div>
         <div style={{ maxWidth: 300 }}><RadioGroup variant="segmented" label="Overflow" options={[...OPTS, ...ICONS]} value={b} onChange={setB} /></div>
+      </Sub>
+      <Sub title="Swatch: a palette, with a picker for anything else (md and sm)">
+        <div style={row}><RadioGroup variant="swatch" label="Text colour" picker="Another colour" options={SWATCHES} value={hue} onChange={setHue} /><code>{hue}</code></div>
+        <div style={row}><RadioGroup variant="swatch" size="sm" label="Edge colour" options={SWATCHES} value="#00e5ff" /></div>
+        <div style={row}><RadioGroup variant="swatch" disabled label="Disabled" options={SWATCHES} value="#ffffff" /></div>
       </Sub>
     </Section>
   );

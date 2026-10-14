@@ -1,9 +1,9 @@
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
-  Accordion, Combobox, Disclosure, OptionList, RadioGroup, Slider, Tab, TabList, TabPanel, Tabs,
+  Accordion, ColorInput, Combobox, Disclosure, OptionList, RadioGroup, Slider, Tab, TabList, TabPanel, Tabs,
 } from "@thekrystalship/krystal";
 
 describe("Combobox", () => {
@@ -318,5 +318,40 @@ describe("Tabs ids", () => {
     const controls = screen.getByRole("tab").getAttribute("aria-controls");
     expect(controls).not.toMatch(/\s/);
     expect(screen.getByRole("tabpanel").id).toBe(controls);
+  });
+});
+
+describe("RadioGroup swatch and ColorInput", () => {
+  const options = [
+    { value: "#ffffff", label: "White", color: "#ffffff" },
+    { value: "#ff0000", label: "Red", color: "#ff0000" },
+  ];
+
+  it("names each disc by its label, chooses with arrows like any radio group, and leaves the picker out of the order", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<RadioGroup variant="swatch" label="Colour" picker="Another" options={options} value="#ffffff" onChange={onChange} />);
+    const white = screen.getByRole("radio", { name: "White" });
+    expect(white.getAttribute("aria-checked")).toBe("true");
+    expect(white.textContent).toBe("");
+    white.focus();
+    await user.keyboard("{ArrowRight}");
+    expect(onChange).toHaveBeenCalledWith("#ff0000");
+    expect(screen.getAllByRole("radio")).toHaveLength(2);
+  });
+
+  it("marks the picker as chosen when the value is none of the options, and reports the picked colour", () => {
+    const onChange = vi.fn();
+    const { container } = render(<RadioGroup variant="swatch" label="Colour" picker="Another" options={options} value="#123456" onChange={onChange} />);
+    const input = screen.getByLabelText("Another");
+    expect(input.value).toBe("#123456");
+    expect(container.querySelector(".k-swatch--picker.k-is-on")).toBeTruthy();
+    fireEvent.change(input, { target: { value: "#abcdef" } });
+    expect(onChange).toHaveBeenCalledWith("#abcdef");
+  });
+
+  it("ColorInput is a colour input named by its label", () => {
+    render(<ColorInput label="Text colour" value="#ffcc00" />);
+    expect(screen.getByLabelText("Text colour").getAttribute("type")).toBe("color");
   });
 });

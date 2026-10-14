@@ -47,7 +47,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 | Sign-in screens | `CardScreen` (the centred card on the page background), `CopyField` (a read-only value with a copy button) |
 | Sign-in | `ProviderMark`, `providerLabel`, `ProviderButton` (a provider's mark and name, and a button carrying them) |
 | Forms | `useForm` (values, per-field rules and async `validate`, dirty and submitting state, server field errors from a returned or thrown `{ errors, message }`), `Form`, `FormScope`, `FormField`, `FormError`, `FormSubmit` |
-| Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked), `Slider` (one number along a line), `Disclosure` and `Accordion` (a summary that opens its content, and a group of them) |
+| Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked, or a palette of swatches), `ColorInput` (the native colour picker as a round swatch), `Slider` (one number along a line), `Disclosure` and `Accordion` (a summary that opens its content, and a group of them) |
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `Combobox`, `OptionList`, `Meter`, `StatusDot` (a lit dot in a tone, always named by `label`; `pulse` for live, `caption` for the age or state beside it) |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
@@ -176,7 +176,9 @@ between pages are `SubTabs` (a link strip, a native select on a phone) or `TabBa
 
 `RadioGroup` is the compact single choice: `options` (`{ value, label, icon, title, disabled }`), `value`
 and `onChange`, `orientation` (`horizontal` or `vertical`), `size` (`sm` or `md`) and `variant`
-(`radio` draws a dot before each label, `segmented` one framed strip with the chosen option filled).
+(`radio` draws a dot before each label, `segmented` one framed strip with the chosen option filled,
+`swatch` a round disc of each option's `color`, named by its `label`, with `picker` adding a `ColorInput`
+after them for a colour outside the palette). `ColorInput` is the browser's colour picker as a round swatch.
 It follows the WAI-ARIA radio group pattern: one tab stop on the chosen option, arrow keys that move
 to the next enabled option and choose it. Use it for a few short labels beside other controls;
 `OptionList` is the choice that is a field of its own, with full-width rows, a `detail` and an `aside`.

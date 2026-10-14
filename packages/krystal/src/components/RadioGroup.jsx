@@ -1,4 +1,5 @@
 import React from "react";
+import { ColorInput } from "./ColorInput.jsx";
 import { Icon } from "./Icon.jsx";
 
 // RadioGroup — a small single choice drawn inline or stacked, each option a button with role radio
@@ -13,7 +14,10 @@ import { Icon } from "./Icon.jsx";
 //   value        the chosen value; `onChange` receives the next one
 //   orientation  horizontal (default) lays the options in a row, vertical stacks them
 //   variant      radio (default) draws a dot before each label; segmented draws one framed strip
-//                with the chosen option filled
+//                with the chosen option filled; swatch draws each option as a round disc of its
+//                `color`, named by its `label` (a palette). `picker` adds a ColorInput after the
+//                discs, for a colour that is not in the palette: it is marked when `value` is none
+//                of the options, and `onChange` receives its `#rrggbb`
 //   size         sm or md (default)
 //   label        the group's accessible name, for one whose heading is drawn elsewhere
 //
@@ -24,6 +28,7 @@ import { Icon } from "./Icon.jsx";
  * @property {V} value
  * @property {import("react").ReactNode} label
  * @property {string} [icon] A Lucide name drawn before the label.
+ * @property {string} [color] A CSS colour, for the `swatch` variant's disc.
  * @property {string} [title] A hover hint.
  * @property {boolean} [disabled]
  */
@@ -33,7 +38,8 @@ import { Icon } from "./Icon.jsx";
  * @property {any} [value] The chosen value.
  * @property {(next: any) => void} [onChange] The next value.
  * @property {"horizontal" | "vertical"} [orientation] `horizontal` lays the options in a row; `vertical` stacks them.
- * @property {"radio" | "segmented"} [variant] `radio` draws a dot before each label; `segmented` draws one framed strip with the chosen option filled.
+ * @property {"radio" | "segmented" | "swatch"} [variant] `radio` draws a dot before each label; `segmented` draws one framed strip with the chosen option filled; `swatch` draws each option as a disc of its `color`.
+ * @property {string} [picker] With `variant="swatch"`, draws a ColorInput after the discs, named by this text.
  * @property {"sm" | "md"} [size] `sm` or `md`.
  * @property {string} [label] The group's accessible name.
  * @property {boolean} [disabled] Makes every option inert.
@@ -43,7 +49,7 @@ import { Icon } from "./Icon.jsx";
 /** @type {import("react").ForwardRefExoticComponent<RadioGroupProps & import("react").RefAttributes<HTMLDivElement>>} */
 const RadioGroup = React.forwardRef(function RadioGroup({
   options, value, onChange, orientation = "horizontal", variant = "radio", size = "md", label,
-  disabled = false, className, onKeyDown, ...rest
+  disabled = false, picker, className, onKeyDown, ...rest
 }, ref) {
   const own = React.useRef(null);
   const setRef = (el) => {
@@ -85,16 +91,24 @@ const RadioGroup = React.forwardRef(function RadioGroup({
         const on = isOn(o);
         const off = disabled || !!o.disabled;
         return (
-          <button key={String(o.value)} type="button" role="radio" aria-checked={on} title={o.title}
+          <button key={String(o.value)} type="button" role="radio" aria-checked={on} title={o.title || (variant === "swatch" && typeof o.label === "string" ? o.label : undefined)}
             disabled={off} tabIndex={on ? 0 : -1}
-            className={"k-radios__item" + (on ? " k-is-on" : "")}
+            className={(variant === "swatch" ? "k-swatch k-swatch--" + size : "k-radios__item") + (on ? " k-is-on" : "")}
+            aria-label={variant === "swatch" && typeof o.label === "string" ? o.label : undefined}
+            style={variant === "swatch" ? /** @type {any} */ ({ "--k-swatch": o.color }) : undefined}
             onClick={() => { if (!on && onChange) onChange(o.value); }}>
             {variant === "radio" && <span className="k-radios__mark" aria-hidden="true" />}
             {o.icon && <Icon name={o.icon} size={size === "sm" ? 13 : 14} />}
-            <span className="k-radios__label">{o.label}</span>
+            {variant !== "swatch" && <span className="k-radios__label">{o.label}</span>}
           </button>
         );
       })}
+      {variant === "swatch" && picker && (
+        <ColorInput label={picker} title={picker} size={size} disabled={disabled}
+          value={typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value) ? value : undefined}
+          selected={value != null && !options.some((o) => o.value === value)}
+          onChange={(v) => { if (onChange) onChange(v); }} />
+      )}
     </div>
   );
 });

@@ -77,7 +77,10 @@ export const BEHAVIOUR = {
       ["ArrowRight, ArrowDown", "Next option, chosen at once"],
       ["ArrowLeft, ArrowUp", "Previous option, chosen at once"],
     ],
-    semantics: ["`role=\"radiogroup\"` of `role=\"radio\"` buttons with `aria-checked`; `label` names the group."],
+    semantics: [
+      "`role=\"radiogroup\"` of `role=\"radio\"` buttons with `aria-checked`; `label` names the group.",
+      "A swatch option has no words, so its `label` is its accessible name and hover hint. The `picker`'s ColorInput is a native colour input named by `picker`, outside the arrow order.",
+    ],
   },
   slider: {
     keys: [
