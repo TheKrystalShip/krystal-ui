@@ -12,9 +12,16 @@ import { useFloating, autoUpdate, offset, flip, shift, size } from "@floating-ui
 const GAP = 8;
 const EDGE = 8;
 
+/**
+ * @param {boolean} open
+ * @param {(open: boolean) => void} setOpen
+ * @param {import("react").RefObject<HTMLElement>} ref The anchor.
+ * @param {{ placement?: import("@floating-ui/react-dom").Placement }} [options]
+ * @returns {{ pos: import("react").CSSProperties | null, menuRef: (el: HTMLElement | null) => void }}
+ */
 function usePortalPopover(open, setOpen, ref, options) {
   const placement = options && options.placement;
-  const [side, setSide] = React.useState("bottom-start");
+  const [side, setSide] = React.useState(/** @type {import("@floating-ui/react-dom").Placement} */ ("bottom-start"));
   const { refs, floatingStyles, isPositioned } = useFloating({
     open,
     strategy: "fixed",
@@ -58,7 +65,7 @@ function usePortalPopover(open, setOpen, ref, options) {
 
   const { position, top, left } = floatingStyles;
   // Hidden until the first measurement lands, so the popover never shows at the window's corner.
-  const pos = open ? { position, top, left, visibility: isPositioned ? "visible" : "hidden" } : null;
+  const pos = open ? { position, top, left, visibility: /** @type {"visible" | "hidden"} */ (isPositioned ? "visible" : "hidden") } : null;
   return { pos, menuRef };
 }
 

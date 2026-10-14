@@ -8,6 +8,16 @@
 // static document served under a policy that refuses inline styles uses these classes as they are
 // (k-cardscreen, k-cardscreen--sm|md, k-cardscreen__card, __brand, __mark, __wordmark, __tagline,
 // __foot). Inside a taller or shorter box, a caller sets `--k-cardscreen-height` on an ancestor.
+/**
+ * @param {object} props
+ * @param {string} [props.mark] An image URL.
+ * @param {import("react").ReactNode} [props.wordmark] The screen's heading.
+ * @param {import("react").ReactNode} [props.tagline]
+ * @param {import("react").ReactNode} [props.children]
+ * @param {import("react").ReactNode} [props.foot] Under the card.
+ * @param {"sm" | "md"} [props.width]
+ * @param {string} [props.className]
+ */
 function CardScreen({ mark, wordmark, tagline, children, foot, width = "sm", className }) {
   const brand = mark || wordmark || tagline;
   return (

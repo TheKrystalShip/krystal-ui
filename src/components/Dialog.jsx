@@ -15,6 +15,23 @@ import { Modal } from "./Modal.jsx";
 //
 // `as="form"` makes the sheet a form, `onSubmit` its handler, so Enter in a field submits it.
 // `label` names the dialog for a screen reader when `title` is not a string.
+/**
+ * @param {object} props
+ * @param {import("react").ReactNode} props.title
+ * @param {import("react").ReactNode} [props.sub]
+ * @param {string} [props.icon] A Lucide name.
+ * @param {string} [props.art] A CSS background-image value for the banner.
+ * @param {string} [props.label] Accessible name when `title` is not a string.
+ * @param {() => void} [props.onClose]
+ * @param {boolean} [props.canClose]
+ * @param {"md" | "lg" | "xl"} [props.size]
+ * @param {boolean} [props.fill]
+ * @param {"div" | "form"} [props.as]
+ * @param {import("react").FormEventHandler<HTMLElement>} [props.onSubmit]
+ * @param {import("react").ReactNode} [props.foot]
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function Dialog({
   title, sub, icon, art, label, onClose, canClose = true, size = "md", fill = false,
   as = "div", onSubmit, foot, className, children,

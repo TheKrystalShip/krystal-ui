@@ -3,6 +3,12 @@
 //
 // It is decoration beside words that say what is happening ("Saving…"), so it is hidden from
 // assistive technology by default. Alone, give it a `label`: it is then announced as a status.
+/**
+ * @param {object} props
+ * @param {number} [props.size] Diameter in pixels.
+ * @param {string} [props.label] Announces the spinner as a status; without it the spinner is hidden from assistive technology.
+ * @param {string} [props.className]
+ */
 function Spinner({ size = 16, label, className }) {
   return (
     <span

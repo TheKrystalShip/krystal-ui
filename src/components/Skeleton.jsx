@@ -4,6 +4,14 @@
 // when the data arrives: a site lays these out in its own containers, at the sizes its real text
 // and artwork take. `w` and `h` are any CSS length (a number is pixels), `r` the corner radius.
 // The block shimmers, and holds still under prefers-reduced-motion (styles/skeleton.css).
+/**
+ * @param {object} props
+ * @param {string | number} [props.w] Width: any CSS length, a number is pixels.
+ * @param {string | number} [props.h] Height: any CSS length, a number is pixels.
+ * @param {string | number} [props.r] Corner radius.
+ * @param {import("react").CSSProperties} [props.style]
+ * @param {string} [props.className]
+ */
 export function Skeleton({ w = "100%", h = 12, r = 6, style, className }) {
   return (
     <span

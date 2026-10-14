@@ -1,4 +1,9 @@
 // AccountAvatar — a person, as a circle: a teal-gradient disc with their initial.
+/**
+ * @param {object} props
+ * @param {{ display?: string, name?: string } | null} [props.user] The person; their initial is drawn.
+ * @param {number} [props.size] Diameter in pixels.
+ */
 function AccountAvatar({ user, size = 24 }) {
   const initial = ((user && (user.display || user.name)) || "?")[0].toUpperCase();
   return (

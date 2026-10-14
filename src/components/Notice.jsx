@@ -5,6 +5,13 @@ import { Icon } from "./Icon.jsx";
 // danger, and picks the icon unless `icon` names one. A danger notice is announced as an alert.
 const ICONS = { info: "info", ok: "check-circle-2", warn: "alert-triangle", danger: "alert-triangle" };
 
+/**
+ * @param {object} props
+ * @param {"info" | "ok" | "warn" | "danger"} [props.tone]
+ * @param {string} [props.icon] A Lucide name; defaults to the tone's icon.
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function Notice({ tone = "info", icon, className, children }) {
   return (
     <div className={"k-notice k-notice--" + tone + (className ? " " + className : "")}

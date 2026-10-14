@@ -7,6 +7,14 @@ import { Icon } from "./Icon.jsx";
 // `tone` (success | warn | danger | info) tints the left rule + icon chip via the
 // shared brief-item modifiers — for a row that carries a verdict, not just a value.
 // Omitted, the row is the neutral one every existing caller renders.
+/**
+ * @param {object} props
+ * @param {string} props.icon A Lucide name.
+ * @param {import("react").ReactNode} props.title
+ * @param {import("react").ReactNode} [props.sub]
+ * @param {"success" | "warn" | "danger" | "info"} [props.tone] Tints the row for a verdict.
+ * @param {import("react").ReactNode} [props.children] The row's controls.
+ */
 function SettingsRow({ icon, title, sub, tone, children }) {
   return (
     <div className={"chat-brief__item chat-brief__item--static" + (tone ? " chat-brief__item--" + tone : "")}>
@@ -20,6 +28,15 @@ function SettingsRow({ icon, title, sub, tone, children }) {
   );
 }
 
+/**
+ * @param {object} props
+ * @param {string} [props.icon] A Lucide name.
+ * @param {import("react").ReactNode} props.title
+ * @param {import("react").ReactNode} [props.meta]
+ * @param {import("react").ReactNode} [props.action]
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children] SettingsRows.
+ */
 function SettingsSection({ icon, title, meta, action, className, children }) {
   return (
     <BriefCard icon={icon} title={title} meta={meta} action={action} className={className}>

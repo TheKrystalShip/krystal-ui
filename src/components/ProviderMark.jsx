@@ -7,12 +7,21 @@ import { Button } from "./Button.jsx";
 const PROVIDER_LABEL = { discord: "Discord", github: "GitHub", google: "Google", microsoft: "Microsoft" };
 const BRANDED = Object.keys(PROVIDER_LABEL);
 
+/**
+ * @param {string} provider
+ * @returns {string}
+ */
 function providerLabel(provider) {
   return PROVIDER_LABEL[provider] || provider;
 }
 
 // ProviderMark — the provider's logo at `size` px. discord and github draw in the surrounding text
 // colour; google and microsoft keep their own colours.
+/**
+ * @param {object} props
+ * @param {string} props.provider
+ * @param {number} [props.size] Pixels.
+ */
 function ProviderMark({ provider, size = 20 }) {
   const s = { width: size, height: size, display: "block" };
   if (provider === "discord") {
@@ -58,6 +67,14 @@ function ProviderMark({ provider, size = 20 }) {
 // (tokens --brand-<provider> and --on-brand-<provider>, the same in every theme); any other provider,
 // and any button without `brand`, is Button's neutral look. `busy` swaps the mark for the spinner.
 // Every other prop is Button's.
+/**
+ * @typedef {object} ProviderButtonOwnProps
+ * @property {string} provider
+ * @property {import("react").ReactNode} [children]
+ * @property {boolean} [brand] Fills with the provider's own colour for a known provider.
+ * @typedef {ProviderButtonOwnProps & Omit<import("./Button.jsx").ButtonProps, keyof ProviderButtonOwnProps | "icon" | "iconRight">} ProviderButtonProps
+ */
+/** @param {ProviderButtonProps} props */
 function ProviderButton({ provider, children, brand = false, busy, size = "md", className, ...buttonProps }) {
   const branded = brand && BRANDED.includes(provider);
   return (

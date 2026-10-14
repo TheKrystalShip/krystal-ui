@@ -18,6 +18,7 @@ import React from "react";
 const SWIPE_PX = 48;
 const SWIPE_RATIO = 1.5;
 
+/** @returns {boolean} */
 function useReducedMotion() {
   const [reduced, setReduced] = React.useState(() => matches("(prefers-reduced-motion: reduce)"));
   React.useEffect(() => {
@@ -30,10 +31,36 @@ function useReducedMotion() {
   return reduced;
 }
 
+/** @param {string} media */
 function matches(media) {
   return typeof window !== "undefined" && !!window.matchMedia && window.matchMedia(media).matches;
 }
 
+/**
+ * @typedef {object} CarouselOptions
+ * @property {number} count Number of slides.
+ * @property {number} [interval] Milliseconds each slide is shown.
+ * @property {number} [start] The first slide.
+ * @property {boolean} [pauseOnFocus] Hold still while keyboard focus is inside the slides.
+ * @property {boolean} [paused] Hold still from outside.
+ */
+/**
+ * @typedef {object} Carousel
+ * @property {number} index The slide shown.
+ * @property {number} count
+ * @property {number} interval
+ * @property {number} epoch Changes whenever a slide's time starts over.
+ * @property {boolean} autoplay Whether the slides turn by themselves at all.
+ * @property {boolean} running Whether they are turning now.
+ * @property {(index: number) => void} go Shows slide `index`, wrapping.
+ * @property {() => void} next
+ * @property {() => void} prev
+ * @property {import("react").HTMLAttributes<HTMLElement> & { "data-carousel": string }} rootProps Spread on what holds the slides.
+ */
+/**
+ * @param {CarouselOptions} options
+ * @returns {Carousel}
+ */
 function useCarousel({ count, interval = 8000, start = 0, pauseOnFocus = true, paused = false }) {
   const [index, setIndex] = React.useState(() => (count > 0 ? start % count : 0));
   const [epoch, setEpoch] = React.useState(0);

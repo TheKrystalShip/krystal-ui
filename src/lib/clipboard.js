@@ -13,6 +13,10 @@
 // The fallback is the pre-Clipboard-API selection trick, which still works in
 // an insecure context. `execCommand` is deprecated and every engine still
 // implements it; when it goes, this returns false and the caller says so.
+/**
+ * @param {string | number | null | undefined} text
+ * @returns {Promise<boolean>} Whether the text reached the clipboard.
+ */
 function copyText(text) {
   if (text == null || text === "") return Promise.resolve(false);
   const str = String(text);
@@ -23,6 +27,7 @@ function copyText(text) {
   return Promise.resolve(legacyCopy(str));
 }
 
+/** @param {string} str @returns {boolean} */
 function legacyCopy(str) {
   try {
     const ta = document.createElement("textarea");

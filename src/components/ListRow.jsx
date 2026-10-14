@@ -19,12 +19,36 @@
 //   tone      ok | info | warn | danger | accent: a thin edge on the row's leading side
 // `data-*` and the other props reach the `li`. At phone width `meta` and `aside` wrap under the
 // title and `actions` stay at the end.
+/**
+ * @param {object} props
+ * @param {string} [props.label]
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function List({ label, children, className }) {
   return <ul className={"k-list" + (className ? " " + className : "")} aria-label={label}>{children}</ul>;
 }
 
+/**
+ * @typedef {object} ListRowOwnProps
+ * @property {import("react").ReactNode} [lead]
+ * @property {import("react").ReactNode} title
+ * @property {import("react").ReactNode} [sub]
+ * @property {import("react").ReactNode} [meta] Pills.
+ * @property {import("react").ReactNode} [aside] Quiet monospace text at the end.
+ * @property {import("react").ReactNode} [actions]
+ * @property {(event: import("react").MouseEvent<HTMLElement>) => void} [onOpen] Makes the title a button.
+ * @property {string} [href] Makes the title a link.
+ * @property {boolean} [selected]
+ * @property {boolean} [disabled]
+ * @property {"ok" | "info" | "warn" | "danger" | "accent"} [tone]
+ * @property {string} [className]
+ * @typedef {ListRowOwnProps & Omit<import("react").ComponentPropsWithoutRef<"li">, keyof ListRowOwnProps | "title">} ListRowProps
+ */
+/** @param {ListRowProps} props */
 function ListRow({ lead, title, sub, meta, aside, actions, onOpen, href, selected = false, disabled = false, tone, className, ...rest }) {
   const openable = !disabled && (onOpen != null || href != null);
+  /** @type {{ className: string, "aria-current": "true" | undefined }} */
   const titleProps = {
     className: "k-listrow__title" + (openable ? " k-listrow__open" : ""),
     "aria-current": selected ? "true" : undefined,

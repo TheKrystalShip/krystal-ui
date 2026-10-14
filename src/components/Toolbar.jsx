@@ -29,6 +29,11 @@ import { useDebouncedValue } from "./Pagination.jsx";
 // direction), for a page whose rows are tiles or cards; a table sorts from its
 // own column headers instead.
 
+/**
+ * @param {object} props
+ * @param {import("react").ReactNode} [props.children] ToolbarSearch, ToolbarFilters and ToolbarSort are placed in their own columns; anything else follows.
+ * @param {string} [props.className]
+ */
 function Toolbar({ children, className }) {
   const search = [], filters = [], rest = [];
   React.Children.forEach(children, child => {
@@ -48,6 +53,15 @@ function Toolbar({ children, className }) {
   );
 }
 
+/**
+ * @param {object} props
+ * @param {string} props.value
+ * @param {(value: string) => void} props.onChange
+ * @param {string} [props.placeholder]
+ * @param {boolean} [props.pending] Shows a searching mark.
+ * @param {boolean} [props.autoFocus]
+ * @param {string} [props.ariaLabel]
+ */
 function ToolbarSearch({ value, onChange, placeholder, pending, autoFocus, ariaLabel }) {
   return (
     <div className="toolbar__search">
@@ -84,6 +98,14 @@ function ToolbarSpacer() { return <span className="toolbar__spacer" />; }
 //   onChange(key, dir)
 //   options: [{ value, label, defaultDir }]  — defaultDir applied when you
 //            switch TO that key (numbers usually "desc", names "asc").
+/**
+ * @param {object} props
+ * @param {string} props.value The current sort key.
+ * @param {"asc" | "desc"} [props.dir]
+ * @param {(key: string, dir: "asc" | "desc") => void} props.onChange
+ * @param {{ value: string, label: import("react").ReactNode, defaultDir?: "asc" | "desc" }[]} props.options
+ * @param {string} [props.label]
+ */
 function ToolbarSort({ value, dir = "desc", onChange, options, label = "Sort" }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);
@@ -156,11 +178,29 @@ function ToolbarSort({ value, dir = "desc", onChange, options, label = "Sort" })
   );
 }
 
+/**
+ * @param {object} props
+ * @param {number} [props.shown]
+ * @param {number} [props.total]
+ * @param {string} [props.unit]
+ * @param {import("react").ReactNode} [props.children] Replaces the "shown of total unit" text.
+ */
 function ToolbarCount({ shown, total, unit, children }) {
   if (children) return <span className="toolbar__count">{children}</span>;
   return <span className="toolbar__count"><b>{shown}</b> of {total} {unit}</span>;
 }
 
+/**
+ * @param {object} props
+ * @param {string} [props.icon] A Lucide name.
+ * @param {import("react").ReactNode} [props.children]
+ * @param {import("react").MouseEventHandler<HTMLButtonElement>} [props.onClick]
+ * @param {boolean} [props.disabled]
+ * @param {string} [props.title]
+ * @param {boolean} [props.spinning]
+ * @param {boolean} [props.active]
+ * @param {string} [props.ariaLabel]
+ */
 function ToolbarButton({ icon, children, onClick, disabled, title, spinning, active, ariaLabel }) {
   return (
     <button
@@ -176,14 +216,32 @@ function ToolbarButton({ icon, children, onClick, disabled, title, spinning, act
 }
 
 // Resolve a field's currently-selected option (for chip labels).
+/** @param {ToolbarFilterField} field */
 function optionFor(field) {
   return (field.options || []).find(o => o.value === field.value) || null;
 }
+/** @param {ToolbarFilterField} field */
 function fieldActive(field) {
   return field.value !== (field.default != null ? field.default : (field.options && field.options[0] && field.options[0].value));
 }
 
 // ToolbarFilters — single Filters popover + inline active-filter chips.
+/**
+ * @typedef {object} ToolbarFilterField
+ * @property {string} id
+ * @property {string} label
+ * @property {any} value
+ * @property {(value: any) => void} onChange
+ * @property {any} [default] The value that counts as unfiltered; the first option's by default.
+ * @property {{ value: any, label: import("react").ReactNode, count?: number }[]} options
+ * @property {boolean} [hidden]
+ */
+/**
+ * @param {object} props
+ * @param {ToolbarFilterField[]} props.fields
+ * @param {() => void} [props.onReset]
+ * @param {string} [props.label]
+ */
 function ToolbarFilters({ fields, onReset, label = "Filters" }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);
@@ -276,7 +334,12 @@ function ToolbarFilters({ fields, onReset, label = "Filters" }) {
 //   const f = useFilters({ search:"", status:"all", game:"all" });
 //   f.query, f.setQuery, f.debouncedQuery, f.searchPending
 //   f.values.status, f.set("status", v), f.reset(), f.activeCount
-function useFilters(defaults = {}, { debounce = 250 } = {}) {
+/**
+ * @template {Record<string, any>} T
+ * @param {{ search?: string } & T} [defaults]
+ * @param {{ debounce?: number }} [options]
+ */
+function useFilters(defaults = /** @type {any} */ ({}), { debounce = 250 } = {}) {
   const { search = "", ...rest } = defaults;
   const [query, setQuery] = React.useState(search);
   const [values, setValues] = React.useState(rest);

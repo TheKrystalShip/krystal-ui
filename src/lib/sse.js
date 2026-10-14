@@ -5,6 +5,10 @@
 /// Each frame carries a `data:` line with JSON; `:`-comment lines yield no data
 /// → returns null (heartbeats are ignored for free).
 /// Per the SSE spec, multiple `data:` lines concatenate with "\n" (the writer emits one).
+/**
+ * @param {string} block One event block.
+ * @returns {any} The parsed `data:` JSON, or null.
+ */
 export function parseSseEvent(block) {
   const data = [];
   for (const line of block.split("\n")) {
@@ -17,6 +21,12 @@ export function parseSseEvent(block) {
 /// Read an SSE response body stream, calling `onEvent` for each parsed event.
 /// Uses `getReader()` + `TextDecoder` + split-on-`\n\n` loop. Stops on stream
 /// end, abort, or transport error. Returns when the stream is fully consumed.
+/**
+ * @param {Response} res
+ * @param {(event: any) => void} onEvent
+ * @param {AbortSignal} [signal]
+ * @returns {Promise<void>}
+ */
 export async function readSseStream(res, onEvent, signal) {
   if (!res.body) return;
   const reader = res.body.getReader();

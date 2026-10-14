@@ -11,6 +11,26 @@
 //
 // `label` is the bar's accessible name. `start` and `end` are the caption's two ends, in monospace;
 // either alone is a one-sided caption.
+/**
+ * @typedef {object} MeterSegment
+ * @property {number} value
+ * @property {"neutral" | "accent" | "success" | "warn" | "danger"} [tone]
+ * @property {string} [label]
+ */
+/**
+ * @typedef {object} MeterOwnProps
+ * @property {number} [value] One accent fill, out of `max`.
+ * @property {MeterSegment[]} [segments] A measurement split into parts; overrides `value`.
+ * @property {number} [max]
+ * @property {string} [label] The bar's accessible name.
+ * @property {string} [valueText]
+ * @property {string} [role]
+ * @property {import("react").ReactNode} [start] Caption's left end.
+ * @property {import("react").ReactNode} [end] Caption's right end.
+ * @property {string} [className]
+ * @typedef {MeterOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof MeterOwnProps>} MeterProps
+ */
+/** @param {MeterProps} props */
 function Meter({ value, segments, max = 100, label, valueText, role, start, end, className, ...rest }) {
   const parts = segments || [{ value: value || 0, tone: "accent" }];
   const total = parts.reduce((sum, p) => sum + (p.value || 0), 0);

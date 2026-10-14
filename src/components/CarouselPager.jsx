@@ -3,6 +3,13 @@
 // held still. Choosing a mark shows its slide. `labels` names each mark's slide for a screen reader
 // ("Show Heat"). `indicator` draws the marks only, for a surface where they are not to be focused,
 // such as a television, where the slides are turned by time alone.
+/**
+ * @param {object} props
+ * @param {ReturnType<typeof import("../hooks/useCarousel.js").useCarousel>} props.carousel
+ * @param {string[]} [props.labels] Each mark's accessible name.
+ * @param {boolean} [props.indicator] Draw the marks only, not focusable.
+ * @param {string} [props.className]
+ */
 function CarouselPager({ carousel, labels = [], indicator = false, className }) {
   const { index, count, interval, epoch, autoplay, running, go } = carousel;
   if (count < 2) return null;

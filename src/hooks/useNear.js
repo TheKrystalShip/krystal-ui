@@ -15,6 +15,15 @@ const AHEAD = { rootMargin: "50% 0px", scrollMargin: "50%" };
  * start, and its images are left to the browser's own lazy loading.
  */
 const observers = new Map();
+/**
+ * @typedef {object} NearMargins
+ * @property {string} rootMargin
+ * @property {string} scrollMargin
+ */
+/**
+ * @param {NearMargins} ahead
+ * @returns {{ watch(el: Element, near: () => void): () => void } | null}
+ */
 function observer(ahead) {
   const key = ahead.rootMargin + "|" + ahead.scrollMargin;
   if (observers.has(key)) return observers.get(key);
@@ -47,6 +56,11 @@ function observer(ahead) {
  * Whether the element `ref` holds is near being seen, once it has been. `ahead` is how far: an
  * IntersectionObserver's `rootMargin` and `scrollMargin`, the same object for every call that shares
  * one observer.
+ */
+/**
+ * @param {import("react").RefObject<Element>} ref
+ * @param {NearMargins} [ahead]
+ * @returns {boolean}
  */
 export function useNear(ref, ahead = AHEAD) {
   const [near, setNear] = React.useState(() => observer(ahead) === null);

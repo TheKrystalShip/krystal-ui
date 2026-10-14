@@ -24,6 +24,11 @@ import { BriefCard, Icon, Rail, Toasts, toast } from "@thekrystalship/krystal-ui
 React (18.3 or 19), React DOM and `lucide-react` are peer dependencies: the site's own copies are used. The
 package depends on `@floating-ui/react-dom`, which places its popovers; a site never imports it.
 
+The package ships its own type declarations (`dist/**/*.d.ts`, named by the `types` condition of the
+`.` and `./lib/*` exports), so an editor completes component names and checks props in plain
+JavaScript too: each component's props, each hook's arguments and each store's state type are read from
+the JSDoc beside the source.
+
 The modules under `lib/` (`store`, `theme`, `toasts`, `time`, `clipboard`, `pushBrowser`) are also
 addressable one at a time — `@thekrystalship/krystal-ui/lib/time` — for code that runs outside a
 browser and must not load React.

@@ -28,11 +28,35 @@ import { Spinner } from "./Spinner.jsx";
 // anchors to its trigger by it).
 const ICON_SIZE = { xs: 12, sm: 13, md: 14, lg: 15, xl: 16 };
 
+/**
+ * @param {import("react").ReactNode} icon
+ * @param {number} size
+ * @param {string} [className]
+ */
 function glyph(icon, size, className) {
   if (!icon) return null;
   return typeof icon === "string" ? <Icon name={icon} size={size} className={className} /> : icon;
 }
 
+/**
+ * @typedef {object} ButtonOwnProps
+ * @property {"primary" | "secondary" | "outline" | "ghost" | "accent" | "danger" | "warning" | "link"} [variant]
+ * @property {"xs" | "sm" | "md" | "lg" | "xl"} [size]
+ * @property {"danger" | "warning" | "success"} [tone] A neutral variant's consequence colour on hover.
+ * @property {string | import("react").ReactNode} [icon] A Lucide name or a node, before the label.
+ * @property {string | import("react").ReactNode} [iconRight] A Lucide name or a node, after the label.
+ * @property {boolean} [busy] Spinner for the icon; disabled while busy.
+ * @property {boolean} [pressed] Makes it a two-state button (aria-pressed).
+ * @property {boolean} [armed] A confirm-first button waiting for its second press.
+ * @property {boolean} [wide] Fills its container.
+ * @property {string} [href] Renders a link that looks like a button.
+ * @property {"button" | "submit" | "reset"} [type]
+ * @property {boolean} [disabled]
+ * @property {string} [className]
+ * @property {import("react").ReactNode} [children]
+ * @typedef {ButtonOwnProps & Omit<import("react").ComponentPropsWithoutRef<"button">, keyof ButtonOwnProps>} ButtonProps
+ */
+/** @type {import("react").ForwardRefExoticComponent<ButtonProps & import("react").RefAttributes<HTMLButtonElement>>} */
 const Button = React.forwardRef(function Button({
   variant = "secondary", size = "md", tone, icon, iconRight, busy = false, pressed, armed = false,
   wide = false, href, type = "button", disabled, className, children, ...rest
@@ -52,7 +76,7 @@ const Button = React.forwardRef(function Button({
     </>
   );
   if (href != null) {
-    return <a ref={ref} className={cls} href={href} aria-disabled={disabled || undefined} {...rest}>{body}</a>;
+    return <a ref={/** @type {any} */ (ref)} className={cls} href={href} aria-disabled={disabled || undefined} {.../** @type {any} */ (rest)}>{body}</a>;
   }
   return (
     <button ref={ref} type={type} className={cls} disabled={disabled || busy}
@@ -72,6 +96,23 @@ const Button = React.forwardRef(function Button({
 // its tone is success.
 const ICON_BTN_GLYPH = { xs: 13, sm: 14, md: 15, lg: 17 };
 
+/**
+ * @typedef {object} IconButtonOwnProps
+ * @property {string | import("react").ReactNode} icon A Lucide name or a node.
+ * @property {string} label The accessible name and tooltip.
+ * @property {"outline" | "ghost" | "secondary"} [variant]
+ * @property {"xs" | "sm" | "md" | "lg"} [size]
+ * @property {"danger" | "warning" | "success"} [tone]
+ * @property {boolean} [busy]
+ * @property {boolean} [pressed]
+ * @property {boolean} [armed]
+ * @property {"button" | "submit" | "reset"} [type]
+ * @property {boolean} [disabled]
+ * @property {string} [title] Overrides the tooltip, which is `label` otherwise.
+ * @property {string} [className]
+ * @typedef {IconButtonOwnProps & Omit<import("react").ComponentPropsWithoutRef<"button">, keyof IconButtonOwnProps>} IconButtonProps
+ */
+/** @type {import("react").ForwardRefExoticComponent<IconButtonProps & import("react").RefAttributes<HTMLButtonElement>>} */
 const IconButton = React.forwardRef(function IconButton({
   icon, label, variant = "outline", size = "md", tone, busy = false, pressed, armed = false,
   type = "button", disabled, title, className, ...rest

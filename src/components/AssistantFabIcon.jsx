@@ -2,6 +2,11 @@ import { useRef, useEffect } from "react";
 
 const MAX_EYE_PX = 2;
 
+/**
+ * @param {object} props
+ * @param {number} [props.size]
+ * @param {string} [props.className]
+ */
 export default function AssistantFabIcon({ size = 22, className = "" }) {
   const ref = useRef(null);
 

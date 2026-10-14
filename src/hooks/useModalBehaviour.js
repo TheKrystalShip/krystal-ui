@@ -28,6 +28,7 @@ const FOCUSABLE = [
   "[tabindex]:not([tabindex='-1'])",
 ].join(",");
 
+/** @param {Node} el */
 function bodyChild(el) {
   let node = el;
   while (node && node.parentNode !== document.body) node = node.parentNode;
@@ -47,27 +48,34 @@ function applyInert() {
   });
 }
 
+/** @param {Element} root @returns {HTMLElement[]} */
 function focusables(root) {
-  return Array.from(root.querySelectorAll(FOCUSABLE)).filter(
+  return Array.from(/** @type {NodeListOf<HTMLElement>} */ (root.querySelectorAll(FOCUSABLE))).filter(
     (el) => el.getClientRects().length > 0 && !el.closest("[inert]"),
   );
 }
 
+/** @param {HTMLElement} root @returns {HTMLElement} */
 function sheetOf(root) {
-  return root.querySelector("[role='dialog']") || root.firstElementChild || root;
+  return /** @type {HTMLElement} */ (root.querySelector("[role='dialog']") || root.firstElementChild || root);
 }
 
+/** @param {HTMLElement} root */
 function focusInto(root) {
   if (root.contains(document.activeElement)) return;
-  const target = root.querySelector("[data-autofocus]") || focusables(root)[0];
+  const target = /** @type {HTMLElement | undefined} */ (root.querySelector("[data-autofocus]")) || focusables(root)[0];
   if (target) { target.focus(); return; }
   const sheet = sheetOf(root);
   if (!sheet.hasAttribute("tabindex")) sheet.setAttribute("tabindex", "-1");
   sheet.focus();
 }
 
+/**
+ * @param {import("react").RefObject<HTMLElement>} root The element portaled into <body>.
+ * @param {{ onClose?: () => void, canClose?: boolean }} [options]
+ */
 function useModalBehaviour(root, { onClose, canClose = true } = {}) {
-  const live = React.useRef({});
+  const live = React.useRef(/** @type {{ onClose?: () => void, canClose?: boolean }} */ ({}));
   live.current = { onClose, canClose };
   // Read during the first render, before any child's `autoFocus` has moved focus.
   const opener = React.useRef(undefined);

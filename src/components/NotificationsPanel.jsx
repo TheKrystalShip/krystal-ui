@@ -17,6 +17,10 @@ import { toast, toastStore, unreadCount, unreadTone } from "../lib/toasts.js";
 
 const TONE_ICON = { error: "circle-alert", success: "circle-check", info: "info" };
 
+/**
+ * @param {object} props
+ * @param {(subject: any) => void} [props.onOpen] Called with a row's `subject` when it is picked.
+ */
 function NotificationsPanel({ onOpen }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);

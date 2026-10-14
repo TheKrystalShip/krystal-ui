@@ -10,6 +10,12 @@ import { Pill } from "./Pill.jsx";
 // real telemetry).
 // A tab may carry an optional `title` for a hover hint (the leaf config page puts each leaf's
 // role there). Everything else is unchanged.
+/**
+ * @param {object} props
+ * @param {{ id: string, label: import("react").ReactNode, icon?: string, title?: string, badge?: number, badgeTone?: "info" | "neutral" | "accent" | "ok" | "warn" | "danger" | "muted", badgeNoun?: string }[]} props.tabs
+ * @param {string} props.active The active tab's id.
+ * @param {(id: string) => void} props.onChange
+ */
 export function SubTabs({ tabs, active, onChange }) {
   const current = tabs.find(t => t.id === active) || tabs[0];
   return (

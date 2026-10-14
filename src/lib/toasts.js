@@ -31,18 +31,43 @@ const nextId = () => "t" + (++seq) + "_" + Date.now().toString(36);
 // `action` holds a function and is deliberately dropped on the way to storage —
 // a callback cannot survive a reload, and JSON.stringify would silently write
 // null for it anyway. History rows are data; only live toasts carry behaviour.
+/**
+ * @typedef {object} Toast
+ * @property {string} id
+ * @property {"error" | "success" | "info"} tone
+ * @property {string} title
+ * @property {string | null} detail
+ * @property {string | null} code
+ * @property {any} subject Opaque; handed back through NotificationsPanel's `onOpen`.
+ * @property {{ label: import("react").ReactNode, onClick: () => void } | null} action Live toasts only.
+ * @property {boolean} sticky
+ * @property {number} count
+ * @property {number} ts
+ * @property {boolean} read
+ */
+/**
+ * @typedef {object} ToastOptions
+ * @property {string} [detail]
+ * @property {string | number} [code]
+ * @property {any} [subject]
+ * @property {{ label: import("react").ReactNode, onClick: () => void }} [action]
+ * @property {boolean} [sticky]
+ */
+/** @param {Toast} t */
 function persistable(t) {
   const rest = { ...t };
   delete rest.action;
   return rest;
 }
 
+/** @param {Toast[]} history @param {number} now */
 function prune(history, now) {
   return history
     .filter(t => (now - (t.ts || 0)) < HISTORY_TTL_MS)
     .slice(0, HISTORY_MAX);
 }
 
+/** @returns {Toast[]} */
 function load() {
   try {
     const raw = localStorage.getItem(KEY);
@@ -52,12 +77,15 @@ function load() {
   } catch { return []; }
 }
 
+/** @param {Toast[]} history */
 function save(history) {
   try { localStorage.setItem(KEY, JSON.stringify(history.map(persistable))); } catch {}
 }
 
+/** @type {import("./store.js").Store<{ live: Toast[], history: Toast[] }>} */
 const toastStore = createStore({ live: [], history: load() });
 
+/** @param {{ history: Toast[] }} state @returns {number} */
 function unreadCount(state) {
   let n = 0;
   for (const t of state.history) if (!t.read) n++;
@@ -66,11 +94,18 @@ function unreadCount(state) {
 
 // "danger" the moment any unread one is an error, so the badge tells you whether
 // what you missed needs you.
+/** @param {{ history: Toast[] }} state @returns {"danger" | "info"} */
 function unreadTone(state) {
   for (const t of state.history) if (!t.read && t.tone === "error") return "danger";
   return "info";
 }
 
+/**
+ * @param {"error" | "success" | "info"} tone
+ * @param {string} title
+ * @param {ToastOptions} [opts]
+ * @returns {string} The toast's id.
+ */
 function push(tone, title, opts) {
   const o = opts || {};
   const now = Date.now();

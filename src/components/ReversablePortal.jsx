@@ -21,6 +21,16 @@ import { Modal } from "./Modal.jsx";
 // so the projected subtree participates in the slot parent's layout exactly as it
 // did before wrapping — Monaco measures its own `.fb-editor__monaco-wrap` box, not
 // the slot, so layout is unaffected.
+/**
+ * @param {object} props
+ * @param {boolean} [props.fullscreen] Moves the children's DOM into the modal.
+ * @param {() => void} [props.onClose]
+ * @param {string} [props.scrimClassName]
+ * @param {string} [props.modalClassName]
+ * @param {string} [props.ariaLabel]
+ * @param {import("react").ReactNode} [props.placeholder] Shown in the inline slot while fullscreen.
+ * @param {import("react").ReactNode} [props.children]
+ */
 function ReversablePortal({
   fullscreen,
   onClose,

@@ -23,6 +23,14 @@ const ALIASES = {
   "terminal-square": "SquareTerminal",
 };
 
+/**
+ * @param {object} props
+ * @param {string} props.name A Lucide icon name in kebab-case.
+ * @param {number} [props.size]
+ * @param {number} [props.strokeWidth]
+ * @param {string} [props.className]
+ * @param {import("react").CSSProperties} [props.style]
+ */
 export function Icon({ name, size = 18, strokeWidth = 1.7, className, style }) {
   const Cmp = icons[ALIASES[name] || toPascal(name)];
   const base = { display: "inline-flex", ...(style || {}) };

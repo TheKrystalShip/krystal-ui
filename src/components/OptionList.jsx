@@ -21,6 +21,32 @@ import { Icon } from "./Icon.jsx";
 // `collapsedAfter` shows that many rows and ends the group with a row that reveals the rest;
 // `moreLabel(hiddenCount)` words it ("9 more languages"), and is "N more" when left out. A chosen
 // option past the cut is shown anyway, in its place, so a choice is never hidden.
+/**
+ * @template {string | number} [V=string | number]
+ * @typedef {object} OptionListItem
+ * @property {V} value
+ * @property {import("react").ReactNode} label
+ * @property {import("react").ReactNode} [detail] A quieter word after the label.
+ * @property {import("react").ReactNode} [aside] At the row's end, in monospace.
+ * @property {boolean} [disabled]
+ */
+/**
+ * @typedef {object} OptionListOwnProps
+ * @property {OptionListItem[]} options
+ * @property {any} [value] The chosen value; with `multiple`, the array of chosen values.
+ * @property {(next: any) => void} [onChange] The next value; with `multiple`, the next array in `options` order.
+ * @property {boolean} [multiple] Checkboxes instead of a radio group.
+ * @property {string} [label] The group's accessible name.
+ * @property {string} [name] The inputs' form name.
+ * @property {boolean} [disabled]
+ * @property {"sm" | "md"} [size]
+ * @property {"list" | "segmented"} [variant]
+ * @property {number} [collapsedAfter] Rows shown before a reveal row.
+ * @property {(hiddenCount: number) => string} [moreLabel]
+ * @property {string} [className]
+ * @typedef {OptionListOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof OptionListOwnProps | "onChange">} OptionListProps
+ */
+/** @param {OptionListProps} props */
 function OptionList({
   options, value, onChange, multiple = false, label, name, disabled = false,
   size = "md", variant = "list", collapsedAfter, moreLabel, className, ...rest

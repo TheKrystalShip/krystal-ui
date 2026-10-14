@@ -4,6 +4,7 @@ import React from "react";
 // sidebar and the dock fills the screen. Follows the window as it changes.
 const PHONE = "(max-width: 768px)";
 
+/** @returns {boolean} */
 function usePhone() {
   const query = () => typeof window !== "undefined" && !!window.matchMedia && window.matchMedia(PHONE).matches;
   const [phone, setPhone] = React.useState(query);

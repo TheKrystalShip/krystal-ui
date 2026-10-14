@@ -7,6 +7,17 @@ import { Icon } from "./Icon.jsx";
 //
 // `page` makes it the whole screen — centred on the canvas, on a card — for a site that has nothing
 // else to draw: signed out, no access, crashed. Without it, it centres in whatever holds it.
+/**
+ * @param {object} props
+ * @param {string} [props.icon] A Lucide name.
+ * @param {import("react").ReactNode} [props.title]
+ * @param {"neutral" | "accent" | "warn" | "danger"} [props.tone] Colours the icon disc.
+ * @param {import("react").ReactNode} [props.detail] Monospace text under the copy.
+ * @param {import("react").ReactNode} [props.actions]
+ * @param {boolean} [props.page] Fills the whole screen on a card.
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function EmptyState({ icon, title, tone = "neutral", detail, actions, page = false, className, children }) {
   const body = (
     <div className={"k-empty k-empty--" + tone + (page ? " k-empty--card" : "") + (className && !page ? " " + className : "")}>

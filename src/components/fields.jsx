@@ -14,6 +14,18 @@ import { IconButton } from "./Button.jsx";
 // `prefix` and `suffix` are words or marks inside the field's frame, before and after what is typed —
 // the unit a number is in, the domain a name is completed with. The frame then draws the field and
 // the native input inside it is bare; the ref still reaches the input.
+/**
+ * @typedef {object} InputOwnProps
+ * @property {"sm" | "md" | "lg"} [size]
+ * @property {boolean} [mono] Monospace, for an identifier, a path, a port.
+ * @property {boolean} [wide] Fills its container.
+ * @property {boolean} [invalid] Danger border and aria-invalid.
+ * @property {import("react").ReactNode} [prefix] Inside the frame, before what is typed.
+ * @property {import("react").ReactNode} [suffix] Inside the frame, after what is typed.
+ * @property {string} [className]
+ * @typedef {InputOwnProps & Omit<import("react").ComponentPropsWithoutRef<"input">, keyof InputOwnProps>} InputProps
+ */
+/** @type {import("react").ForwardRefExoticComponent<InputProps & import("react").RefAttributes<HTMLInputElement>>} */
 const Input = React.forwardRef(function Input(
   { size = "md", mono = false, wide = false, invalid = false, prefix, suffix, className, ...rest }, ref) {
   const cls = "k-input k-input--" + size
@@ -36,6 +48,12 @@ const Input = React.forwardRef(function Input(
 // PasswordInput — an Input whose suffix is a button revealing what is typed. `revealLabel` is the
 // button's accessible name in each state, [hidden, shown]; every other prop is Input's and reaches the
 // input, and the ref reaches it too. A press on the button leaves focus in the input.
+/**
+ * @typedef {object} PasswordInputOwnProps
+ * @property {[string, string]} [revealLabel] The reveal button's accessible name, [hidden, shown].
+ * @typedef {PasswordInputOwnProps & Omit<InputProps, keyof PasswordInputOwnProps | "type">} PasswordInputProps
+ */
+/** @type {import("react").ForwardRefExoticComponent<PasswordInputProps & import("react").RefAttributes<HTMLInputElement>>} */
 const PasswordInput = React.forwardRef(function PasswordInput(
   { revealLabel = ["Show password", "Hide password"], size = "md", ...inputProps }, ref) {
   const [shown, setShown] = React.useState(false);
@@ -52,6 +70,15 @@ const PasswordInput = React.forwardRef(function PasswordInput(
 });
 
 // Textarea — Input's look over several lines. It grows by the person dragging it, vertically only.
+/**
+ * @typedef {object} TextareaOwnProps
+ * @property {boolean} [mono]
+ * @property {boolean} [invalid]
+ * @property {number} [rows]
+ * @property {string} [className]
+ * @typedef {TextareaOwnProps & Omit<import("react").ComponentPropsWithoutRef<"textarea">, keyof TextareaOwnProps>} TextareaProps
+ */
+/** @type {import("react").ForwardRefExoticComponent<TextareaProps & import("react").RefAttributes<HTMLTextAreaElement>>} */
 const Textarea = React.forwardRef(function Textarea(
   { mono = false, invalid = false, rows = 4, className, ...rest }, ref) {
   return (
@@ -66,6 +93,16 @@ const Textarea = React.forwardRef(function Textarea(
 
 // Checkbox — a native checkbox in the accent colour, with its words beside it. The whole line is
 // the hit target. `onChange` receives the new checked state, not the event.
+/**
+ * @typedef {object} CheckboxOwnProps
+ * @property {boolean} [checked]
+ * @property {(checked: boolean) => void} [onChange] Receives the new checked state, not the event.
+ * @property {boolean} [disabled]
+ * @property {import("react").ReactNode} [children] The words beside the box.
+ * @property {string} [className]
+ * @typedef {CheckboxOwnProps & Omit<import("react").ComponentPropsWithoutRef<"input">, keyof CheckboxOwnProps | "type">} CheckboxProps
+ */
+/** @param {CheckboxProps} props */
 function Checkbox({ checked, onChange, disabled = false, children, className, ...rest }) {
   return (
     <label className={"k-check" + (disabled ? " k-check--disabled" : "") + (className ? " " + className : "")}>
@@ -81,6 +118,16 @@ function Checkbox({ checked, onChange, disabled = false, children, className, ..
 // controls passes `group`, and becomes a labelled group instead.
 //
 // `aside` sits after the label in a quieter weight ("optional", a character count).
+/**
+ * @param {object} props
+ * @param {import("react").ReactNode} [props.label]
+ * @param {import("react").ReactNode} [props.aside]  After the label, quieter.
+ * @param {import("react").ReactNode} [props.hint]
+ * @param {import("react").ReactNode} [props.error] Replaces the hint.
+ * @param {boolean} [props.group] A labelled group instead of a <label>, for several controls.
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function Field({ label, aside, hint, error, group = false, className, children }) {
   const Tag = group ? "div" : "label";
   return (

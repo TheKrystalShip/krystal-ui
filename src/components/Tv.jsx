@@ -11,6 +11,14 @@ import { useNear } from "../hooks/useNear.js";
 // right. Each item is a link (`href`, `onClick`); the one for the page that is open carries
 // `active`, which is `aria-current`, where focus lands when it comes up into the bar. `hidden` slides
 // the bar away, for a page scrolled past its top.
+/**
+ * @param {object} props
+ * @param {string} [props.mark] An image URL.
+ * @param {string} [props.name]
+ * @param {{ id: string, label: import("react").ReactNode, active?: boolean, href?: string, onClick?: import("react").MouseEventHandler<HTMLAnchorElement> }[]} props.items
+ * @param {import("react").ReactNode} [props.actions]
+ * @param {boolean} [props.hidden]
+ */
 function TvBar({ mark, name, items, actions, hidden = false }) {
   return (
     <header className="tv-bar" data-hidden={hidden ? "" : undefined}>
@@ -29,6 +37,16 @@ function TvBar({ mark, name, items, actions, hidden = false }) {
 
 // TvBarButton — a round button among the bar's actions: an icon, or `children` drawn in its place
 // (an avatar). `label` is its accessible name; `dot` marks something waiting behind it.
+/**
+ * @typedef {object} TvBarButtonOwnProps
+ * @property {string} [icon] A Lucide name.
+ * @property {string} label The accessible name.
+ * @property {boolean} [dot] Marks something waiting behind it.
+ * @property {import("react").ReactNode} [children] Drawn in place of the icon.
+ * @property {string} [className]
+ * @typedef {TvBarButtonOwnProps & Omit<import("react").ComponentPropsWithoutRef<"button">, keyof TvBarButtonOwnProps>} TvBarButtonProps
+ */
+/** @param {TvBarButtonProps} props */
 function TvBarButton({ icon, label, dot = false, children, className, ...rest }) {
   return (
     <button type="button" className={"tv-bar__button" + (className ? " " + className : "")} aria-label={label} {...rest}>
@@ -43,6 +61,11 @@ function TvBarButton({ icon, label, dot = false, children, className, ...rest })
 // canvas between two pictures. `size` is how far down it reaches: "tall" behind a page's opening
 // spotlight, "short" behind one drawn above a row, "page" across most of a page that is about one
 // thing.
+/**
+ * @param {object} props
+ * @param {string} [props.src]
+ * @param {"tall" | "short" | "page"} [props.size]
+ */
 function TvBackdrop({ src, size = "tall" }) {
   const [layers, setLayers] = React.useState(() => (src ? [{ src, key: 0 }] : []));
   const next = React.useRef(1);
@@ -72,6 +95,15 @@ function TvBackdrop({ src, size = "tall" }) {
 // TvSpotlight — what one thing is, large: a line above its name, its name, a line of facts, and below
 // them whatever the site puts there (an overview, its actions). `size` "lg" opens a page; "md" sits
 // above a row and describes the card focused in it.
+/**
+ * @param {object} props
+ * @param {import("react").ReactNode} [props.eyebrow]
+ * @param {import("react").ReactNode} props.title
+ * @param {import("react").ReactNode} [props.meta]
+ * @param {"lg" | "md"} [props.size]
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function TvSpotlight({ eyebrow, title, meta, size = "lg", className, children }) {
   return (
     <section className={"tv-spot tv-spot--" + size + (className ? " " + className : "")}>
@@ -86,6 +118,15 @@ function TvSpotlight({ eyebrow, title, meta, size = "lg", className, children })
 // TvRow — one row of cards that runs past the right of the screen: a heading with its icon and count,
 // then the cards, then `end`, the tile that leads past the row. It is a `data-tv-row`, which a
 // navigator places on the page's line when focus is in it.
+/**
+ * @param {object} props
+ * @param {string} [props.icon] A Lucide name.
+ * @param {import("react").ReactNode} props.title
+ * @param {import("react").ReactNode} [props.count]
+ * @param {import("react").ReactNode} [props.end] The tile that leads past the row.
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function TvRow({ icon, title, count, end, className, children }) {
   return (
     <section className={"tv-row" + (className ? " " + className : "")} data-tv-row="">
@@ -109,6 +150,18 @@ function TvRow({ icon, title, count, end, className, children }) {
 // then: a television's page column and its rows are both scrollers, so that is a quarter screen ahead
 // down the page and along a row, which keeps a page to the pictures it is about to show.
 const CARD_AHEAD = { rootMargin: "0px", scrollMargin: "25%" };
+/**
+ * @typedef {object} TvCardOwnProps
+ * @property {string} [art] Image URL.
+ * @property {"poster" | "wide"} [shape]
+ * @property {string} [label] The accessible name.
+ * @property {number} [progress] 0 to 1.
+ * @property {import("react").ReactNode} [badge]
+ * @property {string} [className]
+ * @property {import("react").ReactNode} [children]
+ * @typedef {TvCardOwnProps & Omit<import("react").ComponentPropsWithoutRef<"a">, keyof TvCardOwnProps>} TvCardProps
+ */
+/** @type {import("react").ForwardRefExoticComponent<TvCardProps & import("react").RefAttributes<HTMLAnchorElement>>} */
 const TvCard = React.forwardRef(function TvCard({ art, shape = "poster", label, progress, badge, className, children, ...rest }, ref) {
   const own = React.useRef(null);
   const near = useNear(own, CARD_AHEAD);
@@ -130,6 +183,15 @@ const TvCard = React.forwardRef(function TvCard({ art, shape = "poster", label, 
 });
 
 // TvTile — the tile that ends a row: an icon over a few words, the size of the row's cards.
+/**
+ * @typedef {object} TvTileOwnProps
+ * @property {string} [icon] A Lucide name.
+ * @property {import("react").ReactNode} label
+ * @property {"poster" | "wide"} [shape]
+ * @property {string} [className]
+ * @typedef {TvTileOwnProps & Omit<import("react").ComponentPropsWithoutRef<"a">, keyof TvTileOwnProps>} TvTileProps
+ */
+/** @param {TvTileProps} props */
 function TvTile({ icon = "arrow-right", label, shape = "poster", className, ...rest }) {
   return (
     <a className={"tv-card tv-tile tv-card--" + shape + (className ? " " + className : "")} {...rest}>

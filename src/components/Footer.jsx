@@ -1,6 +1,7 @@
 import { Icon } from "./Icon.jsx";
 
 // GitHub's mark. Lucide carries no brand glyphs, and a link to github.com is recognised by this one.
+/** @param {{ size?: number }} props */
 function GithubMark({ size = 16 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
@@ -12,6 +13,18 @@ function GithubMark({ size = 16 }) {
 
 // A link opens in a new tab unless the site handles it itself: given `onClick`, a plain click is
 // the site's (a client-side navigation) and a modified click still opens `href` the browser's way.
+/**
+ * @typedef {object} FooterLinkItem
+ * @property {import("react").ReactNode} name
+ * @property {string} href
+ * @property {string} [scope] A prefix before the name.
+ * @property {import("react").ReactNode} [sub]
+ * @property {string} [icon] A Lucide name.
+ * @property {import("react").ReactNode} [glyph] A node drawn in place of the icon.
+ * @property {boolean} [featured]
+ * @property {() => void} [onClick] A plain click is the site's; a modified click opens `href`.
+ */
+/** @param {{ link: FooterLinkItem }} props */
 function FooterLink({ link }) {
   const own = typeof link.onClick === "function";
   const onClick = own ? (e) => {
@@ -46,6 +59,24 @@ function FooterLink({ link }) {
 // `{ label, columns, mono, links }` (`mono` sets the names as code, for repositories and the like), a
 // link being `{ name, href, scope?, sub?, icon? | glyph?, featured?,
 // onClick? }`. The bar under both carries `copy` on the left and `end` on the right.
+/**
+ * @typedef {object} FooterGroup
+ * @property {string} label
+ * @property {number} [columns]
+ * @property {boolean} [mono] Names set as code.
+ * @property {FooterLinkItem[]} links
+ */
+/**
+ * @param {object} props
+ * @param {string} [props.mark] An image URL.
+ * @param {import("react").ReactNode} [props.wordmark]
+ * @param {import("react").ReactNode} [props.tagline]
+ * @param {import("react").ReactNode} [props.note]
+ * @param {boolean} [props.live] A pulsing dot before the note.
+ * @param {FooterGroup[]} [props.groups]
+ * @param {import("react").ReactNode} [props.copy]
+ * @param {import("react").ReactNode} [props.end]
+ */
 function Footer({ mark, wordmark, tagline, note, live = false, groups = [], copy, end }) {
   return (
     <footer className="kfoot" role="contentinfo">
@@ -67,7 +98,7 @@ function Footer({ mark, wordmark, tagline, note, live = false, groups = [], copy
         <div className="kfoot__groups">
           {groups.map((g) => (
             <div key={g.label} className={"kfoot__group" + (g.mono ? " kfoot__group--mono" : "")}
-                 style={{ "--kfoot-columns": g.columns || 1 }}>
+                 style={/** @type {import("react").CSSProperties} */ ({ "--kfoot-columns": g.columns || 1 })}>
               <div className="kfoot__group-label">{g.label}</div>
               <div className="kfoot__group-links">
                 {g.links.map((l) => <FooterLink key={l.href} link={l} />)}

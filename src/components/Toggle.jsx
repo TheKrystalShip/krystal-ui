@@ -6,6 +6,14 @@
 // be changed from here (one turned off for everyone, say). It stays visible rather than being hidden,
 // because a missing switch reads as "no such setting" when the truth is "not yours to change"; the
 // row around it says which.
+/**
+ * @param {object} props
+ * @param {boolean} [props.on]
+ * @param {(next: boolean) => void} [props.onChange] Receives the new state.
+ * @param {boolean} [props.disabled] Inert and faded, still visible.
+ * @param {string} [props.label] The accessible name.
+ * @param {string} [props.className]
+ */
 function Toggle({ on, onChange, disabled = false, label, className }) {
   return (
     <button type="button" role="switch" aria-checked={!!on} aria-label={label} disabled={disabled}

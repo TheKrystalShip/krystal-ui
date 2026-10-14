@@ -48,6 +48,16 @@ const THEME_KEY = "krystal:theme";
 // editor scheme is a syntax palette and never had an opinion about a corner, whereas a tribute is
 // quoting a whole interface. The set of tokens a theme is permitted to re-value is fixed and
 // listed in tokens.css's structural banner; this field is only the human-readable half.
+/**
+ * @typedef {object} ThemeOption
+ * @property {string} id
+ * @property {string} label
+ * @property {"dark" | "light"} [mode] Absent on `auto`.
+ * @property {string} [cvd] The colour-vision pack: who it is built for.
+ * @property {string} [tribute] The screen a tribute quotes.
+ * @property {string} [shape] What structure a tribute re-values.
+ */
+/** @type {ThemeOption[]} */
 const THEME_OPTS = [
   { id: "auto",             label: "Auto (system)"                            },
   { id: "dark",             label: "Krystal Blue Dark",          mode: "dark"  },
@@ -118,6 +128,7 @@ const THEME_OPTS = [
 const VALID = THEME_OPTS.map(o => o.id);
 const DEFAULT = "dark";
 
+/** @returns {string} */
 function readPref() {
   try {
     const v = localStorage.getItem(THEME_KEY);
@@ -130,6 +141,10 @@ const prefersLight = () =>
 
 // A preference → the concrete theme actually painted.
 // Concrete themes (anything except "auto") pass through unchanged.
+/**
+ * @param {string} pref A THEME_OPTS id.
+ * @returns {string} The concrete palette id.
+ */
 function resolveTheme(pref) {
   if (pref !== "auto") return pref;
   return prefersLight() ? "light" : "dark";
@@ -138,6 +153,7 @@ function resolveTheme(pref) {
 // Push the resolved theme onto <html> and keep the browser-chrome color honest.
 // We read --canvas back out of the cascade rather than hardcode it, so the meta
 // tag tracks whatever the active theme defines (no second source of truth).
+/** @param {string} resolved */
 function applyResolved(resolved) {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
@@ -149,8 +165,12 @@ function applyResolved(resolved) {
   } catch {}
 }
 
+/**
+ * @typedef {{ pref: string, resolved: string }} ThemeState
+ * @typedef {import("./store.js").Store<ThemeState> & { set(pref: string): void }} ThemeStore
+ */
 const initialPref = readPref();
-const themeStore = createStore({ pref: initialPref, resolved: resolveTheme(initialPref) });
+const themeStore = /** @type {ThemeStore} */ (createStore({ pref: initialPref, resolved: resolveTheme(initialPref) }));
 
 // Set + persist the preference, then apply it live. `pref` ∈ VALID.
 themeStore.set = (pref) => {
@@ -178,7 +198,9 @@ if (typeof matchMedia !== "undefined") {
 // beats first paint); this pass also wires up the meta tag and the store.
 applyResolved(themeStore.getState().resolved);
 
+/** @returns {string} */
 const useThemePref = () => useStore(themeStore, s => s.pref);
+/** @returns {string} */
 const useResolvedTheme = () => useStore(themeStore, s => s.resolved);
 
 export { themeStore, useThemePref, useResolvedTheme, resolveTheme, THEME_KEY, THEME_OPTS };

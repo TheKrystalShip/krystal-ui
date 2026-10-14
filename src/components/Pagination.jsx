@@ -12,6 +12,12 @@ import { Icon } from "./Icon.jsx";
 // Build a windowed list of page numbers with "…" gaps so the control stays a
 // fixed width no matter how many pages exist: always first + last, plus a
 // window around the current page.
+/**
+ * @param {number} page Zero-based current page.
+ * @param {number} pageCount
+ * @param {number} [span] Pages shown each side of the current one.
+ * @returns {{ gap?: boolean, page?: number, key: string }[]}
+ */
 function paginationWindow(page, pageCount, span = 1) {
   const shown = new Set([0, pageCount - 1]);
   for (let p = page - span; p <= page + span; p++) {
@@ -28,6 +34,15 @@ function paginationWindow(page, pageCount, span = 1) {
   return seq;
 }
 
+/**
+ * @param {object} props
+ * @param {number} props.page Zero-based.
+ * @param {number} props.pageCount
+ * @param {number} props.total
+ * @param {number} props.pageSize
+ * @param {(page: number) => void} props.onPage
+ * @param {string} [props.unit]
+ */
 function Pagination({ page, pageCount, total, pageSize, onPage, unit = "results" }) {
   if (!pageCount || pageCount <= 1) return null;
   const clamp = (p) => Math.max(0, Math.min(pageCount - 1, p));
@@ -82,6 +97,12 @@ function Pagination({ page, pageCount, total, pageSize, onPage, unit = "results"
 // value; callers compare it to the live value to know a query is still "pending"
 // and show a spinner. Every searchable list shares it, so search behaves the
 // same everywhere.
+/**
+ * @template T
+ * @param {T} value
+ * @param {number} [delay] Milliseconds of quiet before the value settles.
+ * @returns {T}
+ */
 function useDebouncedValue(value, delay = 250) {
   const [settled, setSettled] = React.useState(value);
   React.useEffect(() => {

@@ -14,7 +14,36 @@ const PHONE_MAX = 768;
 //
 // `storedOpen` is what `:open` held when the page loaded — "1", "0" or null — for a site that
 // restores the dock once it knows the dock has something to show.
-function useDock({ storageKey, defaultWidth = 420, minWidth = 320, maxWidth = 900, contentFloor = 1000 } = {}) {
+/**
+ * @typedef {object} DockOptions
+ * @property {string} storageKey Prefix of the localStorage keys.
+ * @property {number} [defaultWidth]
+ * @property {number} [minWidth]
+ * @property {number} [maxWidth]
+ * @property {number} [contentFloor] Pixels the page must keep for a pinned dock to push it.
+ */
+/**
+ * @typedef {object} DockState
+ * @property {boolean} open
+ * @property {(open: boolean | ((open: boolean) => boolean)) => void} setOpen
+ * @property {string | null} storedOpen What `:open` held at load: "1", "0" or null.
+ * @property {number} width
+ * @property {(width: number) => void} setWidth
+ * @property {(event: import("react").PointerEvent<HTMLElement>) => void} startResize Bound to the handle's pointerdown.
+ * @property {boolean | null} pin Null until somebody chooses.
+ * @property {(pin: boolean | null) => void} setPin
+ * @property {boolean} pinned
+ * @property {() => void} togglePin
+ * @property {boolean} canPush
+ * @property {number} vw
+ * @property {boolean} desktop
+ * @property {boolean} pushing
+ */
+/**
+ * @param {DockOptions} [options]
+ * @returns {DockState}
+ */
+function useDock({ storageKey, defaultWidth = 420, minWidth = 320, maxWidth = 900, contentFloor = 1000 } = /** @type {DockOptions} */ ({})) {
   const read = (name) => { try { return localStorage.getItem(storageKey + ":" + name); } catch { return null; } };
   const [open, setOpen] = React.useState(false);
   const [storedOpen] = React.useState(() => read("open"));
@@ -89,6 +118,13 @@ function useDock({ storageKey, defaultWidth = 420, minWidth = 320, maxWidth = 90
 // The dock itself: fixed to the right edge, sliding in when `dock.open`, with the resize handle on
 // its left edge while it is open. Below `compactBelow` pixels it carries `--compact`, for content
 // that tightens at that width.
+/**
+ * @param {object} props
+ * @param {DockState} props.dock
+ * @param {number} [props.compactBelow] Width under which the dock carries `--compact`.
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function Dock({ dock, compactBelow = 550, className, children }) {
   return (
     <aside className={"assistant-dock" + (dock.open ? " assistant-dock--open" : "") + (dock.pushing ? " assistant-dock--push" : "")
@@ -101,6 +137,11 @@ function Dock({ dock, compactBelow = 550, className, children }) {
 }
 
 // The floating button that opens the dock, bottom-right.
+/**
+ * @param {object} props
+ * @param {() => void} [props.onClick]
+ * @param {string} [props.label]
+ */
 function DockFab({ onClick, label = "Open assistant" }) {
   return (
     <button className="assistant-fab" onClick={onClick} title={label} aria-label={label}>

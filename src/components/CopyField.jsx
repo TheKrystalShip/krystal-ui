@@ -7,6 +7,17 @@ import { copyText } from "../lib/clipboard.js";
 // button shows a check for a moment once the text is on the clipboard; if the browser refuses, it
 // stays a copy icon. `label` names the button; `onCopied(value)` runs after a copy that worked.
 // Every other prop is Input's, and the ref reaches the input.
+/**
+ * @typedef {object} CopyFieldOwnProps
+ * @property {string} value The text shown and copied.
+ * @property {string} [label] The copy button's accessible name.
+ * @property {boolean} [mono]
+ * @property {"sm" | "md" | "lg"} [size]
+ * @property {boolean} [wide]
+ * @property {(value: string) => void} [onCopied] Runs after a copy that worked.
+ * @typedef {CopyFieldOwnProps & Omit<import("./fields.jsx").InputProps, keyof CopyFieldOwnProps | "readOnly" | "suffix">} CopyFieldProps
+ */
+/** @type {React.ForwardRefExoticComponent<CopyFieldProps & React.RefAttributes<HTMLInputElement>>} */
 const CopyField = React.forwardRef(function CopyField(
   { value, label = "Copy", mono = true, onCopied, size = "md", wide = true, ...inputProps }, ref) {
   const [done, setDone] = React.useState(false);

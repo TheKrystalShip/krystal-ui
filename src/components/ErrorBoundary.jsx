@@ -9,6 +9,14 @@ import { EmptyState } from "./EmptyState.jsx";
 // `onError(error, info)` hears every catch.
 //
 // It catches rendering only. A request that fails is state, and the page that made it says so.
+/**
+ * @typedef {object} ErrorBoundaryProps
+ * @property {import("react").ReactNode | ((reset: () => void, error: Error) => import("react").ReactNode)} [fallback]
+ * @property {unknown} [resetKey] A change clears a caught error.
+ * @property {(error: Error, info: import("react").ErrorInfo) => void} [onError]
+ * @property {import("react").ReactNode} [children]
+ */
+/** @extends {React.Component<ErrorBoundaryProps, { error: Error | null }>} */
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -46,6 +54,7 @@ class ErrorBoundary extends React.Component {
   }
 }
 
+/** @param {{ error?: Error | null }} props */
 function CrashScreen({ error }) {
   return (
     <EmptyState page tone="danger" icon="bug" title="Something went wrong"

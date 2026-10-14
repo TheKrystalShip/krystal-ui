@@ -6,6 +6,12 @@
 // `onNavigate(href, event)` lets a single-page site take a plain left click itself. A click with a
 // modifier key, a non-primary button or an already-prevented event is left to the browser.
 // A string label is also the crumb's `title`, so a label cut short by the width can be read whole.
+/**
+ * @param {object} props
+ * @param {{ label: import("react").ReactNode, href?: string }[]} props.items Root first, the current page last.
+ * @param {(href: string, event: import("react").MouseEvent<HTMLAnchorElement>) => void} [props.onNavigate] Takes a plain left click.
+ * @param {string} [props.className]
+ */
 export function Breadcrumbs({ items, onNavigate, className }) {
   if (!items || items.length === 0) return null;
   const last = items.length - 1;

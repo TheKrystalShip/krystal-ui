@@ -11,11 +11,23 @@ import { Icon } from "./Icon.jsx";
 //
 // `dockPush` is the width a pinned dock takes from the page, in pixels; the frame pads its right
 // edge by it so the page reflows rather than sitting under the dock.
+/**
+ * @param {object} props
+ * @param {import("react").ReactNode} [props.sidebar]
+ * @param {boolean} [props.collapsed] Icon-rail sidebar.
+ * @param {boolean} [props.drawerOpen] The phone drawer.
+ * @param {(open: boolean) => void} [props.onDrawer]
+ * @param {number} [props.dockPush] Pixels a pinned dock takes from the page.
+ * @param {import("react").ReactNode} [props.aside]
+ * @param {import("react").ReactNode} [props.tabBar]
+ * @param {import("react").Ref<HTMLElement>} [props.mainRef]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, aside, tabBar, mainRef, children }) {
   return (
     <div
       className={"app" + (tabBar ? " app--tabbed" : "")}
-      style={{ "--dock-push": dockPush + "px", ...(collapsed ? { "--sidebar-w": "64px" } : {}) }}>
+      style={/** @type {import("react").CSSProperties} */ ({ "--dock-push": dockPush + "px", ...(collapsed ? { "--sidebar-w": "64px" } : {}) })}>
       {sidebar}
       {drawerOpen
         ? <div className="sidebar-scrim sidebar-scrim--open" onClick={() => onDrawer(false)} />
@@ -32,6 +44,21 @@ function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, asid
 // around. Each item is `{ id, icon, label, active, onClick, badge, tone }`, where `badge` is a count
 // drawn on the icon when it is above zero, in a `tone` of info, warn or danger. The bar clears the
 // home indicator of a phone that has one.
+/**
+ * @typedef {object} TabBarItem
+ * @property {string} [id]
+ * @property {string} icon A Lucide name.
+ * @property {string} label
+ * @property {boolean} [active]
+ * @property {() => void} [onClick]
+ * @property {number} [badge] Drawn on the icon when above zero.
+ * @property {"info" | "warn" | "danger"} [tone]
+ */
+/**
+ * @param {object} props
+ * @param {TabBarItem[]} props.items
+ * @param {string} [props.label]
+ */
 function TabBar({ items, label = "Main" }) {
   return (
     <nav className="tabbar" aria-label={label}>
@@ -58,6 +85,18 @@ function TabBar({ items, label = "Main" }) {
 // the foot stays reachable in a short window. The hairline under the brand moves under `top` when
 // there is one, so the header reads as one block. `closeNav` rules off the last group too, for a
 // site whose nav and foot are far apart.
+/**
+ * @param {object} props
+ * @param {string} [props.mark] An image URL.
+ * @param {import("react").ReactNode} [props.wordmark]
+ * @param {boolean} [props.open] The phone drawer is open.
+ * @param {boolean} [props.collapsed]
+ * @param {() => void} [props.onToggleCollapse]
+ * @param {import("react").ReactNode} [props.top]
+ * @param {boolean} [props.closeNav] Rules off the last group too.
+ * @param {import("react").ReactNode} [props.foot]
+ * @param {import("react").ReactNode} [props.children] Nav groups.
+ */
 function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, closeNav, foot, children }) {
   return (
     <aside className={"sidebar" + (open ? " sidebar--open" : "") + (collapsed ? " sidebar--rail" : "")}>
@@ -83,6 +122,14 @@ function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, close
 // The signed-in person, at the bottom of the sidebar's foot: their avatar, their name and a `sub`
 // line under it, opening a menu upward of `items` — `{ icon, label, onClick, danger }`. `detail` is
 // what the menu's head says under the name. On the collapsed rail the row is the avatar alone.
+/**
+ * @param {object} props
+ * @param {{ display?: string, name?: string }} props.user
+ * @param {import("react").ReactNode} [props.sub]
+ * @param {import("react").ReactNode} [props.detail]
+ * @param {{ icon: string, label: string, onClick?: () => void, danger?: boolean }[]} [props.items]
+ * @param {boolean} [props.collapsed]
+ */
 function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);
@@ -144,6 +191,11 @@ function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
 // A run of related links. Groups are ruled off from each other by a hairline, so a group with
 // nothing in it should not be rendered at all. The label is for a group whose links do not say
 // what they share on their own; the collapsed rail hides it.
+/**
+ * @param {object} props
+ * @param {import("react").ReactNode} [props.label]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function SidebarGroup({ label, children }) {
   return (
     <div className="sidebar__group">
@@ -156,6 +208,17 @@ function SidebarGroup({ label, children }) {
 // One link. `badge` is a count drawn after the label when it is above zero, in a `tone` of info,
 // warn or danger; on the collapsed rail it becomes a pip on the icon. `tip` is what the rail's
 // tooltip says, defaulting to the label.
+/**
+ * @param {object} props
+ * @param {string} props.icon A Lucide name.
+ * @param {string} props.label
+ * @param {boolean} [props.active]
+ * @param {(event: import("react").SyntheticEvent<HTMLElement>) => void} [props.onClick]
+ * @param {number} [props.badge]
+ * @param {"info" | "warn" | "danger"} [props.tone]
+ * @param {string} [props.tip] The rail tooltip; the label by default.
+ * @param {number} [props.iconSize]
+ */
 function NavItem({ icon, label, active, onClick, badge = 0, tone = "info", tip, iconSize = 16 }) {
   const onKeyDown = (e) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick && onClick(e); }
@@ -178,6 +241,7 @@ function NavItem({ icon, label, active, onClick, badge = 0, tone = "info", tip, 
 }
 
 // The drawer's opener on phones: a slim handle on the left edge, where the swipe lives.
+/** @param {{ onOpen?: () => void }} props */
 function MobileNavToggle({ onOpen }) {
   return (
     <button className="mnav mnav--edge" onClick={onOpen} aria-label="Open menu" title="Menu">

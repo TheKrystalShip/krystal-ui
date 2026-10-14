@@ -16,6 +16,22 @@ import { Icon } from "./Icon.jsx";
 // card is always cut off at the right edge. That peek is the primary "there is
 // more" affordance; the arrows and the edge fade are the secondary ones.
 //
+/**
+ * @template T
+ * @param {object} props
+ * @param {string} [props.icon] A Lucide name.
+ * @param {string} props.title
+ * @param {import("react").ReactNode} [props.count]
+ * @param {import("react").ReactNode} [props.pin]
+ * @param {() => void} [props.onViewAll]
+ * @param {string} [props.viewAllLabel]
+ * @param {T[]} props.items
+ * @param {(item: T) => import("react").ReactNode} props.renderItem
+ * @param {(item: T) => string | number} [props.itemKey] Defaults to `item.id`, then the index.
+ * @param {boolean} [props.disabled]
+ * @param {string} [props.variant]
+ * @param {string} [props.ariaLabel]
+ */
 function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", items, renderItem, itemKey, disabled = false, variant, ariaLabel }) {
   const trackRef = React.useRef(null);
   // atStart/atEnd drive the arrows' disabled state and which edge fades;
@@ -103,7 +119,7 @@ function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", i
         data-end={edge.end ? "" : undefined}
       >
         {items.map((item, i) => (
-          <div className="rail__item" key={itemKey ? itemKey(item) : (item.id ?? i)}>
+          <div className="rail__item" key={itemKey ? itemKey(item) : (/** @type {any} */ (item).id ?? i)}>
             {renderItem(item)}
           </div>
         ))}

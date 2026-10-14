@@ -22,11 +22,28 @@ import { useNear } from "../hooks/useNear.js";
 // poster fewer. `label` is the accessible name when `name` alone does not say enough. Every other prop
 // reaches the link, so a site hands it `href` and `onClick`; on a television (`data-tv`) it takes focus
 // as a TvCard does.
+/**
+ * @typedef {object} CollectionTileOwnProps
+ * @property {"fan" | "strip"} [variant]
+ * @property {string} name
+ * @property {string} [icon] A Lucide name, on a fan.
+ * @property {import("react").ReactNode} [caption]
+ * @property {(string | null | undefined)[]} [posters] Poster image URLs.
+ * @property {number} [total] A strip's title count when larger than `posters`.
+ * @property {number} [watched]
+ * @property {import("react").ReactNode} [next] Names what to watch next, on a started strip.
+ * @property {string} [doneLabel]
+ * @property {"sm" | "md"} [size]
+ * @property {string} [label] Accessible name when `name` alone does not say enough.
+ * @property {string} [className]
+ * @typedef {CollectionTileOwnProps & Omit<import("react").ComponentPropsWithoutRef<"a">, keyof CollectionTileOwnProps>} CollectionTileProps
+ */
+/** @param {CollectionTileProps} props */
 function CollectionTile({
   variant = "fan", name, icon, caption, posters = [], total, watched = 0, next, doneLabel = "Watched",
   size = "md", label, className, ...rest
 }) {
-  const ref = React.useRef(null);
+  const ref = React.useRef(/** @type {HTMLAnchorElement | null} */ (null));
   const near = useNear(ref);
   const cls = "collection-tile collection-tile--" + variant + " collection-tile--" + size
     + (className ? " " + className : "");
@@ -40,10 +57,12 @@ function CollectionTile({
   );
 }
 
+/** @param {{ src: string }} props */
 function Art({ src }) {
   return <img className="collection-tile__art" src={src} alt="" loading="lazy" decoding="async" />;
 }
 
+/** @param {{ name: string, icon?: string, caption?: import("react").ReactNode, posters: (string | null | undefined)[], near: boolean }} props */
 function Fan({ name, icon, caption, posters, near }) {
   // Fewer than three posters stack in from the right, so the fan never leaves a hole at its edge.
   const shown = posters.filter(Boolean).slice(0, 3);
@@ -66,6 +85,7 @@ function Fan({ name, icon, caption, posters, near }) {
   );
 }
 
+/** @param {{ name: string, caption?: import("react").ReactNode, posters: (string | null | undefined)[], total?: number, watched: number, next?: import("react").ReactNode, doneLabel: import("react").ReactNode, fit: number, near: boolean }} props */
 function Strip({ name, caption, posters, total, watched, next, doneLabel, fit, near }) {
   const count = total != null ? total : posters.length;
   const over = count > fit;

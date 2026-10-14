@@ -13,6 +13,16 @@ import { Icon } from "./Icon.jsx";
 //
 // `size` (sm 30, md 34, lg 38) gives a field or an inline select the height of the Input and
 // Button beside it.
+/**
+ * @typedef {object} SelectOwnProps
+ * @property {"field" | "inline" | "chip"} [variant]
+ * @property {"sm" | "md" | "lg"} [size]
+ * @property {string} [className]
+ * @property {{ value: string | number, label: import("react").ReactNode }[]} [options] Alternative to <option> children.
+ * @property {import("react").ReactNode} [children] <option> elements.
+ * @typedef {SelectOwnProps & Omit<import("react").ComponentPropsWithoutRef<"select">, keyof SelectOwnProps>} SelectProps
+ */
+/** @param {SelectProps} props */
 export function Select({ variant = "field", size, className = "", options, children, ...rest }) {
   const content = options
     ? options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)

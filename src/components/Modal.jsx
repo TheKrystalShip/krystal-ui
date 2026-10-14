@@ -18,6 +18,13 @@ import { useModalBehaviour } from "../hooks/useModalBehaviour.js";
 // `position: fixed; inset: 0`, so portaling to <body> never shifts them; it lifts them out of any
 // `transform`/`overflow` ancestor that could clip them. Mark the element that should take focus on
 // open with `data-autofocus` (or React's `autoFocus`).
+/**
+ * @param {object} props
+ * @param {() => void} [props.onClose]
+ * @param {boolean} [props.canClose] False blocks Escape and scrim close.
+ * @param {string} [props.scrimClassName]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function Modal({ onClose, canClose = true, scrimClassName = "modal-scrim", children }) {
   const scrim = React.useRef(null);
   useModalBehaviour(scrim, { onClose, canClose });

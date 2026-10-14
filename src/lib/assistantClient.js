@@ -39,24 +39,36 @@ const IDLE_MS = 60000;
 // network to come back, not for the turn.
 const RESUME_DELAYS_MS = [300, 700, 1500, 3000, 5000, 8000];
 
+/**
+ * @typedef {Error & { code: number | string, status?: number, envCode?: string | null, userMessage: string }} AssistantError
+ * Every failure of the client: `code` is the HTTP status or "ECONNREFUSED".
+ */
+
+/**
+ * @param {number} status
+ * @param {any} body
+ * @returns {AssistantError}
+ */
 function failure(status, body) {
   const env = (body && body.error) || {};
   const message = typeof env === "string" ? env : (env.message || (body && body.message));
-  const e = new Error(message || "HTTP " + status);
+  const e = /** @type {AssistantError} */ (new Error(message || "HTTP " + status));
   e.code = status;
   e.status = status;
   e.envCode = (typeof env === "object" && env.code) || (body && body.code) || null;
   e.userMessage = message || "The assistant returned an error.";
   return e;
 }
+/** @returns {AssistantError} */
 function unreachable() {
-  const e = new Error("Can't reach the assistant (network).");
+  const e = /** @type {AssistantError} */ (new Error("Can't reach the assistant (network)."));
   e.code = "ECONNREFUSED";
   e.userMessage = "Can't reach the assistant.";
   return e;
 }
+/** @returns {AssistantError} */
 function signedOut() {
-  const e = new Error("Not signed in.");
+  const e = /** @type {AssistantError} */ (new Error("Not signed in."));
   e.code = 401;
   e.status = 401;
   e.userMessage = "Sign in to talk to the assistant.";
@@ -99,6 +111,15 @@ async function payloadOf(res) {
   try { return await res.json(); } catch { return null; }
 }
 
+/**
+ * @typedef {object} AssistantClientOptions
+ * @property {string | (() => string)} baseUrl The assistant's address, or a function answering it, asked on every call.
+ * @property {() => string | null | undefined | Promise<string | null | undefined>} getToken The bearer to send, or null when nobody is signed in.
+ * @property {() => Promise<string | null>} [renewToken] A fresh bearer, or null when the session cannot be renewed.
+ * @property {() => boolean} [canRenew] Whether asking for a renewal is worth it.
+ */
+
+/** @param {AssistantClientOptions} options */
 function createAssistantClient({ baseUrl, getToken, renewToken, canRenew }) {
   const baseOf = () => String((typeof baseUrl === "function" ? baseUrl() : baseUrl) || "").replace(/\/$/, "");
   const renewable = () => typeof renewToken === "function" && (typeof canRenew !== "function" || canRenew());
@@ -147,6 +168,12 @@ function createAssistantClient({ baseUrl, getToken, renewToken, canRenew }) {
   // One request. `once` is a call that must not be sent twice; any other is renewed and sent again
   // when refused 401. Where the assistant is is asked before the bearer: an assistant with no address
   // has nothing to present a credential to.
+  /**
+   * @param {string} method
+   * @param {string} path
+   * @param {{ body?: BodyInit, headers?: Record<string, string>, signal?: AbortSignal, once?: boolean }} [options]
+   * @returns {Promise<Response>}
+   */
   const call = async (method, path, { body, headers, signal, once } = {}) => {
     const base = baseOf();
     const init = (token) => ({ method, headers: headersOf(token, headers), body, signal });
@@ -187,6 +214,11 @@ function createAssistantClient({ baseUrl, getToken, renewToken, canRenew }) {
   //
   // A turn the person stopped ends with an `error` frame coded `cancelled`; that is a stop, not a
   // failure, so it surfaces as an AbortError. An abort of `signal` rethrows.
+  /**
+   * @param {{ body?: any, turnId?: string, after?: number }} source
+   * @param {{ onEvent?: (event: any) => void, signal?: AbortSignal }} [opts]
+   * @returns {Promise<void>}
+   */
   const runTurn = async ({ body, turnId: followed, after }, opts) => {
     const { onEvent, signal } = opts || {};
     const base = baseOf();

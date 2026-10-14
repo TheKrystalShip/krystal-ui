@@ -41,6 +41,7 @@ import { themeStore, useThemePref, THEME_OPTS } from "../lib/theme.js";
 // tile's tooltip carries the `shape` sentence under the `tribute` one. The miniature shows it
 // too, without any help: it is built from the same tokens, so an LCARS tile is visibly rounder
 // and a Windows 95 tile visibly squarer than the palette alone would make it.
+/** Renders every theme as a swatch over `themeStore`; takes no props. */
 function ThemePicker() {
   const pref = useThemePref();
   const groups = [
@@ -100,6 +101,7 @@ function ThemePicker() {
   );
 }
 
+/** @param {{ opt: import("../lib/theme.js").ThemeOption, selected: boolean }} props */
 function ThemeSwatch({ opt, selected }) {
   const isAuto = opt.id === "auto";
   return (
@@ -148,6 +150,7 @@ function ThemeSwatch({ opt, selected }) {
 //
 // Everything inside resolves against the `data-theme` on this element, so every value below is that
 // palette's own token and none is a literal.
+/** @param {{ theme: string }} props */
 function Mini({ theme }) {
   return (
     <span className="theme-mini" data-theme={theme}>

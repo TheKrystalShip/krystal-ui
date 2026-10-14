@@ -5,6 +5,12 @@ import React from "react";
 //
 // An element marked `data-hswipe` owns its own sideways gesture (a horizontal scroller whose items
 // sit inside the edge zone), so a touch that starts inside one is left alone.
+/**
+ * @param {boolean} drawerOpen
+ * @param {(open: boolean) => void} setDrawerOpen
+ * @param {boolean} [dockOpen]
+ * @param {(open: boolean) => void} [setDockOpen]
+ */
 function useEdgeSwipe(drawerOpen, setDrawerOpen, dockOpen, setDockOpen) {
   React.useEffect(() => {
     if (window.innerWidth > 768) return undefined;

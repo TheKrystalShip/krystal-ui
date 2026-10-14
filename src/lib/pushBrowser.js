@@ -30,6 +30,8 @@
  * "needs-install" is its own state rather than folded into "unsupported" because on iOS the
  * feature is not missing, it is one step away — and telling somebody it is unsupported when the fix
  * is "add to Home Screen" is telling them something false.
+ *
+ * @returns {{ state: "unsupported" | "needs-install" | "denied" | "ready", canPrompt: boolean }}
  */
 function support() {
   if (typeof window === "undefined") return { state: "unsupported", canPrompt: false };
@@ -41,7 +43,7 @@ function support() {
   if (!hasSW || !hasPush || !hasNotif) {
     // iOS exposes PushManager only to an installed web app. `standalone` is the iOS-specific signal
     // for "launched from the Home Screen"; display-mode covers the installed case everywhere else.
-    const installed = window.navigator.standalone === true
+    const installed = /** @type {any} */ (window.navigator).standalone === true
       || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
     const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent || "");
     if (iOS && !installed) return { state: "needs-install", canPrompt: false };
@@ -60,6 +62,8 @@ function support() {
  * caller pending, and a settings screen sits on "Checking…" for the life of the page. Dev builds
  * register no worker at all and a failed registration in production looks identical, so this asks
  * `getRegistration()` — which resolves either way — first.
+ *
+ * @returns {Promise<ServiceWorkerRegistration | null>}
  */
 async function worker() {
   if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return null;
@@ -70,14 +74,20 @@ async function worker() {
   } catch { return null; }
 }
 
-/** This browser's existing subscription for this origin, if it already has one. */
+/**
+ * This browser's existing subscription for this origin, if it already has one.
+ * @returns {Promise<PushSubscription | null>}
+ */
 async function currentSubscription() {
   const reg = await worker();
   if (!reg) return null;
   try { return await reg.pushManager.getSubscription(); } catch { return null; }
 }
 
-/** The endpoint identifying this browser to a backend, or null. */
+/**
+ * The endpoint identifying this browser to a backend, or null.
+ * @returns {Promise<string | null>}
+ */
 async function currentEndpoint() {
   const sub = await currentSubscription();
   return sub ? sub.endpoint : null;
@@ -128,6 +138,7 @@ async function acquire(publicKey) {
  * the host would keep pushing to a dead endpoint until it collected enough 410s to retire it.
  *
  * @param {(endpoint: string) => Promise<void>} unregister
+ * @returns {Promise<void>}
  */
 async function release(unregister) {
   const sub = await currentSubscription();
@@ -139,7 +150,12 @@ async function release(unregister) {
   }
 }
 
-/** Whether a subscription was created against this exact application server key. */
+/**
+ * Whether a subscription was created against this exact application server key.
+ * @param {PushSubscription} sub
+ * @param {string} publicKey
+ * @returns {boolean}
+ */
 function sameKey(sub, publicKey) {
   const key = sub.options && sub.options.applicationServerKey;
   if (!key) return false;
@@ -152,6 +168,10 @@ function sameKey(sub, publicKey) {
 
 // `applicationServerKey` takes bytes, and the key travels as base64url — which atob does not
 // accept, hence the re-padding rather than a direct decode.
+/**
+ * @param {string} base64Url
+ * @returns {Uint8Array<ArrayBuffer>}
+ */
 function urlBase64ToUint8Array(base64Url) {
   const padding = "=".repeat((4 - (base64Url.length % 4)) % 4);
   const base64 = (base64Url + padding).replace(/-/g, "+").replace(/_/g, "/");

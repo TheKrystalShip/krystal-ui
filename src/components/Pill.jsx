@@ -13,6 +13,18 @@ import { Icon } from "./Icon.jsx";
 //
 // A site's own class beside `k-pill` (`className`) restyles one placement: position, a scrim behind
 // artwork, a solid fill on a corner pip. Anything else spreads onto the span.
+/**
+ * @typedef {object} PillOwnProps
+ * @property {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [tone]
+ * @property {string} [icon] A Lucide name drawn before the text.
+ * @property {boolean | "live"} [dot] A leading status dot instead of an icon; "live" colours it as a running thing.
+ * @property {"sm" | "md"} [size]
+ * @property {string} [className]
+ * @property {string} [dotClassName] A class on the dot.
+ * @property {import("react").ReactNode} [children]
+ * @typedef {PillOwnProps & Omit<import("react").ComponentPropsWithoutRef<"span">, keyof PillOwnProps>} PillProps
+ */
+/** @param {PillProps} props */
 function Pill({ tone = "neutral", icon, dot, size = "md", className, dotClassName, children, ...rest }) {
   return (
     <span {...rest} className={"k-pill k-pill--" + tone + " k-pill--" + size + (className ? " " + className : "")}>

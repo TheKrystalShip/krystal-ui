@@ -47,10 +47,17 @@ npm run check:markdown   # the composer's highlighter emits every character exac
 npm run check:themes     # native controls take the light scheme on exactly the light palettes
 npm run check:tokens     # every var() resolves; no literal colour or radius outside tokens.css
 npm run check:contrast   # every --on-* ink reads on its fill at 4.5:1 in every palette
-npm run build     # vite library build → dist/, one ES module per source file
+npm run check:types      # tsc --checkJs over src, no emit
+npm run build     # vite library build → dist/ (one ES module per source file), then tsc emits one .d.ts beside each
 npm publish       # prepack builds; a published version is permanent (a re-publish is refused)
 npm publish --tag dev   # a prerelease — npm refuses one without a tag, so `latest` stays a release
 ```
+
+Sources stay `.jsx` and `.js`. The types are JSDoc: every exported component documents its props as a
+`@typedef` (the component's own props, intersected with the native element's attributes when it
+spreads `...rest` onto one), every hook and function its arguments and result, and a store its state
+through `@template`. `tsconfig.json` runs with `strict` off; `tsc` emits only declarations, so the build
+runs vite first (its `emptyOutDir` would otherwise remove them).
 
 React, React DOM and `lucide-react` are externals and peer dependencies; `@floating-ui/react-dom` is an
 external and a regular dependency, resolved by the site's bundler. `package.json`'s

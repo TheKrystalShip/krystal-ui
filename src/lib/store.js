@@ -9,6 +9,18 @@ import React from "react";
 // Framework-agnostic core (createStore) + React binding (useStore via
 // useSyncExternalStore, the canonical React 18 external-store hook).
 
+/**
+ * @template S
+ * @typedef {object} Store
+ * @property {() => S} getState
+ * @property {(next: S | Partial<S> | ((prev: S) => S)) => void} setState An object patch is merged; an array or primitive replaces; a function maps the previous state.
+ * @property {(listener: () => void) => () => void} subscribe Returns the unsubscribe.
+ */
+/**
+ * @template S
+ * @param {S} initial
+ * @returns {Store<S>}
+ */
 function createStore(initial) {
   let state = initial;
   const subs = new Set();
@@ -16,6 +28,7 @@ function createStore(initial) {
   return {
     getState() { return state; },
     // Object patch (merged), array (replaced), or updater fn (prev => next).
+    /** @param {any} next */
     setState(next) {
       if (typeof next === "function") state = next(state);
       else if (Array.isArray(next) || typeof next !== "object" || next === null) state = next;
@@ -30,10 +43,17 @@ function createStore(initial) {
 // The selector MUST return a stable reference when nothing changed (return a
 // state slice, don't build a new array/object inline) — derive with useMemo in
 // the component if you need to transform.
+/**
+ * @template S
+ * @template [R=S]
+ * @param {Store<S>} store
+ * @param {(state: S) => R} [selector] Must return a stable reference while nothing changed.
+ * @returns {R}
+ */
 function useStore(store, selector) {
   // Same snapshot for client + server (getServerSnapshot) so the hook is safe
   // under renderToString / prerender as well as in the browser.
-  const snapshot = () => (selector ? selector(store.getState()) : store.getState());
+  const snapshot = () => /** @type {R} */ (selector ? selector(store.getState()) : store.getState());
   return React.useSyncExternalStore(store.subscribe, snapshot, snapshot);
 }
 

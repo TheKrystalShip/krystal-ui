@@ -27,6 +27,24 @@ import { Pill } from "./Pill.jsx";
 //   onToggle                 toggle and the body is unmounted when shut. Left
 //                            uncontrolled the card renders exactly as before.
 //   className, children
+/**
+ * @param {object} props
+ * @param {string} [props.icon] A Lucide name.
+ * @param {import("react").ReactNode} props.title
+ * @param {import("react").ReactNode | false} [props.count] A pill after the title.
+ * @param {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [props.countTone]
+ * @param {string} [props.countTitle] Tooltip on the count pill.
+ * @param {import("react").ReactNode} [props.meta] A muted strip under the header.
+ * @param {import("react").ReactNode} [props.pin] Header-right node before the action.
+ * @param {() => void} [props.onViewAll]
+ * @param {string} [props.viewAllLabel]
+ * @param {import("react").ReactNode} [props.action] Header-right node; wins over `onViewAll`, null for nothing.
+ * @param {boolean} [props.collapsible]
+ * @param {boolean} [props.open] Controlled collapse state.
+ * @param {() => void} [props.onToggle]
+ * @param {string} [props.className]
+ * @param {import("react").ReactNode} [props.children]
+ */
 function BriefCard({ icon, title, count, countTone, countTitle, meta, pin, onViewAll, viewAllLabel = "View all", action,
   collapsible = false, open = true, onToggle, className = "", children }) {
   const right = action !== undefined

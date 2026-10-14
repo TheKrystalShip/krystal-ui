@@ -12,6 +12,7 @@ import { toast, toastStore } from "../lib/toasts.js";
 
 const TONE_ICON = { error: "circle-alert", success: "circle-check", info: "info" };
 
+/** @param {{ t: import("../lib/toasts.js").Toast }} props */
 function ToastCard({ t }) {
   const [paused, setPaused] = React.useState(false);
   const dismiss = React.useCallback(() => toast.dismiss(t.id), [t.id]);
@@ -57,6 +58,7 @@ function ToastCard({ t }) {
   );
 }
 
+/** Renders the live toast stack; takes no props. */
 function Toasts() {
   const live = useStore(toastStore, s => s.live);
   if (typeof document === "undefined") return null;
