@@ -13,6 +13,11 @@ import { Tooltip } from "./Tooltip.jsx";
 //   danger     destroys something; the danger fill
 //   warning    a primary action that goes ahead despite a caution; the warning fill
 //   link       text that acts, inline with prose
+//   bare       no look at all: no fill, border, padding, height or size, only a button's behaviour and
+//              the focus ring, for a control a site shapes with its own class (a player's controls, a
+//              tile that is one button). `size` has no effect on it. Disabled, busy and pressed keep
+//              their meaning (`disabled`, `aria-busy`, `aria-pressed`) and draw nothing of their own
+//              beyond the dimming a disabled button gets
 //
 // `tone` keeps a neutral variant's weight and takes a consequence's colour on hover — "danger" for
 // a destructive row action that should not shout before it is pointed at, "warning" for one that
@@ -41,7 +46,7 @@ function glyph(icon, size, className) {
 
 /**
  * @typedef {object} ButtonOwnProps
- * @property {"primary" | "secondary" | "outline" | "ghost" | "accent" | "danger" | "warning" | "link"} [variant] How loud it is: `primary`, `secondary`, `outline`, `ghost`, `accent`, `danger`, `warning` or `link`.
+ * @property {"primary" | "secondary" | "outline" | "ghost" | "accent" | "danger" | "warning" | "link" | "bare"} [variant] How loud it is: `primary`, `secondary`, `outline`, `ghost`, `accent`, `danger`, `warning`, `link`, or `bare` for no look of its own.
  * @property {"xs" | "sm" | "md" | "lg" | "xl"} [size] Height step shared with Input: `xs` to `xl`.
  * @property {"danger" | "warning" | "success"} [tone] A neutral variant's consequence colour on hover.
  * @property {string | import("react").ReactNode} [icon] A Lucide name or a node, before the label.
@@ -63,11 +68,11 @@ const Button = React.forwardRef(function Button({
   wide = false, href, type = "button", disabled, className, children, ...rest
 }, ref) {
   const s = ICON_SIZE[size] || ICON_SIZE.md;
-  const cls = "k-btn k-btn--" + variant + " k-btn--" + size
+  const cls = "k-btn k-btn--" + variant + (variant === "bare" ? "" : " k-btn--" + size)
     + (tone ? " k-btn--tone-" + tone : "")
     + (wide ? " k-btn--wide" : "")
     + (armed ? " k-is-armed" : "")
-    + (children == null || children === false ? " k-btn--bare" : "")
+    + (children == null || children === false ? " k-btn--icon" : "")
     + (className ? " " + className : "");
   const body = (
     <>

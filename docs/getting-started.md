@@ -124,7 +124,7 @@ export default [
 The entries report:
 
 - a raw `<button>`, `<input>`, `<select>`, `<textarea>` or `<dialog>`, naming the component to use
-  (Button or IconButton; Input, Checkbox or Toggle; Select; Textarea; Dialog or Modal);
+  (Button or IconButton, with `variant="bare"` for a button the site's own class shapes; Input, Checkbox or Toggle; Select; Textarea; Dialog or Modal);
 - a literal colour (hex, `rgb()`, `hsl()` and the other colour functions, a named colour) in the
   `color`, `background`, `backgroundColor`, `borderColor`, `fill` or `stroke` of an inline `style`;
 - an import of `@floating-ui/*` or `react-hook-form`, which the package wraps.

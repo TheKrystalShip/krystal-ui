@@ -52,7 +52,7 @@
 .k-btn--xl { height: 46px; padding: 0 18px; gap: 9px; font-size: 14px; }
 
 /* An icon with no words keeps the size's height and becomes square. */
-.k-btn--bare { padding: 0; aspect-ratio: 1; }
+.k-btn--icon { padding: 0; aspect-ratio: 1; }
 
 .k-btn--wide {
   display: flex;
@@ -186,6 +186,28 @@
 
 .k-btn[aria-disabled="true"] {
   pointer-events: none;
+}
+
+/* bare — a button's behaviour and focus ring with none of its look, so a site's own class shapes it.
+   Every state that paints a Button paints nothing here. */
+.k-btn--bare,
+.k-btn--bare:hover,
+.k-btn--bare[aria-pressed="true"],
+.k-btn--bare[aria-expanded="true"],
+.k-btn--bare.k-is-armed,
+.k-btn--bare.k-is-armed:hover:not(:disabled) {
+  height: auto;
+  padding: 0;
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  white-space: normal;
+  text-align: inherit;
+  filter: none;
 }
 
 /* Busy is disabled but still readable: its label is saying what is happening. */

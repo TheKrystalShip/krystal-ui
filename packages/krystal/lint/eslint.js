@@ -21,7 +21,7 @@
 // Not for the package's own sources: they are where the native elements are wrapped.
 
 const COMPONENTS = [
-  ["button", "Button or IconButton"],
+  ["button", "Button or IconButton (Button variant=\"bare\" for a control your own class shapes)"],
   ["input", "Input, Checkbox or Toggle"],
   ["select", "Select"],
   ["textarea", "Textarea"],

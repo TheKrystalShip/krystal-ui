@@ -241,3 +241,33 @@ describe("FormDialog", () => {
     release();
   });
 });
+
+describe("Button variant bare", () => {
+  it("draws no size or variant look, and keeps disabled, busy and pressed as attributes", async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
+    render(
+      <>
+        <Button variant="bare" size="xl" onClick={onClick} pressed>Play</Button>
+        <Button variant="bare" disabled onClick={onClick}>Off</Button>
+        <Button variant="bare" busy onClick={onClick}>Working</Button>
+        <Button>Plain</Button>
+      </>,
+    );
+    const play = screen.getByRole("button", { name: "Play" });
+    expect(play.className).toBe("k-btn k-btn--bare");
+    expect(play.getAttribute("aria-pressed")).toBe("true");
+    await user.click(play);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole("button", { name: "Off" }));
+    await user.click(screen.getByRole("button", { name: "Working" }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "Working" }).getAttribute("aria-busy")).toBe("true");
+    expect(screen.getByRole("button", { name: "Plain" }).className).toContain("k-btn--md");
+  });
+
+  it("marks a button with no words as an icon button, not bare", () => {
+    render(<Button icon="plus" aria-label="Add" />);
+    expect(screen.getByRole("button", { name: "Add" }).className).toContain("k-btn--icon");
+  });
+});

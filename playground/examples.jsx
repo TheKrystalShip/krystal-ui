@@ -41,6 +41,13 @@ export function ButtonExamples() {
           ))}
         </div>
       </Sub>
+      <Sub title="Bare: no look of its own, shaped by the site's class; focus ring, disabled and busy stay">
+        <div style={row}>
+          <Button variant="bare" style={{ padding: "6px 12px", borderRadius: 999, background: "var(--surface-3)", color: "var(--fg-1)" }}>Shaped by its site</Button>
+          <Button variant="bare" disabled style={{ padding: "6px 12px", borderRadius: 999, background: "var(--surface-3)", color: "var(--fg-1)" }}>Disabled</Button>
+          <Button variant="bare" busy style={{ padding: "6px 12px", borderRadius: 999, background: "var(--surface-3)", color: "var(--fg-1)" }}>Busy</Button>
+        </div>
+      </Sub>
       <Sub title="Button sizes, icon, busy, armed, pressed, tone, href, disabled">
         <div style={row}>
           {["xs", "sm", "md", "lg", "xl"].map((s) => <Button key={s} size={s}>{s}</Button>)}
