@@ -9,6 +9,13 @@
 - **A field with a prefix or suffix draws one focus ring**, its frame's; the bare input inside it no longer
   takes the universal focus ring as well.
 
+## [0.30.0-dev.4]
+
+### Fixed
+- **A closed dock casts no shadow.** The dock slides off-screen when closed, and its shadow stayed, a dark
+  band down the window's right edge on a light palette (both edges on a phone). The shadow is the open
+  dock's alone, and a pushing dock still draws none.
+
 ## [0.30.0-dev.3]
 
 ### Fixed
