@@ -51,6 +51,7 @@ export { Pagination, paginationWindow, useDebouncedValue } from "./components/Pa
 export { RadioGroup } from "./components/RadioGroup.jsx";
 export { Rail } from "./components/Rail.jsx";
 export { ReversablePortal } from "./components/ReversablePortal.jsx";
+export { SearchField } from "./components/SearchField.jsx";
 export { Select } from "./components/Select.jsx";
 export { SettingsRow, SettingsSection } from "./components/settings-primitives.jsx";
 export { ShowcaseCard } from "./components/ShowcaseCard.jsx";

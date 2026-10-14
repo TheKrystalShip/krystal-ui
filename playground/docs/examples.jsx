@@ -46,6 +46,7 @@ export const EXAMPLES = {
   dialogs: E.DialogExamples,
   fullscreen: fromSection("fullscreen"),
   confirm: fromSection("confirm"),
+  "search-field": fromSection("search-field"),
   steps: fromSection("steps"),
   "form-dialog": fromSection("form-dialog"),
   drawer: fromSection("drawer"),

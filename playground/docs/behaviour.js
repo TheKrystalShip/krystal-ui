@@ -190,6 +190,13 @@ export const BEHAVIOUR = {
       "A dot has no words, so it is named by its step's `label`.",
     ],
   },
+  "search-field": {
+    keys: [
+      ["Enter", "In the input, submits: `onSubmit` receives the text"],
+      ["Tab", "Moves from the input to the actions and the submit button"],
+    ],
+    semantics: ["A `<form role=\"search\">`; the input is named by `label`, or the placeholder."],
+  },
   "confirm-dialog": {
     keys: [["Escape", "Cancels; held while the confirmation is working"]],
     semantics: ["A Dialog: the confirm is a danger Button with the dialog's icon, and `busyLabel` replaces its label while it works."],

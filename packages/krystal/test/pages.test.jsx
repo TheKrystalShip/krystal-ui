@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
-import { render, screen } from "@testing-library/react";
-import { Avatar, BriefEmpty, BriefItem, DetailPage, FormField, ListPage, ListRow, Notice, SignInScreen, StatTile } from "@thekrystalship/krystal";
+import React from "react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { Avatar, BriefEmpty, BriefItem, DetailPage, FormField, ListPage, ListRow, Notice, SearchField, SignInScreen, StatTile } from "@thekrystalship/krystal";
 
 describe("SignInScreen", () => {
   it("draws usernameExtra between the username and the password, and passwordHint inside the password's frame", () => {
@@ -127,5 +128,32 @@ describe("Avatar", () => {
     const { container } = render(<Avatar name="Ada Lovelace" size="lg" />);
     expect(container.querySelector(".k-avatar").textContent).toBe("AL");
     expect(container.querySelector(".k-avatar").style.width).toBe("40px");
+  });
+});
+
+describe("SearchField", () => {
+  it("submits the text on Enter and on the button, and holds the button when told to", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    function Host() {
+      const [v, setV] = React.useState("");
+      return <SearchField value={v} onChange={setV} onSubmit={onSubmit} placeholder="Find" submitDisabled={!v} />;
+    }
+    render(<Host />);
+    expect(screen.getByRole("search")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Search" }).hasAttribute("disabled")
+      || screen.getByRole("button", { name: "Search" }).getAttribute("aria-disabled") === "true").toBe(true);
+    await user.type(screen.getByRole("textbox", { name: "Find" }), "dune{Enter}");
+    expect(onSubmit).toHaveBeenLastCalledWith("dune");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+    expect(onSubmit).toHaveBeenCalledTimes(2);
+  });
+
+  it("draws no submit button with submit={false}, and does not submit while disabled", async () => {
+    const onSubmit = vi.fn();
+    render(<SearchField value="x" submit={false} disabled onSubmit={onSubmit} placeholder="Find" />);
+    expect(screen.queryByRole("button")).toBeNull();
+    fireEvent.submit(screen.getByRole("search"));
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 });

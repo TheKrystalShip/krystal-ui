@@ -182,6 +182,11 @@ export const PAGES = [
     versus: "Field when the value lives in the site's own state.",
   },
   {
+    id: "search-field", name: "SearchField", group: "Forms and page furniture", exports: ["SearchField"], examples: ["search-field"],
+    summary: "A large pill search or naming field: a leading icon, the input and a submit button in one frame.",
+    versus: "ToolbarSearch for the small filter that narrows a list as it is typed.",
+  },
+  {
     id: "toolbar", name: "Toolbar", group: "Forms and page furniture", exports: ["Toolbar", "ToolbarSearch", "ToolbarFilters", "ToolbarSort", "ToolbarButton", "ToolbarCount", "ToolbarSpacer", "useFilters"], examples: ["toolbar"],
     summary: "The filter, search, sort and action bar that sits directly on a page.",
   },

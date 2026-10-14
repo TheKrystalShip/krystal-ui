@@ -38,7 +38,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
-| Cards and lists | `BriefCard` (with `BriefList`, `BriefItem` (a row: `tone`, `icon`, `title`, `detail`, `action`, a button with `onClick` or a link with `href`), `BriefEmpty` and `FactList` for its body), `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art, a `ribbon` hanging from its top edge for keeping the thing, an `eyebrow` above the name saying what kind of thing it is, and along its foot a `progress` bar or one short bar per part in `segments`), `CollectionTile` (a set of titles as a link: `fan` draws three posters fanned beside its mark and name, `strip` its posters in order, numbered, and with `total` and `watched` follows somebody through it; it fills its slot at a fixed shape and takes a TvCard's focus on a television), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Steps` (where somebody is in a sequence they can move around in: a numbered `rail` with each step's label and detail, or `dots`), `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
+| Cards and lists | `BriefCard` (with `BriefList`, `BriefItem` (a row: `tone`, `icon`, `title`, `detail`, `action`, a button with `onClick` or a link with `href`), `BriefEmpty` and `FactList` for its body), `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art, a `ribbon` hanging from its top edge for keeping the thing, an `eyebrow` above the name saying what kind of thing it is, and along its foot a `progress` bar or one short bar per part in `segments`), `CollectionTile` (a set of titles as a link: `fan` draws three posters fanned beside its mark and name, `strip` its posters in order, numbered, and with `total` and `watched` follows somebody through it; it fills its slot at a fixed shape and takes a TvCard's focus on a television), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Steps` (where somebody is in a sequence they can move around in: a numbered `rail` with each step's label and detail, or `dots`), `SearchField` (a large pill: icon, input and a submit button in one frame, a `form` that calls `onSubmit(value)`), `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Slides | `useCarousel` (one of several slides at a time, turning by itself on an interval: held still under a mouse, under keyboard focus, on a hidden page and while `paused`, never turning by itself under reduced motion, its time started over by a key or a press in it, and turned by a swipe), `CarouselPager` (a mark a slide, the shown one filling over the slide's time; `indicator` for a television, where the marks are not focused) |
 | Labels | `Pill` (a count, a state or a kind as a small non-interactive label), `Kbd` (a key, or a chord with `keys`, in mono) |
 | Layout | `Stack` (a column), `Cluster` (a wrapping row), `Grid` (columns of a `min` width, or `cols`), `Container` (the centred page column, `size` sm to xl or full); each takes `gap` as a spacing step or `xs` to `xl`, and `as` |
@@ -188,6 +188,14 @@ to the next enabled option and choose it. Use it for a few short labels beside o
   options={[{ value: "auto", label: "Auto" }, { value: "720", label: "720p" }]} />
 <RadioGroup variant="segmented" size="sm" label="View" value={view} onChange={setView}
   options={[{ value: "list", label: "List", icon: "list" }, { value: "grid", label: "Grid", icon: "layout-grid" }]} />
+```
+
+`SearchField` is the field a page opens with, whose answer waits for a press (`ToolbarSearch` is the small
+live filter): `value`, `onChange(value)`, `onSubmit(value)`, `placeholder`, `icon`, `submitLabel`, `actions`
+before the submit, and `size` `lg` or `xl`.
+
+```jsx
+<SearchField value={draft} onChange={setDraft} onSubmit={run} placeholder="Any movie or show" size="xl" />
 ```
 
 `Slider` picks one number along a line (`min`, `max`, `step`, `value` and `onChange`, or `defaultValue`)
