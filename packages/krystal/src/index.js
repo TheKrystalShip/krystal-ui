@@ -13,6 +13,7 @@ export { Checkbox, Field, Input, PasswordInput, Textarea } from "./components/fi
 export { DataState } from "./components/DataState.jsx";
 export { Dialog } from "./components/Dialog.jsx";
 export { Drawer } from "./components/Drawer.jsx";
+export { Accordion, Disclosure } from "./components/Disclosure.jsx";
 export { EmptyState } from "./components/EmptyState.jsx";
 export { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 export { CarouselPager } from "./components/CarouselPager.jsx";

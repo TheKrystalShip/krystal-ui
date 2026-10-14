@@ -114,6 +114,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs) |
 | Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked) |
 | Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked), `Slider` (one number along a line) |
+| Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked), `Slider` (one number along a line), `Disclosure` and `Accordion` (a summary that opens its content, and a group of them) |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
@@ -262,6 +263,23 @@ or a key is pressed, for a value too costly to apply on every move. `format(valu
 <Slider label="Volume" value={volume} onChange={setVolume} onChangeEnd={save} format={(v) => v + "%"} showValue />
 <Slider label="Memory" min={4} max={32} step={4} value={gb} onChange={setGb}
   marks={[{ value: 4, label: "4" }, { value: 32, label: "32" }]} />
+```
+
+`Disclosure` is a summary button, inside a heading of `level`, that shows or hides its content
+(`open` and `onOpenChange`, or `defaultOpen`); `summary` is any node, with an `icon` before it and an
+`aside` at the row's end. `Accordion` groups Disclosures named by `value`: `type="single"` keeps one
+open (`collapsible={false}` keeps it from closing), `type="multiple"` any number. Both follow the
+WAI-ARIA disclosure and accordion patterns, and an Accordion's summaries move with Up, Down, Home and
+End. The height animates, and does not under reduced motion; closed content stays mounted but out of
+the tab order. `variant` is `framed` (a bordered card, one bordered group in an Accordion) or `plain`
+(a section head with a rule).
+
+```jsx
+<Disclosure summary="Advanced" icon="settings" aside={<Pill size="sm">3</Pill>}>…</Disclosure>
+<Accordion type="multiple" value={open} onChange={setOpen}>
+  <Disclosure value="network" summary="Network">…</Disclosure>
+  <Disclosure value="storage" summary="Storage">…</Disclosure>
+</Accordion>
 ```
 
 `PasswordInput` is an `Input` whose suffix is a ghost `IconButton` (eye, eye-off) that shows or hides

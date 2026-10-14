@@ -1,0 +1,176 @@
+/* ============================================================================
+   disclosure.css — a summary that opens its content (<Disclosure>) and a group of them
+   (<Accordion>): a bordered card or a plain section head, the height animating open.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-disclosure {
+  box-sizing: border-box;
+  min-width: 0;
+  font-family: var(--font-ui);
+}
+
+.k-disclosure--framed {
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.k-disclosure__heading {
+  margin: 0;
+  font: inherit;
+}
+
+.k-disclosure__summary {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 14px;
+  border: 0;
+  background: transparent;
+  color: var(--fg-1);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: var(--w-semibold);
+  line-height: 1.3;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--d-fast) var(--ease-out);
+}
+
+.k-disclosure__summary:hover:not(:disabled) {
+  background: var(--veil-2);
+}
+
+.k-disclosure__summary:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--krystal-teal);
+}
+
+.k-disclosure__summary:disabled {
+  cursor: not-allowed;
+}
+
+.k-disclosure.k-is-disabled .k-disclosure__summary > * {
+  opacity: 0.45;
+}
+
+.k-disclosure__title {
+  flex: 1;
+  min-width: 0;
+}
+
+.k-disclosure__icon {
+  flex-shrink: 0;
+  color: var(--fg-3);
+}
+
+.k-disclosure__aside {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--fg-3);
+  font-weight: var(--w-medium);
+}
+
+.k-disclosure__caret {
+  flex-shrink: 0;
+  color: var(--fg-3);
+  transition: transform var(--d-base) var(--ease-out);
+}
+
+.k-disclosure.k-is-open > .k-disclosure__heading .k-disclosure__caret {
+  transform: rotate(90deg);
+}
+
+/* ---- Height animation: the content sits in a grid row that grows from 0 to its size. ---------- */
+.k-disclosure__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows var(--d-base) var(--ease-out), visibility 0s linear var(--d-base);
+}
+
+.k-disclosure.k-is-open > .k-disclosure__panel {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition: grid-template-rows var(--d-base) var(--ease-out), visibility 0s;
+}
+
+.k-disclosure__clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.k-disclosure__body {
+  padding: var(--s-1) 14px var(--s-4);
+  color: var(--fg-2);
+  font-size: 14px;
+}
+
+/* ---- Plain: a section head with a rule under it ----------------------------------------------- */
+.k-disclosure--plain > .k-disclosure__heading {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.k-disclosure--plain .k-disclosure__summary {
+  padding: 0 var(--s-1);
+  border-radius: var(--r-sm);
+}
+
+.k-disclosure--plain .k-disclosure__body {
+  padding-left: var(--s-1);
+  padding-right: var(--s-1);
+}
+
+/* ---- Accordion: framed disclosures as one bordered group -------------------------------------- */
+.k-accordion {
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.k-accordion--framed {
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+.k-accordion--plain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.k-disclosure--grouped {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.k-disclosure--grouped + .k-disclosure--grouped {
+  border-top: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 768px) {
+  .k-disclosure__summary {
+    min-height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-disclosure__panel,
+  .k-disclosure.k-is-open > .k-disclosure__panel,
+  .k-disclosure__caret {
+    transition: none;
+  }
+}
+}
