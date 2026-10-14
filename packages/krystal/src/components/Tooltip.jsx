@@ -5,8 +5,9 @@ import { chain, elementRef, mergeRefs } from "../lib/refs.js";
 
 // Tooltip — a short text label for a control that has no words of its own, or whose words need a
 // line more. It shows when a mouse or pen rests on the control (after `delay`) and when the control
-// takes keyboard focus; a touch never shows it. It hides on leave, blur, a press and Escape, and
-// Escape is marked handled so a dialog around it stays open. The panel is text only, never
+// takes keyboard focus; a touch never shows it. It hides on leave, blur, a press and Escape. A tip is
+// not a layer the person opened, so it leaves Escape unhandled: the press that hides it also closes
+// the dialog or popover it sits in, one press as without the tip. The panel is text only, never
 // interactive, so a pointer can pass over it without keeping it open.
 //
 // `children` is one element, cloned with its handlers and `aria-describedby` while the tip shows.
@@ -40,9 +41,7 @@ function Tooltip({ label, children, placement = "top", delay = 450, className })
   React.useEffect(() => {
     if (!open) return undefined;
     const onKey = (e) => {
-      if (e.key !== "Escape" || e.defaultPrevented) return;
-      e.preventDefault();
-      setOpen(false);
+      if (e.key === "Escape") setOpen(false);
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
