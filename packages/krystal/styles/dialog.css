@@ -50,6 +50,24 @@
   height: min(680px, 92vh);
 }
 
+/* A pop-out: the sheet fills the viewport inside a safe-area inset, whatever its `size`. Its body
+   still scrolls; with `fill` as well the body clips instead and a child that sizes itself to the
+   container (a feed, a chart, an editor) takes the room and owns its own scroll. */
+.k-backdrop:has(> .k-modal--fullscreen) {
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+.k-modal--fullscreen {
+  max-width: none;
+  max-height: none;
+  height: 100%;
+}
+
+.k-modal--fullscreen.k-modal--fill .k-modal__body {
+  overflow: hidden;
+}
+
 .k-modal__art {
   flex-shrink: 0;
   height: 110px;
@@ -152,12 +170,25 @@
     padding: 0;
   }
 
+  .k-backdrop:has(> .k-modal--fullscreen) {
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  .k-modal--fullscreen {
+    border: none;
+    border-radius: 0;
+  }
+
   .k-modal--fill {
     height: 100%;
     max-height: none;
     border: none;
     border-radius: 0;
     padding-top: env(safe-area-inset-top);
+  }
+
+  .k-modal--fullscreen.k-modal--fill {
+    padding-top: 0;
   }
 }
 

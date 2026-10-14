@@ -549,7 +549,10 @@ Escape and a press on the scrim close it unless `canClose` is false. Open modals
 only the topmost, and the chat's history sheet and picture viewer behave the same way. `Dialog` is a
 framed sheet on `Modal`: `size` is md (520px), lg (720px) or xl
 (960px), `fill` gives it a definite height for a body that sizes itself to its container, `as="form"`
-with `onSubmit` makes the sheet a form, and `art` draws a banner above the head.
+with `onSubmit` makes the sheet a form, and `art` draws a banner above the head. `fullscreen` is
+the pop-out: the sheet fills the viewport inside a safe-area inset (edge to edge on a phone) and keeps
+its head and close button; the body scrolls, or with `fill` too it clips so a feed, chart or editor
+inside it takes the room and scrolls itself.
 
 ### Layout, keys and drawers
 

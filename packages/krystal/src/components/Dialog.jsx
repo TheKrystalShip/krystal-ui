@@ -11,7 +11,9 @@ import { Modal } from "./Modal.jsx";
 // `art` is a background image drawn as a banner above the head. `size` is the sheet's width — md
 // (520px), lg (720px) or xl (960px). `fill` gives the sheet a definite height, for a body that
 // sizes itself to its container (a code editor) and would otherwise collapse to nothing. On a phone
-// a `fill` sheet takes the whole screen.
+// a `fill` sheet takes the whole screen. `fullscreen` is a pop-out: the sheet fills the viewport
+// inside a safe-area inset (edge to edge on a phone), keeping its head and close button; the body
+// scrolls, or with `fill` as well it clips so a child that sizes itself takes the room.
 //
 // `as="form"` makes the sheet a form, `onSubmit` its handler, so Enter in a field submits it.
 // `label` names the dialog for a screen reader when `title` is not a string.
@@ -26,6 +28,7 @@ import { Modal } from "./Modal.jsx";
  * @param {boolean} [props.canClose]
  * @param {"md" | "lg" | "xl"} [props.size]
  * @param {boolean} [props.fill]
+ * @param {boolean} [props.fullscreen] Fills the viewport inside a safe-area inset.
  * @param {"div" | "form"} [props.as]
  * @param {import("react").FormEventHandler<HTMLElement>} [props.onSubmit]
  * @param {import("react").ReactNode} [props.foot]
@@ -33,11 +36,11 @@ import { Modal } from "./Modal.jsx";
  * @param {import("react").ReactNode} [props.children]
  */
 function Dialog({
-  title, sub, icon, art, label, onClose, canClose = true, size = "md", fill = false,
+  title, sub, icon, art, label, onClose, canClose = true, size = "md", fill = false, fullscreen = false,
   as = "div", onSubmit, foot, className, children,
 }) {
   const Sheet = as;
-  const cls = "k-modal k-modal--" + size + (fill ? " k-modal--fill" : "") + (className ? " " + className : "");
+  const cls = "k-modal k-modal--" + size + (fill ? " k-modal--fill" : "") + (fullscreen ? " k-modal--fullscreen" : "") + (className ? " " + className : "");
   return (
     <Modal onClose={onClose} canClose={canClose} scrimClassName="k-backdrop">
       <Sheet className={cls} role="dialog" aria-modal="true"
