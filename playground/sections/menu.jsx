@@ -1,8 +1,23 @@
 import React from "react";
 import {
-  Button, IconButton, Menu, MenuCheckboxItem, MenuGroup, MenuItem, MenuRadioGroup, MenuRadioItem, MenuSeparator, SidebarAccount,
+  Button, IconButton, Menu, MenuCheckboxItem, MenuGroup, MenuItem, MenuRadioGroup, MenuRadioItem, MenuSeparator, Popover, SidebarAccount,
 } from "@thekrystalship/krystal";
 import { Section, Sub, row } from "../kit.jsx";
+
+function FrameMenu() {
+  const [frame, setFrame] = React.useState(null);
+  return (
+    <div ref={setFrame} data-testid="menu-frame" style={{ position: "relative", ...row, padding: 12, border: "var(--edge)", borderRadius: "var(--r-md)" }}>
+      <Menu container={frame} trigger={<Button variant="secondary">Menu in the frame</Button>}>
+        <MenuItem>Inside</MenuItem>
+        <MenuItem>The frame</MenuItem>
+      </Menu>
+      <Popover container={frame} title="Popover" trigger={<Button variant="secondary">Popover in the frame</Button>}>
+        Drawn inside the same element.
+      </Popover>
+    </div>
+  );
+}
 
 export default function MenuSection() {
   const [grid, setGrid] = React.useState(true);
@@ -41,11 +56,15 @@ export default function MenuSection() {
             <MenuRadioGroup label="Order by" value={order} onChange={setOrder}>
               <MenuRadioItem value="name">Name</MenuRadioItem>
               <MenuRadioItem value="added">Date added</MenuRadioItem>
-              <MenuRadioItem value="size">Size</MenuRadioItem>
+              <MenuRadioItem value="size" sub="Largest first">Size</MenuRadioItem>
+              <MenuRadioItem value="fixed" readOnly>Pinned by the room</MenuRadioItem>
             </MenuRadioGroup>
           </Menu>
           <span>grid {String(grid)}, dense {String(dense)}, order {order}</span>
         </div>
+      </Sub>
+      <Sub title="container: the panel drawn inside a frame of the site's own (a fullscreen element)">
+        <FrameMenu />
       </Sub>
       <Sub title="Header and matchWidth, opening upward (the account menu's shape)">
         <div style={{ ...row, paddingTop: 140 }}>

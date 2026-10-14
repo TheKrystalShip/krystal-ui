@@ -31,7 +31,11 @@ import { chain, elementRef, mergeRefs } from "../lib/refs.js";
 // is announced as disabled.
 //
 // `header` draws a line of context above the items (who is signed in); `matchWidth` makes the panel
-// at least as wide as the trigger. A control that needs no `trigger` of its own passes `open`,
+// at least as wide as the trigger. The panel is portaled to `document.body`; `container` (an element,
+// or a function returning one when the menu opens) portals it into another, which a fullscreen
+// element needs, since nothing outside it is drawn while it is fullscreen. An item's `sub` is a
+// quieter second line under its label; a radio item that is `readOnly` shows its state and takes
+// focus but cannot be chosen. A control that needs no `trigger` of its own passes `open`,
 // `onOpenChange` and `anchorRef` instead.
 
 const MenuContext = React.createContext({ close: (/** @type {boolean} */ _focus) => {} });
@@ -60,6 +64,7 @@ function drawShortcut(shortcut) {
  * @property {string} [label] The menu's accessible name; the trigger names it otherwise.
  * @property {import("react").ReactNode} [header] A line of context above the items.
  * @property {boolean} [matchWidth] The panel is at least as wide as its anchor.
+ * @property {Element | null | (() => Element | null)} [container] Where the panel is portaled; `document.body` by default. A function is read each time the menu opens.
  * @property {import("react").ReactNode} [children] MenuItem, MenuCheckboxItem, MenuRadioGroup, MenuGroup and MenuSeparator.
  * @property {string} [className] Class name added to the root element.
  * @typedef {MenuOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof MenuOwnProps>} MenuProps
@@ -67,7 +72,7 @@ function drawShortcut(shortcut) {
 /** @param {MenuProps} props */
 function Menu({
   trigger, open: openProp, defaultOpen = false, onOpenChange, anchorRef, placement, label, header,
-  matchWidth = false, children, className, ...rest
+  matchWidth = false, container, children, className, ...rest
 }) {
   const [open, setOpen] = useOpenState(openProp, defaultOpen, onOpenChange);
   const own = React.useRef(null);
@@ -157,7 +162,7 @@ function Menu({
             {children}
           </div>
         </MenuContext.Provider>,
-        document.body,
+        (typeof container === "function" ? container() : container) || document.body,
       )}
     </>
   );
@@ -172,6 +177,7 @@ function Menu({
  * @property {string | string[] | import("react").ReactNode} [shortcut] The item's keyboard shortcut at the row's end,
  *   drawn as keys: a string is split on "+" into a chord ("Ctrl+K"), an array is the chord's keys, any
  *   other node is drawn as it is.
+ * @property {import("react").ReactNode} [sub] A quieter line under the label.
  * @property {import("react").ReactNode} [aside] At the row's end, in the accent.
  * @property {boolean} [closeOnSelect] Closes the menu after `onSelect`; true for an item.
  * @property {import("react").ReactNode} [children] The label.
@@ -181,16 +187,16 @@ function Menu({
 
 /**
  * The row every kind of item draws.
- * @param {MenuItemProps & { role: string, checked?: boolean, lead?: import("react").ReactNode }} props
+ * @param {MenuItemProps & { role: string, checked?: boolean, readOnly?: boolean, lead?: import("react").ReactNode }} props
  */
 function Row({
-  role, checked, lead, icon, onSelect, disabled = false, tone, shortcut, aside, closeOnSelect = true,
+  role, checked, lead, icon, onSelect, disabled = false, readOnly = false, tone, shortcut, sub, aside, closeOnSelect = true,
   children, className, onClick, ...rest
 }) {
   const { close } = React.useContext(MenuContext);
   const press = (e) => {
     if (onClick) onClick(e);
-    if (disabled) return;
+    if (disabled || readOnly) { if (readOnly) e.preventDefault(); return; }
     if (onSelect) onSelect(e);
     if (closeOnSelect && !e.defaultPrevented) close(true);
   };
@@ -201,9 +207,9 @@ function Row({
       onClick={press}
       onMouseEnter={(e) => { if (!disabled) e.currentTarget.focus({ preventScroll: true }); }}
       {...rest}
-      className={"k-menu__item" + (tone ? " k-menu__item--" + tone : "") + (className ? " " + className : "")}>
+      className={"k-menu__item" + (tone ? " k-menu__item--" + tone : "") + (readOnly ? " k-is-readonly" : "") + (className ? " " + className : "")}>
       {glyph != null && glyph !== false && <span className="k-menu__lead">{glyph}</span>}
-      <span className="k-menu__label">{children}</span>
+      <span className="k-menu__label">{children}{sub != null && <span className="k-menu__sub">{sub}</span>}</span>
       {aside != null && <span className="k-menu__aside">{aside}</span>}
       {shortcut != null && <span className="k-menu__shortcut">{drawShortcut(shortcut)}</span>}
     </button>
@@ -234,14 +240,15 @@ function MenuCheckboxItem({ checked = false, onCheckedChange, onSelect, closeOnS
 /**
  * @typedef {object} MenuRadioItemOwnProps
  * @property {any} value Chosen when the group's value equals it.
+ * @property {boolean} [readOnly] Shows the state and takes focus, but a press changes nothing and keeps the menu open.
  * @typedef {MenuRadioItemOwnProps & Omit<MenuItemProps, keyof MenuRadioItemOwnProps>} MenuRadioItemProps
  */
 /** @param {MenuRadioItemProps} props */
-function MenuRadioItem({ value, onSelect, ...rest }) {
+function MenuRadioItem({ value, onSelect, readOnly, ...rest }) {
   const group = React.useContext(RadioContext);
   const checked = !!group && group.value === value;
   return (
-    <Row role="menuitemradio" checked={checked}
+    <Row role="menuitemradio" checked={checked} readOnly={readOnly}
       lead={<span className={"k-menu__dot" + (checked ? " k-is-on" : "")} aria-hidden="true" />}
       onSelect={(e) => {
         if (onSelect) onSelect(e);

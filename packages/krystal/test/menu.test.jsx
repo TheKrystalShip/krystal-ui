@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Button, Menu, MenuCheckboxItem, MenuItem, MenuRadioGroup, MenuRadioItem, MenuSeparator } from "@thekrystalship/krystal";
+import { Button, Menu, Popover, MenuCheckboxItem, MenuItem, MenuRadioGroup, MenuRadioItem, MenuSeparator } from "@thekrystalship/krystal";
 
 const open = async (user) => {
   const trigger = screen.getByRole("button", { name: "Actions" });
@@ -136,5 +136,47 @@ describe("Menu", () => {
     await user.keyboard("{Tab}");
     expect(screen.queryByRole("menu")).toBeNull();
     expect(document.activeElement).toBe(screen.getByRole("button", { name: "after" }));
+  });
+});
+
+describe("Menu container, sub and readOnly", () => {
+  it("portals the menu and a popover into `container`", async () => {
+    const user = userEvent.setup();
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    render(
+      <>
+        <Menu container={host} trigger={<Button>Actions</Button>}><MenuItem>Rename</MenuItem></Menu>
+        <Popover container={() => host} title="Pop" trigger={<Button>Info</Button>}>Body</Popover>
+      </>,
+    );
+    await user.click(screen.getByRole("button", { name: "Actions" }));
+    expect((await screen.findByRole("menu")).parentElement).toBe(host);
+    await user.keyboard("{Escape}");
+    await user.click(screen.getByRole("button", { name: "Info" }));
+    expect((await screen.findByRole("dialog")).parentElement).toBe(host);
+    host.remove();
+  });
+
+  it("draws a sub line, and a readOnly radio item takes focus but changes nothing and stays open", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <Menu trigger={<Button>Actions</Button>}>
+        <MenuRadioGroup value="a" onChange={onChange}>
+          <MenuRadioItem value="a" sub="The first">Alpha</MenuRadioItem>
+          <MenuRadioItem value="b" readOnly>Beta</MenuRadioItem>
+        </MenuRadioGroup>
+      </Menu>,
+    );
+    screen.getByRole("button", { name: "Actions" }).focus();
+    await user.keyboard("{ArrowDown}");
+    await screen.findByRole("menu");
+    expect(screen.getByText("The first")).toBeTruthy();
+    await user.keyboard("{ArrowDown}");
+    expect(document.activeElement.textContent).toBe("Beta");
+    await user.keyboard("{Enter}");
+    expect(onChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("menu")).toBeTruthy();
   });
 });

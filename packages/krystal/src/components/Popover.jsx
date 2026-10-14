@@ -18,6 +18,9 @@ import { chain, elementRef, mergeRefs } from "../lib/refs.js";
 // leaves focus on the trigger for the browser to move on from. A press outside closes it and leaves
 // focus where the press put it.
 //
+// The panel is portaled to `document.body`; `container` (an element, or a function returning one when
+// the panel opens) portals it into another, which a fullscreen element needs.
+//
 // `title` is the panel's heading and its accessible name; a panel without a visible heading takes
 // `label` instead. `children` may be a function, which receives `{ close }`.
 /**
@@ -31,6 +34,7 @@ import { chain, elementRef, mergeRefs } from "../lib/refs.js";
  * @property {import("react").ReactNode} [title] The heading, drawn at the top and naming the panel.
  * @property {string} [label] The accessible name of a panel with no `title`.
  * @property {boolean} [matchWidth] The panel is at least as wide as its anchor.
+ * @property {Element | null | (() => Element | null)} [container] Where the panel is portaled; `document.body` by default. A function is read each time the panel opens.
  * @property {import("react").ReactNode | ((api: { close: () => void }) => import("react").ReactNode)} [children] The panel's content; a function receives `close` to dismiss it.
  * @property {string} [className] Class name added to the root element.
  * @typedef {PopoverOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof PopoverOwnProps>} PopoverProps
@@ -38,7 +42,7 @@ import { chain, elementRef, mergeRefs } from "../lib/refs.js";
 /** @param {PopoverProps} props */
 function Popover({
   trigger, open: openProp, defaultOpen = false, onOpenChange, anchorRef, placement, title, label,
-  matchWidth = false, children, className, ...rest
+  matchWidth = false, container, children, className, ...rest
 }) {
   const [open, setOpen] = useOpenState(openProp, defaultOpen, onOpenChange);
   const own = React.useRef(null);
@@ -102,7 +106,7 @@ function Popover({
           {title != null && <div className="k-popover__title" id={titleId}>{title}</div>}
           {typeof children === "function" ? children({ close }) : children}
         </div>,
-        document.body,
+        (typeof container === "function" ? container() : container) || document.body,
       )}
     </>
   );
