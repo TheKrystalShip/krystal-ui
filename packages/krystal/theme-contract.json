@@ -1,0 +1,36 @@
+{
+  "required": [
+    "--canvas", "--surface-0", "--surface-1", "--surface-2", "--surface-3", "--border-subtle",
+    "--border-strong", "--border-accent", "--fg-1", "--fg-2", "--fg-3", "--fg-4", "--fg-inverse",
+    "--btn-accent-fg", "--btn-success-fg", "--krystal-teal", "--krystal-teal-hover",
+    "--krystal-teal-press", "--krystal-teal-dim", "--krystal-teal-ring", "--krystal-ink", "--success",
+    "--success-bg", "--success-fg", "--danger", "--danger-bg", "--danger-fg", "--warning",
+    "--warning-bg", "--warning-fg", "--update", "--update-bg", "--update-fg", "--info", "--info-bg",
+    "--info-fg", "--veil-1", "--veil-2", "--veil-3", "--scrim-base", "--scrollbar-thumb",
+    "--scrollbar-thumb-hover"
+  ],
+  "optional": [
+    "--on-accent", "--on-success", "--on-danger", "--on-warning", "--on-update", "--on-info"
+  ],
+  "structural": [
+    "--r-sm", "--r-md", "--r-lg", "--r-xl", "--r-pill", "--edge", "--edge-strong", "--edge-accent",
+    "--shadow-1", "--shadow-2", "--shadow-pop", "--ring-focus", "--ring-input", "--font-ui", "--d-fast",
+    "--d-base", "--d-slow", "--ease-out", "--ease-in-out"
+  ],
+  "invariant": [
+    "--font-mono", "--text-xs", "--text-sm", "--text-base", "--text-md", "--text-lg", "--text-xl",
+    "--text-2xl", "--text-3xl", "--text-4xl", "--text-5xl", "--w-regular", "--w-medium", "--w-semibold",
+    "--w-bold", "--lh-tight", "--lh-snug", "--lh-normal", "--lh-loose", "--s-0", "--s-1", "--s-2",
+    "--s-3", "--s-4", "--s-5", "--s-6", "--s-8", "--s-10", "--s-12", "--s-16", "--s-20", "--shadow-0",
+    "--shadow-lift", "--glow-accent", "--brand-discord", "--on-brand-discord", "--brand-github",
+    "--on-brand-github", "--brand-google", "--on-brand-google", "--brand-microsoft",
+    "--on-brand-microsoft", "--sidebar-w", "--topbar-h", "--content-max", "--gutter", "--scrim-media",
+    "--art-fg-1", "--art-fg-2", "--art-fg-3", "--art-fg-4", "--art-fg-inverse", "--art-fg-white",
+    "--art-fg-soft", "--art-line-subtle", "--art-line", "--art-line-strong", "--art-success-fg",
+    "--art-warning-fg", "--art-danger-fg", "--art-update-fg", "--art-info-fg", "--art-scrim",
+    "--art-glass"
+  ],
+  "colorScheme": [
+    "light", "dark"
+  ]
+}

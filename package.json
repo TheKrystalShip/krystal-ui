@@ -19,7 +19,9 @@
     "check:markdown": "node scripts/check-markdown-highlight.mjs",
     "check:themes": "node scripts/check-themes.mjs",
     "check:tokens": "node scripts/check-tokens.mjs",
-    "check:contrast": "node scripts/check-contrast.mjs"
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "check:contract": "node scripts/check-contract.mjs",
+    "check:palettes": "node packages/krystal/bin/krystal-check-theme.mjs packages/krystal/styles/tokens.css"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
@@ -34,6 +36,7 @@
     "lucide-react": "^0.460.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "stylelint": "^16.26.1",
     "typescript": "^5.9.3",
     "vite": "^6.0.5"
   }

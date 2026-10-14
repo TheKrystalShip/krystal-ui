@@ -2,6 +2,23 @@
 
 ## [0.32.0]
 
+### Added
+- **Shared lint configs**, from core as subpath exports with `eslint` and `stylelint` as optional peer
+  dependencies. `@thekrystalship/krystal/eslint` is a flat-config array (`import krystal from …; export
+  default [...krystal]`; `configs.strict` reports errors) that reports a raw `<button>`, `<input>`,
+  `<select>`, `<textarea>` or `<dialog>`, a literal colour in an inline `style`, and an import of
+  `@floating-ui/*` or `react-hook-form`. `@thekrystalship/krystal/stylelint` (`extends`) reports literal
+  colours and any `border-radius` outside `var(--r-*)`, `0`, `50%`, `100%` and `inherit`, and a four-sided
+  `border` that is not `var(--edge*)`. Findings are warnings; `defaultSeverity: "error"` raises the
+  Stylelint ones.
+- **The theme contract**: `@thekrystalship/krystal/theme-contract.json` lists the colour tokens every
+  palette defines, the optional `--on-*` inks, the structural tokens a palette may re-value and the
+  invariant rest. The `krystal-check-theme <file.css>...` bin checks a site's `[data-theme="…"]` blocks
+  against it (missing or disallowed tokens, no `color-scheme`, `--on-*` ink under 4.5:1). `npm run
+  check:contract` and `npm run check:palettes` keep the contract and the built-in palettes in step.
+- **`registerThemes(options)`**, exported from core, adds a site's own palettes to `THEME_OPTS` and to the
+  ids the theme store accepts.
+
 ### Changed
 - **The repository is `tks-krystal` and publishes two packages**, in lockstep (one version, one changelog,
   one `v<version>` tag). `@thekrystalship/krystal` holds the tokens, themes, fonts, components, hooks,

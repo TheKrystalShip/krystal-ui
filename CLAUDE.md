@@ -46,6 +46,15 @@ Renaming one is a breaking change.
 Each package's `styles.css` imports its sheets in the order they assume. A site with its own cascade
 imports `styles/<sheet>.css` individually at the position its rules need.
 
+## Lint configs and the theme contract
+
+Core ships `lint/eslint.js` and `lint/stylelint.js` (exported as `./eslint` and `./stylelint`, with
+`eslint` and `stylelint` as optional peers), `theme-contract.json` and the `krystal-check-theme` bin
+(`bin/`), which shares its palette reading and contrast measurement with `scripts/check-contrast.mjs`
+through `tools/theme-css.js`. The contract's lists partition the base tokens of `tokens.css`: a token
+added there is placed in one of them, and `check:contract` fails until it is. The lint configs are not
+applied to this repository's own sources, where the raw elements are wrapped.
+
 ## Build and release
 
 ```bash
@@ -55,6 +64,8 @@ npm run check:markdown   # the composer's highlighter emits every character exac
 npm run check:themes     # native controls take the light scheme on exactly the light palettes
 npm run check:tokens     # every var() resolves; no literal colour or radius outside tokens.css
 npm run check:contrast   # every --on-* ink reads on its fill at 4.5:1 in every palette
+npm run check:contract   # theme-contract.json describes tokens.css and every built-in palette
+npm run check:palettes   # krystal-check-theme over the package's own tokens.css
 npm run check:types      # builds core, then tsc --checkJs over both packages, no emit
 npm run build     # core, then the chat: vite library build → packages/*/dist (one ES module per source file), then tsc emits one .d.ts beside each
 npm run play -- --port 5211   # the playground, both packages resolved to their sources

@@ -128,6 +128,35 @@ const THEME_OPTS = [
 const VALID = THEME_OPTS.map(o => o.id);
 const DEFAULT = "dark";
 
+// A site's own palettes join the list a picker offers and the ids the store accepts. The entries
+// have the shape of THEME_OPTS entries; a palette's CSS is the site's own `[data-theme="<id>"]`
+// block, which `krystal-check-theme` checks against the theme contract. An id already offered is
+// ignored. A stored preference naming a newly registered palette takes effect here, because it was
+// read before the palette was known. Call it once, before the first render.
+/**
+ * @param {ThemeOption[]} options Each with a unique `id`, a `label` and a `mode`.
+ * @returns {void}
+ */
+function registerThemes(options) {
+  for (const o of options) {
+    if (!o || typeof o.id !== "string" || !o.id || typeof o.label !== "string") {
+      throw new TypeError("registerThemes: each option needs a string id and label");
+    }
+    if (o.mode !== "light" && o.mode !== "dark") {
+      throw new TypeError(`registerThemes: ${o.id} needs a mode of "light" or "dark"`);
+    }
+    if (VALID.includes(o.id)) continue;
+    THEME_OPTS.push(o);
+    VALID.push(o.id);
+  }
+  const pref = readPref();
+  if (pref !== themeStore.getState().pref) {
+    const resolved = resolveTheme(pref);
+    applyResolved(resolved);
+    themeStore.setState({ pref, resolved });
+  }
+}
+
 /** @returns {string} */
 function readPref() {
   try {
@@ -203,4 +232,4 @@ const useThemePref = () => useStore(themeStore, s => s.pref);
 /** @returns {string} */
 const useResolvedTheme = () => useStore(themeStore, s => s.resolved);
 
-export { themeStore, useThemePref, useResolvedTheme, resolveTheme, THEME_KEY, THEME_OPTS };
+export { themeStore, useThemePref, useResolvedTheme, resolveTheme, registerThemes, THEME_KEY, THEME_OPTS };

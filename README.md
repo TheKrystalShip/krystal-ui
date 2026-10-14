@@ -74,7 +74,7 @@ lists them in the order they assume.
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `AccountAvatar`, `AssistantFabIcon` |
-| State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS`, `copyText`, `pushBrowser`, `fmtRelative` |
+| State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS` + `registerThemes`, `copyText`, `pushBrowser`, `fmtRelative` |
 
 `@thekrystalship/krystal-chat`:
 
@@ -527,6 +527,83 @@ without the section.
 The pages sit at a reading measure (`.assistant-page`); `styles/assistant-pages.css` draws it and
 the memory editor, after `settings.css`.
 
+## Keeping a site inside the system
+
+Core ships an ESLint config and a Stylelint config. Both are optional peers (`eslint` 9, `stylelint`
+16): a site that installs neither pulls nothing in. Findings are warnings by default; a site whose code
+is clean raises them to errors.
+
+```js
+// eslint.config.js
+import krystal, { configs } from "@thekrystalship/krystal/eslint";
+export default [
+  ...krystal,                       // warnings; ...configs.strict for errors
+  // the site's own entries
+];
+```
+
+The ESLint rules are core's `no-restricted-syntax` and `no-restricted-imports`; a later entry of the
+site's own config for either rule replaces these, so a site that sets its own restrictions lists them
+in the same entry. They report:
+
+- a raw `<button>`, `<input>`, `<select>`, `<textarea>` or `<dialog>`, naming the component to use
+  (Button or IconButton; Input, Checkbox or Toggle; Select; Textarea; Dialog or Modal);
+- a literal colour (hex, `rgb()`, `hsl()` and the other colour functions, a named colour) in the
+  `color`, `background`, `backgroundColor`, `borderColor`, `fill` or `stroke` of an inline `style`;
+- an import of `@floating-ui/*` or `react-hook-form`, which the package wraps.
+
+```js
+// stylelint.config.js
+export default { extends: ["@thekrystalship/krystal/stylelint"] };   // defaultSeverity: "error" raises them
+```
+
+The Stylelint rules report a hex colour, a colour function or a named colour outside `transparent`,
+`currentColor` and the CSS-wide keywords (neutral black and white stay allowed in `box-shadow`,
+`text-shadow`, `filter` and masks, and a colour keyword inside a function such as `color-mix()`), a
+`border-radius` that is not `var(--r-*)`, `0`, `50%`, `100%` or `inherit`, and a four-sided `border`
+that is not `var(--edge*)`, `none`, `0` or transparent. Whether a one-sided hairline is a surface
+outline is a judgement the rules cannot make, so `border-top: 1px solid var(--border-subtle)` is left
+to review.
+
+The package's own sources are where the raw elements are wrapped, so neither config applies to them.
+
+## Adding a palette
+
+A palette is a sheet with a `[data-theme="<id>"]` block, loaded after the package's `styles.css`. It
+defines every colour token `theme-contract.json` lists as `required`, declares `color-scheme: light` or
+`color-scheme: dark`, and may re-value the `optional` ink tokens (`--on-*`) and the `structural` set
+(corner radius, edge, elevation, focus ring, UI font, motion). It cannot re-value anything else: the
+type scale, spacing, layout metrics and sign-in brand colours are the same in every palette.
+
+```css
+[data-theme="harbour"] {
+  color-scheme: dark;
+  --canvas: #0f1720;
+  /* … every required token … */
+  --r-sm: 2px;                      /* structural, optional */
+}
+```
+
+The site registers the palette with the theme store, before its first render, with an entry shaped
+like those of `THEME_OPTS`:
+
+```js
+import { registerThemes } from "@thekrystalship/krystal";
+registerThemes([{ id: "harbour", label: "Harbour", mode: "dark" }]);
+```
+
+The theme picker lists it, and a stored preference naming it takes effect. `mode` is the palette's own
+light or dark character and matches the `color-scheme` its block declares.
+
+`krystal-check-theme` reads the `[data-theme]` blocks of the sheets it is given and fails on a missing
+required token, a token outside the permitted set, a missing `color-scheme`, and any `--on-*` ink under
+4.5:1 on its fill. A token a block does not define resolves against the package's `tokens.css`, as it
+does in the page.
+
+```json
+{ "scripts": { "check:theme": "krystal-check-theme src/styles/harbour.css" } }
+```
+
 ## Developing
 
 ```bash
@@ -536,6 +613,8 @@ npm run check:markdown   # the composer's highlighter emits every character exac
 npm run check:themes     # native controls take the light scheme on exactly the light palettes
 npm run check:tokens     # every var() resolves; no literal colour or radius outside tokens.css
 npm run check:contrast   # every --on-* ink reads on its fill at 4.5:1 in every palette
+npm run check:contract   # theme-contract.json describes tokens.css and every built-in palette
+npm run check:palettes   # krystal-check-theme over the package's own tokens.css
 npm run check:types      # builds core, then tsc --checkJs over both packages
 npm run build        # core, then the chat → packages/*/dist, one ES module per source file
 npm run play -- --port 5211   # the playground, both packages from source

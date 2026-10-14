@@ -17,11 +17,18 @@
     "styles",
     "styles.css",
     "fonts",
-    "assets"
+    "assets",
+    "bin",
+    "lint",
+    "tools",
+    "theme-contract.json"
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "krystal-check-theme": "./bin/krystal-check-theme.mjs"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -31,6 +38,9 @@
       "types": "./dist/lib/*.d.ts",
       "default": "./dist/lib/*.js"
     },
+    "./eslint": "./lint/eslint.js",
+    "./stylelint": "./lint/stylelint.js",
+    "./theme-contract.json": "./theme-contract.json",
     "./styles.css": "./styles.css",
     "./styles/*": "./styles/*",
     "./fonts/*": "./fonts/*",
@@ -50,9 +60,19 @@
   "peerDependencies": {
     "lucide-react": ">=0.460.0",
     "react": "^18.3.1 || ^19.0.0",
-    "react-dom": "^18.3.1 || ^19.0.0"
+    "react-dom": "^18.3.1 || ^19.0.0",
+    "eslint": "^9.0.0",
+    "stylelint": "^16.0.0"
   },
   "dependencies": {
     "@floating-ui/react-dom": "^2.1.9"
+  },
+  "peerDependenciesMeta": {
+    "eslint": {
+      "optional": true
+    },
+    "stylelint": {
+      "optional": true
+    }
   }
 }

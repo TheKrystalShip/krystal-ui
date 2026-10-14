@@ -34,7 +34,7 @@ export default [
   },
 
   {
-    files: ["scripts/**/*.mjs", "**/vite.config.js", "eslint.config.js"],
+    files: ["scripts/**/*.mjs", "packages/krystal/bin/**/*.mjs", "**/vite.config.js", "eslint.config.js"],
     languageOptions: { globals: { ...globals.node } },
   },
 ];

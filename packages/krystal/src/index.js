@@ -56,6 +56,6 @@ export { useStoredFlag } from "./hooks/useStoredFlag.js";
 export { copyText } from "./lib/clipboard.js";
 export * as pushBrowser from "./lib/pushBrowser.js";
 export { createStore, useStore } from "./lib/store.js";
-export { themeStore, useThemePref, useResolvedTheme, resolveTheme, THEME_KEY, THEME_OPTS } from "./lib/theme.js";
+export { themeStore, useThemePref, useResolvedTheme, resolveTheme, registerThemes, THEME_KEY, THEME_OPTS } from "./lib/theme.js";
 export { fmtRelative } from "./lib/time.js";
 export { toast, toastStore, unreadCount, unreadTone } from "./lib/toasts.js";
