@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.36.0]
+
+### Added
+- **`FormDialog`**: a dialog that is a form, its fields under `FormScope`, Cancel and a `FormSubmit` in
+  its foot; Escape, the scrim and Cancel hold while it submits, and `notice` places the form's error.
+- **`Steps`**: where somebody is in a sequence they can move around in, its dots 24px targets.
+- **`SignInScreen`** takes `usernameExtra` (fields between the username and the password) and
+  `passwordHint` (a hint inside the password field).
+- **`ListPage` and `DetailPage`** take `empty`, and `DetailPage` `emptyIcon`, for their not-found and empty
+  states.
+- **`Notice`** takes `action`, a control at its end.
+- **`BriefItem`** draws a block below its detail, tags beside its title and a detail that wraps;
+  **`BriefEmpty`** draws its `children` after its body.
+- **`ListRow`** stands outside a `List` through `as`, and draws a line of chips.
+- **`useFollowTail`** takes `keys` and `anchorAttribute`: a parked reader keeps the row they were reading
+  in place while lines are trimmed off the top, and `unread` counts the rows after the newest one they
+  saw.
+
+### Changed
+- **`StatTile` draws the briefing card's head**: its icon and label as the title, an `aside` on the head's
+  right (a status dot, a pin) and `onView` drawing a "View" button there (the arrow alone at size `sm`,
+  named by `viewLabel` and the label), a divider, then the figure, its sub and its spark.
+- **`ConfirmDialog`'s refusal may be a node**, drawn as given; a string is drawn in a danger `Notice`.
+- **Readable text and a control's resting glyph draw in `--fg-3`**, which reads at 4.5:1 or better on
+  every surface of the default dark and light palettes; `--fg-4` is for placeholders and decorative marks.
+
 ## [0.35.0]
 
 ### Added
