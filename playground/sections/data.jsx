@@ -28,7 +28,7 @@ export function TableExamples() {
   return (
     <>
       <Sub title="Table: sortable, rows open, row actions, selection">
-        <p style={{ margin: "0 0 8px", fontSize: 12, opacity: 0.6 }}>Opened: {open || "none"}</p>
+        <p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--fg-3)" }}>Opened: {open || "none"}</p>
         <Table label="People" rows={rows} rowKey={(p) => p.id} columns={COLUMNS} sort={sort} onSortChange={setSort}
           selected={open} onRowOpen={(p) => setOpen(p.id)}
           rowTone={(p) => (p.load > 0.9 ? "danger" : undefined)}

@@ -32,14 +32,14 @@ function WithForm() {
     { id: "appearance", title: "Appearance", icon: "palette", rows: [{ icon: "palette", title: "Theme", sub: "Saved on this device. A wide control drops under the words.", control: <ThemePicker /> }] },
     { id: "sessions", title: "Sessions", icon: "monitor-smartphone", rows: [
       { icon: "laptop", title: "This browser", sub: "Signed in today", control: <Button size="sm" variant="outline">End</Button> },
-      { icon: "globe", title: "Region", sub: "Narrow beside the words, wrapping on a phone.", control: <Select variant="inline" options={[{ value: "a", label: "Western Europe, Frankfurt" }, { value: "b", label: "North America" }]} /> },
-      { icon: "bell", title: "Quiet hours", control: <Toggle on onChange={() => {}} /> },
+      { icon: "globe", title: "Region", sub: "Narrow beside the words, wrapping on a phone.", control: <Select variant="inline" aria-label="Region" options={[{ value: "a", label: "Western Europe, Frankfurt" }, { value: "b", label: "North America" }]} /> },
+      { icon: "bell", title: "Quiet hours", control: <Toggle on onChange={() => {}} label="Quiet hours" /> },
     ] },
     { id: "danger", title: "Danger zone", icon: "triangle-alert", rows: [{ icon: "trash-2", tone: "danger", title: "Delete account", sub: "Removes it for good.", control: <Button size="sm" variant="danger">Delete</Button> }] },
   ];
   return (
     <>
-      <p style={{ margin: "0 0 8px", fontSize: 12, opacity: 0.6 }}>Last saved: {saved ? JSON.stringify(saved) : "nothing yet"}. Edit a field to show the save bar.</p>
+      <p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--fg-3)" }}>Last saved: {saved ? JSON.stringify(saved) : "nothing yet"}. Edit a field to show the save bar.</p>
       <SettingsPage title="Settings" sub="Your account." sections={sections} form={form} />
     </>
   );
@@ -54,7 +54,7 @@ function Plain() {
     <SettingsPage title="Preferences" dirty={on !== base} saving={saving} onSave={save} onRevert={() => setOn(base)}
       sections={[
         { id: "general", title: "General", icon: "settings", rows: [
-          { icon: "bell", title: "Notices", sub: "Tell me when something happens.", control: <Toggle on={on} onChange={setOn} /> },
+          { icon: "bell", title: "Notices", sub: "Tell me when something happens.", control: <Toggle on={on} onChange={setOn} label="Notices" /> },
         ] },
         { id: "more", title: "More", icon: "info", rows: [{ icon: "info", title: "Version", control: <span className="k-settings-value k-settings-value--mono">1.0.0</span> }] },
       ]} />

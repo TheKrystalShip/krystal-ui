@@ -88,19 +88,19 @@ export function InputExamples() {
       <Sub title="Input">
         <div style={col}>
           {["sm", "md", "lg"].map((s) => <Input key={s} size={s} placeholder={"size " + s} />)}
-          <Input mono defaultValue="/var/lib/kgsm:8097" />
-          <Input prefix="https://" suffix=".thekrystalship.com" defaultValue="auth" />
-          <Input prefix="Port" mono defaultValue="8097" />
-          <Input invalid defaultValue="invalid value" />
-          <Input disabled defaultValue="disabled" />
-          <Input prefix="$" disabled defaultValue="affixed disabled" />
-          <Input prefix="$" invalid defaultValue="affixed invalid" />
+          <Input mono aria-label="Path" defaultValue="/var/lib/kgsm:8097" />
+          <Input prefix="https://" suffix=".thekrystalship.com" aria-label="Subdomain" defaultValue="auth" />
+          <Input prefix="Port" mono aria-label="Port" defaultValue="8097" />
+          <Input invalid aria-label="Invalid" defaultValue="invalid value" />
+          <Input disabled aria-label="Disabled" defaultValue="disabled" />
+          <Input prefix="$" disabled aria-label="Affixed disabled" defaultValue="affixed disabled" />
+          <Input prefix="$" invalid aria-label="Affixed invalid" defaultValue="affixed invalid" />
         </div>
       </Sub>
       <Sub title="Textarea">
         <div style={col}>
           <Textarea placeholder="Textarea" rows={3} />
-          <Textarea mono invalid defaultValue="mono, invalid" rows={2} />
+          <Textarea mono invalid aria-label="Mono, invalid" defaultValue="mono, invalid" rows={2} />
         </div>
       </Sub>
     </>
@@ -137,9 +137,9 @@ export function PasswordInputExamples() {
               segments={[0, 1, 2, 3].map((i) => ({ value: 1, tone: i < pwScore ? PW_TONES[pwScore] : "neutral" }))} />
           </Field>
           <Button size="sm" variant="outline" onClick={() => pwRef.current && pwRef.current.focus()}>Focus the field</Button>
-          <PasswordInput size="sm" defaultValue="small" />
-          <PasswordInput size="lg" defaultValue="large" invalid />
-          <PasswordInput disabled defaultValue="disabled" />
+          <PasswordInput size="sm" aria-label="Small password" defaultValue="small" />
+          <PasswordInput size="lg" aria-label="Large password" defaultValue="large" invalid />
+          <PasswordInput disabled aria-label="Disabled password" defaultValue="disabled" />
         </div>
       </Sub>
     </>
@@ -191,10 +191,10 @@ export function SelectExamples() {
     <>
       <Sub title="Select">
         <div style={row}>
-          <Select options={[{ value: "1", label: "Field" }, { value: "2", label: "Two" }]} />
-          <Select variant="inline" size="sm" options={[{ value: "1", label: "Inline sm" }]} />
-          <Select variant="chip" options={[{ value: "1", label: "Chip" }]} />
-          <Select disabled options={[{ value: "1", label: "Disabled" }]} />
+          <Select aria-label="Field select" options={[{ value: "1", label: "Field" }, { value: "2", label: "Two" }]} />
+          <Select variant="inline" size="sm" aria-label="Inline small select" options={[{ value: "1", label: "Inline sm" }]} />
+          <Select variant="chip" aria-label="Chip select" options={[{ value: "1", label: "Chip" }]} />
+          <Select disabled aria-label="Disabled select" options={[{ value: "1", label: "Disabled" }]} />
         </div>
       </Sub>
     </>
@@ -457,8 +457,8 @@ export function CopyFieldExamples() {
     <>
       <Sub title="CopyField">
         <div style={col}>
-          <CopyField value="kgsm_pat_7f3a91c2d8e04b5a" data-copyfield />
-          <CopyField value="https://kgsm.thekrystalship.com" label="Copy address" mono={false} size="sm" />
+          <CopyField value="kgsm_pat_7f3a91c2d8e04b5a" aria-label="Token" data-copyfield />
+          <CopyField value="https://kgsm.thekrystalship.com" aria-label="Address" label="Copy address" mono={false} size="sm" />
         </div>
       </Sub>
     </>
@@ -472,7 +472,7 @@ export function SettingsExamples() {
       <div style={{ maxWidth: 640 }}>
         <SettingsSection icon="settings" title="Section" meta="A meta line.">
           <SettingsRow icon="bell" title="Toggle row" sub="A sub line under the title."><Toggle on={on} onChange={setOn} label="On" /></SettingsRow>
-          <SettingsRow icon="globe" title="Select row"><Select variant="inline" options={[{ value: "1", label: "English" }]} /></SettingsRow>
+          <SettingsRow icon="globe" title="Select row"><Select variant="inline" aria-label="Select row" options={[{ value: "1", label: "English" }]} /></SettingsRow>
           <SettingsRow icon="check-circle-2" title="Success row" tone="success"><Button size="sm">Action</Button></SettingsRow>
           <SettingsRow icon="alert-triangle" title="Warn row" tone="warn"><Button size="sm" variant="outline">Action</Button></SettingsRow>
           <SettingsRow icon="x-circle" title="Danger row" tone="danger"><Button size="sm" variant="danger">Remove</Button></SettingsRow>
@@ -571,7 +571,7 @@ export function ListExamples() {
       </Sub>
       <Sub title="Empty: the List draws nothing, an EmptyState stands in">
         <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
-          <div data-empty-list><List label="Nobody">{[]}</List><p style={{ margin: 0, opacity: 0.5, fontSize: 12 }}>(an empty List)</p></div>
+          <div data-empty-list><List label="Nobody">{[]}</List><p style={{ margin: 0, color: "var(--fg-3)", fontSize: 12 }}>(an empty List)</p></div>
           <EmptyState icon="users" title="Nobody here yet">Accounts you invite show up in this list.</EmptyState>
         </div>
       </Sub>

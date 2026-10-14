@@ -40,7 +40,7 @@ export default function TabsSection() {
             <Tab value="a">One</Tab>
             <Tab value="b">Two</Tab>
           </TabList>
-          <TabPanel value="a" keepMounted><input defaultValue="kept while hidden" /></TabPanel>
+          <TabPanel value="a" keepMounted><input aria-label="Kept while hidden" defaultValue="kept while hidden" /></TabPanel>
           <TabPanel value="b" keepMounted>Second.</TabPanel>
         </Tabs>
       </Sub>
@@ -58,6 +58,7 @@ export default function TabsSection() {
             <TabList label="Long segmented">
               {LONG.map((t) => <Tab key={t} value={t}>{t}</Tab>)}
             </TabList>
+            <TabPanel value={long}>{long}</TabPanel>
           </Tabs>
         </div>
       </Sub>

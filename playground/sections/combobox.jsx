@@ -44,7 +44,7 @@ export default function ComboboxSection() {
           <Combobox wide options={GAMES} value={none} onChange={setNone} placeholder="Nothing chosen" empty="No game by that name" />
           {["sm", "md", "lg"].map((s) => <Combobox key={s} wide size={s} options={GAMES} placeholder={"size " + s} />)}
           <Combobox wide invalid options={GAMES} placeholder="invalid" />
-          <Combobox wide disabled options={GAMES} defaultValue="factorio" />
+          <Combobox wide disabled aria-label="Disabled game" options={GAMES} defaultValue="factorio" />
         </div>
       </Sub>
       <Sub title="A server search: the caller owns the text, filter is false, loading shows">

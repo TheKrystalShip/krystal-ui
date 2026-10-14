@@ -9,7 +9,7 @@ function Password() {
   const [last, setLast] = React.useState("none yet");
   return (
     <>
-      <p style={{ margin: "0 0 8px", fontSize: 12, opacity: 0.6 }}>Submitted: {last}. The password "wrong" is refused; submit empty to see the field errors.</p>
+      <p style={{ margin: "0 0 8px", fontSize: 12, color: "var(--fg-3)" }}>Submitted: {last}. The password "wrong" is refused; submit empty to see the field errors.</p>
       <div style={box(640)}>
         <SignInScreen mark={tksMark} wordmark="The Krystal Ship" tagline="Sign in."
           providers={["discord", "github", "google", "microsoft"]} onProvider={(p) => setLast("provider " + p)}
@@ -50,7 +50,7 @@ export default function PagesSignin() {
         <div style={box(640)}>
           <SignInScreen mark={tksMark} wordmark="Krystal Cinema" providers={["discord", "github"]} busyProvider="github"
             error="The sign-in service is not answering. Try again in a moment." password>
-            <CopyField value="ABCD-EFGH" />
+            <CopyField value="ABCD-EFGH" aria-label="Device code" />
           </SignInScreen>
         </div>
       </Sub>

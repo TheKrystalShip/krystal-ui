@@ -21,7 +21,7 @@ export default function BriefSection() {
             </BriefItem>
           </BriefList>
         </BriefCard>
-        <p style={{ opacity: 0.6, fontSize: 12 }}>Presses: {hits}</p>
+        <p style={{ color: "var(--fg-3)", fontSize: 12 }}>Presses: {hits}</p>
       </Sub>
       <Sub title="BriefEmpty: ok and neutral">
         <BriefCard icon="bell" title="Alerts">
