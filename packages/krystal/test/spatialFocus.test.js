@@ -38,6 +38,49 @@ const press = (key) => {
   return e;
 };
 
+describe("spatial focus in a radiogroup", () => {
+  it("treats the unchosen radios of a roving tabindex as places focus can go", () => {
+    const host = grid(1, 1);
+    const group = document.createElement("div");
+    group.setAttribute("role", "radiogroup");
+    ["a", "b", "c"].forEach((name, i) => {
+      const r = document.createElement("button");
+      r.setAttribute("role", "radio");
+      r.setAttribute("aria-checked", i === 0 ? "true" : "false");
+      r.tabIndex = i === 0 ? 0 : -1;
+      r.textContent = name;
+      r.setAttribute("data-box", [i * 120, 240, 100, 40].join(","));
+      group.appendChild(r);
+    });
+    host.appendChild(group);
+    const nav = createSpatialFocus();
+    nav.start();
+    at("a").focus();
+    press("ArrowRight");
+    expect(document.activeElement).toBe(at("b"));
+    press("ArrowRight");
+    expect(document.activeElement).toBe(at("c"));
+    press("ArrowLeft");
+    expect(document.activeElement).toBe(at("b"));
+    nav.destroy();
+  });
+
+  it("still skips a tabindex -1 control that is not a radio in a group", () => {
+    const host = grid(1, 1);
+    const stray = document.createElement("button");
+    stray.tabIndex = -1;
+    stray.textContent = "stray";
+    stray.setAttribute("data-box", "120,0,100,100");
+    host.appendChild(stray);
+    const nav = createSpatialFocus();
+    nav.start();
+    at("0,0").focus();
+    press("ArrowRight");
+    expect(document.activeElement).toBe(at("0,0"));
+    nav.destroy();
+  });
+});
+
 describe("spatial focus", () => {
   it("moves to the nearest control in the direction of each arrow, and takes the key", () => {
     grid(3, 3);

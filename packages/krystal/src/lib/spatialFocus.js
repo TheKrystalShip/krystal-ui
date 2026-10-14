@@ -7,7 +7,8 @@
 // regions and stop on the first floating button they meet.
 //
 // What counts as a candidate:
-// - anything that takes focus by Tab and is drawn, outside anything `aria-hidden` or `inert` (a page
+// - anything that takes focus by Tab and is drawn (and a radio in a `radiogroup`, whose roving tabindex
+//   keeps the unchosen options off the Tab order, though each is a place focus can go), outside anything `aria-hidden` or `inert` (a page
 //   being prepared out of sight is `aria-hidden` until it is shown);
 // - not a container that is focusable only to be scrolled or grouped, such as a row's scrolling track;
 // - not a control inside a card that is itself a control. `enterCard` goes into the focused card's own
@@ -82,7 +83,8 @@ function drawn(el) {
 
 /** @param {any} el */
 function usable(el) {
-  if (el.tabIndex < 0 || el.disabled || el.getAttribute("aria-disabled") === "true") return false;
+  if (el.disabled || el.getAttribute("aria-disabled") === "true") return false;
+  if (el.tabIndex < 0 && !(role(el) === "radio" && el.closest('[role="radiogroup"]'))) return false;
   if (el.tagName === "INPUT" && el.type === "hidden") return false;
   return true;
 }
