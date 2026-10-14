@@ -1,29 +1,6 @@
 # Changelog
 
-## [0.30.0-dev.2]
-
-### Changed
-- **`CardScreen`'s wordmark is the screen's heading** (`h1`), so a signed-out screen has one.
-
-### Fixed
-- **A field with a prefix or suffix draws one focus ring**, its frame's; the bare input inside it no longer
-  takes the universal focus ring as well.
-
-## [0.30.0-dev.4]
-
-### Fixed
-- **A closed dock casts no shadow.** The dock slides off-screen when closed, and its shadow stayed, a dark
-  band down the window's right edge on a light palette (both edges on a phone). The shadow is the open
-  dock's alone, and a pushing dock still draws none.
-
-## [0.30.0-dev.3]
-
-### Fixed
-- **Native controls follow the palette's mode.** `tokens.css` sets `color-scheme` on the root, dark unless
-  the palette is light, so a checkbox, a scrollbar or a picker the browser draws is not a white box on a
-  dark palette. `npm run check:themes` fails when the light list disagrees with `THEME_OPTS`.
-
-## [0.30.0-dev.1]
+## [0.30.0]
 
 ### Added
 - **`Pill`**, the one small non-interactive label: a `tone` of neutral, accent, info, ok, warn, danger or
@@ -48,6 +25,17 @@
   badge and `BriefCard`'s count keep their class names and share one height, weight, case and tint
   per tone. The showcase badge is no longer uppercase or taller than the others, and the family
   sheets keep only placement and the fills their surroundings need.
+- **`CardScreen`'s wordmark is the screen's heading** (`h1`), so a signed-out screen has one.
+
+### Fixed
+- **A field with a prefix or suffix draws one focus ring**, its frame's; the bare input inside it no longer
+  takes the universal focus ring as well.
+- **Native controls follow the palette's mode.** `tokens.css` sets `color-scheme` on the root, dark unless
+  the palette is light, so a checkbox, a scrollbar or a picker the browser draws is not a white box on a
+  dark palette. `npm run check:themes` fails when the light list disagrees with `THEME_OPTS`.
+- **A closed dock casts no shadow.** The dock slides off-screen when closed, and its shadow stayed, a dark
+  band down the window's right edge on a light palette (both edges on a phone). The shadow is the open
+  dock's alone, and a pushing dock still draws none.
 
 ## [0.29.4]
 
