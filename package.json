@@ -20,9 +20,16 @@
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js",
-    "./lib/*": "./dist/lib/*.js",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./lib/*": {
+      "types": "./dist/lib/*.d.ts",
+      "default": "./dist/lib/*.js"
+    },
     "./styles.css": "./styles.css",
     "./styles/*": "./styles/*",
     "./fonts/*": "./fonts/*",
@@ -35,10 +42,11 @@
     "./dist/lib/toasts.js"
   ],
   "scripts": {
-    "build": "vite build",
-    "prepack": "vite build",
+    "build": "vite build && tsc",
+    "prepack": "npm run build",
     "play": "vite playground",
     "lint": "eslint src scripts",
+    "check:types": "tsc --noEmit",
     "check:markdown": "node scripts/check-markdown-highlight.mjs",
     "check:themes": "node scripts/check-themes.mjs",
     "check:tokens": "node scripts/check-tokens.mjs",
@@ -51,6 +59,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.3.4",
     "esbuild": "^0.25.12",
     "eslint": "^9.39.5",
@@ -60,6 +70,7 @@
     "lucide-react": "^0.460.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "typescript": "^5.9.3",
     "vite": "^6.0.5"
   },
   "dependencies": {
