@@ -30,6 +30,20 @@
   `import "@thekrystalship/krystal-chat/styles.css"`. The chat takes core as a peer dependency at its own
   version. `AssistantFabIcon`, `pushBrowser` and `lib/sse` stay in core.
 - **Core exports `useModalBehaviour`**, which the chat's overlays use.
+- **Every class carries the `k-` prefix**, the chat's `k-chat-`, with no alias sheet: `hero` is `k-hero`,
+  `rail__track` is `k-rail__track`, `chat-turn` is `k-chat-turn`, and the short names read in full
+  (`kfoot` is `k-footer`, `gbtn` is `k-hero-btn`, `mnav` is `k-mobile-nav`, `skel` is `k-skeleton`,
+  `notif` is `k-notifications`, `crumbs` is `k-breadcrumbs`, `ev-card` is `k-chat-card`, `mem-editor` is
+  `k-assistant-memory-editor`, `chat-brief` is `k-brief`, `dash-section__more` is `k-view-all`). State
+  classes are `k-is-*` (`is-on` is `k-is-on`). `scripts/class-map.json` is the full list and
+  `scripts/codemod-k-prefix.mjs` rewrites a site: `node scripts/codemod-k-prefix.mjs <dir> [--write]`
+  covers CSS selectors, `className` strings, `classList` and selector-method arguments, and reports as
+  ambiguous each class the site both styles and emits itself, to be settled with `--assume-package`.
+  `h1.display` is no longer a selector; `.k-display` is the one rule.
+- **The sheets sit in the cascade layers `krystal.tokens`, `krystal.base` and `krystal.components`**,
+  ordered by the `@layer` statement each sheet opens with. A site's unlayered rules beat every layered
+  rule whatever their specificity, so a restyle needs no raised specificity, and a site's own element
+  rules (`a`, `button`, `*`) beat the package's class rules unless they sit in a layer ordered before it.
 
 ## [0.31.0]
 

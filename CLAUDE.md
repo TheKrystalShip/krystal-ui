@@ -40,11 +40,24 @@ through `--edge*`, radius through `--r-*`) are the ones `kgsm-web/src/styles/CLA
 because that is where the tokens were first measured.
 
 **A sheet's class names are its public interface**, as much as a component's props: a site restyles
-a variant (`.rail--catalog .rail__track`) or places a component in its own layout by them.
+a variant (`.k-rail--catalog .k-rail__track`) or places a component in its own layout by them.
 Renaming one is a breaking change.
 
+Every class carries one prefix, `k-`: a family is `k-<family>` with BEM elements and modifiers
+(`k-rail__track`, `k-rail--catalog`), the chat's are `k-chat-*`, and a component's state is a
+`k-is-*` class set beside its component class. No bare name (`hero`, `is-on`) is defined or emitted,
+because a site's own classes share the document.
+
+**Every sheet sits in a cascade layer.** `tokens.css` holds the palettes in `krystal.tokens` and the
+document and element rules in `krystal.base`; the scrollbar and motion sheets are `krystal.base`;
+every component sheet, the chat's included, is `krystal.components`. A sheet wraps all its rules in its
+`@layer` block and opens with `@layer krystal.tokens, krystal.base, krystal.components;`, so it is
+layered however it is imported (`@font-face` rules stay outside, a layer does not affect them). A
+site's unlayered rules therefore win over the package without raising specificity.
+
 Each package's `styles.css` imports its sheets in the order they assume. A site with its own cascade
-imports `styles/<sheet>.css` individually at the position its rules need.
+imports `styles/<sheet>.css` individually at the position its rules need. `check:tokens` and
+`check:contrast` read the sheets through the layer blocks.
 
 ## Lint configs and the theme contract
 

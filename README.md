@@ -47,9 +47,49 @@ The modules under core's `lib/` (`store`, `theme`, `toasts`, `time`, `clipboard`
 addressable one at a time — `@thekrystalship/krystal/lib/time` — for code that runs outside a
 browser and must not load React.
 
-A site that has its own stylesheet cascade imports the sheets one at a time from
-`@thekrystalship/krystal/styles/` (and `@thekrystalship/krystal-chat/styles/`) and places each where its rules have to sit; `styles.css`
-lists them in the order they assume.
+### Class names and the cascade
+
+Every class a sheet defines carries the prefix `k-`: `k-btn`, `k-rail__track`, `k-toast--error`. The
+chat's carry `k-chat-` (`k-chat-turn`), and a component's state is a `k-is-` class
+(`k-toolbar-btn.k-is-on`). A site's own `.hero` or `.rail` never meets the package's, and the names are
+the interface a site restyles by, so `.k-rail--catalog .k-rail__track` is how a shelf changes its density.
+
+The sheets sit in three cascade layers, ordered by the statement each sheet opens with:
+
+```css
+@layer krystal.tokens, krystal.base, krystal.components;
+```
+
+- `krystal.tokens`: the custom properties of every palette, in `tokens.css`.
+- `krystal.base`: the rules that style the document and its elements: `html`, `body`, headings, links, the
+  focus ring, native control schemes, scrollbars and the keyframes.
+- `krystal.components`: every component sheet, the chat's included.
+
+A rule outside any layer beats every layered rule whatever its specificity, so a site restyles a component
+with an ordinary rule and never raises specificity to win. That holds for element rules too: a site's
+unlayered `a { … }` or `button { … }` beats the package's class rules, so a site keeps its resets in a
+layer ordered before the package's and its restyles outside any layer:
+
+```css
+@layer site.reset, krystal.tokens, krystal.base, krystal.components;
+
+@import "@thekrystalship/krystal/styles.css";
+
+@layer site.reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+}
+
+/* unlayered: wins over every krystal layer */
+.k-toolbar { gap: 4px; }
+:root[data-theme="dark"] { --canvas: #0b0d10; }
+```
+
+The first `@layer` statement fixes the order, and the package's sheets imported after it join those layers. A
+site that places the package's sheets one at a time imports them from
+`@thekrystalship/krystal/styles/` (and `@thekrystalship/krystal-chat/styles/`) where its own rules have
+to sit; `styles.css` lists them in the order they assume. Each sheet repeats the order statement and
+wraps its rules in its layer, so a sheet imported alone is layered too.
 
 ## What is in it
 
@@ -188,7 +228,7 @@ grid. `busy` swaps the mark for the spinner.
 `Pill` is the label every badge is drawn with: `tone` neutral (default), accent, info, ok, warn,
 danger or muted; `size` md or sm; `icon` or `dot` (`"live"` for a running thing) before the text.
 `NavItem`, `SubTabs`, `TabBar`, `ShowcaseCard` and `BriefCard` draw their count or badge through it
-and keep their own class names, so a site's rule on `.nav-item__badge--warn` still lands.
+and keep their own class names, so a site's rule on `.k-nav-item__badge--warn` still lands.
 
 ```jsx
 <Pill tone="warn">3</Pill>
@@ -285,7 +325,7 @@ useEdgeSwipe(drawerOpen, setDrawerOpen, dock.open, dock.setOpen);
   sidebar={
     <Sidebar mark="/mark.png" wordmark="Site" open={drawerOpen}
       collapsed={dock.desktop && collapsed} onToggleCollapse={() => setCollapsed(c => !c)}
-      top={<label className="sidebar__search">…</label>}
+      top={<label className="k-sidebar__search">…</label>}
       closeNav
       foot={<>
         <NavItem icon="settings" label="Settings" onClick={…} />
@@ -335,7 +375,7 @@ it; the site opens the dock from a tab of its own. Wide screens keep the sidebar
 
 A site drawn on a television, driven by a remote, sets `data-tv` on its root element. Focus then
 lifts what it is on: a card grows and rises on `--shadow-lift` with a hairline and `--glow-accent`
-while the other cards in its row dim, at once rather than over a transition, and a `Button`, a place in the bar or anything marked `tv-pill`
+while the other cards in its row dim, at once rather than over a transition, and a `Button`, a place in the bar or anything marked `k-tv-pill`
 turns into a light pill with dark ink. Anything else focusable takes the hairline and the light. A
 primary button's ink is dark on the accent, and `Rail` draws no scroll arrows, since a row scrolls to
 whatever takes focus in it.
@@ -348,7 +388,7 @@ The parts a television page is built from, in `components/Tv.jsx`:
 - `TvBackdrop` — artwork behind the page, at its right, fading into the canvas; a new `src` is loaded
   before it fades in over the last. `size` is `tall`, `short` or `page`.
 - `TvSpotlight` — `eyebrow`, `title`, `meta` and `children`; `size` `lg` opens a page and `md` sits
-  above a row, its name on one line. `tv-spot__overview` and `tv-spot__actions` place a story and buttons.
+  above a row, its name on one line. `k-tv-spot__overview` and `k-tv-spot__actions` place a story and buttons.
 - `TvRow` — a heading with `icon`, `title` and `count`, then its cards and `end`, running past the
   right margin; it is a `data-tv-row`, which a site's navigator can place on a line.
 - `TvCard` — a picture that is a link, `poster` or `wide`, with `progress` and a `badge`; every
@@ -447,7 +487,7 @@ named as the site's review listing names it; the client's own is
 functions that prepare a file are `prepareAttachment`, `acceptFor`, `textOverLimit` and `sizeLabel`.
 
 A site whose frame has a sidebar can keep the conversation list there: `railTarget` is the element
-the list is drawn into, and the chat takes the whole width. `pageClass="chat-page--framed"` makes the
+the list is drawn into, and the chat takes the whole width. `pageClass="k-chat-page--framed"` makes the
 chat fill an `AppShell`'s main column. When the site shows something other than the chat while the
 list stays in view, `onShowConversation` tells it the person opened or started a conversation, and
 `conversationShown` says whether the chat is what is on screen, so the sidebar lights the open one
@@ -460,7 +500,7 @@ surface, framed, with a dock's window buttons. `"page"` is the chat as the whole
 tab opens it: it stands on the page's background with no frame, its header has a way back to the
 empty conversation and the conversation list as a sheet, its opening suggestions are a row of chips
 over a one-row composer, and while the person writes the site's tab bar gives its room to the
-keyboard. Give a page `pageClass="chat-page--framed"` as well, to fill the column.
+keyboard. Give a page `pageClass="k-chat-page--framed"` as well, to fill the column.
 
 `slots` puts a site's own blocks in the chat's frame, by place: `start` is the empty conversation's
 column, `aboveComposer` a row over the composer, `headerActions` buttons in the header and `history`
@@ -524,7 +564,7 @@ text area, and `keyPlaceholder` is a new memory's example name. `AssistantSkills
 `assistantPushStatus`, `assistantPushSubscribe` and `assistantPushUnsubscribe` are the same calls
 without the section.
 
-The pages sit at a reading measure (`.assistant-page`); `styles/assistant-pages.css` draws it and
+The pages sit at a reading measure (`.k-assistant-page`); `styles/assistant-pages.css` draws it and
 the memory editor, after `settings.css`.
 
 ## Keeping a site inside the system
