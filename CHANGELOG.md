@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.31.0]
+
+### Added
+- **Type declarations.** Every module ships a `.d.ts` beside it, emitted from JSDoc in the sources, and
+  `package.json` names them (`types`, and a `types` condition on `.` and `./lib/*`), so an editor completes
+  and checks a site's props. The chat's wire-contract frames, `profile`, slots and `createAssistantClient`
+  are typed in `src/chat/types.js`.
+- **`npm run check:tokens`** fails on a `var()` naming a property no sheet defines and on a literal colour
+  or radius outside `tokens.css`; **`npm run check:contrast`** fails on any `--on-*` ink under 4.5:1 on its
+  fill in any palette; **`npm run check:types`** runs `tsc` over the sources. CI runs lint, every check and
+  the build on each push.
+- **`--art-*` tokens** for type, lines and scrims drawn over cover art, the same in every theme.
+
+### Changed
+- **The fonts are WOFF2**, subset to Latin, Latin Extended-A, punctuation, currency, arrows, mathematical
+  operators, box drawing, geometric shapes and dingbats, with their variable axes and layout features
+  kept and a `unicode-range` on each face.
+- **React 19** is accepted beside 18.3 as a peer.
+- **Popovers are placed by Floating UI** (`@floating-ui/react-dom`, a regular dependency): they flip to the
+  side with room, stay 8px inside the window and follow their anchor. `usePortalPopover` keeps its
+  signature and takes an optional `{ placement }`.
+- **Small radii follow the theme**: the 2px and 3px corners in the carousel, composer, chat, collection
+  tile, shell, theme picker and television sheets draw `--r-sm`. The hero's veil and the showcase's
+  warning border mix from theme tokens.
+
+### Fixed
+- **A dialog is a dialog.** `Modal` (and so `Dialog`), the chat's history sheet and its picture lightbox
+  move focus in on open, keep Tab inside, hand focus back on close and make the rest of the page inert
+  (the toasts excepted). Escape closes only the topmost, and a popover open inside a dialog takes Escape
+  first, so one press closes one layer.
+
 ## [0.30.0]
 
 ### Added
