@@ -50,7 +50,8 @@ function List({ label, children, className }) {
  * @typedef {ListRowOwnProps & Omit<import("react").ComponentPropsWithoutRef<"li">, keyof ListRowOwnProps | "title">} ListRowProps
  */
 /** @param {ListRowProps} props */
-function ListRow({ as: Root = "li", lead, title, sub, detail, meta, aside, actions, onOpen, href, selected = false, disabled = false, tone, className, ...rest }) {
+function ListRow({ as = "li", lead, title, sub, detail, meta, aside, actions, onOpen, href, selected = false, disabled = false, tone, className, ...rest }) {
+  const Root = /** @type {any} */ (as);
   const openable = !disabled && (onOpen != null || href != null);
   /** @type {{ className: string, "aria-current": "true" | undefined }} */
   const titleProps = {
