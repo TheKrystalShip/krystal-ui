@@ -9,6 +9,7 @@ export { BriefCard } from "./components/BriefCard.jsx";
 export { Button, IconButton } from "./components/Button.jsx";
 export { Checkbox, Field, Input, PasswordInput, Textarea } from "./components/fields.jsx";
 export { Dialog } from "./components/Dialog.jsx";
+export { Drawer } from "./components/Drawer.jsx";
 export { EmptyState } from "./components/EmptyState.jsx";
 export { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 export { CarouselPager } from "./components/CarouselPager.jsx";

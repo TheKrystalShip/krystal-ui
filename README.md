@@ -111,7 +111,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Controls | `Button`, `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `OptionList`, `Meter` |
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
-| Overlays | `Dialog`, `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
+| Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `AccountAvatar`, `AssistantFabIcon` |
@@ -307,6 +307,28 @@ only the topmost, and the chat's history sheet and picture viewer behave the sam
 framed sheet on `Modal`: `size` is md (520px), lg (720px) or xl
 (960px), `fill` gives it a definite height for a body that sizes itself to its container, `as="form"`
 with `onSubmit` makes the sheet a form, and `art` draws a banner above the head.
+
+### Layout, keys and drawers
+
+```jsx
+<Container size="lg" as="main">
+  <Stack gap="lg">
+    <Cluster gap={2} justify="between">
+      <h1>Library</h1>
+      <span>Press <Kbd keys={["Ctrl", "K"]} /> to search</span>
+    </Cluster>
+    <Grid min={260} gap={4}>{cards}</Grid>
+  </Stack>
+</Container>
+
+{narrow
+  ? <Drawer title="Download" onClose={close} foot={<Button onClick={go}>Save</Button>}>{body}</Drawer>
+  : <Dialog title="Download" onClose={close} foot={<Button onClick={go}>Save</Button>}>{body}</Dialog>}
+```
+
+`gap` is a step of the spacing scale (`--s-N`) or a name for one (`xs` 1, `sm` 2, `md` 4, `lg` 6, `xl` 8).
+A `Drawer` takes `side="right"` or `"left"` for a panel at the screen's edge; on touch its head is
+the grip a pull toward the edge closes it by.
 
 ## The frame
 

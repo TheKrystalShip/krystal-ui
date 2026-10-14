@@ -1,0 +1,177 @@
+/* ============================================================================
+   drawer.css — a modal sheet sliding in from an edge (Drawer): the scrim, the sheet on its three
+   sides, its grab handle, head, sub line, scrolling body and foot. Square-cornered on the edge it
+   sits against, as the dock is.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-drawer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  box-sizing: border-box;
+  display: flex;
+  background: color-mix(in srgb, var(--scrim-base) 70%, transparent);
+  animation: k-fade var(--d-base) var(--ease-out);
+}
+
+.k-drawer-scrim--bottom { align-items: flex-end; justify-content: center; }
+.k-drawer-scrim--right { align-items: stretch; justify-content: flex-end; }
+.k-drawer-scrim--left { align-items: stretch; justify-content: flex-start; }
+
+.k-drawer {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface-1);
+  color: var(--fg-1);
+  box-shadow: var(--shadow-pop);
+  animation: var(--k-drawer-in) var(--d-slow) var(--ease-out);
+}
+
+.k-drawer--bottom {
+  --k-drawer-in: k-drawer-from-bottom;
+  width: 100%;
+  max-width: 520px;
+  max-height: 92dvh;
+  border: var(--edge-strong);
+  border-bottom: none;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.k-drawer--right,
+.k-drawer--left {
+  width: 100%;
+  max-width: 520px;
+  height: 100%;
+  padding-block: env(safe-area-inset-top) env(safe-area-inset-bottom);
+}
+
+.k-drawer--right {
+  --k-drawer-in: k-drawer-from-right;
+  border-left: var(--edge-strong);
+  padding-right: env(safe-area-inset-right);
+}
+
+.k-drawer--left {
+  --k-drawer-in: k-drawer-from-left;
+  border-right: var(--edge-strong);
+  padding-left: env(safe-area-inset-left);
+}
+
+.k-drawer--lg { max-width: 720px; }
+.k-drawer--xl { max-width: 960px; }
+
+/* A definite height, for a body that sizes itself to its container. */
+.k-drawer--bottom.k-drawer--fill { height: 92dvh; }
+
+.k-drawer,
+.k-drawer * { overscroll-behavior: contain; }
+
+/* The head is the grip a touch pulls the sheet by, so the browser is told it takes no pan of its own. */
+.k-drawer__top {
+  position: relative;
+  flex-shrink: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.k-drawer__top.k-is-held { cursor: grabbing; }
+
+.k-drawer__grabber {
+  width: 36px;
+  height: 4px;
+  margin: var(--s-2) auto 0;
+  border-radius: var(--r-pill);
+  background: var(--border-strong);
+  transition: background var(--d-fast);
+  pointer-events: none;
+}
+
+.k-drawer__top.k-is-held .k-drawer__grabber { background: var(--krystal-teal); }
+
+.k-drawer__head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-5) var(--s-1);
+}
+
+.k-drawer__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: var(--r-sm);
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal);
+}
+
+.k-drawer__title {
+  min-width: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--fg-1);
+  letter-spacing: -0.005em;
+}
+
+.k-drawer__close { margin-left: auto; }
+
+.k-drawer__sub {
+  flex-shrink: 0;
+  padding: 0 var(--s-5) var(--s-4);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--fg-3);
+}
+
+.k-drawer__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: var(--s-1) var(--s-5) var(--s-4);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.k-drawer__foot {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: var(--s-4) var(--s-5);
+  border-top: 1px solid var(--border-subtle);
+}
+
+@keyframes k-drawer-from-bottom { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes k-drawer-from-right { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes k-drawer-from-left { from { transform: translateX(-40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+@media (max-width: 768px) {
+  .k-drawer__head { padding: var(--s-3) var(--s-4) var(--s-1); }
+  .k-drawer__sub { padding: 0 var(--s-4) var(--s-3); }
+  .k-drawer__body { padding: var(--s-1) var(--s-4) var(--s-3); }
+  .k-drawer__foot { padding: var(--s-3) var(--s-4); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-drawer-scrim,
+  .k-drawer { animation: none; }
+  .k-drawer__grabber { transition: none; }
+}
+
+/* While a drawer is open the toasts sit at the top of the screen, clear of it. */
+body.k-has-drawer .k-toasts {
+  top: calc(var(--s-4) + env(safe-area-inset-top));
+  bottom: auto;
+}
+}
