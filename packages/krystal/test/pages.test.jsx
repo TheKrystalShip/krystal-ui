@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { BriefEmpty, BriefItem, DetailPage, FormField, ListPage, Notice, SignInScreen } from "@thekrystalship/krystal";
+import { BriefEmpty, BriefItem, DetailPage, FormField, ListPage, ListRow, Notice, SignInScreen } from "@thekrystalship/krystal";
 
 describe("SignInScreen", () => {
   it("draws usernameExtra between the username and the password, and passwordHint inside the password's frame", () => {
@@ -59,5 +59,19 @@ describe("Brief furniture", () => {
   it("BriefEmpty draws its children after the body line", () => {
     render(<BriefEmpty title="None" body="Nothing yet.">{<button>Add</button>}</BriefEmpty>);
     expect(screen.getByText("Nothing yet.").nextElementSibling).toBe(screen.getByRole("button", { name: "Add" }));
+  });
+});
+
+describe("ListRow", () => {
+  it("stands as a div outside a List and draws `detail` under the sub", () => {
+    const { container } = render(<ListRow as="div" title="Row" sub="Quiet" detail={<span>chip</span>} data-row="x" />);
+    const root = container.querySelector("[data-row=x]");
+    expect(root.tagName).toBe("DIV");
+    expect(screen.getByText("Quiet").nextElementSibling.textContent).toBe("chip");
+  });
+
+  it("stays an li by default", () => {
+    const { container } = render(<ul><ListRow title="Row" /></ul>);
+    expect(container.querySelector("li.k-listrow")).toBeTruthy();
   });
 });

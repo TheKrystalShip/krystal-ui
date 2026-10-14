@@ -543,6 +543,13 @@ export function ListExamples() {
           ))}
         </List>
       </Sub>
+      <Sub title="Standing on its own (as=div), with a chip line under the sub">
+        <div style={{ display: "grid", gap: 8, maxWidth: 560 }}>
+          <ListRow as="div" lead={<AccountAvatar user={{ name: "Ada" }} size={28} />} title="Ada signed in"
+            sub="From the Control Panel" detail={<><Pill size="sm" tone="info">auth.signin</Pill><span>host: walter</span><span>client: panel</span></>}
+            aside="2 min ago" />
+        </div>
+      </Sub>
       <Sub title={"Navigable (onOpen): opened " + opened}>
         <List label="Applications">
           {["Control Panel", "Cinema", "Assistant"].map((n, i) => (
