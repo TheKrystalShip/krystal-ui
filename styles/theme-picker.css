@@ -149,13 +149,13 @@
 
 .theme-mini__brand {
   height: 5px;
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: var(--krystal-teal);
 }
 
 .theme-mini__nav {
   height: 3px;
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: var(--fg-3);
   opacity: 0.55;
 }
@@ -174,7 +174,7 @@
 .theme-mini__title {
   width: 45%;
   height: 5px;
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: var(--fg-1);
 }
 
@@ -234,7 +234,7 @@
 
 .theme-mini__line {
   height: 4px;
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: var(--fg-1);
 }
 

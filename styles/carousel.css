@@ -36,7 +36,7 @@
   width: 8px;
   height: 4px;
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: color-mix(in srgb, var(--fg-1) 30%, transparent);
   transition: width var(--d-base) var(--ease-out), background var(--d-base) var(--ease-out);
 }
@@ -88,7 +88,7 @@
 :root[data-tv] .carousel-pager__bar {
   width: 12px;
   height: 6px;
-  border-radius: 3px;
+  border-radius: var(--r-sm);
 }
 
 :root[data-tv] .carousel-pager__mark[aria-current] .carousel-pager__bar {

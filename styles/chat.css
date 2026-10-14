@@ -875,7 +875,7 @@
   padding: 0 3px;
   margin-right: 2px;
   border: var(--edge-strong);
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   color: var(--fg-3);
 }
 

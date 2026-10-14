@@ -27,7 +27,7 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(to right, var(--surface-1) 30%, rgba(17, 22, 29, 0.4) 60%, transparent 100%);
+  background: linear-gradient(to right, var(--surface-1) 30%, color-mix(in srgb, var(--surface-1) 40%, transparent) 60%, transparent 100%);
 }
 
 .hero>.hero__content {
@@ -104,18 +104,18 @@
 .hero__statuspos,
 .hero--cinematic .hero__heading,
 .hero--cinematic .hero__on-art {
-  --fg-1: #F2F5F9;
-  --fg-2: #B8C2D0;
-  --fg-3: #7C8899;
-  --fg-4: #515E70;
-  --fg-inverse: #0B0F14;
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-strong: rgba(255, 255, 255, 0.12);
-  --success-fg: #4ADE80;
-  --warning-fg: #FBBF24;
-  --danger-fg: #FB7185;
-  --update-fg: #FB923C;
-  --info-fg: #7DD3FC;
+  --fg-1: var(--art-fg-1);
+  --fg-2: var(--art-fg-2);
+  --fg-3: var(--art-fg-3);
+  --fg-4: var(--art-fg-4);
+  --fg-inverse: var(--art-fg-inverse);
+  --border-subtle: var(--art-line-subtle);
+  --border-strong: var(--art-line);
+  --success-fg: var(--art-success-fg);
+  --warning-fg: var(--art-warning-fg);
+  --danger-fg: var(--art-danger-fg);
+  --update-fg: var(--art-update-fg);
+  --info-fg: var(--art-info-fg);
   color: var(--fg-1);
 }
 
@@ -132,11 +132,11 @@
   inset: 0;
   z-index: 1;
   background: linear-gradient(to top,
-      rgba(7, 11, 15, 0.50) 0%,
-      rgba(7, 11, 15, 0.80) 22%,
-      rgba(7, 11, 15, 0.55) 48%,
-      rgba(7, 11, 15, 0.14) 78%,
-      rgba(7, 11, 15, 0.22) 100%);
+      color-mix(in srgb, var(--art-scrim) 50%, transparent) 0%,
+      color-mix(in srgb, var(--art-scrim) 80%, transparent) 22%,
+      color-mix(in srgb, var(--art-scrim) 55%, transparent) 48%,
+      color-mix(in srgb, var(--art-scrim) 14%, transparent) 78%,
+      color-mix(in srgb, var(--art-scrim) 22%, transparent) 100%);
 }
 
 .hero__statuspos {
@@ -171,10 +171,10 @@
 
 /* Frosted backing so a tag stays legible over art. */
 .hero__tag--glass {
-  background: rgba(10, 15, 20, 0.5);
+  background: var(--art-glass);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: var(--art-line);
   color: var(--fg-1);
 }
 

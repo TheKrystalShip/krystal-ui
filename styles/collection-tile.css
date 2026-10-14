@@ -208,7 +208,7 @@
 .collection-tile__segs i {
   flex: 1;
   height: 3px;
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: color-mix(in srgb, var(--fg-1) 14%, transparent);
 }
 

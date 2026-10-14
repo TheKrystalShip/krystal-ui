@@ -352,6 +352,26 @@
      chose, so they hold the dark palette in every theme and their content stays white. Three
      light themes give --scrim-base a LIGHT value, which is correct for a backdrop and would put
      white type on white here. Same reasoning as lib/art.js's separate dark hero placeholder. */
+  /* ---------- On-art palette ------------------------------
+     Colours for type, borders and scrims that sit DIRECTLY on cover art. The art is whatever image
+     the page has, so these hold the dark palette in every theme: no theme re-values them. */
+  --art-fg-1: #F2F5F9;
+  --art-fg-2: #B8C2D0;
+  --art-fg-3: #7C8899;
+  --art-fg-4: #515E70;
+  --art-fg-inverse: #0B0F14;
+  --art-fg-white: #FFFFFF;
+  --art-fg-soft: rgba(255, 255, 255, 0.78);
+  --art-line-subtle: rgba(255, 255, 255, 0.06);
+  --art-line: rgba(255, 255, 255, 0.12);
+  --art-line-strong: rgba(255, 255, 255, 0.18);
+  --art-success-fg: #4ADE80;
+  --art-warning-fg: #FBBF24;
+  --art-danger-fg: #FB7185;
+  --art-update-fg: #FB923C;
+  --art-info-fg: #7DD3FC;
+  --art-scrim: #070B0F;
+  --art-glass: rgba(10, 15, 20, 0.5);
   --scrollbar-thumb: rgba(255, 255, 255, 0.14);
   --scrollbar-thumb-hover: rgba(255, 255, 255, 0.24);
 }

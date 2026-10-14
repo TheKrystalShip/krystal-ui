@@ -361,7 +361,7 @@
 .chat-voice__bar {
   flex-shrink: 0;
   width: 3px;
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: var(--krystal-teal);
   transition: height 80ms linear;
 }
@@ -419,7 +419,7 @@
 .chat-voicenote__bar {
   flex-shrink: 0;
   width: 3px;
-  border-radius: 2px;
+  border-radius: var(--r-sm);
   background: var(--fg-3);
 }
 
