@@ -7,7 +7,7 @@ import { Icon } from "./Icon.jsx";
 // It does NOT own data — the parent decides the page size, computes pageCount
 // from the server's total, and slices or re-requests on onPage. This keeps the
 // component pure and the "which rows" decision next to the request that
-// produced them.
+// produced them. Without `total` and `pageSize` there is no summary, only the controls.
 
 // Build a windowed list of page numbers with "…" gaps so the control stays a
 // fixed width no matter how many pages exist: always first + last, plus a
@@ -38,8 +38,8 @@ function paginationWindow(page, pageCount, span = 1) {
  * @param {object} props
  * @param {number} props.page Zero-based.
  * @param {number} props.pageCount
- * @param {number} props.total
- * @param {number} props.pageSize
+ * @param {number} [props.total] The count across every page; with `pageSize`, it words the summary.
+ * @param {number} [props.pageSize]
  * @param {(page: number) => void} props.onPage
  * @param {string} [props.unit]
  */
@@ -47,15 +47,18 @@ function Pagination({ page, pageCount, total, pageSize, onPage, unit = "results"
   if (!pageCount || pageCount <= 1) return null;
   const clamp = (p) => Math.max(0, Math.min(pageCount - 1, p));
   const go = (p) => { const n = clamp(p); if (n !== page) onPage(n); };
-  const from = page * pageSize + 1;
-  const to = Math.min(total, (page + 1) * pageSize);
+  const summarised = total != null && pageSize != null;
+  const from = summarised ? page * pageSize + 1 : 0;
+  const to = summarised ? Math.min(total, (page + 1) * pageSize) : 0;
   const seq = paginationWindow(page, pageCount, 1);
 
   return (
     <nav className="k-pagination" aria-label="Pagination">
-      <span className="k-pagination__summary">
-        Showing <b>{from.toLocaleString()}–{to.toLocaleString()}</b> of {total.toLocaleString()} {unit}
-      </span>
+      {summarised && (
+        <span className="k-pagination__summary">
+          Showing <b>{from.toLocaleString()}–{to.toLocaleString()}</b> of {total.toLocaleString()} {unit}
+        </span>
+      )}
       <div className="k-pagination__controls">
         <button
           className="k-pagination__btn k-pagination__btn--nav"

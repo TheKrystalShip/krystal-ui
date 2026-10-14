@@ -115,6 +115,7 @@ wraps its rules in its layer, so a sheet imported alone is layered too.
 | Page furniture | `PageHeader`, `Notice`, `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow`, `ThemePicker` |
 | Overlays | `Dialog`, `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle and touch pull-to-dismiss), `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
+| Page patterns | `ListPage` (heading, toolbar, rows, table or grid, pager and the loading, failed and empty states, from the site's data and flags) |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
@@ -346,6 +347,22 @@ through `DataState`. At phone width each row is a card with its header as an inl
     { key: "role", header: "Role", render: (p) => <Pill>{p.role}</Pill> },
   ]}
   onRowOpen={open} rowActions={(p) => <IconButton variant="ghost" icon="trash-2" label="Remove" onClick={() => remove(p)} />} />
+```
+
+`ListPage` lays out a page of records and fetches nothing: `title`, `sub` and `actions` make the heading
+(or `header` is a node of the site's own), `toolbar` is usually a `Toolbar`, and `items` are drawn by
+`layout`: `list` (each `renderItem` result inside a `List`, so a `ListRow`), `grid` (a `Grid` with `gridMin`
+wide columns) or `table` (`columns`, and `table` for the rest of Table's props). `children` replace the
+body for a shape of the site's own. `loading`, `error` with `onRetry`, and an empty list draw through
+`DataState` (`emptyTitle`, `emptyBody`, `emptyIcon`, `emptyAction`) under a heading and toolbar that stay.
+`page` (zero-based), `pageCount` and `onPageChange` draw the pager, with `total` and `pageSize` for its summary.
+
+```jsx
+<ListPage title="Accounts" sub="Everyone who can sign in." actions={<Button variant="primary">Add</Button>}
+  toolbar={<Toolbar><ToolbarSearch value={q} onChange={setQ} /></Toolbar>}
+  items={accounts} renderItem={(a) => <ListRow key={a.id} title={a.name} onOpen={() => open(a)} />}
+  loading={!data} error={error} onRetry={reload} emptyTitle="No accounts"
+  page={page} pageCount={pages} onPageChange={setPage} total={total} pageSize={50} unit="accounts" />
 ```
 
 `StatTile` is one figure: `label`, `value`, `unit`, `delta`, `sub`, `tone`, an optional `icon` and a

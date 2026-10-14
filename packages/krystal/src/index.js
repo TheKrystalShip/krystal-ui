@@ -32,6 +32,7 @@ export { Notice } from "./components/Notice.jsx";
 export { Pill } from "./components/Pill.jsx";
 export { Popover } from "./components/Popover.jsx";
 export { List, ListRow } from "./components/ListRow.jsx";
+export { ListPage } from "./components/ListPage.jsx";
 export { CardScreen } from "./components/CardScreen.jsx";
 export { Combobox } from "./components/Combobox.jsx";
 export { CopyField } from "./components/CopyField.jsx";

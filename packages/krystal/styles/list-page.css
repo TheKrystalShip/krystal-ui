@@ -1,0 +1,24 @@
+/* ============================================================================
+   list-page.css — ListPage: a heading, a toolbar, a body of records and a pager stacked at one
+   gap. The records' own look is list.css, table.css and layout.css; this sheet only spaces them.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-listpage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-width: 0;
+}
+
+.k-listpage__body {
+  min-width: 0;
+}
+
+.k-listpage__pager .k-pagination {
+  margin-top: 0;
+}
+
+}
