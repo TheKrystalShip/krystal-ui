@@ -15,13 +15,24 @@ const toPascal = (name) =>
 
 // Kebab names that resolve to a differently-named lucide-react component.
 const ALIASES = {
-  "alert-triangle": "TriangleAlert",
-  "help-circle": "CircleHelp",
   home: "House",
   "line-chart": "ChartLine",
   "loader-2": "LoaderCircle",
-  "terminal-square": "SquareTerminal",
 };
+
+// Lucide names a glyph in a shape shape-first (`circle-x`, `triangle-alert`, `square-terminal`), and
+// many call sites, including names that arrive as data, write it glyph-first (`x-circle`,
+// `alert-triangle`, `check-circle-2`). A name that does not resolve is tried shape-first, its
+// trailing variant number dropped.
+const GLYPH_IN_SHAPE = /^(.+)-(circle|square|triangle)(?:-\d+)?$/;
+
+/** @param {string} name */
+function lookup(name) {
+  const direct = icons[ALIASES[name] || toPascal(name)];
+  if (direct) return direct;
+  const m = GLYPH_IN_SHAPE.exec(String(name || ""));
+  return m ? icons[toPascal(m[2] + "-" + m[1])] : undefined;
+}
 
 /**
  * @param {object} props
@@ -32,7 +43,7 @@ const ALIASES = {
  * @param {import("react").CSSProperties} [props.style]
  */
 export function Icon({ name, size = 18, strokeWidth = 1.7, className, style }) {
-  const Cmp = icons[ALIASES[name] || toPascal(name)];
+  const Cmp = lookup(name);
   const base = { display: "inline-flex", ...(style || {}) };
   if (!Cmp) {
     if (import.meta.env.DEV && name) console.warn(`[Icon] unknown lucide icon: "${name}"`);
