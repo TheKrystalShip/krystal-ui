@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.34.0]
+
+### Added
+- **Page patterns**, layouts built from the package's own components that take a site's data, words and
+  flags and fetch nothing: `ListPage` (heading, toolbar, a list, table or grid body, pager, and the
+  loading, failed and empty states), `DetailPage` (crumbs, a head or a `Hero`, in-page `Tabs` or
+  route `SubTabs` by `tabsKind`, an aside that stacks under the body on a phone, whole-page states),
+  `SettingsPage` (sections of rows or content, a side nav that is a Select on a phone, a save bar while a
+  form is dirty) and `SignInScreen` (providers, a username and password form on the form layer, tabs,
+  extra fields, a refusal and a foot on `CardScreen`).
+- **`ConfirmDialog`**: the question before a change that is hard to undo. `onConfirm` returns a promise;
+  nothing closes it, `{ refusal }` or a rejection shows the reason and keeps it open, and it is busy and
+  held open while pending.
+- **`BriefList`, `BriefItem`, `BriefEmpty` and `FactList`**, the bodies a `BriefCard` holds, drawing the
+  `k-brief__*` markup.
+- **`useFollowTail`**: a feed that stays at its end while the reader is there and stops following when
+  they scroll up, with an unread count for "N new below". The chat's thread scrolls through it.
+- **`Dialog fullscreen`**, the pop-out frame over the whole window.
+- **`StatusDot`**: a lit dot in a tone, always named by its `label`, with `pulse` and a `caption`.
+- **Spatial focus** for television pages: `createSpatialFocus` (also at
+  `@thekrystalship/krystal/lib/spatialFocus`) and `useSpatialFocus` move focus by arrow key across the
+  page's geometry, remember each row's and page's place, trap focus in an open overlay and give it back,
+  and read the `data-tv-*` attributes the `Tv*` components carry.
+- **`Drawer`** takes `back`, `action`, `head`, `role`, `contained` (the sheet inside its positioned
+  ancestor, over a frame such as a player, with the rest of the page inert) and `theme` (a palette for
+  the sheet alone).
+
+### Changed
+- **A `SettingsRow`'s control wraps under its words when it does not fit**; a toggle, a button or a short
+  select stays beside them.
+- **`Pagination`'s `total` and `pageSize` are optional**; without them it draws only the controls.
+
+### Fixed
+- **One Escape closes a dialog whose focused control shows a tooltip.** A tooltip hides on Escape and
+  leaves the key to the layer around it.
+
 ## [0.33.0]
 
 ### Added
