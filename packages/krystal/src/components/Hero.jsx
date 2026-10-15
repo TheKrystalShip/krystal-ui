@@ -51,8 +51,9 @@ function Hero({ art, variant = "cinematic", className, children }) {
 //   HeroBar       the frosted control bar, holding HeroGroups and HeroDividers
 //   HeroGroup     buttons in a row inside the bar
 //   HeroDivider   a rule between two groups
+//   HeroNote      a line set directly on the art, under the bar: an optional `icon`, a warning tone
 //   HeroButton    a bar button: `icon` and its words, any button prop
-// A note or line placed directly on the art takes the class `k-hero__on-art` to keep the art's light
+// Anything else placed directly on the art takes the class `k-hero__on-art` to keep the art's light
 // palette.
 
 /** @param {import("react").ComponentPropsWithoutRef<"div">} props */
@@ -114,6 +115,21 @@ function HeroDivider({ className, ...rest }) {
 }
 
 /**
+ * @typedef {object} HeroNoteOwnProps
+ * @property {string} [icon] A Lucide name before the words.
+ * @typedef {HeroNoteOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof HeroNoteOwnProps>} HeroNoteProps
+ */
+/** @param {HeroNoteProps} props */
+function HeroNote({ icon, className, children, ...rest }) {
+  return (
+    <div {...rest} className={"k-hero__note k-hero__on-art" + (className ? " " + className : "")}>
+      {icon && <Icon name={icon} size={13} />}
+      {children}
+    </div>
+  );
+}
+
+/**
  * @typedef {object} HeroButtonOwnProps
  * @property {string} [icon] A Lucide name before the words.
  * @typedef {HeroButtonOwnProps & Omit<import("react").ComponentPropsWithoutRef<"button">, keyof HeroButtonOwnProps>} HeroButtonProps
@@ -128,4 +144,4 @@ const HeroButton = React.forwardRef(function HeroButton({ icon, className, child
   );
 });
 
-export { Hero, HeroBar, HeroBody, HeroButton, HeroDivider, HeroGroup, HeroHeading, HeroName, HeroStatus, HeroTag, HeroTags };
+export { Hero, HeroBar, HeroBody, HeroButton, HeroDivider, HeroGroup, HeroHeading, HeroName, HeroNote, HeroStatus, HeroTag, HeroTags };

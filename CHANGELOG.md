@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.41.0]
+
+### Added
+- **`Notice` `block`**: the text is a column that fills the notice, its children stacked.
+- **`ListRow` `actionsBelow`**: at phone width the actions take their own line, and their children share it.
+- **`BriefItem` `controls`**: controls at the row's end in the settings arrangement, wrapping under the
+  words when they do not fit.
+- **`HeroNote`**: a line set directly on the art, with an optional icon, in the warning tone.
+
+### Fixed
+- **`HeroButton` text sits where a ghost `Button`'s does**: both lines are one em high.
+
 ## [0.40.0]
 
 ### Added

@@ -28,6 +28,7 @@ function BriefList({ className, children, ...rest }) {
  * @property {import("react").ReactNode} [detail] A muted line under the title.
  * @property {boolean} [wrapDetail] Lets the detail wrap onto several lines instead of ending in an ellipsis.
  * @property {import("react").ReactNode} [below] A block under the detail, in the text column (fields, a preview). Controls here belong on a row that is not itself a button or a link.
+ * @property {import("react").ReactNode} [controls] Controls at the row's end in the settings arrangement: they wrap under the words when they do not fit beside them.
  * @property {import("react").ReactNode} [action] A link-styled label at the row's end, with an arrow.
  * @property {() => void} [onClick] Makes the row a button.
  * @property {string} [href] Makes the row a link.
@@ -36,9 +37,9 @@ function BriefList({ className, children, ...rest }) {
  * @typedef {BriefItemOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof BriefItemOwnProps>} BriefItemProps
  */
 /** @param {BriefItemProps} props */
-function BriefItem({ tone, icon, title, escalated = false, mono = false, tags, detail, wrapDetail = false, below, action, onClick, href, className, children, ...rest }) {
+function BriefItem({ tone, icon, title, escalated = false, mono = false, tags, detail, wrapDetail = false, below, controls, action, onClick, href, className, children, ...rest }) {
   const live = Boolean(onClick || href);
-  const cls = "k-brief__item" + (tone ? " k-brief__item--" + tone : "") + (live ? "" : " k-brief__item--static") + (escalated ? " k-brief__item--escalated" : "")
+  const cls = "k-brief__item" + (tone ? " k-brief__item--" + tone : "") + (live ? "" : " k-brief__item--static") + (escalated ? " k-brief__item--escalated" : "") + (controls != null ? " k-settings-row" : "")
     + (className ? " " + className : "");
   const body = (
     <>
@@ -53,6 +54,7 @@ function BriefItem({ tone, icon, title, escalated = false, mono = false, tags, d
         {below != null && <div className="k-brief__below">{below}</div>}
       </div>
       {children}
+      {controls != null && <div className="k-settings-row__controls">{controls}</div>}
       {action && <span className="k-brief__ask">{action} <Icon name="arrow-right" size={12} strokeWidth={2.2} /></span>}
     </>
   );

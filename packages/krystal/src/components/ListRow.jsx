@@ -18,6 +18,8 @@
 //             row, so a press anywhere on the row but an action opens it.
 //   selected  the accent tint and edge (aria-current on the title control)
 //   disabled  dims the row and blocks opening
+//   actionsBelow at phone width the actions take their own line under the text and their children
+//             share its width (a Select and a Button)
 //   wrapTitle the title wraps over as many lines as it needs instead of ellipsizing, and the aside
 //             sits at the top right beside it (an event line that reads as a sentence)
 //   tone      ok | info | warn | danger | accent: a thin edge on the row's leading side
@@ -47,13 +49,14 @@ function List({ label, children, className }) {
  * @property {string} [href] Makes the title a link.
  * @property {boolean} [selected] Marks the row as the chosen one.
  * @property {boolean} [disabled] Dims the row and keeps it from opening.
+ * @property {boolean} [actionsBelow] At phone width the actions take their own line under the text, and their children fill its width.
  * @property {boolean} [wrapTitle] The title wraps over several lines instead of ellipsizing, and the aside sits at the top right.
  * @property {"ok" | "info" | "warn" | "danger" | "accent"} [tone] Tints the row's lead edge with a status colour.
  * @property {string} [className] Class name added to the root element.
  * @typedef {ListRowOwnProps & Omit<import("react").ComponentPropsWithoutRef<"li">, keyof ListRowOwnProps | "title">} ListRowProps
  */
 /** @param {ListRowProps} props */
-function ListRow({ as = "li", lead, title, sub, detail, meta, aside, actions, onOpen, href, selected = false, disabled = false, wrapTitle = false, tone, className, ...rest }) {
+function ListRow({ as = "li", lead, title, sub, detail, meta, aside, actions, onOpen, href, selected = false, disabled = false, wrapTitle = false, actionsBelow = false, tone, className, ...rest }) {
   const Root = /** @type {any} */ (as);
   const openable = !disabled && (onOpen != null || href != null);
   /** @type {{ className: string, "aria-current": "true" | undefined }} */
@@ -74,7 +77,7 @@ function ListRow({ as = "li", lead, title, sub, detail, meta, aside, actions, on
   return (
     <Root {...rest}
       className={"k-listrow" + (openable ? " k-listrow--open" : "") + (selected ? " k-is-selected" : "")
-        + (disabled ? " k-is-disabled" : "") + (wrapTitle ? " k-listrow--wrap" : "") + (tone ? " k-listrow--" + tone : "") + (className ? " " + className : "")}>
+        + (disabled ? " k-is-disabled" : "") + (wrapTitle ? " k-listrow--wrap" : "") + (actionsBelow ? " k-listrow--actions-below" : "") + (tone ? " k-listrow--" + tone : "") + (className ? " " + className : "")}>
       {lead != null && <span className="k-listrow__lead">{lead}</span>}
       <div className="k-listrow__main">
         {head}

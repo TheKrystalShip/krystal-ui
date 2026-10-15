@@ -242,6 +242,18 @@
     white-space: nowrap;
   }
 
+  .k-listrow--actions-below > .k-listrow__actions {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    align-self: stretch;
+    margin: 8px 0 0;
+  }
+
+  .k-listrow--actions-below > .k-listrow__actions > * {
+    flex: 1;
+    min-width: 0;
+  }
+
   .k-listrow--wrap > .k-listrow__actions {
     grid-row: 2 / span 2;
     align-self: start;

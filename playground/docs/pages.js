@@ -171,7 +171,7 @@ export const PAGES = [
     summary: "A set of titles shown by its posters, as a link.",
   },
   {
-    id: "hero", name: "Hero", group: "Cards and lists", exports: ["Hero", "HeroStatus", "HeroBody", "HeroHeading", "HeroName", "HeroTags", "HeroTag", "HeroBar", "HeroGroup", "HeroDivider", "HeroButton"], examples: ["pages-detail"],
+    id: "hero", name: "Hero", group: "Cards and lists", exports: ["Hero", "HeroStatus", "HeroBody", "HeroHeading", "HeroName", "HeroNote", "HeroTags", "HeroTag", "HeroBar", "HeroGroup", "HeroDivider", "HeroButton"], examples: ["pages-detail"],
     summary: "The cinematic banner: art behind a scrim, and the page's own content over it.",
   },
 

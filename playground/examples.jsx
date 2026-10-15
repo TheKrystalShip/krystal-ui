@@ -362,6 +362,7 @@ export function BriefCardCountExamples() {
             <BriefList>
               <BriefItem tone="danger" icon="triangle-alert" title="Disk full" escalated detail="Auto-recovery gave up" />
               <BriefItem tone="warn" icon="bell" title="Backup is old" detail="Last one 3 days ago" />
+              <BriefItem icon="gauge" title="Watch CPU" detail="controls sit at the end and wrap under the words" controls={<Toggle on label="Watch CPU" onChange={() => {}} />} />
             </BriefList>
           </BriefCard>
         </div>
@@ -387,6 +388,7 @@ export function NoticeExamples() {
       <Sub title="Notice">
         <div style={{ display: "grid", gap: 10, maxWidth: 560 }}>
           {["info", "ok", "warn", "danger"].map((t) => <Notice key={t} tone={t}>A {t} notice.</Notice>)}
+          <Notice block tone="info"><strong>Client secret</strong><code>kgsm_9f3a2c71</code><Button size="xs" variant="outline">Copy</Button></Notice>
           <Notice tone="danger" icon="circle-x" action={<Button variant="outline" size="xs" icon="rotate-cw">Retry</Button>}>
             <b>Couldn't refresh.</b> Showing the last known state.
           </Notice>
@@ -552,6 +554,12 @@ export function ListExamples() {
   );
   return (
     <>
+      <Sub title="actionsBelow: at phone width the actions take their own line, their children sharing it">
+        <List label="Below">
+          <ListRow actionsBelow title="Catalogue entry" sub="Resize to phone width"
+            actions={<><Select variant="inline" aria-label="Role" options={[{ value: "a", label: "Operator" }]} /><Button size="sm" variant="outline">Assign</Button></>} />
+        </List>
+      </Sub>
       <Sub title="wrapTitle with as=&quot;div&quot;: a long title wraps, the aside sits top right; without it the title ellipsizes">
         <div style={{ maxWidth: 420 }}>
           <ListRow as="div" wrapTitle title="Claude (agent) restarted the instance Factorio on walter because the watchdog reported it unresponsive for three consecutive checks"

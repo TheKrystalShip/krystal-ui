@@ -25,7 +25,7 @@ export { FormDialog } from "./components/FormDialog.jsx";
 export { Form, FormError, FormField, FormScope, FormSubmit } from "./components/Form.jsx";
 export { Footer, GithubMark } from "./components/Footer.jsx";
 export { Cluster, Container, Grid, Stack } from "./components/Layout.jsx";
-export { Hero, HeroBar, HeroBody, HeroButton, HeroDivider, HeroGroup, HeroHeading, HeroName, HeroStatus, HeroTag, HeroTags } from "./components/Hero.jsx";
+export { Hero, HeroBar, HeroBody, HeroButton, HeroDivider, HeroGroup, HeroHeading, HeroName, HeroNote, HeroStatus, HeroTag, HeroTags } from "./components/Hero.jsx";
 export { Icon } from "./components/Icon.jsx";
 export { Kbd } from "./components/Kbd.jsx";
 export { Menu, MenuCheckboxItem, MenuGroup, MenuItem, MenuRadioGroup, MenuRadioItem, MenuSeparator } from "./components/Menu.jsx";

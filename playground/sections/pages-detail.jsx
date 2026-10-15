@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, DetailPage, Hero, HeroBar, HeroBody, HeroButton, HeroDivider, HeroGroup, HeroHeading, HeroName, HeroStatus, HeroTag, Pill, StatTile, StatTiles } from "@thekrystalship/krystal";
+import { Button, Card, DetailPage, Hero, HeroBar, HeroBody, HeroButton, HeroDivider, HeroGroup, HeroHeading, HeroName, HeroNote, HeroStatus, HeroTag, Pill, StatTile, StatTiles } from "@thekrystalship/krystal";
 import { Section, Sub } from "../kit.jsx";
 
 const TABS = [
@@ -80,6 +80,7 @@ export default function PagesDetail() {
               <HeroDivider />
               <HeroGroup><HeroButton icon="plug">Connect</HeroButton></HeroGroup>
             </HeroBar>
+            <HeroNote icon="power-off">Watchdog unavailable: start and stop are paused on this host.</HeroNote>
           </HeroBody>
         </Hero>
       </Sub>

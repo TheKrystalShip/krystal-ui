@@ -203,6 +203,20 @@
   box-shadow: var(--shadow-2);
 }
 
+.k-hero__note {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--warning-fg);
+}
+
+.k-hero__note > svg {
+  flex-shrink: 0;
+}
+
 .k-hero__group {
   display: flex;
   align-items: center;
@@ -231,6 +245,7 @@
   font-family: var(--font-ui);
   font-size: 12.5px;
   font-weight: 600;
+  line-height: 1;
   cursor: pointer;
   white-space: nowrap;
   transition: background var(--d-fast) var(--ease-out), opacity var(--d-fast) var(--ease-out);
