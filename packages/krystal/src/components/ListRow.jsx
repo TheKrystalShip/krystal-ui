@@ -18,8 +18,8 @@
 //             row, so a press anywhere on the row but an action opens it.
 //   selected  the accent tint and edge (aria-current on the title control)
 //   disabled  dims the row and blocks opening
-//   actionsBelow at phone width the actions take their own line under the text and their children
-//             share its width (a Select and a Button)
+//   actionsBelow at phone width the actions take their own line under the text; a Select, Input,
+//             Combobox or SearchField among them takes the width the buttons leave
 //   wrapTitle the title wraps over as many lines as it needs instead of ellipsizing, and the aside
 //             sits at the top right beside it (an event line that reads as a sentence)
 //   tone      ok | info | warn | danger | accent: a thin edge on the row's leading side
@@ -49,7 +49,7 @@ function List({ label, children, className }) {
  * @property {string} [href] Makes the title a link.
  * @property {boolean} [selected] Marks the row as the chosen one.
  * @property {boolean} [disabled] Dims the row and keeps it from opening.
- * @property {boolean} [actionsBelow] At phone width the actions take their own line under the text, and their children fill its width.
+ * @property {boolean} [actionsBelow] At phone width the actions take their own line under the text, and a field among them (a Select, Input, Combobox, SearchField) takes the width the buttons leave.
  * @property {boolean} [wrapTitle] The title wraps over several lines instead of ellipsizing, and the aside sits at the top right.
  * @property {"ok" | "info" | "warn" | "danger" | "accent"} [tone] Tints the row's lead edge with a status colour.
  * @property {string} [className] Class name added to the root element.

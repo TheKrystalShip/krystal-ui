@@ -9,6 +9,9 @@
 
 /* ============= Page heading ============= */
 .k-pagehead {
+  /* As tall as a control, so a heading without actions and one with a button start the page below at
+     the same height. */
+  min-height: 34px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;

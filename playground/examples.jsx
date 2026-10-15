@@ -557,7 +557,7 @@ export function ListExamples() {
       <Sub title="actionsBelow: at phone width the actions take their own line, their children sharing it">
         <List label="Below">
           <ListRow actionsBelow title="Catalogue entry" sub="Resize to phone width"
-            actions={<><Select variant="inline" aria-label="Role" options={[{ value: "a", label: "Operator" }]} /><Button size="sm" variant="outline">Assign</Button></>} />
+            actions={<><Select variant="inline" aria-label="Role" options={[{ value: "a", label: "Operator" }]} /><Button size="sm" variant="outline">Assign</Button><Button size="sm" variant="outline">Skip</Button></>} />
         </List>
       </Sub>
       <Sub title="wrapTitle with as=&quot;div&quot;: a long title wraps, the aside sits top right; without it the title ellipsizes">

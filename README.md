@@ -260,7 +260,7 @@ With `onOpen` the title is a button, with `href` a link, and its hit area covers
 `actions` stay separate targets and a press anywhere else on the row opens it. `selected` tints the row
 with the accent, `disabled` dims it and blocks opening, `tone` (accent, ok, info, warn, danger) draws a
 thin leading edge. `wrapTitle` lets the title wrap over several lines instead of ellipsizing, with the
-`aside` at the top right (an event line); `actionsBelow` puts the actions on their own line at phone width, their children sharing it; `as="div"` makes the row stand outside a `List`. At phone width `meta` and `aside` wrap under the title. `data-*` props reach the `li`.
+`aside` at the top right (an event line); `actionsBelow` puts the actions on their own line at phone width, a field among them taking the width the buttons leave; `as="div"` makes the row stand outside a `List`. At phone width `meta` and `aside` wrap under the title. `data-*` props reach the `li`.
 
 ```jsx
 <List label="People">

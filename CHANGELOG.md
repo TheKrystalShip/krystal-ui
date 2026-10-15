@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.41.1]
+
+### Fixed
+- **`ListRow actionsBelow` sizes by kind**: a Select, Input, Combobox or SearchField takes the width the
+  buttons leave, and a button keeps its natural size.
+- **`PageHeader` is as tall as a control** (34px at least), so a heading without actions and one with a
+  button start the page below at the same height.
+
 ## [0.41.0]
 
 ### Added

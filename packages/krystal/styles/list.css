@@ -249,8 +249,9 @@
     margin: 8px 0 0;
   }
 
-  .k-listrow--actions-below > .k-listrow__actions > * {
-    flex: 1;
+  /* A field takes the width the buttons leave; a button keeps its own. */
+  .k-listrow--actions-below > .k-listrow__actions > :is(.k-select, .k-input, .k-combobox, .k-searchfield) {
+    flex: 1 1 0;
     min-width: 0;
   }
 
