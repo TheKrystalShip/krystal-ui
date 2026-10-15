@@ -22,6 +22,7 @@ function BriefList({ className, children, ...rest }) {
  * @property {BriefTone} [tone] Colours the row's stripe and icon; omitted is neutral.
  * @property {string} [icon] A Lucide name, in the icon tile.
  * @property {import("react").ReactNode} title What the row is.
+ * @property {boolean} [escalated] Marks a row that needs a person: a danger tint on the row and a filled "Needs you" mark after the title.
  * @property {boolean} [mono] Sets the title in the monospace face (a name, an id, a path).
  * @property {import("react").ReactNode} [tags] Pills after the title text, inside the title line.
  * @property {import("react").ReactNode} [detail] A muted line under the title.
@@ -35,9 +36,9 @@ function BriefList({ className, children, ...rest }) {
  * @typedef {BriefItemOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof BriefItemOwnProps>} BriefItemProps
  */
 /** @param {BriefItemProps} props */
-function BriefItem({ tone, icon, title, mono = false, tags, detail, wrapDetail = false, below, action, onClick, href, className, children, ...rest }) {
+function BriefItem({ tone, icon, title, escalated = false, mono = false, tags, detail, wrapDetail = false, below, action, onClick, href, className, children, ...rest }) {
   const live = Boolean(onClick || href);
-  const cls = "k-brief__item" + (tone ? " k-brief__item--" + tone : "") + (live ? "" : " k-brief__item--static")
+  const cls = "k-brief__item" + (tone ? " k-brief__item--" + tone : "") + (live ? "" : " k-brief__item--static") + (escalated ? " k-brief__item--escalated" : "")
     + (className ? " " + className : "");
   const body = (
     <>
@@ -45,6 +46,7 @@ function BriefItem({ tone, icon, title, mono = false, tags, detail, wrapDetail =
       <div className="k-brief__body">
         <span className={"k-brief__item-title" + (mono ? " k-brief__item-title--mono" : "")}>
           <span className="k-brief__titletext">{title}</span>
+          {escalated && <span className="k-brief__needs-you"><Icon name="hand" size={9} strokeWidth={2.6} /> Needs you</span>}
           {tags}
         </span>
         {detail && <span className={"k-brief__detail" + (wrapDetail ? " k-brief__detail--wrap" : "")}>{detail}</span>}

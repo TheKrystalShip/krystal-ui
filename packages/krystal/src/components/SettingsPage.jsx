@@ -9,7 +9,7 @@ import { SettingsRow, SettingsSection } from "./settings-primitives.jsx";
 // more than a few, and a save bar for a form. It fetches nothing and owns no routing.
 //
 // `sections` are `{ id, title, icon?, description?, meta?, action?, rows?, content? }`: `rows` are
-// SettingsRow props (`icon`, `title`, `sub`, `tone`) with the row's controls in `control`, and
+// SettingsRow props (`icon`, `title`, `sub`, `tone`, `value`, `mono`) with the row's controls in `control`, and
 // `content` is any node drawn in place of rows. Sections of the site's own composition may instead be
 // `children`, a column of SettingsSection, though a side nav is made only from `sections`.
 //
@@ -30,7 +30,7 @@ import { SettingsRow, SettingsSection } from "./settings-primitives.jsx";
  * @property {import("react").ReactNode} [description] A muted line under the section's header.
  * @property {import("react").ReactNode} [meta] Used as the description when there is none.
  * @property {import("react").ReactNode} [action] Header-right node.
- * @property {{ id?: string | number, icon: string, title: import("react").ReactNode, sub?: import("react").ReactNode, tone?: "success" | "warn" | "danger" | "info", control?: import("react").ReactNode }[]} [rows]
+ * @property {{ id?: string | number, icon: string, title: import("react").ReactNode, sub?: import("react").ReactNode, tone?: "success" | "warn" | "danger" | "info", value?: import("react").ReactNode, mono?: boolean, control?: import("react").ReactNode }[]} [rows]
  * @property {import("react").ReactNode} [content] Drawn in place of `rows`.
  */
 /**
@@ -126,7 +126,7 @@ function SettingsPage({
         <div key={s.id} id={anchor(s.id)} data-section={s.id} tabIndex={-1} className="k-settingspage__section">
           <SettingsSection icon={s.icon} title={s.title} meta={s.description != null ? s.description : s.meta} action={s.action}>
             {s.content != null ? s.content : (s.rows || []).map((r, i) => (
-              <SettingsRow key={r.id != null ? r.id : i} icon={r.icon} title={r.title} sub={r.sub} tone={r.tone}>{r.control}</SettingsRow>
+              <SettingsRow key={r.id != null ? r.id : i} icon={r.icon} title={r.title} sub={r.sub} tone={r.tone} value={r.value} mono={r.mono}>{r.control}</SettingsRow>
             ))}
           </SettingsSection>
         </div>

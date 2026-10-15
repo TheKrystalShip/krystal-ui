@@ -10,7 +10,8 @@ import { Pill } from "./Pill.jsx";
 // `.k-brief__empty` placeholder, or any custom content (e.g. a grid).
 //
 // Props:
-//   icon, title            — header (icon + label)
+//   icon, title            — header (icon + label); with no title and no `collapsible` the card
+//                            has no header, only its body
 //   count, countTone       — optional pill after the title; countTone "neutral"
 //                            for a quiet grey chip, omit for the default accent
 //   countTitle             — optional tooltip on that pill, for a count that has to
@@ -30,7 +31,7 @@ import { Pill } from "./Pill.jsx";
 /**
  * @param {object} props
  * @param {string} [props.icon] A Lucide name.
- * @param {import("react").ReactNode} props.title The header's label.
+ * @param {import("react").ReactNode} [props.title] The header's label; without it (and without `collapsible`) the card draws no header.
  * @param {import("react").ReactNode | false} [props.count] A pill after the title.
  * @param {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [props.countTone] `neutral` for a quiet grey count pill; the accent when omitted.
  * @param {string} [props.countTitle] Tooltip on the count pill.
@@ -73,7 +74,9 @@ function BriefCard({ icon, title, count, countTone, countTitle, meta, pin, onVie
   );
   return (
     <div className={"k-brief" + (shut ? " k-brief--shut" : "") + (className ? " " + className : "")}>
-      {collapsible
+      {title == null && !collapsible
+        ? null
+        : collapsible
         ? (
           <button type="button" className="k-brief__head k-brief__head--toggle"
             onClick={onToggle} aria-expanded={open}>

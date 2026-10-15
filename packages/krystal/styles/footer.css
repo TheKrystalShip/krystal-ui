@@ -13,10 +13,10 @@
 }
 
 .k-footer__inner {
-  max-width: var(--content-max);
+  max-width: calc(var(--content-max) + 2 * var(--k-page-gutter, 24px));
   margin: 0 auto;
   box-sizing: border-box;
-  padding: 18px 24px 14px;
+  padding: 18px var(--k-page-gutter, 24px) 14px;
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   gap: 48px;
@@ -198,10 +198,10 @@
 
 /* Bottom bar */
 .k-footer__bar {
-  max-width: var(--content-max);
+  max-width: calc(var(--content-max) + 2 * var(--k-page-gutter, 24px));
   margin: 0 auto;
   box-sizing: border-box;
-  padding: 9px 24px 10px;
+  padding: 9px var(--k-page-gutter, 24px) 10px;
   border-top: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
@@ -244,8 +244,11 @@
 }
 
 /* The footer collapses on the main column's own width, not the viewport's, so it reflows when a
-   pinned dock narrows the page. Widest first, so the narrowest matching rule wins. */
-@container appmain (max-width: 980px) {
+   pinned dock narrows the page. The query reads the column's content box, which is the column less
+   the page gutter on each side, which is 24px above 768px of viewport and 16px at or below it. The
+   breakpoints are therefore 980px and 760px of column less 2 * gutter: 932px and 712px beside a
+   wide viewport, 728px beside a phone. Widest first, so the narrowest matching rule wins. */
+@container appmain (max-width: 932px) {
   .k-footer__inner {
     grid-template-columns: 1fr;
     gap: 20px;
@@ -256,24 +259,49 @@
   }
 }
 
-@container appmain (max-width: 760px) {
-  .k-footer__inner {
-    gap: 18px;
-    padding: 16px 16px 12px;
-  }
+@media (min-width: 769px) {
+  @container appmain (max-width: 712px) {
+    .k-footer__inner {
+      gap: 18px;
+      padding-block: 16px 12px;
+    }
 
-  .k-footer__groups {
-    grid-auto-flow: row;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 16px;
-  }
+    .k-footer__groups {
+      grid-auto-flow: row;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
 
-  .k-footer__group-links {
-    grid-template-columns: minmax(0, 1fr);
-  }
+    .k-footer__group-links {
+      grid-template-columns: minmax(0, 1fr);
+    }
 
-  .k-footer__bar {
-    padding: 14px 16px max(16px, env(safe-area-inset-bottom, 0));
+    .k-footer__bar {
+      padding-block: 14px max(16px, env(safe-area-inset-bottom, 0));
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  @container appmain (max-width: 728px) {
+    .k-footer__inner {
+      gap: 18px;
+      padding-block: 16px 12px;
+    }
+
+    .k-footer__groups {
+      grid-auto-flow: row;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .k-footer__group-links {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .k-footer__bar {
+      padding-block: 14px max(16px, env(safe-area-inset-bottom, 0));
+    }
   }
 }
 
@@ -282,7 +310,7 @@
     .k-footer__inner {
       grid-template-columns: 1fr;
       gap: 18px;
-      padding: 16px 16px 12px;
+      padding-block: 16px 12px;
     }
 
     .k-footer__brand {
@@ -300,7 +328,7 @@
     }
 
     .k-footer__bar {
-      padding: 14px 16px max(16px, env(safe-area-inset-bottom, 0));
+      padding-block: 14px max(16px, env(safe-area-inset-bottom, 0));
     }
   }
 }

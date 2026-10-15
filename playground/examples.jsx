@@ -3,7 +3,7 @@
 // grouped into the sections the visual harness shoots (see docs/all.jsx).
 import React from "react";
 import {
-  AccountAvatar, AppShell, Container, Breadcrumbs, BriefCard, Button, CardScreen, Checkbox, CopyField, Dialog, EmptyState, Field, IconButton, Input,
+  AccountAvatar, AppShell, Footer, BriefItem, BriefList, Container, Breadcrumbs, BriefCard, Button, CardScreen, Checkbox, CopyField, Dialog, EmptyState, Field, IconButton, Input,
   Icon, List, ListRow, Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, ShowcaseCard,
   Sidebar, SidebarGroup, Skeleton, Spinner, SubTabs, Textarea, Toggle, Toolbar,
   ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
@@ -355,6 +355,16 @@ export function BriefCardCountExamples() {
           </BriefCard>
         </div>
       </Sub>
+      <Sub title="BriefCard without a title draws no header; BriefItem escalated">
+        <div style={{ display: "grid", gap: 14, maxWidth: 420 }}>
+          <BriefCard>
+            <BriefList>
+              <BriefItem tone="danger" icon="triangle-alert" title="Disk full" escalated detail="Auto-recovery gave up" />
+              <BriefItem tone="warn" icon="bell" title="Backup is old" detail="Last one 3 days ago" />
+            </BriefList>
+          </BriefCard>
+        </div>
+      </Sub>
     </>
   );
 }
@@ -487,6 +497,8 @@ export function SettingsExamples() {
           <SettingsRow icon="alert-triangle" title="Warn row" tone="warn"><Button size="sm" variant="outline">Action</Button></SettingsRow>
           <SettingsRow icon="x-circle" title="Danger row" tone="danger"><Button size="sm" variant="danger">Remove</Button></SettingsRow>
           <SettingsRow icon="info" title="Info row" tone="info" />
+          <SettingsRow icon="fingerprint" title="Read-only value" value="active" />
+          <SettingsRow icon="key" title="Read-only identifier" mono value="acct_01HZX7Q2" />
         </SettingsSection>
       </div>
     </>
@@ -623,6 +635,8 @@ export function FrameExamples() {
           <Container size="lg">
             <div style={{ border: "1px dashed var(--accent, currentColor)", padding: 8 }}>The page column: the frame pads its sides by --k-page-gutter.</div>
           </Container>
+          <Footer wordmark="Playground" tagline="The footer's text lines up with the page column above it."
+            groups={[{ label: "Source", links: [{ label: "Repository", href: "#" }] }]} copy="Copyright" />
         </AppShell>
       </div>
     </>

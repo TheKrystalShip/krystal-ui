@@ -66,6 +66,13 @@ export default function PagesDetail() {
   return (
     <Section id="pages-detail" title="Page patterns: DetailPage">
       <Sub title="Head, meta pills, crumbs, in-page Tabs, extra control, aside"><Frame><Sections /></Frame></Sub>
+      <Sub title="Hero variant card: the veil card, name, tags and an action">
+        <Hero variant="card" art="linear-gradient(135deg, var(--krystal-teal), var(--surface-3))">
+          <h1 className="k-hero__name">Factorio</h1>
+          <div className="k-hero__tags"><span className="k-hero__tag">container</span><span className="k-hero__tag k-hero__tag--verbatim">walter only</span></div>
+          <div><Button>Create</Button></div>
+        </Hero>
+      </Sub>
       <Sub title="Hero header and route tabs (SubTabs)"><Frame><Routes /></Frame></Sub>
       <Sub title="Plain head, no tabs">
         <Frame>

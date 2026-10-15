@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.39.0]
+
+### Added
+- **`BriefCard` without a `title`** draws no header; the card is its body.
+- **`BriefItem` `escalated`**: the danger tint on the row and the "Needs you" mark after the title.
+- **`SettingsRow` `value` and `mono`**: a read-only figure drawn where a control sits (also as `value`
+  and `mono` on a `SettingsPage` row).
+- **`Hero variant="card"`**: the bordered card with the art behind a veil, its children in a column
+  over the left of it.
+
+### Fixed
+- **The footer lines up with the page.** Its text is inset by the page gutter at every width, and on a
+  wide screen its column is as wide as the page's content. Its collapse points are measured against the
+  column's content box, so it collapses at the same column widths as before the frame owned the gutter.
+
 ## [0.38.0]
 
 ### Added

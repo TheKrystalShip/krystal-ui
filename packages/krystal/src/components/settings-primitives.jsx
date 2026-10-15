@@ -6,6 +6,7 @@ import { Icon } from "./Icon.jsx";
 
 // `tone` (success | warn | danger | info) tints the left rule + icon chip via the
 // shared brief-item modifiers — for a row that carries a verdict, not just a value.
+// `value` is a read-only figure in the control's place; `mono` sets it as an identifier.
 // A control that fits beside the words stays there; one that does not drops under them, full width.
 // Omitted, the row is the neutral one every existing caller renders.
 /**
@@ -14,9 +15,11 @@ import { Icon } from "./Icon.jsx";
  * @param {import("react").ReactNode} props.title The row's label.
  * @param {import("react").ReactNode} [props.sub] A quieter line under the title.
  * @param {"success" | "warn" | "danger" | "info"} [props.tone] Tints the row for a verdict.
- * @param {import("react").ReactNode} [props.children] The row's controls.
+ * @param {import("react").ReactNode} [props.value] A read-only value, drawn where a control sits.
+ * @param {boolean} [props.mono] Sets `value` in the monospace face (an id, a path).
+ * @param {import("react").ReactNode} [props.children] The row's controls, after `value`.
  */
-function SettingsRow({ icon, title, sub, tone, children }) {
+function SettingsRow({ icon, title, sub, tone, value, mono = false, children }) {
   return (
     <div className={"k-brief__item k-brief__item--static k-settings-row" + (tone ? " k-brief__item--" + tone : "")}>
       <span className="k-brief__icon"><Icon name={icon} size={14} /></span>
@@ -24,7 +27,10 @@ function SettingsRow({ icon, title, sub, tone, children }) {
         <span className="k-brief__item-title"><span className="k-brief__titletext">{title}</span></span>
         {sub && <span className="k-brief__detail" style={{ whiteSpace: "normal" }}>{sub}</span>}
       </div>
-      <div className="k-settings-row__controls">{children}</div>
+      <div className="k-settings-row__controls">
+        {value != null && <span className={"k-settings-value" + (mono ? " k-settings-value--mono" : "")}>{value}</span>}
+        {children}
+      </div>
     </div>
   );
 }
