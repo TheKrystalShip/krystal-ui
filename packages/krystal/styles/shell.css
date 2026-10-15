@@ -28,6 +28,30 @@
      they respond to a pinned dock narrowing the page. */
   container-type: inline-size;
   container-name: appmain;
+  /* The page's side gutter, equal on both sides. A page reads it as var(--k-page-gutter); the
+     column pads by it, so the page's own column needs no inline padding. */
+  --k-page-gutter: 24px;
+  box-sizing: border-box;
+  padding-inline: var(--k-page-gutter);
+}
+
+/* The footer spans the column edge to edge. */
+.k-app__main > .k-footer {
+  width: auto;
+  margin-inline: calc(var(--k-page-gutter) * -1);
+}
+
+/* A Container in the frame takes the column's gutter rather than adding its own. */
+.k-app__main .k-container:not(.k-container--flush) {
+  padding-inline: 0;
+}
+
+@media (max-width: 768px) {
+  .k-app__main { --k-page-gutter: 16px; }
+}
+
+@media (max-width: 480px) {
+  .k-app__main { --k-page-gutter: 12px; }
 }
 
 /* ============= Sidebar ============= */

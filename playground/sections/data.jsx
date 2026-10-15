@@ -109,6 +109,9 @@ export function AvatarExamples() {
           <Avatar size={72} name="Big" />
           <Avatar name="Solo" />
           <Avatar />
+          <Avatar size="lg" name="Claude (agent)" />
+          <Avatar size="lg" letters={1} name="Claude (agent)" />
+          <Avatar size="lg" name="- 42" />
         </div>
         <div style={row}>
           <Avatar shape="rounded" size="lg" name="Grace Hopper" />

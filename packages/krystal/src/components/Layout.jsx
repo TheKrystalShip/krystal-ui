@@ -100,7 +100,9 @@ function Grid({ as: Tag = "div", gap, min, cols, fill, className, style, childre
  * @property {boolean} [flush] Drops the side gutter.
  * @typedef {ContainerOwnProps & Omit<LayoutOwnProps, "gap"> & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof ContainerOwnProps | keyof LayoutOwnProps>} ContainerProps
  */
-// Container — a column centred in the page, capped at `size`, with the site gutter at its sides.
+// Container — a column centred in the page, capped at `size`, with the page gutter at its sides:
+// 32px, 16px on a phone and 12px on a small one. Inside an AppShell the main column already pads the
+// page by `--k-page-gutter`, and a Container there adds none.
 /** @param {ContainerProps} props */
 function Container({ as: Tag = "div", size = "xl", flush, className, children, ...rest }) {
   return (

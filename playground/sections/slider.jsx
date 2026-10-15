@@ -22,6 +22,12 @@ export default function SliderSection() {
             marks={[{ value: 4, label: "4" }, { value: 16, label: "16" }, { value: 32, label: "32" }]} />
         </div>
       </Sub>
+      <Sub title="On a television (data-tv) only Left and Right move the thumb">
+        <div style={col}>
+          <button type="button" onClick={() => document.documentElement.toggleAttribute("data-tv")}>Toggle data-tv</button>
+          <Slider label="Television" defaultValue={30} showValue format={pct} />
+        </div>
+      </Sub>
       <Sub title="Uncontrolled with unlabelled marks, decimals, disabled">
         <div style={col}>
           <Slider label="Opacity" min={0} max={1} step={0.1} defaultValue={0.5} marks={[0, 0.25, 0.5, 0.75, 1]} showValue />

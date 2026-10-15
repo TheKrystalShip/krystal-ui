@@ -13,7 +13,8 @@ import { Icon } from "./Icon.jsx";
 // field a page opens with, whose answer waits for a press. `icon` is any Lucide name, `actions` are
 // more buttons before the submit (a Cancel), `submitLabel` words the button (`submit={false}` draws
 // none) and `submitDisabled` holds it. `busy` shows the button's spinner; `disabled` makes the whole
-// field inert. `size` is `lg` (the default) or `xl`, the page's first and largest control.
+// field inert. `inputProps` spread onto the inner `<input>` (`data-*`, `inputMode`), where `...rest`
+// reaches the form. `size` is `lg` (the default) or `xl`, the page's first and largest control.
 /**
  * @typedef {object} SearchFieldOwnProps
  * @property {string} [value] The text in the field.
@@ -30,6 +31,7 @@ import { Icon } from "./Icon.jsx";
  * @property {boolean} [disabled] Makes the field and its buttons inert.
  * @property {boolean} [autoFocus] Focuses the input when it mounts.
  * @property {number} [maxLength] The input's maximum length.
+ * @property {Omit<import("react").ComponentPropsWithoutRef<"input">, "value" | "onChange" | "disabled"> & Record<`data-${string}`, string | number | boolean | undefined>} [inputProps] Props spread onto the inner `<input>`, such as `data-*` attributes or `inputMode`.
  * @property {"lg" | "xl"} [size] `lg` or `xl`; `lg` by default.
  * @property {string} [className] Extra class names on the form.
  * @typedef {SearchFieldOwnProps & Omit<import("react").ComponentPropsWithoutRef<"form">, keyof SearchFieldOwnProps | "onChange" | "onSubmit">} SearchFieldProps
@@ -37,15 +39,16 @@ import { Icon } from "./Icon.jsx";
 /** @type {import("react").ForwardRefExoticComponent<SearchFieldProps & import("react").RefAttributes<HTMLInputElement>>} */
 const SearchField = React.forwardRef(function SearchField({
   value = "", onChange, onSubmit, placeholder, label, icon = "search", submitLabel = "Search", submit = true,
-  submitDisabled = false, busy = false, actions, disabled = false, autoFocus, maxLength, size = "lg", className, ...rest
+  submitDisabled = false, busy = false, actions, disabled = false, autoFocus, maxLength, inputProps, size = "lg", className, ...rest
 }, ref) {
   return (
     <form role="search" {...rest} className={"k-searchfield k-searchfield--" + size + (disabled ? " k-is-disabled" : "") + (className ? " " + className : "")}
       onSubmit={(e) => { e.preventDefault(); if (!disabled && onSubmit) onSubmit(value); }}>
       <Icon name={icon} size={size === "xl" ? 20 : 17} className="k-searchfield__icon" />
-      <input ref={ref} className="k-searchfield__input" value={value} disabled={disabled} autoFocus={autoFocus}
-        maxLength={maxLength} placeholder={placeholder} aria-label={label || placeholder}
-        enterKeyHint="search" spellCheck="false" autoComplete="off"
+      <input enterKeyHint="search" spellCheck="false" autoComplete="off" {...inputProps}
+        ref={ref} className={"k-searchfield__input" + (inputProps && inputProps.className ? " " + inputProps.className : "")}
+        value={value} disabled={disabled} autoFocus={autoFocus} maxLength={maxLength} placeholder={placeholder}
+        aria-label={label || placeholder}
         onChange={(e) => onChange && onChange(e.target.value)} />
       {actions}
       {submit && (

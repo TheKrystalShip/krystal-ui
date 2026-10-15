@@ -192,7 +192,7 @@ to the next enabled option and choose it. Use it for a few short labels beside o
 
 `SearchField` is the field a page opens with, whose answer waits for a press (`ToolbarSearch` is the small
 live filter): `value`, `onChange(value)`, `onSubmit(value)`, `placeholder`, `icon`, `submitLabel`, `actions`
-before the submit, and `size` `lg` or `xl`.
+before the submit, `inputProps` (spread onto the inner `<input>`: `data-*`, `inputMode`), and `size` `lg` or `xl`.
 
 ```jsx
 <SearchField value={draft} onChange={setDraft} onSubmit={run} placeholder="Any movie or show" size="xl" />
@@ -200,7 +200,8 @@ before the submit, and `size` `lg` or `xl`.
 
 `Slider` picks one number along a line (`min`, `max`, `step`, `value` and `onChange`, or `defaultValue`)
 and follows the WAI-ARIA slider pattern: arrows move by `step`, PageUp and PageDown by a tenth of the
-range, Home and End to the ends. A press or drag by mouse, pen or finger moves the thumb, and the page
+range, Home and End to the ends; on a page marked `data-tv` only Left and Right move the thumb, and
+Up and Down are left to spatial focus. A press or drag by mouse, pen or finger moves the thumb, and the page
 still scrolls vertically under a finger. `onChangeEnd` receives the final value when a drag is let go
 or a key is pressed, for a value too costly to apply on every move. `format(value)` words the value for
 `aria-valuetext` and for `showValue`; `marks` draws ticks (numbers, or `{ value, label }`).
@@ -258,7 +259,8 @@ an `EmptyState` stands in. `ListRow` is its `li`: `lead` (an `AccountAvatar`, an
 With `onOpen` the title is a button, with `href` a link, and its hit area covers the whole row, so
 `actions` stay separate targets and a press anywhere else on the row opens it. `selected` tints the row
 with the accent, `disabled` dims it and blocks opening, `tone` (accent, ok, info, warn, danger) draws a
-thin leading edge. At phone width `meta` and `aside` wrap under the title. `data-*` props reach the `li`.
+thin leading edge. `wrapTitle` lets the title wrap over several lines instead of ellipsizing, with the
+`aside` at the top right (an event line); `as="div"` makes the row stand outside a `List`. At phone width `meta` and `aside` wrap under the title. `data-*` props reach the `li`.
 
 ```jsx
 <List label="People">
@@ -364,7 +366,7 @@ rule for what is a site's own (a device code).
 `spark` node under the figure. A `null` value draws "—", read as "unknown", never 0. `StatTiles` is the
 responsive grid (`min` is the narrowest tile). `Card` frames anything: `title`, `sub`, `icon`,
 `actions`, `foot`, `padding`, `tone`, and `onOpen` or `href` to make the whole card open. `Avatar`
-takes `src` or the initials of `name`, a `size` (xs to xl), a `shape` and a `status` dot.
+takes `src` or the initials of `name` (letters only: "Claude (agent)" draws "CA"), a `size` (xs to xl), a `shape` and a `status` dot.
 
 ```jsx
 <StatTiles>
@@ -519,6 +521,11 @@ its head and close button; the body scrolls, or with `fill` too it clips so a fe
 inside it takes the room and scrolls itself.
 
 ### Layout, keys and drawers
+
+`AppShell`'s main column owns the page's side gutter, equal on both sides: 24px, 16px at 768px and
+narrower, 12px at 480px and narrower. A page column inside it sets a max width and no inline padding, and
+reads the gutter as `var(--k-page-gutter)`; a `Container` there adds none of its own, and outside the
+frame a `Container` pads by 32px, 16px and 12px at the same widths.
 
 ```jsx
 <Container size="lg" as="main">

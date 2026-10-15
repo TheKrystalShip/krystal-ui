@@ -89,6 +89,7 @@ export const BEHAVIOUR = {
       ["ArrowLeft, ArrowDown", "Down by `step`"],
       ["PageUp, PageDown", "By a tenth of the range"],
       ["Home, End", "To the ends"],
+      ["ArrowUp, ArrowDown", "On a page marked `data-tv`: left to spatial focus, which moves to the control above or below"],
     ],
     semantics: [
       "`role=\"slider\"` with `aria-valuemin`, `aria-valuemax`, `aria-valuenow` and `aria-valuetext` (the words `format` returns). The thumb is the one tab stop.",

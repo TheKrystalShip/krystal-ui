@@ -67,7 +67,13 @@
 
 @media (max-width: 768px) {
   .k-container:not(.k-container--flush) {
-    padding-inline: var(--s-4);
+    padding-inline: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .k-container:not(.k-container--flush) {
+    padding-inline: 12px;
   }
 }
 }

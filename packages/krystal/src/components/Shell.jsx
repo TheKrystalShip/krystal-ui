@@ -10,6 +10,12 @@ import { Menu, MenuItem } from "./Menu.jsx";
 // the scrim behind it, unless the site gives a `tabBar`: then the phone has the bar along its
 // bottom edge instead, and neither the drawer nor its handle.
 //
+// The main column owns the page's side gutter, equal on left and right: 24px, 16px at 768px and
+// narrower, 12px at 480px and narrower. It is the custom property `--k-page-gutter` on the column, so
+// a page reads it (`calc(var(--k-page-gutter) * -1)` for a full-bleed band) without setting it. The
+// page's own column needs only a max width and a vertical rhythm. A Footer spans the column edge to
+// edge.
+//
 // `dockPush` is the width a pinned dock takes from the page, in pixels; the frame pads its right
 // edge by it so the page reflows rather than sitting under the dock.
 /**

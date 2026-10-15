@@ -1,9 +1,12 @@
 import React from "react";
+import { onTelevision } from "../lib/television.js";
 
 // Slider — one value picked along a line (WAI-ARIA slider). The thumb is the one tab stop:
 // Left/Down and Right/Up move by `step`, PageDown and PageUp by a tenth of the range (never less
 // than a step), Home and End to the ends. A press or drag anywhere on the line moves the thumb
-// there, by mouse, pen or finger; the page still scrolls vertically under a finger.
+// there, by mouse, pen or finger; the page still scrolls vertically under a finger. On a page
+// marked `data-tv` only Left and Right move the thumb; Up and Down are left to spatial focus, which
+// moves to the control above or below.
 //
 //   value / defaultValue   the number chosen; `onChange` receives each next one while it moves
 //   onChangeEnd            receives the final value when a drag is let go and after each key press, for
@@ -93,6 +96,7 @@ const Slider = React.forwardRef(function Slider({
 
   const keys = (e) => {
     if (disabled) return;
+    if (onTelevision() && (e.key === "ArrowUp" || e.key === "ArrowDown")) return;
     const page = Math.max(step, (max - min) / 10);
     const to = e.key === "ArrowRight" || e.key === "ArrowUp" ? current + step
       : e.key === "ArrowLeft" || e.key === "ArrowDown" ? current - step

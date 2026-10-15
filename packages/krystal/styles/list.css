@@ -107,6 +107,21 @@
   white-space: nowrap;
 }
 
+.k-listrow--wrap {
+  align-items: flex-start;
+}
+
+.k-listrow--wrap .k-listrow__title {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.k-listrow--wrap .k-listrow__aside {
+  align-self: flex-start;
+}
+
 .k-listrow__open {
   cursor: pointer;
   outline: none;
@@ -217,6 +232,19 @@
   .k-listrow > .k-listrow__main:first-child ~ .k-listrow__meta,
   .k-listrow > .k-listrow__main:first-child ~ .k-listrow__aside {
     grid-column: 1 / span 2;
+  }
+
+  /* A wrapping title keeps its aside at the top right. */
+  .k-listrow.k-listrow--wrap > .k-listrow__main ~ .k-listrow__aside {
+    grid-column: 3;
+    grid-row: 1;
+    margin: 0 0 0 12px;
+    white-space: nowrap;
+  }
+
+  .k-listrow--wrap > .k-listrow__actions {
+    grid-row: 2 / span 2;
+    align-self: start;
   }
 }
 }

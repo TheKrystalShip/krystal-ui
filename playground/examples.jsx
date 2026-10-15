@@ -3,7 +3,7 @@
 // grouped into the sections the visual harness shoots (see docs/all.jsx).
 import React from "react";
 import {
-  AccountAvatar, AppShell, Breadcrumbs, BriefCard, Button, CardScreen, Checkbox, CopyField, Dialog, EmptyState, Field, IconButton, Input,
+  AccountAvatar, AppShell, Container, Breadcrumbs, BriefCard, Button, CardScreen, Checkbox, CopyField, Dialog, EmptyState, Field, IconButton, Input,
   Icon, List, ListRow, Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, ShowcaseCard,
   Sidebar, SidebarGroup, Skeleton, Spinner, SubTabs, Textarea, Toggle, Toolbar,
   ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
@@ -539,6 +539,13 @@ export function ListExamples() {
   );
   return (
     <>
+      <Sub title="wrapTitle with as=&quot;div&quot;: a long title wraps, the aside sits top right; without it the title ellipsizes">
+        <div style={{ maxWidth: 420 }}>
+          <ListRow as="div" wrapTitle title="Claude (agent) restarted the instance Factorio on walter because the watchdog reported it unresponsive for three consecutive checks"
+            detail={<><Pill size="sm" tone="info">server.restarted</Pill><span>walter</span></>} aside="14:02" />
+          <ListRow as="div" title="Without wrapTitle this long title ellipsizes at the end of the row instead of wrapping" aside="14:01" />
+        </div>
+      </Sub>
       <Sub title="People: lead, sub, role pills, status pill, an action">
         <List label="People">
           {PEOPLE.map((p) => (
@@ -613,6 +620,9 @@ export function FrameExamples() {
             </Sidebar>
           )}>
           <PageHeader title="Main column" sub="Inside the frame." />
+          <Container size="lg">
+            <div style={{ border: "1px dashed var(--accent, currentColor)", padding: 8 }}>The page column: the frame pads its sides by --k-page-gutter.</div>
+          </Container>
         </AppShell>
       </div>
     </>

@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.38.0]
+
+### Added
+- **The page gutter is the frame's.** `AppShell`'s main column pads the page's sides equally, 24px, 16px
+  at 768px and narrower and 12px at 480px and narrower, and exposes the value as `--k-page-gutter`. A
+  `Container` inside the frame adds no gutter of its own; outside it, it pads by 32px, 16px and 12px at
+  the same widths. A Footer spans the column edge to edge.
+- **`ListRow` `wrapTitle`**: the title wraps over several lines instead of ellipsizing, and the aside sits
+  at the top right.
+- **`SearchField` `inputProps`**: props spread onto the inner `<input>` (`data-*`, `inputMode`).
+
+### Fixed
+- **`Avatar` initials are letters only**: "Claude (agent)" draws "CA". A word with no letter is skipped, and
+  digits stand in only for a name that has no letters at all.
+- **A `Slider` on a television (`data-tv`) takes only Left and Right**, so Up and Down reach spatial focus.
+
 ## [0.37.1]
 
 ### Fixed

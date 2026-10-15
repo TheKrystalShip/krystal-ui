@@ -20,6 +20,11 @@ export default function SearchFieldSection() {
             submitDisabled={!name.trim()} actions={<Button variant="outline" size="lg" onClick={() => setName("")}>Cancel</Button>} />
         </div>
       </Sub>
+      <Sub title="inputProps reach the input (data-attribute, inputMode)">
+        <div style={{ maxWidth: 640 }}>
+          <SearchField value={q} onChange={setQ} onSubmit={setLast} placeholder="Numeric keypad" inputProps={{ "data-tv-initial": "", inputMode: "numeric" }} />
+        </div>
+      </Sub>
       <Sub title="Busy and disabled">
         <div style={{ display: "grid", gap: 12, maxWidth: 640 }}>
           <SearchField value="dune" busy placeholder="Search" />

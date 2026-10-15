@@ -13,15 +13,24 @@ import { forwardRef, useEffect, useState } from "react";
 //   status  a dot on the lower corner: ok | warn | danger | info | muted; `statusLabel` is what it says
 //
 // The avatar is decoration beside a name the page already writes, so it is hidden from assistive
-// technology unless `label` names it. A `name` that gives no letters draws "?".
+// technology unless `label` names it. Initials are letters only: a word with none ("(agent)" is a
+// word with letters, "-" is not) is skipped, digits stand in only for a name with no letters at all,
+// and a `name` with neither draws "?".
 const SIZES = { xs: 20, sm: 24, md: 32, lg: 40, xl: 56 };
 
-/** @param {string | undefined} name */
+/** @param {string | undefined} name @param {number} count */
 function initials(name, count) {
   const words = (name || "").trim().split(/\s+/).filter(Boolean);
-  if (words.length === 0) return "?";
-  const first = Array.from(words[0])[0];
-  const last = count === 1 ? "" : words.length > 1 ? Array.from(words[words.length - 1])[0] : "";
+  const lead = (/** @type {string} */ word, /** @type {RegExp} */ kind) => (word.match(kind) || [""])[0];
+  let spelled = words.filter((w) => /\p{L}/u.test(w));
+  let kind = /\p{L}/u;
+  if (spelled.length === 0) {
+    spelled = words.filter((w) => /\p{N}/u.test(w));
+    kind = /\p{N}/u;
+  }
+  if (spelled.length === 0) return "?";
+  const first = lead(spelled[0], kind);
+  const last = count === 1 || spelled.length < 2 ? "" : lead(spelled[spelled.length - 1], kind);
   return (first + last).toUpperCase();
 }
 
