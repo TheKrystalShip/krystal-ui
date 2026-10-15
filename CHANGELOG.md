@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.42.1]
+
+### Added
+- **`TvSpotlight` `credit`**: a quiet line between the overview and the actions ("Directed by <b>Name</b>").
+- **The Stylelint config reports a selector that names a `.k-` class**, as a warning: a site styles its
+  own `className` and reaches the package through props, variants and tokens. The package's own sheets
+  are exempt.
+
+### Fixed
+- **A large `TvHeading` sits on the line height a page's text has**, so its eyebrow, title and count
+  stand where a hand-written heading's did.
+- **Focus returns to the trigger.** A `Popover` or `Menu` whose anchor wraps the trigger hands focus to
+  the trigger inside it on Escape and on Tab past its ends, and when a press outside lands on nothing
+  that takes focus while focus was in the panel. A press on a modal's scrim leaves focus where the
+  modal hands it back on close, instead of the document.
+
 ## [0.42.0]
 
 ### Added

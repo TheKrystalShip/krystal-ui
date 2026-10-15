@@ -690,7 +690,7 @@ The parts a television page is built from, in `components/Tv.jsx`:
   `children` such as an avatar, and a `dot`). `hidden` slides it away.
 - `TvBackdrop` — artwork behind the page, at its right, fading into the canvas; a new `src` is loaded
   before it fades in over the last. `size` is `tall`, `short` or `page`.
-- `TvSpotlight` — `eyebrow`, `title`, `meta`, `overview` (clamped), `actions` and `children`; `size`
+- `TvSpotlight` — `eyebrow`, `title`, `meta`, `overview` (clamped), `credit` (a quiet line, a `b` inside it the name), `actions` and `children`; `size`
   `lg` opens a page and `md` sits above a row, its name on one line.
 - `TvHeading` — `eyebrow`, `title`, `count`, `icon` and a `lead` (an avatar); `size` `sm` is a row's label and `lg` names a page of cards.
 - `TvRow` — a `TvHeading` with `icon`, `title` and `count` (none without a title), a `lead` node under it, then its cards (`trackClassName` styles the track) and `end`, running past the

@@ -5,10 +5,14 @@
 // marks the key handled (`preventDefault`) so a dialog around it stays open; a press anywhere outside
 // the panel and its anchor closes it, and a press inside a panel opened from it (a menu in a popover)
 // is inside both. `onClose` receives "escape" or "outside" and is read through a ref.
+//
+// `focusTrigger` is how a panel hands focus back: the anchor itself when it can take focus, else the
+// first focusable inside it (an anchor that is a wrapper around the trigger).
 
 import React from "react";
 import { usePortalPopover } from "./usePortalPopover.js";
 
+const FOCUSABLE = "a[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex='-1'])";
 const stack = [];
 const noop = () => {};
 
@@ -65,4 +69,31 @@ function useOverlay(open, onClose, anchorRef, options) {
   return { pos: styled, panelRef, panelEl, ready };
 }
 
-export { useOverlay };
+/**
+ * Puts focus on the anchor, or on the first focusable control inside it.
+ * @param {HTMLElement | null} anchor
+ */
+function focusTrigger(anchor) {
+  if (!anchor) return;
+  const target = anchor.matches(FOCUSABLE) ? anchor : /** @type {HTMLElement | null} */ (anchor.querySelector(FOCUSABLE));
+  (target || anchor).focus({ preventScroll: true });
+}
+
+/**
+ * What a panel does with focus when it closes. Escape returns it to the trigger. A press outside
+ * leaves it where the press put it; when focus was inside the panel and the press landed on nothing
+ * that takes focus, it falls to the document, so it returns to the trigger instead.
+ * @param {"escape" | "outside"} reason
+ * @param {HTMLElement | null} anchor
+ * @param {HTMLElement | null} panel
+ */
+function returnFocus(reason, anchor, panel) {
+  if (reason === "escape") { focusTrigger(anchor); return; }
+  if (!panel || !panel.contains(document.activeElement)) return;
+  setTimeout(() => {
+    const at = document.activeElement;
+    if (!at || at === document.body) focusTrigger(anchor);
+  }, 0);
+}
+
+export { focusTrigger, returnFocus, useOverlay };

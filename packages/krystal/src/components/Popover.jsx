@@ -1,6 +1,6 @@
 import React from "react";
 import { createPortal } from "react-dom";
-import { useOverlay } from "../hooks/useOverlay.js";
+import { focusTrigger, returnFocus, useOverlay } from "../hooks/useOverlay.js";
 import { useOpenState } from "../hooks/useOpenState.js";
 import { chain, elementRef, mergeRefs } from "../lib/refs.js";
 
@@ -51,11 +51,13 @@ function Popover({
   const titleId = React.useId();
 
   const close = React.useCallback(() => setOpen(false), [setOpen]);
+  const panelHolder = React.useRef(/** @type {import("react").MutableRefObject<HTMLElement | null> | null} */ (null));
   const onClose = React.useCallback((reason) => {
+    returnFocus(reason, anchor.current, panelHolder.current && panelHolder.current.current);
     setOpen(false);
-    if (reason === "escape" && anchor.current) anchor.current.focus({ preventScroll: true });
   }, [setOpen, anchor]);
   const { pos, panelRef, panelEl, ready } = useOverlay(open, onClose, anchor, { placement, matchWidth });
+  panelHolder.current = panelEl;
 
   const focused = React.useRef(false);
   React.useEffect(() => {
@@ -74,11 +76,11 @@ function Popover({
     const at = document.activeElement;
     if (!e.shiftKey && (items.length === 0 || at === items[items.length - 1])) {
       setOpen(false);
-      anchor.current.focus({ preventScroll: true });
+      focusTrigger(anchor.current);
     } else if (e.shiftKey && (items.length === 0 || at === items[0] || at === e.currentTarget)) {
       e.preventDefault();
       setOpen(false);
-      anchor.current.focus({ preventScroll: true });
+      focusTrigger(anchor.current);
     }
   };
 

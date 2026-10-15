@@ -142,6 +142,10 @@ that is not `var(--edge*)`, `none`, `0` or transparent. Whether a one-sided hair
 outline is a judgement the rules cannot make, so `border-top: 1px solid var(--border-subtle)` is left
 to review.
 
+A selector that names a `.k-` class is reported too. A site styles its own `className`: it picks a
+variant or a prop of the component, sets a token, or puts its own class on the element, and it does not
+restyle the package's markup through the package's class names. The package's own sheets are exempt.
+
 The package's own sources are where the raw elements are wrapped, so neither config applies to them.
 
 ## Adding a palette

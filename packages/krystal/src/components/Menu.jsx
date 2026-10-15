@@ -2,7 +2,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "./Icon.jsx";
 import { Kbd } from "./Kbd.jsx";
-import { useOverlay } from "../hooks/useOverlay.js";
+import { focusTrigger, returnFocus, useOverlay } from "../hooks/useOverlay.js";
 import { useOpenState } from "../hooks/useOpenState.js";
 import { chain, elementRef, mergeRefs } from "../lib/refs.js";
 
@@ -82,12 +82,17 @@ function Menu({
   const first = React.useRef(/** @type {"first" | "last"} */ ("first"));
   const typed = React.useRef({ text: "", at: 0 });
 
-  const close = React.useCallback((focusTrigger) => {
+  const close = React.useCallback((toTrigger) => {
     setOpen(false);
-    if (focusTrigger && anchor.current) anchor.current.focus({ preventScroll: true });
+    if (toTrigger) focusTrigger(anchor.current);
   }, [setOpen, anchor]);
-  const onClose = React.useCallback((reason) => close(reason === "escape"), [close]);
+  const panelHolder = React.useRef(/** @type {import("react").MutableRefObject<HTMLElement | null> | null} */ (null));
+  const onClose = React.useCallback((reason) => {
+    returnFocus(reason, anchor.current, panelHolder.current && panelHolder.current.current);
+    setOpen(false);
+  }, [setOpen, anchor]);
   const { pos, panelRef, panelEl, ready } = useOverlay(open, onClose, anchor, { placement, matchWidth });
+  panelHolder.current = panelEl;
 
   const focused = React.useRef(false);
   React.useEffect(() => {

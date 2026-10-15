@@ -73,6 +73,7 @@ export default function TvFocusSection() {
         <div style={{ display: "grid", gap: 16, maxWidth: 760, "--tv-poster-w": "90px", "--tv-poster-h": "135px", "--tv-gap": "12px", "--tv-margin-x": "6px", "--tv-dim": 0.7 }}>
           <TvSpotlight eyebrow="Series" title="A long-running show" meta="2019 · 4 seasons"
             overview="A few lines of story that the spotlight clamps so a long overview never pushes the row below it off the page."
+            credit={<>Directed by <b>Ada Lovelace</b></>}
             actions={<><Button variant="primary" size="lg" icon="play">Watch</Button><Button size="lg" variant="outline">Save</Button></>}>
             <span style={{ color: "var(--fg-3)" }}>Progress line after the actions</span>
           </TvSpotlight>

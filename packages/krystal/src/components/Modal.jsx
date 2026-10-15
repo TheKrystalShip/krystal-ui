@@ -30,7 +30,11 @@ function Modal({ onClose, canClose = true, scrimClassName = "k-modal-scrim", chi
   useModalBehaviour(scrim, { onClose, canClose });
 
   const onScrimDown = (e) => {
-    if (e.target === e.currentTarget && canClose && onClose) onClose();
+    if (e.target !== e.currentTarget) return;
+    // The press is the scrim's: the browser's own focus change to the document is held off, so focus
+    // stays where the modal hands it back on close.
+    e.preventDefault();
+    if (canClose && onClose) onClose();
   };
 
   return createPortal(

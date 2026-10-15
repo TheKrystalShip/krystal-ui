@@ -279,6 +279,16 @@
   -webkit-line-clamp: 2;
 }
 
+.k-tv-spot__credit {
+  font-size: var(--text-sm);
+  color: var(--fg-3);
+}
+
+.k-tv-spot__credit b {
+  color: var(--fg-2);
+  font-weight: var(--w-semibold);
+}
+
 .k-tv-spot__actions {
   display: flex;
   align-items: center;
@@ -318,6 +328,7 @@
   gap: 18px;
   letter-spacing: 0;
   text-transform: none;
+  line-height: var(--lh-normal);
   color: var(--fg-1);
 }
 
