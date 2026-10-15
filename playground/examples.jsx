@@ -5,7 +5,7 @@ import React from "react";
 import {
   AccountAvatar, AppShell, Footer, BriefItem, BriefList, Container, Breadcrumbs, BriefCard, Button, CardScreen, Checkbox, CopyField, Dialog, EmptyState, Field, IconButton, Input,
   Icon, List, ListRow, Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, ShowcaseCard,
-  Sidebar, SidebarGroup, Skeleton, Spinner, SubTabs, Textarea, Toggle, Toolbar,
+  Sidebar, SidebarGroup, Skeleton, Spinner, StatusDot, SubTabs, Textarea, Toggle, Toolbar,
   ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
 } from "@thekrystalship/krystal";
 import { AssistantPage, ChatCard, ChatCardRow, ChatCardRows, ChatEvidence, ChatModal } from "@thekrystalship/krystal-chat";
@@ -286,6 +286,9 @@ export function NavItemBadgeExamples() {
             <NavItem key={t} icon="bell" label={"Nav " + t} badge={i + 2} tone={t} />
           ))}
           <NavItem icon="server" label="Active, many" active badge={128} tone="warn" />
+          <NavItem compact icon="server" label="walter" aside={<StatusDot tone="ok" label="Online" />} />
+          <NavItem compact active icon="server" label="jessie" aside={<StatusDot tone="warn" label="Needs a sign-in" />} />
+          <NavItem compact icon="anchor" label="Anchor, 2 waiting" badge={2} tone="warn" aside={<StatusDot tone="ok" label="Online" />} />
           <NavItem icon="bell" label="Notifications, 3 unread" role="button" aria-haspopup="dialog" aria-expanded={false} badge={3} tone="danger" />
         </div>
       </Sub>
@@ -637,6 +640,9 @@ export function FrameExamples() {
               <SidebarGroup label="Group">
                 <NavItem icon="server" label="Servers" active />
                 <NavItem icon="bell" label="Alerts" badge={3} tone="warn" />
+                <NavItem compact icon="server" label="walter" aside={<StatusDot tone="ok" label="Online" />} />
+                <NavItem compact active icon="server" label="jessie" aside={<StatusDot tone="warn" label="Needs a sign-in" />} />
+                <NavItem compact icon="anchor" label="Anchor" badge={2} tone="warn" />
               </SidebarGroup>
             </Sidebar>
           )}>

@@ -34,7 +34,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 
 | Kind | Exports |
 |---|---|
-| The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem`, `SidebarAccount`, `MobileNavToggle`, `TabBar`, `useStoredFlag`, `useEdgeSwipe` |
+| The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem` (`badge`, `tone`, and `compact` with an `aside` node for the sub-rows under a group: the icon on a tile, a smaller label, the tile alone on the rail), `SidebarAccount`, `MobileNavToggle`, `TabBar`, `useStoredFlag`, `useEdgeSwipe` |
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` (`cinematic`, or `variant="card"`: the bordered veil card), and the parts its content is drawn from: `HeroStatus`, `HeroBody`, `HeroHeading`, `HeroName`, `HeroTags`, `HeroTag` (`glass`, `verbatim`, `icon`), `HeroBar`, `HeroGroup`, `HeroDivider`, `HeroNote` (a line on the art), `HeroButton` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |

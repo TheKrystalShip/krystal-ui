@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.42.0]
+
+### Added
+- **`NavItem compact` and `aside`**: the row for what sits under a group's entries, with the icon on a
+  tile, a smaller label and a raised active state; `aside` is a node at the row's end (a `StatusDot`),
+  which rides the tile's corner on the collapsed rail. `badge` works in both forms.
+
 ## [0.41.1]
 
 ### Fixed

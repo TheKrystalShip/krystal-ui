@@ -253,6 +253,59 @@
   margin-left: auto;
 }
 
+/* The compact row: what hangs under a group's entries. The icon sits on a tile, the label is smaller,
+   and the active row is a raised surface rather than the accent. */
+.k-nav-item--compact {
+  gap: 8px;
+  padding: 5px 8px;
+  font-size: 12.5px;
+  color: var(--fg-1);
+}
+
+.k-nav-item--compact:hover {
+  background: var(--surface-2);
+}
+
+.k-nav-item--compact.k-nav-item--active {
+  background: var(--surface-3);
+  color: var(--fg-1);
+}
+
+.k-nav-item--compact.k-nav-item--active::before {
+  content: none;
+}
+
+.k-nav-item__tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: var(--r-sm);
+  background: var(--surface-3);
+  color: var(--fg-3);
+}
+
+.k-nav-item--compact .k-nav-item__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-nav-item__aside {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.k-nav-item--compact .k-nav-item__aside {
+  margin-left: 0;
+}
+
 /* ============= Account (the foot's last row) =============
    The heaviest thing in the foot, an avatar and two lines, so it anchors the bottom; its menu opens
    upward for the same reason. */
@@ -428,6 +481,27 @@
     left: -8px;
     top: 6px;
     bottom: 6px;
+  }
+
+  .k-sidebar--rail .k-nav-item--compact {
+    padding: 5px 0;
+  }
+
+  .k-sidebar--rail .k-nav-item--compact .k-nav-item__tile {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* The aside rides the tile's lower corner. */
+  .k-sidebar--rail .k-nav-item__aside {
+    position: absolute;
+    right: 6px;
+    bottom: 3px;
+    margin: 0;
+  }
+
+  .k-sidebar--rail .k-nav-item__aside > .k-dot {
+    box-shadow: 0 0 0 2px var(--surface-0);
   }
 
   .k-sidebar--rail .k-nav-item__badge {
