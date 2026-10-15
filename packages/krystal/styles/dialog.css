@@ -76,6 +76,17 @@
   position: relative;
 }
 
+/* A banner the title stands on: taller, with the head lifted over its fade. */
+.k-modal--overlap .k-modal__art {
+  height: 120px;
+}
+
+.k-modal--overlap .k-modal__art + .k-modal__head {
+  position: relative;
+  margin-top: -54px;
+  align-items: flex-end;
+}
+
 .k-modal__art::after {
   content: "";
   position: absolute;
@@ -142,9 +153,37 @@
   align-items: center;
 }
 
+/* The foot's layouts (the drawer's sheet has the same). A stack is a column of full-width actions; a
+   pair is two equal columns. */
+.k-modal__foot.k-foot--stack {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.k-modal__foot.k-foot--pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
 @media (max-width: 768px) {
   .k-backdrop {
     padding: 12px;
+  }
+
+  .k-modal__art {
+    height: 88px;
+  }
+
+  /* A sheet: the whole screen at phone width. */
+  .k-backdrop:has(> .k-modal--sheet) {
+    padding: 0;
+  }
+
+  .k-modal--sheet {
+    max-height: 100dvh;
+    border: none;
+    border-radius: 0;
   }
 
   .k-modal__head {

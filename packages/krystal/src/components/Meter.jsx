@@ -9,7 +9,7 @@
 // and its spoken value is each part's label and share unless `valueText` gives one. A part above
 // zero is always drawn at least a sliver wide, so a small one stays visible beside a large one.
 //
-// `label` is the bar's accessible name. `start` and `end` are the caption's two ends, in monospace;
+// `stale` dims the fills: the figure is the last one measured, not live. `label` is the bar's accessible name. `start` and `end` are the caption's two ends, in monospace;
 // either alone is a one-sided caption.
 /**
  * @typedef {object} MeterSegment
@@ -27,11 +27,12 @@
  * @property {string} [role] The track's ARIA role; `progressbar` for a value and `meter` for segments by default.
  * @property {import("react").ReactNode} [start] Caption's left end.
  * @property {import("react").ReactNode} [end] Caption's right end.
+ * @property {boolean} [stale] Dims the fills, for a figure that is the last one measured.
  * @property {string} [className] Class name added to the root element.
  * @typedef {MeterOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof MeterOwnProps>} MeterProps
  */
 /** @param {MeterProps} props */
-function Meter({ value, segments, max = 100, label, valueText, role, start, end, className, ...rest }) {
+function Meter({ value, segments, max = 100, label, valueText, role, start, end, stale = false, className, ...rest }) {
   const parts = segments || [{ value: value || 0, tone: "accent" }];
   const total = parts.reduce((sum, p) => sum + (p.value || 0), 0);
   const pct = (v) => Math.max(0, Math.min(100, (100 * (v || 0)) / (max || 1)));
@@ -53,7 +54,7 @@ function Meter({ value, segments, max = 100, label, valueText, role, start, end,
   );
 
   return (
-    <div className={"k-meter" + (className ? " " + className : "")} {...rest}>
+    <div className={"k-meter" + (stale ? " k-is-stale" : "") + (className ? " " + className : "")} {...rest}>
       {bar}
       {(start != null || end != null) && (
         <div className="k-meter__caption">

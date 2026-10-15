@@ -268,6 +268,23 @@
   flex-shrink: 0;
 }
 
+.k-hero-btn--ok .k-hero-btn__icon { color: var(--success-fg); }
+.k-hero-btn--warn .k-hero-btn__icon { color: var(--warning-fg); }
+.k-hero-btn--danger .k-hero-btn__icon { color: var(--danger-fg); }
+.k-hero-btn--info .k-hero-btn__icon { color: var(--info-fg); }
+.k-hero-btn--update .k-hero-btn__icon { color: var(--update-fg); }
+
+/* Waiting for a second press: the bar inverts, so the question cannot be missed. */
+.k-hero-btn.k-is-armed,
+.k-hero-btn.k-is-armed:hover:not(:disabled) {
+  background: var(--fg-1);
+  color: var(--canvas);
+}
+
+.k-hero-btn.k-is-armed .k-hero-btn__icon {
+  color: var(--canvas);
+}
+
 @media (max-width: 680px) {
   .k-hero.k-hero--cinematic {
     min-height: 0;

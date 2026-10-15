@@ -29,6 +29,9 @@ import { useSheetPull } from "../hooks/useSheetPull.js";
 // still modal within its frame: focus is held in the sheet and returned on close, and Escape and a
 // press on the scrim close it; the rest of the page stays live.
 //
+// `foot` lays its actions out by `footLayout`, as Dialog's does: `row` (the default), `stack` or `pair`.
+// A drawer with no children draws no body.
+//
 // `role` is "dialog" (the default), "alertdialog", or "menu" for a sheet whose body is a list of
 // items; `aria-modal` is set for the dialogs only.
 //
@@ -56,6 +59,7 @@ import { useSheetPull } from "../hooks/useSheetPull.js";
  * @property {"div" | "form"} [as] `form` makes the sheet a form, so Enter in a field submits it.
  * @property {import("react").FormEventHandler<HTMLElement>} [onSubmit] The form's submit handler when `as` is `form`.
  * @property {import("react").ReactNode} [foot] The sheet's actions, ruled off from the body.
+ * @property {"row" | "stack" | "pair"} [footLayout] How the foot lays out its actions: a `row` (default), a `stack` or a `pair` of equal columns.
  * @property {string} [className] Extra classes on the sheet.
  * @property {import("react").ReactNode} [children] The body, which scrolls.
  * @typedef {DrawerOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof DrawerOwnProps | "onSubmit">} DrawerProps
@@ -93,7 +97,7 @@ function ContainedScrim({ onClose, canClose, className, children }) {
 function Drawer({
   title, sub, icon, label, onClose, canClose = true, side = "bottom", size = "md", fill = false,
   back, action, head, contained = false, role = "dialog", theme,
-  as = "div", onSubmit, foot, className, children, ...rest
+  as = "div", onSubmit, foot, footLayout = "row", className, children, ...rest
 }) {
   const Sheet = /** @type {import("react").ElementType} */ (as);
   useOpenMark();
@@ -122,8 +126,8 @@ function Drawer({
         )}
       </div>
       {sub && <div className="k-drawer__sub">{sub}</div>}
-      <div className="k-drawer__body">{children}</div>
-      {foot && <div className="k-drawer__foot">{foot}</div>}
+      {children != null && children !== false && <div className="k-drawer__body">{children}</div>}
+      {foot && <div className={"k-drawer__foot" + (footLayout !== "row" ? " k-foot--" + footLayout : "")}>{foot}</div>}
     </Sheet>
   );
   if (contained) {

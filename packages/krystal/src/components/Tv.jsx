@@ -93,9 +93,12 @@ function TvBackdrop({ src, size = "tall" }) {
 }
 
 // TvSpotlight — what one thing is, large: a line above its name, its name, a line of facts, and below
-// them the `overview` (clamped to a few lines), a `credit` line ("Directed by <b>Name</b>"), the `actions` (buttons in a row) and then whatever
-// else the site puts there. `size` "lg" opens a page; "md" sits above a row and describes the card
-// focused in it.
+// them the `overview` (clamped to a few lines), a `credit` line ("Directed by <b>Name</b>"), the
+// `actions` (buttons in a row) and then whatever else the site puts there. `size` "lg" opens a page;
+// "md" sits above a row and describes the card focused in it. `titleSize` sets the name's size: `sm`
+// for a long one, `md` (the default), `lg` for a short one on a page's own head. `overviewLines` is how
+// many lines the overview shows before it is cut (3, or 2 above a row). On a television every button
+// in `actions` is one height, whatever size it asks for.
 /**
  * @param {object} props
  * @param {import("react").ReactNode} [props.eyebrow] A line above the name.
@@ -105,12 +108,15 @@ function TvBackdrop({ src, size = "tall" }) {
  * @param {import("react").ReactNode} [props.credit] A quiet line between the overview and the actions; a `b` inside it is the name.
  * @param {import("react").ReactNode} [props.actions] Buttons in a row under the overview and credit.
  * @param {"lg" | "md"} [props.size] `lg` opens a page; `md` sits above a row.
+ * @param {"sm" | "md" | "lg"} [props.titleSize] The name's size: `sm`, `md` (the default) or `lg`.
+ * @param {number} [props.overviewLines] Lines of the overview shown before it is cut; 3, or 2 above a row.
  * @param {string} [props.className] Extra class names on the root element.
  * @param {import("react").ReactNode} [props.children] What sits below the actions, such as a progress line.
  */
-function TvSpotlight({ eyebrow, title, meta, overview, credit, actions, size = "lg", className, children }) {
+function TvSpotlight({ eyebrow, title, meta, overview, credit, actions, size = "lg", titleSize = "md", overviewLines, className, children }) {
   return (
-    <section className={"k-tv-spot k-tv-spot--" + size + (className ? " " + className : "")}>
+    <section className={"k-tv-spot k-tv-spot--" + size + (titleSize !== "md" ? " k-tv-spot--title-" + titleSize : "") + (className ? " " + className : "")}
+      style={overviewLines ? /** @type {any} */ ({ "--tv-overview-lines": overviewLines }) : undefined}>
       {eyebrow && <span className="k-tv-spot__eyebrow">{eyebrow}</span>}
       <h1 className="k-tv-spot__title">{title}</h1>
       {meta && <div className="k-tv-spot__meta">{meta}</div>}
@@ -193,12 +199,13 @@ const CARD_AHEAD = { rootMargin: "0px", scrollMargin: "25%" };
  * @property {string} [label] The accessible name.
  * @property {number} [progress] 0 to 1.
  * @property {import("react").ReactNode} [badge] A node on the card's top left.
+ * @property {boolean} [dimmed] The card steps back, as the others in a row do while one has focus.
  * @property {string} [className] Extra class names on the root element.
  * @property {import("react").ReactNode} [children] Drawn over the picture.
  * @typedef {TvCardOwnProps & Omit<import("react").ComponentPropsWithoutRef<"a">, keyof TvCardOwnProps>} TvCardProps
  */
 /** @type {import("react").ForwardRefExoticComponent<TvCardProps & import("react").RefAttributes<HTMLAnchorElement>>} */
-const TvCard = React.forwardRef(function TvCard({ art, shape = "poster", label, progress, badge, className, children, ...rest }, ref) {
+const TvCard = React.forwardRef(function TvCard({ art, shape = "poster", label, progress, badge, dimmed = false, className, children, ...rest }, ref) {
   const own = React.useRef(null);
   const near = useNear(own, CARD_AHEAD);
   const attach = React.useCallback((el) => {
@@ -207,7 +214,7 @@ const TvCard = React.forwardRef(function TvCard({ art, shape = "poster", label, 
     else if (ref) ref.current = el;
   }, [ref]);
   return (
-    <a ref={attach} className={"k-tv-card k-tv-card--" + shape + (className ? " " + className : "")} aria-label={label} {...rest}>
+    <a ref={attach} className={"k-tv-card k-tv-card--" + shape + (dimmed ? " k-is-dimmed" : "") + (className ? " " + className : "")} aria-label={label} {...rest}>
       {art ? (near && <img className="k-tv-card__art" src={art} alt="" loading="lazy" decoding="async" />) : <span className="k-tv-card__name">{label}</span>}
       {badge && <span className="k-tv-card__badge">{badge}</span>}
       {progress != null && (

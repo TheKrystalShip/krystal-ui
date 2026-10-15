@@ -25,6 +25,19 @@
   gap: var(--s-1);
 }
 
+/* Inside a disabled fieldset the whole group steps back, as the buttons in it do. */
+fieldset:disabled .k-radios {
+  opacity: 0.5;
+}
+
+.k-radios--fill {
+  width: 100%;
+}
+
+.k-radios--fill .k-radios__item {
+  flex: 1;
+}
+
 .k-radios__item {
   box-sizing: border-box;
   display: inline-flex;

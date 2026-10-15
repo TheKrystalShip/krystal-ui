@@ -17,6 +17,11 @@ import { Pill } from "./Pill.jsx";
 // card is always cut off at the right edge. That peek is the primary "there is
 // more" affordance; the arrows and the edge fade are the secondary ones.
 //
+// `perView` is how many cards the shelf shows: a number, or an object of stops keyed by the rail's own
+// width in pixels, each the count from that width up (`{ 0: 1.25, 430: 2.35, 640: 3.4, 1000: 5.4 }`).
+// The rail measures itself, so the count follows whatever narrows it. `--rail-per-view` is the same
+// number as a custom property: set on the rail or any ancestor it is the default, and `perView` wins.
+//
 /**
  * @template T
  * @param {object} props
@@ -30,11 +35,16 @@ import { Pill } from "./Pill.jsx";
  * @param {(item: T) => import("react").ReactNode} props.renderItem Draws one item as a card.
  * @param {(item: T) => string | number} [props.itemKey] Defaults to `item.id`, then the index.
  * @param {boolean} [props.disabled] Hides the arrows and leaves the row without horizontal swipe.
+ * @param {number | Record<number, number>} [props.perView] Cards in view: a number, or stops keyed by the rail's width in pixels, each the count from that width up.
  * @param {string} [props.variant] A modifier class, `k-rail--<variant>`, that a site's styles target.
+ * @param {string} [props.className] Extra class names on the root element.
+ * @param {import("react").CSSProperties} [props.style] Inline style on the root element.
  * @param {string} [props.ariaLabel] The scroller's accessible name; the title when left out.
  */
-function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", items, renderItem, itemKey, disabled = false, variant, ariaLabel }) {
+function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", items, renderItem, itemKey, disabled = false, perView, variant, className, style, ariaLabel }) {
   const trackRef = React.useRef(null);
+  const rootRef = React.useRef(null);
+  const [width, setWidth] = React.useState(0);
   // atStart/atEnd drive the arrows' disabled state and which edge fades;
   // `scrollable` is false when everything already fits, which hides the arrows
   // entirely rather than showing two dead buttons.
@@ -43,6 +53,7 @@ function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", i
   const measure = React.useCallback(() => {
     const el = trackRef.current;
     if (!el) return;
+    if (rootRef.current) setWidth(rootRef.current.clientWidth);
     const max = el.scrollWidth - el.clientWidth;
     const x = el.scrollLeft;
     const next = { start: x <= 1, end: x >= max - 1, scrollable: max > 1 };
@@ -71,9 +82,16 @@ function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", i
   };
 
   const showArrows = edge.scrollable && !disabled;
+  let shown = null;
+  if (typeof perView === "number") shown = perView;
+  else if (perView && width > 0) {
+    const stops = Object.keys(perView).map(Number).filter((k) => k <= width).sort((a, b) => a - b);
+    if (stops.length) shown = perView[stops[stops.length - 1]];
+  }
 
   return (
-    <div className={"k-brief k-rail" + (variant ? " k-rail--" + variant : "")} data-disabled={disabled ? "" : undefined}>
+    <div ref={rootRef} className={"k-brief k-rail" + (variant ? " k-rail--" + variant : "") + (className ? " " + className : "")}
+      style={style} data-disabled={disabled ? "" : undefined}>
       <div className="k-brief__head">
         <span className="k-brief__title">
           {icon ? <Icon name={icon} size={13} /> : null} {title}
@@ -110,6 +128,7 @@ function Rail({ icon, title, count, pin, onViewAll, viewAllLabel = "View all", i
       <div
         className="k-rail__track"
         ref={trackRef}
+        style={shown != null ? /** @type {any} */ ({ "--rail-per-view": shown }) : undefined}
         role="group"
         aria-label={ariaLabel || title}
         tabIndex={0}

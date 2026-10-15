@@ -15,8 +15,13 @@ import { Icon } from "./Icon.jsx";
 //           and the arrow stays, the label as its accessible name
 //   delta   a change beside the value, `deltaTone` ok | warn | danger | muted colouring it
 //   sub     a quieter line under the figure
-//   tone    ok | info | warn | danger | muted colours the value; warn and danger add a hairline along
+//   tone    ok | info | warn | danger | muted | off colours the value (off is a dark, disabled grey); warn and danger add a hairline along
 //           the tile's top, so a calm surface stays quiet and a problem one stands out
+//   emphasis the hairline along the top is drawn on every tone (ok and info too), as the at-a-glance cue of a band
+//   stale   the figure is the last one measured, not live: a dashed frame, the label and sub quiet; the colours
+//           ease over when it changes
+//   wrapSub the sub wraps over lines instead of ending in an ellipsis
+//   deltaEnd the delta (and whatever the site puts in it) sits at the far end of the figure's row
 //   spark   a node drawn under the figure: a trace, a meter, whatever the figure's own shape is
 //   size    md (default) | sm, the dense variant for a band of many
 // `onOpen` or `href` makes the whole tile a button or a link.
@@ -32,7 +37,11 @@ import { Icon } from "./Icon.jsx";
  * @property {import("react").ReactNode} [delta] A change drawn beside the value.
  * @property {"ok" | "warn" | "danger" | "muted"} [deltaTone] `ok`, `warn`, `danger` or `muted`; colours the delta.
  * @property {import("react").ReactNode} [sub] A quieter line under the figure.
- * @property {"ok" | "info" | "warn" | "danger" | "muted"} [tone] Colours the value: `ok`, `info`, `warn`, `danger` or `muted`; `warn` and `danger` add a hairline along the top.
+ * @property {"ok" | "info" | "warn" | "danger" | "muted" | "off"} [tone] Colours the value: `ok`, `info`, `warn`, `danger`, `muted` or `off` (a disabled grey); `warn` and `danger` add a hairline along the top.
+ * @property {boolean} [emphasis] Draws the top hairline on every tone, not only `warn` and `danger`.
+ * @property {boolean} [stale] The figure is the last one measured: a dashed frame and a quiet label and sub.
+ * @property {boolean} [wrapSub] The sub wraps over lines instead of ending in an ellipsis.
+ * @property {boolean} [deltaEnd] The delta sits at the far end of the figure's row.
  * @property {import("react").ReactNode} [spark] A node under the figure: a trace, a meter, whatever the figure's own shape is.
  * @property {"sm" | "md"} [size] `sm` is the dense variant for a band of many; `md` otherwise.
  * @property {() => void} [onOpen] Makes the whole tile a button; called when it is pressed.
@@ -41,10 +50,10 @@ import { Icon } from "./Icon.jsx";
  * @typedef {StatTileOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof StatTileOwnProps>} StatTileProps
  */
 /** @param {StatTileProps} props */
-function StatTile({ label, icon, value, unit, aside, onView, viewLabel = "View", delta, deltaTone = "muted", sub, tone = "muted", spark, size = "md", onOpen, href, className, ...rest }) {
+function StatTile({ label, icon, value, unit, aside, onView, viewLabel = "View", delta, deltaTone = "muted", sub, tone = "muted", emphasis = false, stale = false, wrapSub = false, deltaEnd = false, spark, size = "md", onOpen, href, className, ...rest }) {
   const unknown = value == null;
   const openable = onOpen != null || href != null;
-  const cls = "k-stat k-stat--" + tone + " k-stat--" + size + (openable ? " k-stat--open" : "") + (className ? " " + className : "");
+  const cls = "k-stat k-stat--" + tone + " k-stat--" + size + (openable ? " k-stat--open" : "") + (emphasis ? " k-stat--emphasis" : "") + (stale ? " k-is-stale" : "") + (wrapSub ? " k-stat--wrapsub" : "") + (deltaEnd ? " k-stat--deltaend" : "") + (className ? " " + className : "");
   const head = (
     <span className="k-stat__label">
       {icon && <Icon name={icon} size={size === "sm" ? 11 : 12} />}

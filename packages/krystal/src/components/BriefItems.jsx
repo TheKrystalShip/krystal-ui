@@ -28,6 +28,8 @@ function BriefList({ className, children, ...rest }) {
  * @property {import("react").ReactNode} [detail] A muted line under the title.
  * @property {boolean} [wrapDetail] Lets the detail wrap onto several lines instead of ending in an ellipsis.
  * @property {import("react").ReactNode} [below] A block under the detail, in the text column (fields, a preview). Controls here belong on a row that is not itself a button or a link.
+ * @property {boolean} [controlsBelow] At phone width the controls take their own line under the words, indented to them: a text field or Select that is `wide` fills the line and the rest keep their size.
+ * @property {boolean} [disabled] The row is not available: it has no hover, and its `action` is quiet.
  * @property {import("react").ReactNode} [controls] Controls at the row's end in the settings arrangement: they wrap under the words when they do not fit beside them.
  * @property {import("react").ReactNode} [action] A link-styled label at the row's end, with an arrow.
  * @property {() => void} [onClick] Makes the row a button.
@@ -37,9 +39,9 @@ function BriefList({ className, children, ...rest }) {
  * @typedef {BriefItemOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof BriefItemOwnProps>} BriefItemProps
  */
 /** @param {BriefItemProps} props */
-function BriefItem({ tone, icon, title, escalated = false, mono = false, tags, detail, wrapDetail = false, below, controls, action, onClick, href, className, children, ...rest }) {
+function BriefItem({ tone, icon, title, escalated = false, mono = false, tags, detail, wrapDetail = false, below, controls, controlsBelow = false, disabled = false, action, onClick, href, className, children, ...rest }) {
   const live = Boolean(onClick || href);
-  const cls = "k-brief__item" + (tone ? " k-brief__item--" + tone : "") + (live ? "" : " k-brief__item--static") + (escalated ? " k-brief__item--escalated" : "") + (controls != null ? " k-settings-row" : "")
+  const cls = "k-brief__item" + (tone ? " k-brief__item--" + tone : "") + (live ? "" : " k-brief__item--static") + (escalated ? " k-brief__item--escalated" : "") + (controls != null ? " k-settings-row" : "") + (controls != null && controlsBelow ? " k-settings-row--below" : "") + (disabled ? " k-is-disabled" : "")
     + (className ? " " + className : "");
   const body = (
     <>

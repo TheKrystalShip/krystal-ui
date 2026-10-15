@@ -118,6 +118,14 @@
   color: var(--fg-2);
 }
 
+.k-empty__icon.k-is-spinning > svg {
+  animation: k-spin 1.4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-empty__icon.k-is-spinning > svg { animation-duration: 4s; }
+}
+
 .k-empty--accent .k-empty__icon {
   background: var(--krystal-teal-dim);
   color: var(--krystal-teal);

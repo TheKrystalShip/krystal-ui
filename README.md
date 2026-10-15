@@ -521,6 +521,36 @@ the pop-out: the sheet fills the viewport inside a safe-area inset (edge to edge
 its head and close button; the body scrolls, or with `fill` too it clips so a feed, chart or editor
 inside it takes the room and scrolls itself.
 
+### Variants, states and tokens
+
+A site places and shapes a component through its props and tokens, never through the package's `.k-`
+classes (the Stylelint config reports them). What the components offer beyond their basics:
+
+- **`BriefCard`**: `value` (a figure in the head), `wrapHead`, `fill` (the card fills its row's height),
+  `revealPin` (the pin shows while the card is hovered or focused), and the tokens `--k-brief-head-padding`
+  and `--k-brief-head-gap`. **`BriefItem`**: `disabled`, `controls` with `controlsBelow`. **`SettingsRow`**:
+  `controlsBelow`. At phone width the controls take a line of their own, indented to the label; a `wide`
+  `Input`, a `Select` or a `fill` `RadioGroup` takes the line and everything else keeps its size.
+- **`Input`**: `narrow` (a number's width) and `align="end"`. **`Button`**: `grow`. **`RadioGroup`**: `fill`.
+  **`Disclosure`**: `flush`, and a summary that lays its children out in a row. **`EmptyState`**: `spin`.
+  **`StatusDot`**: `size` as a number. **`Avatar`**: `imagePosition`. **`ChatCardRows`**: `flush`.
+- **`StatTile`**: `emphasis` (the hairline on every tone), `stale`, `tone="off"`, `wrapSub`, `deltaEnd`.
+  **`Meter`**: `stale`.
+- **`Rail`**: `perView` (a count, or stops keyed by the rail's own width), `className`, `style`; `--rail-per-view`
+  set on the rail or an ancestor is the default.
+- **`Dialog`**: `sheet` (full screen at phone width), `artOverlap`, `footLayout` (`row`, `stack`, `pair`),
+  and a function as `children` that receives `{ fullscreen }`. **`Drawer`**: `footLayout`; no children draws
+  no body.
+- **`HeroButton`**: `iconTone`, `armed`. **`ShowcaseCard`**: `corner.tone` and `corner.mono`, the token
+  `--k-showcase-progress-track`. **`SubTabs`** and **`TabBar`**: a `disabled` item; `SubTabs` `fill`.
+  **`ToolbarFilters`**: `framed`, `compact` (`true` or `"phone"`), `className`.
+- **`AppShell`**: `mainClassName`; `--k-app-bottom-inset` (room above the phone tab bar that the page, the
+  dock and the toasts leave), `--k-toasts-bottom` and `--k-toasts-top`; `body[data-chat-typing]` while
+  somebody writes in a chat that is the page. **`Sidebar`**: `data-collapsed` on its root when collapsed,
+  and `useSidebarCollapsed()`.
+- **`TvSpotlight`**: `titleSize`, `overviewLines`; **`TvCard`**: `dimmed`, and `data-tv-dim` on any ancestor
+  dims every card under it. A `fieldset:disabled` dims radios and a card's controls as it dims buttons.
+
 ### Layout, keys and drawers
 
 `AppShell`'s main column owns the page's side gutter, equal on both sides: 24px, 16px at 768px and

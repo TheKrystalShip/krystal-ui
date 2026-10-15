@@ -16,6 +16,12 @@ import { Pill } from "./Pill.jsx";
 //                            for a quiet grey chip, omit for the default accent
 //   countTitle             — optional tooltip on that pill, for a count that has to
 //                            qualify itself (a window, a floor)
+//   value                  — optional node in the header after the title (a figure the card is about)
+//   wrapHead               — the header wraps: what does not fit beside the title drops under it
+//   fill                   — the card fills the height it is given and its list, empty state or body
+//                            takes what the header leaves (a card in a row of equal cards)
+//   revealPin              — the `pin` shows while the card is hovered or holds focus (always on a
+//                            touch screen, and while the pin is pressed)
 //   meta                   — optional muted sub-strip under the header (cadence,
 //                            retention, "5 of 10 slots used", …)
 //   pin                    — optional header-right NODE, rendered before the action. A node
@@ -28,6 +34,9 @@ import { Pill } from "./Pill.jsx";
 //   onToggle                 toggle and the body is unmounted when shut. Left
 //                            uncontrolled the card renders exactly as before.
 //   className, children
+//
+// Public tokens, set on the card or any ancestor: `--k-brief-head-padding` (10px 14px) and
+// `--k-brief-head-gap` (10px) space the header.
 /**
  * @param {object} props
  * @param {string} [props.icon] A Lucide name.
@@ -35,6 +44,10 @@ import { Pill } from "./Pill.jsx";
  * @param {import("react").ReactNode | false} [props.count] A pill after the title.
  * @param {"neutral" | "accent" | "info" | "ok" | "warn" | "danger" | "muted"} [props.countTone] `neutral` for a quiet grey count pill; the accent when omitted.
  * @param {string} [props.countTitle] Tooltip on the count pill.
+ * @param {import("react").ReactNode} [props.value] A node in the header after the title, such as the figure the card is about.
+ * @param {boolean} [props.wrapHead] The header wraps, so a value or pin that does not fit beside the title drops under it.
+ * @param {boolean} [props.fill] The card fills the height it is given, and its list, empty state or body takes the rest.
+ * @param {boolean} [props.revealPin] The pin shows while the card is hovered or has focus, always on a touch screen and while the pin is pressed.
  * @param {import("react").ReactNode} [props.meta] A muted strip under the header.
  * @param {import("react").ReactNode} [props.pin] Header-right node before the action.
  * @param {() => void} [props.onViewAll] Called by the "View all" affordance at the header's end.
@@ -46,7 +59,7 @@ import { Pill } from "./Pill.jsx";
  * @param {string} [props.className] Extra classes on the card.
  * @param {import("react").ReactNode} [props.children] The body: a `k-brief__list` of rows, a `k-brief__empty`, or any content.
  */
-function BriefCard({ icon, title, count, countTone, countTitle, meta, pin, onViewAll, viewAllLabel = "View all", action,
+function BriefCard({ icon, title, count, countTone, countTitle, value, wrapHead = false, fill = false, revealPin = false, meta, pin, onViewAll, viewAllLabel = "View all", action,
   collapsible = false, open = true, onToggle, className = "", children }) {
   const right = action !== undefined
     ? action
@@ -67,13 +80,14 @@ function BriefCard({ icon, title, count, countTone, countTitle, meta, pin, onVie
             className={"k-brief__count" + (countTone ? " k-brief__count--" + countTone : "")}>{count}</Pill>
         )}
       </span>
-      {pin}
+      {value != null && <span className="k-brief__value">{value}</span>}
+      {pin != null && (revealPin ? <span className="k-brief__pin">{pin}</span> : pin)}
       {right}
       {collapsible && <Icon name="chevron-down" size={16} className="k-brief__chev" />}
     </>
   );
   return (
-    <div className={"k-brief" + (shut ? " k-brief--shut" : "") + (className ? " " + className : "")}>
+    <div className={"k-brief" + (shut ? " k-brief--shut" : "") + (fill ? " k-brief--fill" : "") + (wrapHead ? " k-brief--wrap" : "") + (className ? " " + className : "")}>
       {title == null && !collapsible
         ? null
         : collapsible

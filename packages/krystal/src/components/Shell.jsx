@@ -16,6 +16,10 @@ import { Menu, MenuItem } from "./Menu.jsx";
 // page's own column needs only a max width and a vertical rhythm. A Footer spans the column edge to
 // edge.
 //
+// `--k-app-bottom-inset`, set on `body` or any ancestor, is room a site keeps along the bottom of a
+// phone above the tab bar (a strip, a player): the page, the assistant dock and the toasts leave it.
+// While a person writes in a chat that is the page, `body[data-chat-typing]` is set.
+//
 // `dockPush` is the width a pinned dock takes from the page, in pixels; the frame pads its right
 // edge by it so the page reflows rather than sitting under the dock.
 /**
@@ -28,9 +32,10 @@ import { Menu, MenuItem } from "./Menu.jsx";
  * @param {import("react").ReactNode} [props.aside] A node drawn after the main column, such as a dock.
  * @param {import("react").ReactNode} [props.tabBar] A TabBar for phones; when given, the bar replaces the drawer and its handle.
  * @param {import("react").Ref<HTMLElement>} [props.mainRef] Ref to the scrolling main column.
+ * @param {string} [props.mainClassName] Extra class names on the main column.
  * @param {import("react").ReactNode} [props.children] The page, drawn in the main column.
  */
-function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, aside, tabBar, mainRef, children }) {
+function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, aside, tabBar, mainRef, mainClassName, children }) {
   return (
     <div
       className={"k-app" + (tabBar ? " k-app--tabbed" : "")}
@@ -39,7 +44,7 @@ function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, asid
       {drawerOpen
         ? <div className="k-sidebar-scrim k-sidebar-scrim--open" onClick={() => onDrawer(false)} />
         : !tabBar && <MobileNavToggle onOpen={() => onDrawer(true)} />}
-      <main className="k-app__main" ref={mainRef}>{children}</main>
+      <main className={"k-app__main" + (mainClassName ? " " + mainClassName : "")} ref={mainRef}>{children}</main>
       {aside}
       {tabBar}
     </div>
@@ -58,6 +63,7 @@ function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, asid
  * @property {string} label The words under the icon.
  * @property {boolean} [active] Marks the current tab (`aria-current`).
  * @property {() => void} [onClick] Called when the tab is pressed.
+ * @property {boolean} [disabled] Dims the tab and blocks it.
  * @property {number} [badge] Drawn on the icon when above zero.
  * @property {"info" | "warn" | "danger"} [tone] `info`, `warn` or `danger`; colours the badge.
  */
@@ -75,6 +81,7 @@ function TabBar({ items, label = "Main" }) {
           type="button"
           className={"k-tabbar__tab" + (item.active ? " k-tabbar__tab--active" : "")}
           aria-current={item.active ? "page" : undefined}
+          disabled={item.disabled}
           onClick={item.onClick}>
           <span className="k-tabbar__icon">
             <Icon name={item.icon} size={22} />
@@ -87,9 +94,22 @@ function TabBar({ items, label = "Main" }) {
   );
 }
 
+const SidebarContext = React.createContext(false);
+
+/**
+ * Whether the sidebar around the caller is collapsed to its rail.
+ * @returns {boolean}
+ */
+function useSidebarCollapsed() {
+  return React.useContext(SidebarContext);
+}
+
 // The sidebar: the brand row with its collapse toggle, an optional `top` slot under it (a search
 // field), the nav groups as children, and the `foot` pinned to the bottom. Only the nav scrolls, so
-// the foot stays reachable in a short window. The hairline under the brand moves under `top` when
+// the foot stays reachable in a short window. A collapsed sidebar carries `data-collapsed` on its root,
+// which a site's own rows for the rail select (`[data-collapsed] .my-row`), and `useSidebarCollapsed()`
+// says the same to a component inside it. The rail is drawn from 769px up; at phone width the sidebar is
+// the drawer and a collapsed one is expanded. The hairline under the brand moves under `top` when
 // there is one, so the header reads as one block. `closeNav` rules off the last group too, for a
 // site whose nav and foot are far apart.
 /**
@@ -106,7 +126,9 @@ function TabBar({ items, label = "Main" }) {
  */
 function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, closeNav, foot, children }) {
   return (
-    <aside className={"k-sidebar" + (open ? " k-sidebar--open" : "") + (collapsed ? " k-sidebar--rail" : "")}>
+    <SidebarContext.Provider value={!!collapsed}>
+    <aside className={"k-sidebar" + (open ? " k-sidebar--open" : "") + (collapsed ? " k-sidebar--rail" : "")}
+      data-collapsed={collapsed ? "" : undefined}>
       <div className="k-sidebar__brand">
         <img src={mark} width="32" height="32" alt="" style={{ objectFit: "contain" }} />
         <span className="k-sidebar__brand-wordmark">{wordmark}</span>
@@ -123,6 +145,7 @@ function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, close
       <nav className={"k-sidebar__nav" + (closeNav ? " k-sidebar__nav--closed" : "")}>{children}</nav>
       {foot && <div className="k-sidebar__foot">{foot}</div>}
     </aside>
+    </SidebarContext.Provider>
   );
 }
 
@@ -262,4 +285,4 @@ function MobileNavToggle({ onOpen }) {
   );
 }
 
-export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, TabBar };
+export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, TabBar, useSidebarCollapsed };

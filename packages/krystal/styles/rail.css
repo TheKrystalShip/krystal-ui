@@ -7,8 +7,9 @@
    at the right edge is what tells the user there is more, and it is a stronger
    signal than the arrows.
 
-   A site sets its own density per shelf by re-valuing `--rail-per-view` on
-   `.k-rail--<variant> .k-rail__track`, usually inside `@container rail (…)` queries. */
+   A site sets the density with Rail's `perView`, or with `--rail-per-view` on the rail or an
+   ancestor. The track reads the property and declares none of its own, so an outer value is the
+   one that applies; `perView` writes it on the track. */
 @layer krystal.tokens, krystal.base, krystal.components;
 
 @layer krystal.components {
@@ -58,7 +59,6 @@
 /* ---- the track --------------------------------------------------------- */
 
 .k-rail__track {
-  --rail-per-view: 5.4;
   --rail-gap: 12px;
   --rail-pad: 14px;
   --rail-fade: 30px;
@@ -112,7 +112,7 @@
 
 .k-rail__item {
   flex: 0 0 auto;
-  width: calc((100cqi - (2 * var(--rail-pad)) - ((var(--rail-per-view) - 1) * var(--rail-gap))) / var(--rail-per-view));
+  width: calc((100cqi - (2 * var(--rail-pad)) - ((var(--rail-per-view, 5.4) - 1) * var(--rail-gap))) / var(--rail-per-view, 5.4));
   min-width: 0;
   scroll-snap-align: start;
   /* Cards whose titles wrap to a second line would otherwise leave the row with

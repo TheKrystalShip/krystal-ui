@@ -55,6 +55,11 @@
     transition: color var(--d-fast) var(--ease-out);
   }
 
+  .k-tabbar__tab:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
   .k-tabbar__tab--active {
     color: var(--krystal-teal);
   }
@@ -103,6 +108,9 @@
     color: var(--on-info);
   }
 
+  /* `--k-app-bottom-inset`, set on `body` or any ancestor, is room a site keeps along the bottom above
+     the bar (a strip, a player): the page, the assistant dock and the toasts all leave it. */
+
   /* The bar is the way around, so the drawer is never drawn. */
   .k-app--tabbed .k-sidebar {
     display: none;
@@ -112,7 +120,7 @@
      padding is inside the column's screen height, so what ends the column ends above the bar. */
   .k-app--tabbed .k-app__main {
     box-sizing: border-box;
-    padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + var(--k-app-bottom-inset, 0px));
   }
 
   .k-app--tabbed .k-footer__bar {
@@ -121,7 +129,7 @@
 
   /* The dock ends above the bar, which stays to leave it by; a site opens it from a tab. */
   .k-app--tabbed .k-assistant-dock {
-    bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+    bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + var(--k-app-bottom-inset, 0px));
     box-shadow: none;
   }
 

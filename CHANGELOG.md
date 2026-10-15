@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.43.0]
+
+### Added
+- **Variants, states and tokens in place of reach-in selectors**, so a site needs no rule that names a
+  `.k-` class: `BriefCard` `value`, `wrapHead`, `fill`, `revealPin` and the head tokens; `BriefItem`
+  `disabled` and `controlsBelow`; `SettingsRow` `controlsBelow`; `Input` `narrow` and `align`; `Button`
+  `grow`; `RadioGroup` `fill`; `Disclosure` `flush`; `EmptyState` `spin`; `StatusDot` numeric `size`;
+  `Avatar` `imagePosition`; `ChatCardRows` `flush`.
+- **`StatTile`** `emphasis`, `stale`, `tone="off"`, `wrapSub` and `deltaEnd`; **`Meter`** `stale`.
+- **`Rail`** `perView` (a count, or stops keyed by the rail's width), `className` and `style`; the track
+  reads `--rail-per-view` from outside.
+- **`Dialog`** `sheet`, `artOverlap`, `footLayout` and a `children` function receiving `{ fullscreen }`;
+  **`Drawer`** `footLayout`, and no body when there are no children.
+- **`HeroButton`** `iconTone` and `armed`; **`ShowcaseCard`** `corner.tone` and `corner.mono`, and the
+  token `--k-showcase-progress-track`; **`SubTabs`** and **`TabBar`** `disabled` items and `SubTabs`
+  `fill`; **`ToolbarFilters`** `framed`, `compact` and `className`.
+- **`AppShell`** `mainClassName`; the tokens `--k-app-bottom-inset`, `--k-toasts-bottom` and
+  `--k-toasts-top`; `body[data-chat-typing]`; the sidebar's `data-collapsed` and `useSidebarCollapsed()`.
+- **`TvSpotlight`** `titleSize` and `overviewLines`; **`TvCard`** `dimmed` and `data-tv-dim` on an ancestor.
+
+### Changed
+- The main column keeps its scrollbar's room (`scrollbar-gutter: stable`).
+- A `ShowcaseCard` status with no icon ends in an ellipsis; below 210px a card's facts drop their icons.
+- A popover title and a menu header are rows; a menu label ends in an ellipsis.
+- A `fieldset:disabled` dims `RadioGroup`s and a `ShowcaseCard`'s tools and action. Every button in a
+  `TvSpotlight`'s `actions` is one height on a television.
+- `StatusDot` eases between tones.
+
 ## [0.42.1]
 
 ### Added

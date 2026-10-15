@@ -15,6 +15,12 @@ import { Modal } from "./Modal.jsx";
 // inside a safe-area inset (edge to edge on a phone), keeping its head and close button; the body
 // scrolls, or with `fill` as well it clips so a child that sizes itself takes the room.
 //
+// `sheet` makes the dialog a full-screen sheet at phone width (edge to edge, no frame of scrim). `foot`
+// lays its actions out by `footLayout`: `row` (the default, a wrapping row), `stack` (a column, each
+// action the full width) or `pair` (two equal columns). `artOverlap` draws the banner taller with the
+// head lifted over its fade, the title standing on the picture. `children` may be a function, which
+// receives `{ fullscreen }` for a body that fills a pop-out and drops its own frame there.
+//
 // `as="form"` makes the sheet a form (`noValidate`: a form's own rules judge), `onSubmit` its handler,
 // so Enter in a field submits it.
 // `label` names the dialog for a screen reader when `title` is not a string.
@@ -30,18 +36,22 @@ import { Modal } from "./Modal.jsx";
  * @param {"md" | "lg" | "xl"} [props.size] The sheet's width: `md`, `lg` or `xl`.
  * @param {boolean} [props.fill] A definite height, for a body that sizes itself to its container.
  * @param {boolean} [props.fullscreen] Fills the viewport inside a safe-area inset.
+ * @param {boolean} [props.sheet] A full-screen sheet at phone width.
+ * @param {"row" | "stack" | "pair"} [props.footLayout] How the foot lays out its actions: a `row` (default), a `stack` or a `pair` of equal columns.
+ * @param {boolean} [props.artOverlap] A taller banner with the head lifted over it.
  * @param {"div" | "form"} [props.as] `form` makes the sheet a form, so Enter in a field submits it.
  * @param {import("react").FormEventHandler<HTMLElement>} [props.onSubmit] The form's submit handler when `as` is `form`.
  * @param {import("react").ReactNode} [props.foot] The dialog's actions, ruled off from the body.
  * @param {string} [props.className] Extra classes on the sheet.
- * @param {import("react").ReactNode} [props.children] The body, which scrolls.
+ * @param {import("react").ReactNode | ((state: { fullscreen: boolean }) => import("react").ReactNode)} [props.children] The body, which scrolls; a function receives `{ fullscreen }`.
  */
 function Dialog({
-  title, sub, icon, art, label, onClose, canClose = true, size = "md", fill = false, fullscreen = false,
+  title, sub, icon, art, label, onClose, canClose = true, size = "md", fill = false, fullscreen = false, sheet = false, footLayout = "row", artOverlap = false,
   as = "div", onSubmit, foot, className, children,
 }) {
   const Sheet = as;
-  const cls = "k-modal k-modal--" + size + (fill ? " k-modal--fill" : "") + (fullscreen ? " k-modal--fullscreen" : "") + (className ? " " + className : "");
+  const cls = "k-modal k-modal--" + size + (fill ? " k-modal--fill" : "") + (fullscreen ? " k-modal--fullscreen" : "") + (sheet ? " k-modal--sheet" : "")
+    + (artOverlap && art ? " k-modal--overlap" : "") + (className ? " " + className : "");
   return (
     <Modal onClose={onClose} canClose={canClose} scrimClassName="k-backdrop">
       <Sheet className={cls} role="dialog" aria-modal="true"
@@ -57,8 +67,8 @@ function Dialog({
           )}
         </div>
         {sub && <div className="k-modal__sub">{sub}</div>}
-        <div className="k-modal__body">{children}</div>
-        {foot && <div className="k-modal__foot">{foot}</div>}
+        <div className="k-modal__body">{typeof children === "function" ? children({ fullscreen }) : children}</div>
+        {foot && <div className={"k-modal__foot" + (footLayout !== "row" ? " k-foot--" + footLayout : "")}>{foot}</div>}
       </Sheet>
     </Modal>
   );

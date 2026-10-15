@@ -8,6 +8,7 @@ import { Icon } from "./Icon.jsx";
 // shared brief-item modifiers — for a row that carries a verdict, not just a value.
 // `value` is a read-only figure in the control's place; `mono` sets it as an identifier.
 // A control that fits beside the words stays there; one that does not drops under them, full width.
+// `controlsBelow` puts the controls under the words at phone width whatever their size.
 // Omitted, the row is the neutral one every existing caller renders.
 /**
  * @param {object} props
@@ -17,11 +18,14 @@ import { Icon } from "./Icon.jsx";
  * @param {"success" | "warn" | "danger" | "info"} [props.tone] Tints the row for a verdict.
  * @param {import("react").ReactNode} [props.value] A read-only value, drawn where a control sits.
  * @param {boolean} [props.mono] Sets `value` in the monospace face (an id, a path).
+ * @param {boolean} [props.controlsBelow] At phone width the controls take their own line under the words, indented to them; a `wide` field or a Select fills it.
+ * @param {string} [props.className] Extra class names on the row.
  * @param {import("react").ReactNode} [props.children] The row's controls, after `value`.
  */
-function SettingsRow({ icon, title, sub, tone, value, mono = false, children }) {
+function SettingsRow({ icon, title, sub, tone, value, mono = false, controlsBelow = false, className, children }) {
   return (
-    <div className={"k-brief__item k-brief__item--static k-settings-row" + (tone ? " k-brief__item--" + tone : "")}>
+    <div className={"k-brief__item k-brief__item--static k-settings-row" + (tone ? " k-brief__item--" + tone : "")
+      + (controlsBelow ? " k-settings-row--below" : "") + (className ? " " + className : "")}>
       <span className="k-brief__icon"><Icon name={icon} size={14} /></span>
       <div className="k-brief__body">
         <span className="k-brief__item-title"><span className="k-brief__titletext">{title}</span></span>

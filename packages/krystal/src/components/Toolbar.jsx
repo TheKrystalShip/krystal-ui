@@ -197,7 +197,8 @@ function fieldActive(field) {
   return field.value !== (field.default != null ? field.default : (field.options && field.options[0] && field.options[0].value));
 }
 
-// ToolbarFilters — single Filters popover + inline active-filter chips.
+// ToolbarFilters — single Filters popover + inline active-filter chips. `framed` gives the button a
+// field's frame at the row's height, and `compact` shrinks it to its icon and count (always, or on a phone).
 /**
  * @typedef {object} ToolbarFilterField
  * @property {string} id The field's key.
@@ -213,8 +214,11 @@ function fieldActive(field) {
  * @param {ToolbarFilterField[]} props.fields The filters, one radio group each.
  * @param {() => void} [props.onReset] Draws a reset action that clears every filter.
  * @param {string} [props.label] The Filters button's words.
+ * @param {boolean} [props.framed] The button takes the frame of a field and stretches to the height of the row it stands in, for a bar that pairs it with a SearchField.
+ * @param {boolean | "phone"} [props.compact] The button is its icon and the count alone: `true` always, `"phone"` from 600px down; the label stays its accessible name.
+ * @param {string} [props.className] Extra class names on the root element.
  */
-function ToolbarFilters({ fields, onReset, label = "Filters" }) {
+function ToolbarFilters({ fields, onReset, label = "Filters", framed = false, compact = false, className }) {
   const [open, setOpen] = React.useState(false);
   const name = React.useId();
 
@@ -226,12 +230,14 @@ function ToolbarFilters({ fields, onReset, label = "Filters" }) {
   };
 
   return (
-    <div className="k-toolbar-filter">
+    <div className={"k-toolbar-filter" + (framed ? " k-toolbar-filter--framed" : "")
+      + (compact === true ? " k-toolbar-filter--compact" : compact === "phone" ? " k-toolbar-filter--compact-phone" : "")
+      + (className ? " " + className : "")}>
       <Popover open={open} onOpenChange={setOpen} label={label} className="k-toolbar-filter__menu"
         trigger={(
           <button type="button"
             className={"k-toolbar-btn k-toolbar-filter__trigger" + (open ? " k-toolbar-btn--on" : "")}
-            title="Filters">
+            title="Filters" aria-label={label}>
             <Icon name="sliders-horizontal" size={14} />
             <span>{label}</span>
             {active.length > 0 && <span className="k-toolbar-filter__badge">{active.length}</span>}

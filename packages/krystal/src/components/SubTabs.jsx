@@ -9,14 +9,17 @@ import { Pill } from "./Pill.jsx";
 // "SubTabs is not defined" crash the host deep-dive hit once it rendered with
 // real telemetry).
 // A tab may carry an optional `title` for a hover hint (the leaf config page puts each leaf's
-// role there). Everything else is unchanged.
+// role there). A tab with `disabled` is dimmed and cannot be chosen, in the strip and in the select.
+// `fill` makes the phone select take the whole line of the flex row it stands in, so the controls
+// beside the tabs wrap under it.
 /**
  * @param {object} props
- * @param {{ id: string, label: import("react").ReactNode, icon?: string, title?: string, badge?: number, badgeTone?: "info" | "neutral" | "accent" | "ok" | "warn" | "danger" | "muted", badgeNoun?: string }[]} props.tabs The tabs, each `{ id, label, icon, title, badge, badgeTone, badgeNoun }`; `title` is a hover hint and `badgeNoun` names what the badge counts.
+ * @param {{ id: string, label: import("react").ReactNode, icon?: string, title?: string, badge?: number, badgeTone?: "info" | "neutral" | "accent" | "ok" | "warn" | "danger" | "muted", badgeNoun?: string, disabled?: boolean }[]} props.tabs The tabs, each `{ id, label, icon, title, badge, badgeTone, badgeNoun, disabled }`; `title` is a hover hint, `badgeNoun` names what the badge counts and `disabled` dims the tab and blocks it.
  * @param {string} props.active The active tab's id.
  * @param {(id: string) => void} props.onChange Receives the id of the tab the person chose.
+ * @param {boolean} [props.fill] The phone select takes the whole line of its flex row.
  */
-export function SubTabs({ tabs, active, onChange }) {
+export function SubTabs({ tabs, active, onChange, fill = false }) {
   const current = tabs.find(t => t.id === active) || tabs[0];
   return (
     <>
@@ -25,6 +28,7 @@ export function SubTabs({ tabs, active, onChange }) {
           <button key={t.id}
             className={"k-subtab" + (t.id === active ? " k-subtab--active" : "")}
             onClick={() => onChange(t.id)}
+            disabled={t.disabled}
             title={t.title}>
             <Icon name={t.icon} size={14} />
             {t.label}
@@ -32,7 +36,7 @@ export function SubTabs({ tabs, active, onChange }) {
           </button>
         ))}
       </div>
-      <label className="k-subtabs-mobile" aria-label="Section">
+      <label className={"k-subtabs-mobile" + (fill ? " k-subtabs-mobile--fill" : "")} aria-label="Section">
         <Icon name={current.icon} size={16} />
         <span className="k-subtabs-mobile__label">{current.label}</span>
         {/* The badge's noun is the tab's own, because a badge counts whatever that tab holds — alerts
@@ -40,7 +44,7 @@ export function SubTabs({ tabs, active, onChange }) {
             name something that is not there. */}
         <select value={active} onChange={e => onChange(e.target.value)}>
           {tabs.map(t => (
-            <option key={t.id} value={t.id}>
+            <option key={t.id} value={t.id} disabled={t.disabled}>
               {t.label}
               {t.badge ? " · " + t.badge + " " + (t.badgeNoun || "alert") + (t.badge === 1 ? "" : "s") : ""}
             </option>

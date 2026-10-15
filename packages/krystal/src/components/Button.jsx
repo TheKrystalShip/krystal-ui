@@ -26,6 +26,8 @@ import { Tooltip } from "./Tooltip.jsx";
 // Sizes share their heights with `Input` so a field and its button sit on one line: xs 26, sm 30,
 // md 34, lg 38, xl 46. Phones raise `md` to a 40px touch target.
 //
+// `wide` fills the container; `grow` takes the room the row has left, beside buttons that keep theirs.
+//
 // `icon` is a Lucide name or a node. `busy` swaps the icon for a spinner and holds the button
 // disabled while keeping it readable, because its label is still saying what is happening.
 // `pressed` makes it a two-state button (aria-pressed). `armed` is a confirm-first button waiting
@@ -55,6 +57,7 @@ function glyph(icon, size, className) {
  * @property {boolean} [pressed] Makes it a two-state button (aria-pressed).
  * @property {boolean} [armed] A confirm-first button waiting for its second press.
  * @property {boolean} [wide] Fills its container.
+ * @property {boolean} [grow] Takes the room its row has left (`flex: 1`), beside buttons that keep their size.
  * @property {string} [href] Renders a link that looks like a button.
  * @property {"button" | "submit" | "reset"} [type] The native button type.
  * @property {boolean} [disabled] Blocks activation and dims the button.
@@ -65,12 +68,13 @@ function glyph(icon, size, className) {
 /** @type {import("react").ForwardRefExoticComponent<ButtonProps & import("react").RefAttributes<HTMLButtonElement>>} */
 const Button = React.forwardRef(function Button({
   variant = "secondary", size = "md", tone, icon, iconRight, busy = false, pressed, armed = false,
-  wide = false, href, type = "button", disabled, className, children, ...rest
+  wide = false, grow = false, href, type = "button", disabled, className, children, ...rest
 }, ref) {
   const s = ICON_SIZE[size] || ICON_SIZE.md;
   const cls = "k-btn k-btn--" + variant + (variant === "bare" ? "" : " k-btn--" + size)
     + (tone ? " k-btn--tone-" + tone : "")
     + (wide ? " k-btn--wide" : "")
+    + (grow ? " k-btn--grow" : "")
     + (armed ? " k-is-armed" : "")
     + (children == null || children === false ? " k-btn--icon" : "")
     + (className ? " " + className : "");

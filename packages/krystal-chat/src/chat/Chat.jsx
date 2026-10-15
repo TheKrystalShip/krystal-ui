@@ -325,7 +325,8 @@ function Chat({
   // A page's header draws its rule only once the thread has scrolled under it.
   const [lifted, setLifted]     = React.useState(false);
   // Whether the person is writing, on a page: the site's tab bar gives its room to the keyboard then
-  // (`body.k-chat-typing`, tabbar.css).
+  // (`body.k-chat-typing`, tabbar.css). A site hides its own bottom furniture while it is set with
+  // `body[data-chat-typing]`.
   const [typing, setTyping]     = React.useState(false);
   const pressingRef = React.useRef(false);
   React.useEffect(() => {
@@ -344,7 +345,11 @@ function Chat({
   React.useEffect(() => {
     if (!asPage || !typing) return undefined;
     document.body.classList.add("k-chat-typing");
-    return () => document.body.classList.remove("k-chat-typing");
+    document.body.dataset.chatTyping = "";
+    return () => {
+      document.body.classList.remove("k-chat-typing");
+      delete document.body.dataset.chatTyping;
+    };
   }, [asPage, typing]);
   // A page lays the keyboard over itself rather than letting it resize the viewport, so the page
   // decides what moves: the composer rises by the keyboard's height (`env(keyboard-inset-height)`,

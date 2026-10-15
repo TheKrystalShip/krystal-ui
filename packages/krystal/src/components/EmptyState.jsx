@@ -5,6 +5,8 @@ import { Icon } from "./Icon.jsx";
 // accent, warn or danger. `detail` is a block of monospace text under the copy, for the error a
 // failure screen quotes.
 //
+// `spin` turns the icon, for a place that is waiting for what it will show.
+//
 // `page` makes it the whole screen — centred on the canvas, on a card — for a site that has nothing
 // else to draw: signed out, no access, crashed. Without it, it centres in whatever holds it.
 /**
@@ -14,14 +16,15 @@ import { Icon } from "./Icon.jsx";
  * @param {"neutral" | "accent" | "warn" | "danger"} [props.tone] Colours the icon disc.
  * @param {import("react").ReactNode} [props.detail] Monospace text under the copy.
  * @param {import("react").ReactNode} [props.actions] Controls beneath the copy.
+ * @param {boolean} [props.spin] Turns the icon, for a state that is waiting; still under reduced motion.
  * @param {boolean} [props.page] Fills the whole screen on a card.
  * @param {string} [props.className] Class name added to the root element.
  * @param {import("react").ReactNode} [props.children] A line or two of copy under the title.
  */
-function EmptyState({ icon, title, tone = "neutral", detail, actions, page = false, className, children }) {
+function EmptyState({ icon, title, tone = "neutral", detail, actions, spin = false, page = false, className, children }) {
   const body = (
     <div className={"k-empty k-empty--" + tone + (page ? " k-empty--card" : "") + (className && !page ? " " + className : "")}>
-      {icon && <span className="k-empty__icon"><Icon name={icon} size={page ? 28 : 22} /></span>}
+      {icon && <span className={"k-empty__icon" + (spin ? " k-is-spinning" : "")}><Icon name={icon} size={page ? 28 : 22} /></span>}
       {title && <h2 className="k-empty__title">{title}</h2>}
       {children && <div className="k-empty__body">{children}</div>}
       {detail && <pre className="k-empty__detail">{detail}</pre>}

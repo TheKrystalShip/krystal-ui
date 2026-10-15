@@ -26,7 +26,9 @@ import { Icon } from "./Icon.jsx";
 // tab order and from assistive technology, so state inside it survives.
 //
 // `variant` is `framed` (a bordered card; an Accordion draws its Disclosures as one bordered group)
-// or `plain` (a section head with a rule under it, for a heading over a long list).
+// or `plain` (a section head with a rule under it, for a heading over a long list). The summary lays
+// its children out in a row with a 10px gap (a tile and a name, a name and a count), and `flush`
+// takes the padding off the content, for a body that brings its own.
 const AccordionContext = React.createContext(null);
 
 /**
@@ -40,6 +42,7 @@ const AccordionContext = React.createContext(null);
  * @property {(open: boolean) => void} [onOpenChange] Receives the next open state.
  * @property {string | number} [value] The name inside an Accordion.
  * @property {boolean} [disabled] Keeps the summary from toggling.
+ * @property {boolean} [flush] The content has no padding, for a body that brings its own.
  * @property {"start" | "end"} [caret] Where the chevron sits in the row; start by default.
  * @property {"framed" | "plain"} [variant] `framed` is a bordered card, `plain` a section head with a rule under it; framed by default.
  * @property {string} [className] Class name added to the root element.
@@ -49,7 +52,7 @@ const AccordionContext = React.createContext(null);
 /** @type {import("react").ForwardRefExoticComponent<DisclosureProps & import("react").RefAttributes<HTMLDivElement>>} */
 const Disclosure = React.forwardRef(function Disclosure({
   summary, icon, aside, level = 3, open, defaultOpen = false, onOpenChange, value, disabled = false,
-  caret = "start", variant, className, children, ...rest
+  caret = "start", flush = false, variant, className, children, ...rest
 }, ref) {
   const ownId = React.useId();
   const group = React.useContext(AccordionContext);
@@ -68,7 +71,7 @@ const Disclosure = React.forwardRef(function Disclosure({
   const Heading = /** @type {"h3"} */ ("h" + Math.min(6, Math.max(1, level)));
   const chevron = <Icon name="chevron-right" size={16} className="k-disclosure__caret" />;
   const cls = "k-disclosure k-disclosure--" + shape + (group && shape === "framed" ? " k-disclosure--grouped" : "")
-    + (isOpen ? " k-is-open" : "") + (disabled ? " k-is-disabled" : "") + (className ? " " + className : "");
+    + (isOpen ? " k-is-open" : "") + (disabled ? " k-is-disabled" : "") + (flush ? " k-disclosure--flush" : "") + (className ? " " + className : "");
   return (
     <div ref={ref} className={cls} {...rest}>
       <Heading className="k-disclosure__heading">

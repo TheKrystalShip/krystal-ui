@@ -6,7 +6,7 @@
 
 @layer krystal.components {
 /* The card is a container (`showcase`), so a site can fit its facts to the card's own width — a site
-   whose values are long lets their icons (`.k-showcase-spec__ico`) go on a narrow card. */
+   whose values are long lets their icons go on a narrow card, as below 210px they do by default. */
 .k-showcase-card {
   container-type: inline-size;
   container-name: showcase;
@@ -118,6 +118,27 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Inside a disabled fieldset the card's own controls step back, as the buttons in it do. */
+fieldset:disabled .k-showcase-card__tool,
+fieldset:disabled .k-showcase-card__cta--act {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.k-showcase-card__corner--neutral {
+  border-color: var(--border-strong);
+  color: var(--fg-1);
+}
+
+.k-showcase-card__corner--accent {
+  border-color: var(--border-accent);
+  color: var(--krystal-teal);
+}
+
+.k-showcase-card__corner--mono {
+  font-family: var(--font-mono);
 }
 
 .k-showcase-card__corner svg {
@@ -296,7 +317,7 @@
   bottom: 0;
   z-index: 2;
   height: 4px;
-  background: var(--art-line-strong);
+  background: var(--k-showcase-progress-track, var(--art-line-strong));
 }
 
 .k-showcase-card__progress > span {
@@ -389,6 +410,18 @@
   color: var(--fg-3);
 }
 
+/* A narrow card keeps each fact's value and lets its icon go, so the values do not run into one
+   another. */
+@container showcase (max-width: 210px) {
+  .k-showcase-spec__ico {
+    display: none;
+  }
+
+  .k-showcase-spec {
+    padding: 0 3px;
+  }
+}
+
 .k-showcase-card__foot {
   display: flex;
   align-items: center;
@@ -406,6 +439,12 @@
   font-size: 12px;
   color: var(--fg-3);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.k-showcase-card__status-text {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
 }

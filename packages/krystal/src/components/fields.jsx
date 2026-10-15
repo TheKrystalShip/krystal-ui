@@ -9,7 +9,8 @@ import { IconButton } from "./Button.jsx";
 
 // Input — a single-line field. Sizes share Button's heights (sm 30, md 34, lg 38) so a field and its
 // button sit on one line. `mono` for an identifier, a path, a port; `wide` fills its container;
-// `invalid` marks it (aria-invalid) with the danger border.
+// `invalid` marks it (aria-invalid) with the danger border. `narrow` is a handful of digits wide (a
+// number; wider by its affixes) and `align="end"` sets what is typed against the right, for a number.
 //
 // `prefix` and `suffix` are words or marks inside the field's frame, before and after what is typed —
 // the unit a number is in, the domain a name is completed with. The frame then draws the field and
@@ -19,6 +20,8 @@ import { IconButton } from "./Button.jsx";
  * @property {"sm" | "md" | "lg"} [size] Height step shared with Button: `sm`, `md` or `lg`.
  * @property {boolean} [mono] Monospace, for an identifier, a path, a port.
  * @property {boolean} [wide] Fills its container.
+ * @property {boolean} [narrow] A handful of digits wide, for a number; its prefix and suffix make it wider.
+ * @property {"start" | "end"} [align] Where what is typed sits: `start` (the default) or `end`, for a number.
  * @property {boolean} [invalid] Danger border and aria-invalid.
  * @property {import("react").ReactNode} [prefix] Inside the frame, before what is typed.
  * @property {import("react").ReactNode} [suffix] Inside the frame, after what is typed.
@@ -27,10 +30,12 @@ import { IconButton } from "./Button.jsx";
  */
 /** @type {import("react").ForwardRefExoticComponent<InputProps & import("react").RefAttributes<HTMLInputElement>>} */
 const Input = React.forwardRef(function Input(
-  { size = "md", mono = false, wide = false, invalid = false, prefix, suffix, className, ...rest }, ref) {
+  { size = "md", mono = false, wide = false, narrow = false, align = "start", invalid = false, prefix, suffix, className, ...rest }, ref) {
   const cls = "k-input k-input--" + size
     + (mono ? " k-input--mono" : "")
     + (wide ? " k-input--wide" : "")
+    + (narrow ? " k-input--narrow" : "")
+    + (align === "end" ? " k-input--end" : "")
     + (className ? " " + className : "");
   if (prefix == null && suffix == null) {
     return <input ref={ref} className={cls} aria-invalid={invalid || undefined} {...rest} />;

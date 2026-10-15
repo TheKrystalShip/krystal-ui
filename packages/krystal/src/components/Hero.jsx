@@ -52,7 +52,9 @@ function Hero({ art, variant = "cinematic", className, children }) {
 //   HeroGroup     buttons in a row inside the bar
 //   HeroDivider   a rule between two groups
 //   HeroNote      a line set directly on the art, under the bar: an optional `icon`, a warning tone
-//   HeroButton    a bar button: `icon` and its words, any button prop
+//   HeroButton    a bar button: `icon` and its words, any button prop; `iconTone` colours the icon alone
+//                 (ok, warn, danger, info or update), `armed` inverts the button while it waits for a
+//                 second press
 // Anything else placed directly on the art takes the class `k-hero__on-art` to keep the art's light
 // palette.
 
@@ -132,12 +134,15 @@ function HeroNote({ icon, className, children, ...rest }) {
 /**
  * @typedef {object} HeroButtonOwnProps
  * @property {string} [icon] A Lucide name before the words.
+ * @property {"ok" | "warn" | "danger" | "info" | "update"} [iconTone] Colours the icon alone, as a verb's consequence.
+ * @property {boolean} [armed] Inverts the button while it waits for a second press.
  * @typedef {HeroButtonOwnProps & Omit<import("react").ComponentPropsWithoutRef<"button">, keyof HeroButtonOwnProps>} HeroButtonProps
  */
 /** @type {import("react").ForwardRefExoticComponent<HeroButtonProps & import("react").RefAttributes<HTMLButtonElement>>} */
-const HeroButton = React.forwardRef(function HeroButton({ icon, className, children, type = "button", ...rest }, ref) {
+const HeroButton = React.forwardRef(function HeroButton({ icon, iconTone, armed = false, className, children, type = "button", ...rest }, ref) {
   return (
-    <button {...rest} ref={ref} type={type} className={"k-hero-btn" + (className ? " " + className : "")}>
+    <button {...rest} ref={ref} type={type}
+      className={"k-hero-btn" + (iconTone ? " k-hero-btn--" + iconTone : "") + (armed ? " k-is-armed" : "") + (className ? " " + className : "")}>
       {icon && <Icon name={icon} size={13} strokeWidth={2.2} className="k-hero-btn__icon" />}
       {children}
     </button>

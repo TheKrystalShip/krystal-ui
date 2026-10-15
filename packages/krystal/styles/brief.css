@@ -50,8 +50,8 @@
 .k-brief__head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
+  gap: var(--k-brief-head-gap, 10px);
+  padding: var(--k-brief-head-padding, 10px 14px);
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -98,6 +98,56 @@
   text-transform: uppercase;
   color: var(--fg-2);
   flex: 1;
+}
+
+/* A figure in the head, after the title. */
+.k-brief__value {
+  flex: none;
+  white-space: nowrap;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--fg-1);
+}
+
+/* A wrapping head: the title takes its own length, so what does not fit beside it drops under it. */
+.k-brief--wrap .k-brief__head {
+  flex-wrap: wrap;
+  row-gap: 2px;
+}
+
+.k-brief--wrap .k-brief__title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* A card that fills the height it is given. */
+.k-brief--fill {
+  display: flex;
+  flex-direction: column;
+}
+
+.k-brief--fill > .k-brief__list,
+.k-brief--fill > .k-brief__empty {
+  flex: 1;
+}
+
+/* The pin appears with the card's attention. */
+.k-brief__pin {
+  display: inline-flex;
+  opacity: 0;
+  transition: opacity var(--d-fast) var(--ease-out);
+}
+
+.k-brief:hover .k-brief__pin,
+.k-brief:focus-within .k-brief__pin,
+.k-brief__pin:has([aria-pressed="true"]) {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .k-brief__pin {
+    opacity: 1;
+  }
 }
 
 .k-brief__hide {
@@ -276,6 +326,21 @@
 
 .k-brief__item:hover .k-brief__ask {
   text-decoration: underline;
+}
+
+/* A row that is not available: nothing to hover, and its ask is quiet. */
+.k-brief__list .k-brief__item.k-is-disabled {
+  cursor: default;
+}
+
+.k-brief__list .k-brief__item.k-is-disabled:hover {
+  background: transparent;
+}
+
+.k-brief__item.k-is-disabled .k-brief__ask,
+.k-brief__item.k-is-disabled:hover .k-brief__ask {
+  color: var(--fg-4);
+  text-decoration: none;
 }
 
 .k-brief__dismiss {

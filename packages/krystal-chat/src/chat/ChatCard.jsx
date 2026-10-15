@@ -124,10 +124,11 @@ function ChatCardRow({ label, value, verdict, verdictLabel, mono = false, valueM
 // The rows' frame under the card's head.
 /**
  * @param {object} props
+ * @param {boolean} [props.flush] No padding: the rows run to the card's edges (rows that bring their own).
  * @param {import("react").ReactNode} [props.children] The `ChatCardRow`s of the group.
  */
-function ChatCardRows({ children }) {
-  return <div className="k-chat-card-rows">{children}</div>;
+function ChatCardRows({ flush = false, children }) {
+  return <div className={"k-chat-card-rows" + (flush ? " k-chat-card-rows--flush" : "")}>{children}</div>;
 }
 
 export { ChatCard, ChatCardRow, ChatCardRows, ConfidenceBadge };

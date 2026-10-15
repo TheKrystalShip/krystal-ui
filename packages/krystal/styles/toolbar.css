@@ -184,6 +184,39 @@
   position: relative;
 }
 
+/* Framed: the button wears a field's frame and stretches to the row it stands in. */
+.k-toolbar-filter--framed {
+  align-self: stretch;
+  align-items: stretch;
+}
+
+.k-toolbar-filter--framed .k-toolbar-filter__trigger {
+  height: auto;
+  padding: 0 18px;
+  font-size: 14px;
+  border: var(--edge-strong);
+  border-radius: var(--r-md);
+}
+
+/* Compact: the icon and the count, the label kept as the accessible name. */
+.k-toolbar-filter--compact .k-toolbar-filter__trigger {
+  justify-content: center;
+}
+
+.k-toolbar-filter--compact .k-toolbar-filter__trigger > span:not(.k-toolbar-filter__badge) {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .k-toolbar-filter--compact-phone .k-toolbar-filter__trigger {
+    justify-content: center;
+  }
+
+  .k-toolbar-filter--compact-phone .k-toolbar-filter__trigger > span:not(.k-toolbar-filter__badge) {
+    display: none;
+  }
+}
+
 .k-toolbar-filter__badge {
   min-width: 18px;
   height: 18px;

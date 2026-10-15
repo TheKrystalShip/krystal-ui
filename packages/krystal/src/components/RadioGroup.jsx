@@ -22,6 +22,7 @@ import { Icon } from "./Icon.jsx";
 //                discs, for a colour that is not in the palette: it is marked when `value` is none
 //                of the options, and `onChange` receives its `#rrggbb`
 //   size         sm or md (default)
+//   fill         the group takes its container's width and its options share it equally
 //   label        the group's accessible name, for one whose heading is drawn elsewhere
 //
 // `disabled` makes every option inert; an option is disabled by its own `disabled`.
@@ -44,6 +45,7 @@ import { Icon } from "./Icon.jsx";
  * @property {"radio" | "segmented" | "swatch"} [variant] `radio` draws a dot before each label; `segmented` draws one framed strip with the chosen option filled; `swatch` draws each option as a disc of its `color`.
  * @property {string} [picker] With `variant="swatch"`, draws a ColorInput after the discs, named by this text.
  * @property {"sm" | "md"} [size] `sm` or `md`.
+ * @property {boolean} [fill] The group takes its container's width, and its options share it equally.
  * @property {string} [label] The group's accessible name.
  * @property {boolean} [disabled] Makes every option inert.
  * @property {string} [className] Extra class names on the group.
@@ -51,7 +53,7 @@ import { Icon } from "./Icon.jsx";
  */
 /** @type {import("react").ForwardRefExoticComponent<RadioGroupProps & import("react").RefAttributes<HTMLDivElement>>} */
 const RadioGroup = React.forwardRef(function RadioGroup({
-  options, value, onChange, orientation = "horizontal", variant = "radio", size = "md", label,
+  options, value, onChange, orientation = "horizontal", variant = "radio", size = "md", fill = false, label,
   disabled = false, picker, className, onKeyDown, ...rest
 }, ref) {
   const own = React.useRef(null);
@@ -90,7 +92,7 @@ const RadioGroup = React.forwardRef(function RadioGroup({
   };
 
   const cls = "k-radios k-radios--" + variant + " k-radios--" + orientation + " k-radios--" + size
-    + (className ? " " + className : "");
+    + (fill ? " k-radios--fill" : "") + (className ? " " + className : "");
   return (
     <div ref={setRef} role="radiogroup" aria-label={label} aria-disabled={disabled || undefined}
       aria-orientation={orientation} className={cls} onKeyDown={keys} {...rest}>

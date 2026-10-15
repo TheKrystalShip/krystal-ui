@@ -37,6 +37,9 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--fg-1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .k-menu__item {
@@ -106,6 +109,9 @@
 .k-menu__label {
   flex: 1;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .k-menu__sub {

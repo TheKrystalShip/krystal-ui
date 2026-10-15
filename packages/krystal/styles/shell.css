@@ -28,6 +28,9 @@
      they respond to a pinned dock narrowing the page. */
   container-type: inline-size;
   container-name: appmain;
+  /* The column keeps its scrollbar's room whether or not the page is taller than the screen, so a page
+     growing past it, or shrinking back, never moves sideways. */
+  scrollbar-gutter: stable;
   /* The page's side gutter, equal on both sides. A page reads it as var(--k-page-gutter); the
      column pads by it, so the page's own column needs no inline padding. */
   --k-page-gutter: 24px;

@@ -53,6 +53,24 @@
 }
 
 /* The accent's fill holds dark ink here: light ink on it does not read from a sofa. */
+/* A row of actions is one height, whatever size each button's own component asks for. */
+:root[data-tv] .k-tv-spot__actions .k-btn {
+  height: 40px;
+  padding: 0 18px;
+  gap: 8px;
+  font-size: var(--text-md);
+}
+
+:root[data-tv] .k-tv-spot__actions .k-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+:root[data-tv] .k-menu__item:focus-visible :is(.k-menu__aside, .k-menu__sub) {
+  color: inherit;
+  opacity: 0.75;
+}
+
 :root[data-tv] .k-btn--primary {
   color: var(--fg-inverse);
 }
@@ -270,14 +288,17 @@
   line-height: var(--lh-normal);
   color: var(--fg-2);
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: var(--tv-overview-lines, 3);
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
 .k-tv-spot--md .k-tv-spot__overview {
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: var(--tv-overview-lines, 2);
 }
+
+.k-tv-spot--title-sm .k-tv-spot__title { font-size: var(--text-4xl); }
+.k-tv-spot--title-lg .k-tv-spot__title { font-size: var(--text-5xl); }
 
 .k-tv-spot__credit {
   font-size: var(--text-sm);
@@ -465,9 +486,12 @@
   opacity: 1;
 }
 
-/* With focus in a row its other cards step back; `.k-tv-dim` does the same for a whole page. */
+/* With focus in a row its other cards step back; `data-tv-dim` on any ancestor does the same for
+   everything under it, and a card's `dimmed` for that card alone. */
 .k-tv-row__track:focus-within .k-tv-card:not(:focus-visible),
-.k-tv-dim .k-tv-card:not(:focus-visible) {
+.k-tv-dim .k-tv-card:not(:focus-visible),
+[data-tv-dim] .k-tv-card:not(:focus-visible),
+.k-tv-card.k-is-dimmed:not(:focus-visible) {
   opacity: var(--tv-dim);
 }
 

@@ -15,6 +15,11 @@
   background: var(--k-dot);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--k-dot) 16%, transparent),
     0 0 7px color-mix(in srgb, var(--k-dot) 50%, transparent);
+  transition: background-color 0.55s ease, box-shadow 0.55s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-dot { transition: none; }
 }
 
 .k-dot--sm {

@@ -45,6 +45,11 @@
   display: none;
 }
 
+.k-subtab:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 /* Sub-tab count badge; Pill draws it. */
 .k-subtab__badge {
   margin-left: 6px;
@@ -56,6 +61,10 @@
      Android show their native picker. */
   .k-subtabs {
     display: none;
+  }
+
+  .k-subtabs-mobile--fill {
+    flex: 1 1 100%;
   }
 
   .k-subtabs-mobile {

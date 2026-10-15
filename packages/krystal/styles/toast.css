@@ -6,12 +6,16 @@
 
 /* ---- the live stack ---------------------------------------------------- */
 
+/* Where the stack stands: `--k-toasts-bottom` and `--k-toasts-top`, set on `body` or any ancestor, move it
+   (a site raising it above its own strip, or putting it at the top while something covers the
+   bottom); `--k-app-bottom-inset` raises it with everything else along the bottom. */
 .k-toasts {
   position: fixed;
   z-index: 90;
   right: 24px;
   /* Clear of the assistant FAB, which owns the bottom-right corner. */
-  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  bottom: var(--k-toasts-bottom, calc(96px + env(safe-area-inset-bottom, 0px) + var(--k-app-bottom-inset, 0px)));
+  top: var(--k-toasts-top, auto);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -251,7 +255,7 @@
     left: 12px;
     width: auto;
     /* Centred and clear of the FAB, which sits lower-right on a phone too. */
-    bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+    bottom: var(--k-toasts-bottom, calc(84px + env(safe-area-inset-bottom, 0px) + var(--k-app-bottom-inset, 0px)));
   }
 }
 }

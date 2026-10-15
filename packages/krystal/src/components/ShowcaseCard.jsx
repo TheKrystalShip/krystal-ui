@@ -9,7 +9,8 @@ import { Pill } from "./Pill.jsx";
 //            surface the card already has
 //   eyebrow  { label, icon?, tone?: "accent" }   what kind of thing it is, a short line set on the
 //            art above the name
-//   corner   { label, icon?, title? }   a caution chip on the art's top-left
+//   corner   { label, icon?, title?, tone?: "neutral" | "accent", mono? }   a frosted chip on the art's top-left: a
+//            caution by default, `neutral` or `accent` for a fact that is not one, `mono` for figures
 //   badge   { label, tone: "accent" | "info", dot?: "idle" | "live", title? }   the art's top-right
 //   specs    [{ icon, value, label }]   a null value reads as an em-dash, muted
 //   status   { label, icon?, tone?: "success" | "warning" | "notice" | "active", live?, title? }
@@ -27,6 +28,8 @@ import { Pill } from "./Pill.jsx";
 //            otherwise shown like the tools. `onClick` gets the press's event, whose `currentTarget`
 //            is the ribbon, for anything drawn beside it. A `corner` moves over to make room
 //
+// `--k-showcase-progress-track`, set on the card or an ancestor, is the colour of the bar's empty part.
+//
 // A status left out still keeps its line, so a card with nothing to say is as tall as one that has.
 /**
  * @typedef {object} ShowcaseCardProps
@@ -34,7 +37,7 @@ import { Pill } from "./Pill.jsx";
  * @property {string} [art] A CSS background-image value.
  * @property {() => void} [onPick] Opens the thing.
  * @property {{ label: import("react").ReactNode, icon?: string, tone?: "accent" }} [eyebrow] What kind of thing it is, over the name.
- * @property {{ label: import("react").ReactNode, icon?: string, title?: string }} [corner] A caution chip on the art's top-left.
+ * @property {{ label: import("react").ReactNode, icon?: string, title?: string, tone?: "neutral" | "accent", mono?: boolean }} [corner] A frosted chip on the art's top-left: a caution, or `neutral` or `accent` tone; `mono` sets it in the monospace face.
  * @property {{ label: import("react").ReactNode, tone?: "accent" | "info", dot?: "idle" | "live", title?: string }} [badge] The art's top-right.
  * @property {{ icon?: string, value: import("react").ReactNode | null, label: string }[]} [specs] A null value reads as an em-dash.
  * @property {{ label: import("react").ReactNode, icon?: string, tone?: "success" | "warning" | "notice" | "active", live?: boolean, title?: string }} [status] The foot's one status line; a card without one keeps the line's height.
@@ -75,7 +78,7 @@ function ShowcaseCard({ name, art, onPick, eyebrow, corner, badge, specs = [], s
           </button>
         )}
         {corner && (
-          <span className="k-showcase-card__corner" title={corner.title}>
+          <span className={"k-showcase-card__corner" + (corner.tone ? " k-showcase-card__corner--" + corner.tone : "") + (corner.mono ? " k-showcase-card__corner--mono" : "")} title={corner.title}>
             {corner.icon && <Icon name={corner.icon} size={11} strokeWidth={2.1} />} {corner.label}
           </span>
         )}
@@ -144,7 +147,7 @@ function ShowcaseCard({ name, art, onPick, eyebrow, corner, badge, specs = [], s
           <span className={"k-showcase-card__status" + (status.tone ? " k-showcase-card__status--" + status.tone : "")} title={status.title}>
             {status.live && <span className="k-showcase-card__livedot"></span>}
             {status.icon && <Icon name={status.icon} size={11} />}
-            {status.label}
+            <span className="k-showcase-card__status-text">{status.label}</span>
           </span>
         ) : <span className="k-showcase-card__status"></span>}
         {action && (action.onClick ? (

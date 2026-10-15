@@ -59,6 +59,10 @@
   width: 100%;
 }
 
+.k-btn--grow {
+  flex: 1 1 auto;
+}
+
 /* primary — the accent fill */
 .k-btn--primary {
   background: var(--krystal-teal);
@@ -419,6 +423,20 @@
 
 .k-input--wide {
   width: 100%;
+}
+
+/* A number's width: a few digits, and the affixes on top. */
+.k-input--narrow {
+  width: 92px;
+}
+
+.k-input--narrow.k-input--affixed {
+  width: 124px;
+}
+
+.k-input--end,
+.k-input--end .k-input__el {
+  text-align: end;
 }
 
 .k-input[type="number"],
@@ -833,6 +851,10 @@
   flex: 0 1 auto;
   height: 100%;
   transition: width var(--d-slow) var(--ease-out);
+}
+
+.k-meter.k-is-stale .k-meter__fill {
+  opacity: 0.45;
 }
 
 .k-meter__fill.k-is-some {

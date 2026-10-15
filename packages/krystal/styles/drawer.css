@@ -171,6 +171,17 @@
   border-top: 1px solid var(--border-subtle);
 }
 
+.k-drawer__foot.k-foot--stack {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.k-drawer__foot.k-foot--pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
 @keyframes k-drawer-from-bottom { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes k-drawer-from-right { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes k-drawer-from-left { from { transform: translateX(-40px); opacity: 0; } to { transform: none; opacity: 1; } }

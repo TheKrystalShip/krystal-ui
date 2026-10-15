@@ -16,6 +16,10 @@
   padding: 2px 12px;
 }
 
+.k-chat-card-rows--flush {
+  padding: 0;
+}
+
 /* Label and value hold the two named columns; a verdict mark or a button takes one more at the end.
    The label column is 150px so short labels line up down a card, and grows for a longer one: a label
    is often an identifier (a config key), and one broken mid-word no longer reads as itself. */
