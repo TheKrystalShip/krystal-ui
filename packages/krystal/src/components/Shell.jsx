@@ -198,7 +198,9 @@ function SidebarGroup({ label, children }) {
 
 // One link. `badge` is a count drawn after the label when it is above zero, in a `tone` of info,
 // warn or danger; on the collapsed rail it becomes a pip on the icon. `tip` is what the rail's
-// tooltip says, defaulting to the label.
+// tooltip says, defaulting to the label. A row that opens something (a popover, a panel) passes
+// `role="button"` with `aria-haspopup` and `aria-expanded`, and an `aria-label` that carries what
+// the badge says; every other prop reaches the root.
 /**
  * @param {object} props
  * @param {string} props.icon A Lucide name.
@@ -209,21 +211,25 @@ function SidebarGroup({ label, children }) {
  * @param {"info" | "warn" | "danger"} [props.tone] `info`, `warn` or `danger`; colours the badge.
  * @param {string} [props.tip] The rail tooltip; the label by default.
  * @param {number} [props.iconSize] The icon's size in pixels.
+ * @param {"link" | "button"} [props.role] The row's role: `link` (the default) for a page, `button` for a row that acts.
+ * @param {string} [props.className] Extra class names on the root element.
+ * @param {Record<string, any>} [props.rest] Any other prop (`aria-*`, `data-*`, `id`) reaches the root element.
  */
-function NavItem({ icon, label, active, onClick, badge = 0, tone = "info", tip, iconSize = 16 }) {
+function NavItem({ icon, label, active, onClick, badge = 0, tone = "info", tip, iconSize = 16, role = "link", className, ...rest }) {
   const onKeyDown = (e) => {
     if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick && onClick(e); }
   };
   return (
     <div
-      className={"k-nav-item" + (active ? " k-nav-item--active" : "")}
+      data-tip={tip || label}
+      aria-label={label}
+      {...rest}
+      className={"k-nav-item" + (active ? " k-nav-item--active" : "") + (className ? " " + className : "")}
       onClick={onClick}
       onKeyDown={onKeyDown}
-      role="link"
+      role={role}
       tabIndex={0}
-      aria-current={active ? "page" : undefined}
-      data-tip={tip || label}
-      aria-label={label}>
+      aria-current={active && role === "link" ? "page" : undefined}>
       <Icon name={icon} size={iconSize} />
       <span className="k-nav-item__label">{label}</span>
       {badge > 0 && <Pill tone={tone === "info" ? "neutral" : tone} className={"k-nav-item__badge k-nav-item__badge--" + tone}>{badge}</Pill>}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Dialog, TvCard, TvRow, TvTile, useSpatialFocus } from "@thekrystalship/krystal";
+import { Avatar, Button, Dialog, TvCard, TvHeading, TvRow, TvSpotlight, TvTile, useSpatialFocus } from "@thekrystalship/krystal";
 import { Section, Sub } from "../kit.jsx";
 
 const rows = [
@@ -67,6 +67,21 @@ export default function TvFocusSection() {
         </label>
         <div id="tv-focus-demo" style={{ display: "flex", gap: 20, maxWidth: 760, overflow: "hidden" }}>
           {on ? <Demo /> : <span style={{ opacity: 0.6 }}>Off.</span>}
+        </div>
+      </Sub>
+      <Sub title="TvSpotlight overview and actions, TvHeading (lg with a lead, sm), TvRow lead and trackClassName">
+        <div style={{ display: "grid", gap: 16, maxWidth: 760, "--tv-poster-w": "90px", "--tv-poster-h": "135px", "--tv-gap": "12px", "--tv-margin-x": "6px", "--tv-dim": 0.7 }}>
+          <TvSpotlight eyebrow="Series" title="A long-running show" meta="2019 · 4 seasons"
+            overview="A few lines of story that the spotlight clamps so a long overview never pushes the row below it off the page."
+            actions={<><Button variant="primary" size="lg" icon="play">Watch</Button><Button size="lg" variant="outline">Save</Button></>}>
+            <span style={{ color: "var(--fg-3)" }}>Progress line after the actions</span>
+          </TvSpotlight>
+          <TvHeading size="lg" as="h2" eyebrow="Known for acting" title="Ada Lovelace" count={12}
+            lead={<Avatar name="Ada Lovelace" tone="muted" size={72} />} />
+          <TvRow title="Episodes" count={3}
+            lead={<div style={{ display: "flex", gap: 8, padding: "10px 6px" }}><Button size="sm" variant="outline">Season 1</Button><Button size="sm" variant="ghost">Season 2</Button></div>}>
+            {[1, 2, 3].map((i) => <TvCard key={i} href="#" label={"Episode " + i} onClick={(e) => e.preventDefault()} />)}
+          </TvRow>
         </div>
       </Sub>
     </Section>

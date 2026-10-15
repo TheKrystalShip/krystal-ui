@@ -93,49 +93,83 @@ function TvBackdrop({ src, size = "tall" }) {
 }
 
 // TvSpotlight — what one thing is, large: a line above its name, its name, a line of facts, and below
-// them whatever the site puts there (an overview, its actions). `size` "lg" opens a page; "md" sits
-// above a row and describes the card focused in it.
+// them the `overview` (clamped to a few lines), the `actions` (buttons in a row) and then whatever
+// else the site puts there. `size` "lg" opens a page; "md" sits above a row and describes the card
+// focused in it.
 /**
  * @param {object} props
  * @param {import("react").ReactNode} [props.eyebrow] A line above the name.
  * @param {import("react").ReactNode} props.title The thing's name.
  * @param {import("react").ReactNode} [props.meta] A line of facts under the name.
+ * @param {import("react").ReactNode} [props.overview] A few lines of text under the facts, clamped.
+ * @param {import("react").ReactNode} [props.actions] Buttons in a row under the overview.
  * @param {"lg" | "md"} [props.size] `lg` opens a page; `md` sits above a row.
  * @param {string} [props.className] Extra class names on the root element.
- * @param {import("react").ReactNode} [props.children] What sits below the facts, such as an overview or actions.
+ * @param {import("react").ReactNode} [props.children] What sits below the actions, such as a progress line.
  */
-function TvSpotlight({ eyebrow, title, meta, size = "lg", className, children }) {
+function TvSpotlight({ eyebrow, title, meta, overview, actions, size = "lg", className, children }) {
   return (
     <section className={"k-tv-spot k-tv-spot--" + size + (className ? " " + className : "")}>
       {eyebrow && <span className="k-tv-spot__eyebrow">{eyebrow}</span>}
       <h1 className="k-tv-spot__title">{title}</h1>
       {meta && <div className="k-tv-spot__meta">{meta}</div>}
+      {overview && <p className="k-tv-spot__overview">{overview}</p>}
+      {actions && <div className="k-tv-spot__actions">{actions}</div>}
       {children}
     </section>
   );
 }
 
-// TvRow — one row of cards that runs past the right of the screen: a heading with its icon and count,
-// then the cards, then `end`, the tile that leads past the row. It is a `data-tv-row`, which a
-// navigator places on the page's line when focus is in it.
+// TvHeading — a heading read from across a room: an optional `lead` (an avatar) and `icon`, an
+// `eyebrow` over the `title`, and a `count` after it. `size` "sm" is a row's small uppercase label;
+// "lg" names a whole page of cards, its title as large as a spotlight's. `as` is the element
+// (an `h2` by default).
+/**
+ * @param {object} props
+ * @param {import("react").ReactNode} props.title The heading's words.
+ * @param {import("react").ReactNode} [props.eyebrow] A line over the title.
+ * @param {import("react").ReactNode} [props.count] A figure after the title.
+ * @param {string} [props.icon] A Lucide name before the title.
+ * @param {import("react").ReactNode} [props.lead] A node before everything, such as an avatar.
+ * @param {"sm" | "lg"} [props.size] `sm` (a row's label) or `lg` (a page's name); `sm` by default.
+ * @param {"h1" | "h2" | "h3" | "div"} [props.as] The element.
+ * @param {string} [props.className] Extra class names on the root element.
+ */
+function TvHeading({ title, eyebrow, count, icon, lead, size = "sm", as: Tag = "h2", className }) {
+  return (
+    <Tag className={"k-tv-heading k-tv-heading--" + size + (className ? " " + className : "")}>
+      {lead}
+      {icon && <Icon name={icon} size={14} />}
+      <span className="k-tv-heading__text">
+        {eyebrow && <span className="k-tv-spot__eyebrow">{eyebrow}</span>}
+        <span className="k-tv-heading__title">{title}</span>
+      </span>
+      {count != null && <span className="k-tv-row__count">{count}</span>}
+    </Tag>
+  );
+}
+
+// TvRow — one row of cards that runs past the right of the screen: a heading with its icon and count
+// (none when there is no `title`), the `lead` under it (season pills), then the cards, then `end`,
+// the tile that leads past the row. It is a `data-tv-row`, which a navigator places on the page's
+// line when focus is in it. `trackClassName` is a class on the scrolling track.
 /**
  * @param {object} props
  * @param {string} [props.icon] A Lucide name.
- * @param {import("react").ReactNode} props.title The row's heading.
+ * @param {import("react").ReactNode} [props.title] The row's heading; without it the row has none.
  * @param {import("react").ReactNode} [props.count] A figure after the heading.
+ * @param {import("react").ReactNode} [props.lead] A node between the heading and the cards.
  * @param {import("react").ReactNode} [props.end] The tile that leads past the row.
+ * @param {string} [props.trackClassName] Extra class names on the scrolling track.
  * @param {string} [props.className] Extra class names on the root element.
  * @param {import("react").ReactNode} [props.children] The row's cards.
  */
-function TvRow({ icon, title, count, end, className, children }) {
+function TvRow({ icon, title, count, lead, end, trackClassName, className, children }) {
   return (
     <section className={"k-tv-row" + (className ? " " + className : "")} data-tv-row="">
-      <h2 className="k-tv-row__head">
-        {icon && <Icon name={icon} size={14} />}
-        {title}
-        {count != null && <span className="k-tv-row__count">{count}</span>}
-      </h2>
-      <div className="k-tv-row__track">
+      {(title != null || icon || count != null) && <TvHeading className="k-tv-row__head" icon={icon} title={title} count={count} />}
+      {lead}
+      <div className={"k-tv-row__track" + (trackClassName ? " " + trackClassName : "")}>
         {children}
         {end}
       </div>
@@ -201,4 +235,4 @@ function TvTile({ icon = "arrow-right", label, shape = "poster", className, ...r
   );
 }
 
-export { TvBackdrop, TvBar, TvBarButton, TvCard, TvRow, TvSpotlight, TvTile };
+export { TvBackdrop, TvBar, TvBarButton, TvCard, TvHeading, TvRow, TvSpotlight, TvTile };

@@ -230,6 +230,7 @@ function ConversationOptions({ onCompact, onDelete }) {
  * @param {import("react").ComponentType<import("./types.js").HostPickerProps> | null} [props.HostPicker] a picker among several assistants, in the header
  * @param {import("./types.js").ChatSlots} [props.slots] a site's blocks in the chat's frame
  * @param {string} [props.pageClass] an extra class on the page root
+ * @param {boolean} [props.framed] the chat fills a content area inside a shell, edge to edge, sized by that area
  * @param {"page" | "panel"} [props.layout] a panel beside or over a page, or the whole page a phone shows
  * @param {(() => void) | null} [props.onOpenSettings] the way to the surface's own settings, when the chat is the app
  * @param {HTMLElement | null} [props.railTarget] the element the conversation list is drawn into, for a site whose frame has a sidebar
@@ -274,6 +275,8 @@ function Chat({
   // An extra class on the page root, for a surface that lays the chat out differently — a chat that
   // owns the whole viewport, or one in a content area inside a shell.
   pageClass = "",
+  // The chat is a page inside an AppShell: it fills the main column and the column does not scroll.
+  framed = false,
   // Where the chat stands. `"panel"` is a panel beside or over a page: its own surface, framed, with
   // the dock's window buttons. `"page"` is the chat as the whole page a phone shows: it stands on the
   // page's own background with no frame, leaves through the site's tab bar rather than a close button,
@@ -1754,7 +1757,7 @@ function Chat({
       : null;
     return (
       <ChatContext.Provider value={reviewChat}>
-      <div className={"k-chat-page k-chat-page--review" + (docked ? " k-chat-page--docked" : "") + (pageClass ? " " + pageClass : "")}>
+      <div className={"k-chat-page k-chat-page--review" + (docked ? " k-chat-page--docked" : "") + (framed ? " k-chat-page--framed" : "") + (pageClass ? " " + pageClass : "")}>
         <div className="k-chat-main">
           <div className="k-chat-main__head k-chat-head">
             <span className="k-chat-head__title" title={conversationTitle(review.conversation)}>
@@ -1840,7 +1843,7 @@ function Chat({
   return (
     <ChatContext.Provider value={chat}>
     <div className={"k-chat-page" + (docked ? " k-chat-page--docked" : "") + (railTarget ? " k-chat-page--railless" : "")
-      + (asPage ? " k-chat-page--as-page" : "") + (pageClass ? " " + pageClass : "")}>
+      + (asPage ? " k-chat-page--as-page" : "") + (framed ? " k-chat-page--framed" : "") + (pageClass ? " " + pageClass : "")}>
       {railTarget && createPortal(
         <div className="k-chat-convos">
           <NavItem icon="square-pen" label="New chat" onClick={shown(newChat)} />

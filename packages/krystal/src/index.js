@@ -25,7 +25,7 @@ export { FormDialog } from "./components/FormDialog.jsx";
 export { Form, FormError, FormField, FormScope, FormSubmit } from "./components/Form.jsx";
 export { Footer, GithubMark } from "./components/Footer.jsx";
 export { Cluster, Container, Grid, Stack } from "./components/Layout.jsx";
-export { Hero } from "./components/Hero.jsx";
+export { Hero, HeroBar, HeroBody, HeroButton, HeroDivider, HeroGroup, HeroHeading, HeroName, HeroStatus, HeroTag, HeroTags } from "./components/Hero.jsx";
 export { Icon } from "./components/Icon.jsx";
 export { Kbd } from "./components/Kbd.jsx";
 export { Menu, MenuCheckboxItem, MenuGroup, MenuItem, MenuRadioGroup, MenuRadioItem, MenuSeparator } from "./components/Menu.jsx";
@@ -69,7 +69,7 @@ export { ThemePicker } from "./components/ThemePicker.jsx";
 export { Toasts } from "./components/Toasts.jsx";
 export { Toggle } from "./components/Toggle.jsx";
 export { Tooltip } from "./components/Tooltip.jsx";
-export { TvBackdrop, TvBar, TvBarButton, TvCard, TvRow, TvSpotlight, TvTile } from "./components/Tv.jsx";
+export { TvBackdrop, TvBar, TvBarButton, TvCard, TvHeading, TvRow, TvSpotlight, TvTile } from "./components/Tv.jsx";
 export {
   Toolbar, ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, useFilters,
 } from "./components/Toolbar.jsx";

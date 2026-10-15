@@ -36,7 +36,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 |---|---|
 | The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem`, `SidebarAccount`, `MobileNavToggle`, `TabBar`, `useStoredFlag`, `useEdgeSwipe` |
 | The dock | `Dock`, `DockFab`, `useDock` |
-| Banners | `Hero` (`cinematic`, or `variant="card"`: the bordered veil card with a name, tags and actions) |
+| Banners | `Hero` (`cinematic`, or `variant="card"`: the bordered veil card), and the parts its content is drawn from: `HeroStatus`, `HeroBody`, `HeroHeading`, `HeroName`, `HeroTags`, `HeroTag` (`glass`, `verbatim`, `icon`), `HeroBar`, `HeroGroup`, `HeroDivider`, `HeroButton` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
 | Cards and lists | `BriefCard` (with `BriefList`, `BriefItem` (a row: `tone`, `icon`, `title`, `escalated` for a row that needs a person, `detail`, `action`, a button with `onClick` or a link with `href`), `BriefEmpty` and `FactList` for its body), `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art, a `ribbon` hanging from its top edge for keeping the thing, an `eyebrow` above the name saying what kind of thing it is, and along its foot a `progress` bar or one short bar per part in `segments`), `CollectionTile` (a set of titles as a link: `fan` draws three posters fanned beside its mark and name, `strip` its posters in order, numbered, and with `total` and `watched` follows somebody through it; it fills its slot at a fixed shape and takes a TvCard's focus on a television), `Rail`, `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Steps` (where somebody is in a sequence they can move around in: a numbered `rail` with each step's label and detail, or `dots`), `SearchField` (a large pill: icon, input and a submit button in one frame, a `form` that calls `onSubmit(value)`), `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Slides | `useCarousel` (one of several slides at a time, turning by itself on an interval: held still under a mouse, under keyboard focus, on a hidden page and while `paused`, never turning by itself under reduced motion, its time started over by a key or a press in it, and turned by a swipe), `CarouselPager` (a mark a slide, the shown one filling over the slide's time; `indicator` for a television, where the marks are not focused) |
@@ -63,8 +63,8 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 
 | Kind | Exports |
 |---|---|
-| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatActivity`, `ChatCommand`, `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
-| The assistant's pages | `AssistantChatsPage`, `AssistantMemoryPage`, `AssistantSkillsPage`, `AssistantNotifications`, `AssistantMemory`, `AssistantMemoryEditor`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
+| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatModal` (the full-window pop-out frame), `ChatEvidence` (the column of evidence cards under an answer), `ChatActivity`, `ChatCommand`, `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
+| The assistant's pages | `AssistantPage` (the reading-measure column a page about the assistant stands in), `AssistantChatsPage`, `AssistantMemoryPage`, `AssistantSkillsPage`, `AssistantNotifications`, `AssistantMemory`, `AssistantMemoryEditor`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
 
 Core stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
 theme, and the Inter / JetBrains Mono faces), `styles/motion.css` (shared keyframes),
@@ -690,9 +690,10 @@ The parts a television page is built from, in `components/Tv.jsx`:
   `children` such as an avatar, and a `dot`). `hidden` slides it away.
 - `TvBackdrop` — artwork behind the page, at its right, fading into the canvas; a new `src` is loaded
   before it fades in over the last. `size` is `tall`, `short` or `page`.
-- `TvSpotlight` — `eyebrow`, `title`, `meta` and `children`; `size` `lg` opens a page and `md` sits
-  above a row, its name on one line. `k-tv-spot__overview` and `k-tv-spot__actions` place a story and buttons.
-- `TvRow` — a heading with `icon`, `title` and `count`, then its cards and `end`, running past the
+- `TvSpotlight` — `eyebrow`, `title`, `meta`, `overview` (clamped), `actions` and `children`; `size`
+  `lg` opens a page and `md` sits above a row, its name on one line.
+- `TvHeading` — `eyebrow`, `title`, `count`, `icon` and a `lead` (an avatar); `size` `sm` is a row's label and `lg` names a page of cards.
+- `TvRow` — a `TvHeading` with `icon`, `title` and `count` (none without a title), a `lead` node under it, then its cards (`trackClassName` styles the track) and `end`, running past the
   right margin; it is a `data-tv-row`, which a site's navigator can place on a line.
 - `TvCard` — a picture that is a link, `poster` or `wide`, with `progress` and a `badge`; every
   other prop reaches the link. A card off the screen is skipped (`content-visibility: auto`) until it
@@ -807,7 +808,7 @@ named as the site's review listing names it; the client's own is
 functions that prepare a file are `prepareAttachment`, `acceptFor`, `textOverLimit` and `sizeLabel`.
 
 A site whose frame has a sidebar can keep the conversation list there: `railTarget` is the element
-the list is drawn into, and the chat takes the whole width. `pageClass="k-chat-page--framed"` makes the
+the list is drawn into, and the chat takes the whole width. `framed` makes the
 chat fill an `AppShell`'s main column. When the site shows something other than the chat while the
 list stays in view, `onShowConversation` tells it the person opened or started a conversation, and
 `conversationShown` says whether the chat is what is on screen, so the sidebar lights the open one
@@ -820,7 +821,7 @@ surface, framed, with a dock's window buttons. `"page"` is the chat as the whole
 tab opens it: it stands on the page's background with no frame, its header has a way back to the
 empty conversation and the conversation list as a sheet, its opening suggestions are a row of chips
 over a one-row composer, and while the person writes the site's tab bar gives its room to the
-keyboard. Give a page `pageClass="k-chat-page--framed"` as well, to fill the column.
+keyboard. Give a page `framed` as well, to fill the column.
 
 `slots` puts a site's own blocks in the chat's frame, by place: `start` is the empty conversation's
 column, `aboveComposer` a row over the composer, `headerActions` buttons in the header and `history`

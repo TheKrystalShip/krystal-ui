@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.40.0]
+
+### Added
+- **`NavItem` takes `role`, `className` and any other prop on its root**, so a row that opens something
+  is `role="button"` with `aria-haspopup`, `aria-expanded` and an `aria-label` that carries its count.
+- **`TvSpotlight` `overview` and `actions`**: the clamped story and the row of buttons under the facts.
+- **`TvHeading`**: a heading with an `eyebrow`, a `title`, a `count`, an `icon` and a `lead`; `size`
+  `sm` is a row's label and `lg` names a page of cards. `TvRow` draws its head through it.
+- **`TvRow` `lead` and `trackClassName`**: a node between the heading and the cards, and a class on the
+  scrolling track. A row with no `title` draws no heading.
+- **`ChatModal`, `ChatEvidence`, `AssistantPage` and `Chat` `framed`** (krystal-chat): the full-window
+  pop-out frame (edge to edge at phone width), the column of evidence cards under an answer, the
+  reading-measure column a page about the assistant stands in, and the flag that makes a chat fill a
+  shell's main column.
+- **The parts of a Hero's content**: `HeroStatus`, `HeroBody`, `HeroHeading`, `HeroName`, `HeroTags`,
+  `HeroTag` (`glass`, `verbatim`, `icon`), `HeroBar`, `HeroGroup`, `HeroDivider` and `HeroButton`.
+
 ## [0.39.0]
 
 ### Added

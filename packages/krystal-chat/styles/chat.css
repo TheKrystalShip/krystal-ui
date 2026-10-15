@@ -932,6 +932,18 @@
   flex: 1;
 }
 
+/* The pop-out goes edge to edge on a phone. */
+@media (max-width: 768px) {
+  .k-chat-modal-scrim {
+    padding: 0;
+  }
+
+  .k-chat-modal {
+    border: none;
+    border-radius: 0;
+  }
+}
+
 /* A dock resized narrow tightens the composer toolbar so mic and send stay on screen — the phone
    rule below, triggered by the dock's width rather than the viewport's. */
 .k-assistant-dock--compact .k-chat-composer__bar {

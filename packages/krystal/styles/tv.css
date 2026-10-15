@@ -293,7 +293,8 @@
   flex-direction: column;
 }
 
-.k-tv-row__head {
+.k-tv-row__head,
+.k-tv-heading {
   margin: 0;
   padding: 0 var(--tv-margin-x);
   display: flex;
@@ -304,6 +305,26 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--fg-2);
+}
+
+.k-tv-heading__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* A heading that names a page of cards: its title is as large as a spotlight's, after any lead. */
+.k-tv-heading--lg {
+  gap: 18px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fg-1);
+}
+
+.k-tv-heading--lg .k-tv-heading__title {
+  font-size: var(--text-4xl);
+  line-height: 1.05;
+  font-weight: var(--w-bold);
 }
 
 .k-tv-row:focus-within .k-tv-row__head {

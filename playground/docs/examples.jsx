@@ -65,4 +65,5 @@ export const EXAMPLES = {
   "tv-focus": fromSection("tv-focus"),
   followtail: fromSection("followtail"),
   "chat-card": E.ChatCardExamples,
+  "chat-frame": E.ChatFrameExamples,
 };

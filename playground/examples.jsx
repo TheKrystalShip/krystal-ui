@@ -8,7 +8,7 @@ import {
   Sidebar, SidebarGroup, Skeleton, Spinner, SubTabs, Textarea, Toggle, Toolbar,
   ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
 } from "@thekrystalship/krystal";
-import { ChatCard, ChatCardRow, ChatCardRows } from "@thekrystalship/krystal-chat";
+import { AssistantPage, ChatCard, ChatCardRow, ChatCardRows, ChatEvidence, ChatModal } from "@thekrystalship/krystal-chat";
 import tksMark from "../packages/krystal/assets/tks-mark.png";
 import { Sub, col, row } from "./kit.jsx";
 
@@ -286,6 +286,7 @@ export function NavItemBadgeExamples() {
             <NavItem key={t} icon="bell" label={"Nav " + t} badge={i + 2} tone={t} />
           ))}
           <NavItem icon="server" label="Active, many" active badge={128} tone="warn" />
+          <NavItem icon="bell" label="Notifications, 3 unread" role="button" aria-haspopup="dialog" aria-expanded={false} badge={3} tone="danger" />
         </div>
       </Sub>
     </>
@@ -646,12 +647,41 @@ export function FrameExamples() {
 export function ChatCardExamples() {
   return (
     <>
-      <ChatCard icon="server" title="Factorio" sub="factorio-1" confidence="confirmed">
-        <ChatCardRows>
-          <ChatCardRow label="State" value="Running" verdict="ok" verdictLabel="Healthy" />
-          <ChatCardRow label="Players" value="3" />
-        </ChatCardRows>
-      </ChatCard>
+      <ChatEvidence>
+        <ChatCard icon="server" title="Factorio" sub="factorio-1" confidence="confirmed">
+          <ChatCardRows>
+            <ChatCardRow label="State" value="Running" verdict="ok" verdictLabel="Healthy" />
+            <ChatCardRow label="Players" value="3" />
+          </ChatCardRows>
+        </ChatCard>
+        <ChatCard icon="server" title="Terraria" sub="terraria-1">
+          <ChatCardRows><ChatCardRow label="State" value="Stopped" /></ChatCardRows>
+        </ChatCard>
+      </ChatEvidence>
+    </>
+  );
+}
+
+export function ChatFrameExamples() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <>
+      <Sub title="ChatModal: the pop-out frame (a stand-in for the chat inside)">
+        <Button onClick={() => setOpen(true)}>Open the pop-out</Button>
+        {open && (
+          <ChatModal onClose={() => setOpen(false)}>
+            <div style={{ padding: 24, display: "grid", gap: 12, alignContent: "start" }}>
+              <p>The chat fills this frame; a press on the scrim or Escape closes it.</p>
+              <div><Button onClick={() => setOpen(false)}>Close</Button></div>
+            </div>
+          </ChatModal>
+        )}
+      </Sub>
+      <Sub title="AssistantPage: the reading-measure column">
+        <div style={{ border: "var(--edge)" }}>
+          <AssistantPage><PageHeader title="Skills" /><p>Rows stand in a column at a reading measure.</p></AssistantPage>
+        </div>
+      </Sub>
     </>
   );
 }

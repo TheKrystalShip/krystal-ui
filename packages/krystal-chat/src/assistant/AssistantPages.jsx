@@ -11,6 +11,15 @@ import { AssistantMemory } from "./AssistantMemory.jsx";
 // (`.k-assistant-page`): its conversations, what it remembers, and what it can do. Each talks to the
 // assistant through `client` (`createAssistantClient`), stable across renders.
 
+// AssistantPage — the column a page beside the chat stands in: a reading measure, centred, with the
+// page's own padding and gap. A site's own page about the assistant (its settings) is drawn in it too.
+/**
+ * @param {import("react").ComponentPropsWithoutRef<"div">} props
+ */
+function AssistantPage({ className, ...rest }) {
+  return <div {...rest} className={"k-assistant-page" + (className ? " " + className : "")} />;
+}
+
 // The conversations, as a page — a phone's tab of them. The list is the chat's own: `Chat` draws it
 // into the element this page hands back through `listRef` (its `listTarget`), so what is listed,
 // opened and deleted here is exactly what the chat holds.
@@ -21,10 +30,10 @@ import { AssistantMemory } from "./AssistantMemory.jsx";
  */
 function AssistantChatsPage({ listRef, title = "Chats" }) {
   return (
-    <div className="k-assistant-page">
+    <AssistantPage>
       <PageHeader title={title} />
       <div ref={listRef} />
-    </div>
+    </AssistantPage>
   );
 }
 
@@ -40,10 +49,10 @@ function AssistantChatsPage({ listRef, title = "Chats" }) {
  */
 function AssistantMemoryPage({ title = "Memory", ...memory }) {
   return (
-    <div className="k-assistant-page">
+    <AssistantPage>
       <PageHeader title={title} />
       <AssistantMemory {...memory} />
-    </div>
+    </AssistantPage>
   );
 }
 
@@ -92,7 +101,7 @@ function AssistantSkillsPage({ client, onUse, title = "Skills" }) {
   }, [client]);
 
   return (
-    <div className="k-assistant-page">
+    <AssistantPage>
       <PageHeader title={title} />
 
       {error && <Notice tone="danger">{error}</Notice>}
@@ -114,8 +123,8 @@ function AssistantSkillsPage({ client, onUse, title = "Skills" }) {
         ))}
       </SettingsSection>
       </>}
-    </div>
+    </AssistantPage>
   );
 }
 
-export { AssistantChatsPage, AssistantMemoryPage, AssistantSkillsPage };
+export { AssistantChatsPage, AssistantMemoryPage, AssistantPage, AssistantSkillsPage };

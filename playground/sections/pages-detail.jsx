@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, DetailPage, Hero, Pill, StatTile, StatTiles } from "@thekrystalship/krystal";
+import { Button, Card, DetailPage, Hero, HeroBar, HeroBody, HeroButton, HeroDivider, HeroGroup, HeroHeading, HeroName, HeroStatus, HeroTag, Pill, StatTile, StatTiles } from "@thekrystalship/krystal";
 import { Section, Sub } from "../kit.jsx";
 
 const TABS = [
@@ -66,6 +66,23 @@ export default function PagesDetail() {
   return (
     <Section id="pages-detail" title="Page patterns: DetailPage">
       <Sub title="Head, meta pills, crumbs, in-page Tabs, extra control, aside"><Frame><Sections /></Frame></Sub>
+      <Sub title="Hero parts: status, name and tags, a bar of groups, a divider and buttons">
+        <Hero art="linear-gradient(135deg, var(--krystal-teal), var(--surface-3))">
+          <HeroStatus><Pill tone="ok" dot>Running</Pill></HeroStatus>
+          <HeroBody>
+            <HeroHeading>
+              <HeroName>Factorio</HeroName>
+              <HeroTag glass verbatim>factorio-1</HeroTag>
+              <HeroTag glass icon="cpu">native</HeroTag>
+            </HeroHeading>
+            <HeroBar>
+              <HeroGroup><HeroButton icon="play">Start</HeroButton><HeroButton icon="square">Stop</HeroButton></HeroGroup>
+              <HeroDivider />
+              <HeroGroup><HeroButton icon="plug">Connect</HeroButton></HeroGroup>
+            </HeroBar>
+          </HeroBody>
+        </Hero>
+      </Sub>
       <Sub title="Hero variant card: the veil card, name, tags and an action">
         <Hero variant="card" art="linear-gradient(135deg, var(--krystal-teal), var(--surface-3))">
           <h1 className="k-hero__name">Factorio</h1>

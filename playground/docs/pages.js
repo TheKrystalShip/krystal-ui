@@ -171,7 +171,7 @@ export const PAGES = [
     summary: "A set of titles shown by its posters, as a link.",
   },
   {
-    id: "hero", name: "Hero", group: "Cards and lists", exports: ["Hero"], examples: [],
+    id: "hero", name: "Hero", group: "Cards and lists", exports: ["Hero", "HeroStatus", "HeroBody", "HeroHeading", "HeroName", "HeroTags", "HeroTag", "HeroBar", "HeroGroup", "HeroDivider", "HeroButton"], examples: ["pages-detail"],
     summary: "The cinematic banner: art behind a scrim, and the page's own content over it.",
   },
 
@@ -304,7 +304,7 @@ export const PAGES = [
 
   // Television
   {
-    id: "tv", name: "Television parts", group: "Television", exports: ["TvBackdrop", "TvBar", "TvBarButton", "TvCard", "TvRow", "TvSpotlight", "TvTile", "useSpatialFocus", "createSpatialFocus", "focusElement"], examples: ["tv-focus"],
+    id: "tv", name: "Television parts", group: "Television", exports: ["TvBackdrop", "TvBar", "TvBarButton", "TvCard", "TvHeading", "TvRow", "TvSpotlight", "TvTile", "useSpatialFocus", "createSpatialFocus", "focusElement"], examples: ["tv-focus"],
     summary: "The parts a site is drawn from on a television, under a root marked `data-tv`, sized for the distance and driven by spatial focus.",
   },
 
@@ -324,7 +324,7 @@ export const PAGES = [
 
   // The assistant chat
   {
-    id: "chat", name: "Chat", group: "The assistant chat", exports: ["Chat", "ChatActivity", "ChatBlock", "ChatGreeting", "ChatPrivacyNote", "ChatRecent", "ChatSuggestionChips", "ChatSuggestions", "useChat", "ChatMessage", "ChatThread", "ChatCommand", "ChatDaySeparator", "ChatEvent", "ChatEventRow", "ChatFileChange", "ChatVerify", "ChatMessageAttachments", "ComposerAttachments", "ChatLightbox", "MarkdownTextarea", "VoiceComposerBar", "VoiceNoteBubble", "useVoiceRecorder", "useConversationStream", "createAssistantClient", "renderMarkdown"], examples: [],
+    id: "chat", name: "Chat", group: "The assistant chat", exports: ["Chat", "ChatActivity", "ChatBlock", "ChatGreeting", "ChatPrivacyNote", "ChatRecent", "ChatSuggestionChips", "ChatSuggestions", "useChat", "ChatMessage", "ChatThread", "ChatModal", "ChatEvidence", "ChatCommand", "ChatDaySeparator", "ChatEvent", "ChatEventRow", "ChatFileChange", "ChatVerify", "ChatMessageAttachments", "ComposerAttachments", "ChatLightbox", "MarkdownTextarea", "VoiceComposerBar", "VoiceNoteBubble", "useVoiceRecorder", "useConversationStream", "createAssistantClient", "renderMarkdown"], examples: ["chat-frame"],
     summary: "The assistant chat, the parts it is drawn from, and the client of the assistant wire contract.",
   },
   {
@@ -332,7 +332,7 @@ export const PAGES = [
     summary: "The card a product draws under an answer.",
   },
   {
-    id: "assistant-pages", name: "The assistant's pages", group: "The assistant chat", exports: ["AssistantChatsPage", "AssistantMemoryPage", "AssistantSkillsPage", "AssistantNotifications", "AssistantMemory", "AssistantMemoryEditor", "assistantPushStatus", "assistantPushSubscribe", "assistantPushUnsubscribe"], examples: [],
+    id: "assistant-pages", name: "The assistant's pages", group: "The assistant chat", exports: ["AssistantChatsPage", "AssistantMemoryPage", "AssistantPage", "AssistantSkillsPage", "AssistantNotifications", "AssistantMemory", "AssistantMemoryEditor", "assistantPushStatus", "assistantPushSubscribe", "assistantPushUnsubscribe"], examples: [],
     summary: "The chats, memory and skills pages, the notification switch and the push calls that register with an assistant.",
   },
   {
