@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.43.3]
+
+### Fixed
+- **`RadioGroup` `fill` spans its row on a segmented group too.** The segmented strip's own
+  `fit-content` width took precedence over `fill`.
+
 ## [0.43.2]
 
 ### Fixed

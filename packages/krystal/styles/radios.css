@@ -124,6 +124,11 @@ fieldset:disabled .k-radios {
   display: none;
 }
 
+/* A filled strip spans its row; the strip's own fit-content width otherwise wins. */
+.k-radios--segmented.k-radios--fill {
+  width: 100%;
+}
+
 .k-radios--segmented.k-radios--vertical {
   align-items: stretch;
 }
