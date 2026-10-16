@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.0]
+
+The complete system, as every consumer runs it. The API is 0.43.5's, unchanged; from this release
+versions follow strict semver, with a deprecation window before anything is removed (`CLAUDE.md`,
+"Version tracking").
+
 ## [0.43.5]
 
 ### Fixed
