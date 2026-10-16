@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.1]
+
+### Fixed
+- **The theme and toast modules load quietly outside a page.** They read the browser's storage only
+  where there is a window, so a site's tests importing them under Node raise no storage warning.
+- **A `Card` that is its head alone keeps the head's inset under it**, rather than ending flush at the
+  title.
+
 ## [3.0.0]
 
 ### Changed

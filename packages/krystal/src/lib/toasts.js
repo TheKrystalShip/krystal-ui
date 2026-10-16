@@ -71,10 +71,14 @@ function prune(history, now) {
     .slice(0, HISTORY_MAX);
 }
 
+// The browser's storage, or null outside a page: a runtime with a localStorage of its own (Node) warns
+// on reading it, and a module a site's tests import must load there quietly.
+const storage = () => (typeof window !== "undefined" ? window.localStorage : null);
+
 /** @returns {Toast[]} */
 function load() {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = storage()?.getItem(KEY);
     const arr = raw ? JSON.parse(raw) : [];
     if (!Array.isArray(arr)) return [];
     return prune(arr.filter(t => t && typeof t === "object" && t.id), Date.now());
@@ -83,7 +87,7 @@ function load() {
 
 /** @param {Toast[]} history */
 function save(history) {
-  try { localStorage.setItem(KEY, JSON.stringify(history.map(persistable))); } catch {}
+  try { storage()?.setItem(KEY, JSON.stringify(history.map(persistable))); } catch {}
 }
 
 /** @type {import("./store.js").Store<{ live: Toast[], history: Toast[] }>} */

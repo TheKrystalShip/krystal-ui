@@ -137,6 +137,9 @@
 
 .k-card__head + .k-card__body { padding-top: 10px; }
 
+/* A card that is its head alone keeps the head's inset under it too. */
+.k-card__head:last-child { padding-bottom: 14px; }
+
 .k-card--pad-none .k-card__head { padding-bottom: 12px; border-bottom: var(--edge); }
 .k-card--pad-none .k-card__head + .k-card__body { padding-top: 0; }
 

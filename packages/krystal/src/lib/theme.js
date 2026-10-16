@@ -157,10 +157,14 @@ function registerThemes(options) {
   }
 }
 
+// The browser's storage, or null outside a page: a runtime with a localStorage of its own (Node) warns
+// on reading it, and a module a site's tests import must load there quietly.
+const storage = () => (typeof window !== "undefined" ? window.localStorage : null);
+
 /** @returns {string} */
 function readPref() {
   try {
-    const v = localStorage.getItem(THEME_KEY);
+    const v = storage()?.getItem(THEME_KEY);
     return VALID.includes(v) ? v : DEFAULT;
   } catch { return DEFAULT; }
 }
@@ -204,7 +208,7 @@ const themeStore = /** @type {ThemeStore} */ (createStore({ pref: initialPref, r
 // Set + persist the preference, then apply it live. `pref` ∈ VALID.
 themeStore.set = (pref) => {
   if (!VALID.includes(pref) || pref === themeStore.getState().pref) return;
-  try { localStorage.setItem(THEME_KEY, pref); } catch {}
+  try { storage()?.setItem(THEME_KEY, pref); } catch {}
   const resolved = resolveTheme(pref);
   applyResolved(resolved);
   themeStore.setState({ pref, resolved });
