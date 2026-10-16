@@ -63,7 +63,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 
 | Kind | Exports |
 |---|---|
-| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatModal` (the full-window pop-out frame), `ChatEvidence` (the column of evidence cards under an answer), `ChatActivity`, `ChatCommand`, `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
+| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatEvidence` (the column of evidence cards under an answer), `ChatActivity`, `ChatCommand`, `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
 | The assistant's pages | `AssistantPage` (the reading-measure column a page about the assistant stands in), `AssistantChatsPage`, `AssistantMemoryPage`, `AssistantSkillsPage`, `AssistantNotifications`, `AssistantMemory`, `AssistantMemoryEditor`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
 
 Core stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
@@ -770,7 +770,6 @@ const client = createAssistantClient({ baseUrl: "/assistant", getToken: () => se
   connection={{ tone: "online", label: "Connected", usable: true }}
   storageKey="cinema:chat:conversations"
   suggestions={["What's leaving this week?", "Find me something like Heat"]}
-  primer="I can find films, put one on, and fetch what isn't here yet."
   profile={cinemaProfile}
   renderCards={(msg, api) => <FilmCards cards={msg.cards} />} />
 ```
@@ -783,9 +782,9 @@ answer's markdown covers headings, lists, tables, links, quotes and code blocks 
 A proposed action is one card that changes in place, from proposed through the confirm step to
 verified, not verified or failed; a `write_file` proposal shows a line diff when the proposal carries
 the file's current content. Switches, scope changes, compaction and the assistant coming and going
-are event rows (`ChatEvent`), with a day row where the date changes. The composer's switches are
-labelled toggle buttons, and a single options menu where the composer is narrower than 560px (a
-dock, a phone).
+are event rows (`ChatEvent`), with a day row where the date changes. The conversation's switches
+(Thinking, Read aloud, Auto-run) and how full its context window is stand behind the composer's one
+options button, at every width.
 
 `profile` is how the product reads what the assistant sends: `adaptCard(result)` turns a tool's
 structured result into a card for `renderCards`, `proposal(msg)` names a proposed action and says
@@ -851,7 +850,9 @@ surface, framed, with a dock's window buttons. `"page"` is the chat as the whole
 tab opens it: it stands on the page's background with no frame, its header has a way back to the
 empty conversation and the conversation list as a sheet, its opening suggestions are a row of chips
 over a one-row composer, and while the person writes the site's tab bar gives its room to the
-keyboard. Give a page `framed` as well, to fill the column.
+keyboard and the composer rises above it. Give a page `framed` as well, to fill the column edge to
+edge. A page in a dock, where there is no tab bar to leave by, takes `onClose`: the header's back
+button closes the chat from the empty conversation.
 
 `slots` puts a site's own blocks in the chat's frame, by place: `start` is the empty conversation's
 column, `aboveComposer` a row over the composer, `headerActions` buttons in the header and `history`
@@ -867,13 +868,14 @@ chat fetches nothing for a block; the site's block brings its own data.
 ```jsx
 <Chat
   slots={{
+    // A page draws its suggestions as chips over the composer and its privacy note under it, so
+    // the column holds them only in a panel.
     start: (chat) => (
       <>
         <ChatGreeting />
-        <ChatSuggestions />
+        {chat.layout !== "page" && <ChatSuggestions />}
         <ChatBlock><Alerts onPick={(alert) => chat.draft(alert.prompt)} /></ChatBlock>
-        <ChatRecent />
-        <ChatPrivacyNote />
+        {chat.layout !== "page" && <><ChatRecent /><ChatPrivacyNote /></>}
       </>
     ),
   }} />

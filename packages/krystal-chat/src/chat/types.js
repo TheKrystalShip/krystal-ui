@@ -570,7 +570,6 @@ export {};
  * @property {AssistantHost | null} assistant
  * @property {string} input what the composer holds
  * @property {string} greeting
- * @property {string} primer
  * @property {string} noAssistant
  * @property {Suggestion[]} suggestions
  * @property {Conversation[]} conversations

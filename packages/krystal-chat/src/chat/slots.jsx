@@ -16,7 +16,7 @@
 //   usable         whether the assistant is answering
 //   assistant      the assistant addressed, or null
 //   input          what the composer holds
-//   greeting, primer, noAssistant, suggestions   the empty conversation's words (Chat's props)
+//   greeting, noAssistant, suggestions           the empty conversation's words (Chat's props)
 //   conversations, activeId                     the conversation list and the one open
 //   ask(text)      sends `text` as the next turn
 //   draft(text)    puts `text` in the composer and focuses it, for the person to finish
@@ -53,15 +53,14 @@ function renderSlot(slot, chat) {
   return typeof slot === "function" ? slot(chat) : slot;
 }
 
-/** The assistant's mark, the greeting and what it can do; or that there is no assistant to talk to. */
+/** The assistant's mark and the greeting; or that there is no assistant to talk to. */
 function ChatGreeting() {
   const chat = useChat();
-  const line = chat.assistant ? chat.primer : chat.noAssistant;
   return (
     <>
       <span className="k-chat-start__disc"><Icon name="bot" size={24} /></span>
       <h3 className="k-chat-start__greeting">{chat.assistant ? chat.greeting : "No assistant available"}</h3>
-      {line && <p className="k-chat-start__primer">{line}</p>}
+      {!chat.assistant && chat.noAssistant && <p className="k-chat-start__primer">{chat.noAssistant}</p>}
     </>
   );
 }

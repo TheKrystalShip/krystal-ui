@@ -9,7 +9,7 @@ export { AssistantNotifications } from "./assistant/AssistantNotifications.jsx";
 export { AssistantChatsPage, AssistantMemoryPage, AssistantPage, AssistantSkillsPage } from "./assistant/AssistantPages.jsx";
 export { pushStatus as assistantPushStatus, pushSubscribe as assistantPushSubscribe, pushUnsubscribe as assistantPushUnsubscribe } from "./assistant/push.js";
 export { Chat, CHAT_PRIVACY_NOTICE, DEFAULT_PROFILE as CHAT_DEFAULT_PROFILE, DEFAULT_TOGGLE_COPY as CHAT_TOGGLE_COPY } from "./chat/Chat.jsx";
-export { ChatEvidence, ChatModal } from "./chat/ChatFrame.jsx";
+export { ChatEvidence } from "./chat/ChatFrame.jsx";
 export { ChatActivity } from "./chat/ChatActivity.jsx";
 export {
   ChatBlock, ChatGreeting, ChatPrivacyNote, ChatRecent, ChatSuggestionChips, ChatSuggestions, useChat,

@@ -8,7 +8,7 @@ import {
   Sidebar, SidebarGroup, Skeleton, Spinner, StatusDot, SubTabs, Textarea, Toggle, Toolbar,
   ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
 } from "@thekrystalship/krystal";
-import { AssistantPage, ChatCard, ChatCardRow, ChatCardRows, ChatEvidence, ChatModal } from "@thekrystalship/krystal-chat";
+import { AssistantPage, ChatCard, ChatCardRow, ChatCardRows, ChatEvidence } from "@thekrystalship/krystal-chat";
 import tksMark from "../packages/krystal/assets/tks-mark.png";
 import { Sub, col, row } from "./kit.jsx";
 
@@ -677,20 +677,8 @@ export function ChatCardExamples() {
 }
 
 export function ChatFrameExamples() {
-  const [open, setOpen] = React.useState(false);
   return (
     <>
-      <Sub title="ChatModal: the pop-out frame (a stand-in for the chat inside)">
-        <Button onClick={() => setOpen(true)}>Open the pop-out</Button>
-        {open && (
-          <ChatModal onClose={() => setOpen(false)}>
-            <div style={{ padding: 24, display: "grid", gap: 12, alignContent: "start" }}>
-              <p>The chat fills this frame; a press on the scrim or Escape closes it.</p>
-              <div><Button onClick={() => setOpen(false)}>Close</Button></div>
-            </div>
-          </ChatModal>
-        )}
-      </Sub>
       <Sub title="AssistantPage: the reading-measure column">
         <div style={{ border: "var(--edge)" }}>
           <AssistantPage><PageHeader title="Skills" /><p>Rows stand in a column at a reading measure.</p></AssistantPage>

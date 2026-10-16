@@ -1,14 +1,13 @@
 /* ============================================================================
    chat-composer.css — where a person writes to the assistant: the box and its
-   bar (the conversation's switches, the context ring and its popover, the
-   microphone, send and stop), the lines above the box (the assistant not
-   answering, prompts queued behind a running turn), the box while recording a
-   voice note, the voice note played back inside a sent message, and the slash
-   menu. Drawn by Chat, ChatContextMeter, ChatCommandMenu and VoiceNote.
+   bar (the chat options button, the microphone, send and stop), the lines
+   above the box (the assistant not answering, prompts queued behind a running
+   turn), the box while recording a voice note, the voice note played back
+   inside a sent message, and the slash menu. Drawn by Chat, ChatCommandMenu and
+   VoiceNote.
 
-   The composer is a size container: below 560px of its own width the labelled
-   switches and the context ring give way to one "Chat options" button, so a
-   narrow dock and a phone get the same composer.
+   The conversation's switches and its context stand behind the one options
+   button at every width, so a dock, a page and a phone get the same composer.
    ============================================================================ */
 @layer krystal.tokens, krystal.base, krystal.components;
 
@@ -97,32 +96,9 @@
   flex: 1;
 }
 
-/* ---- the switches ---- */
-.k-chat-composer__switches {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-/* On stays on under the pointer: the hover of an outline button would otherwise read as off. */
-.k-chat-composer__switches .k-btn[aria-pressed="true"]:hover:not(:disabled) {
-  background: var(--krystal-teal-dim);
-  border-color: var(--border-accent);
-  color: var(--krystal-teal-hover);
-}
-
-/* Auto-run skips the confirmation, so on it reads in the warning colour. */
-.k-chat-switch--warn[aria-pressed="true"],
-.k-chat-composer__switches .k-chat-switch--warn[aria-pressed="true"]:hover:not(:disabled) {
-  background: var(--warning-bg);
-  border-color: var(--warning);
-  color: var(--warning-fg);
-}
-
-/* The narrow composer's one button, with a dot for each switch that is on. */
+/* The options button, with a dot for each switch that is on. */
 .k-chat-composer__opts {
-  display: none;
+  display: inline-flex;
   align-items: center;
   gap: 4px;
 }
@@ -143,22 +119,7 @@
   background: var(--warning);
 }
 
-.k-chat-composer__ctx {
-  display: inline-flex;
-}
-
-@container chat-composer (max-width: 560px) {
-  .k-chat-composer__switches,
-  .k-chat-composer__ctx {
-    display: none;
-  }
-
-  .k-chat-composer__opts {
-    display: inline-flex;
-  }
-}
-
-/* ---- context ring and its popover ---- */
+/* ---- the context ring ---- */
 .k-chat-ctxring__track {
   fill: none;
   stroke: var(--border-subtle);
@@ -170,107 +131,6 @@
   stroke: currentColor;
   stroke-width: 2.5;
   stroke-linecap: round;
-}
-
-.k-chat-ctx-btn.k-btn {
-  gap: 6px;
-  padding: 0 6px;
-}
-
-.k-chat-ctx-btn__pct {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.k-chat-ctx-btn--warn.k-btn,
-.k-chat-ctx-btn--warn.k-btn:hover:not(:disabled) {
-  color: var(--warning-fg);
-}
-
-.k-chat-ctxpop {
-  position: fixed;
-  z-index: 1200;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 280px;
-  padding: 14px;
-  background: var(--surface-2);
-  border: var(--edge-strong);
-  border-radius: var(--r-sm);
-  box-shadow: var(--shadow-pop);
-  animation: k-fade var(--d-fast) var(--ease-out);
-}
-
-.k-chat-ctxpop__head {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.k-chat-ctxpop__pct {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--fg-1);
-  font-variant-numeric: tabular-nums;
-}
-
-.k-chat-ctxpop__cap {
-  font-size: 12px;
-  color: var(--fg-3);
-}
-
-.k-chat-ctxpop__bar {
-  height: 6px;
-  border-radius: var(--r-pill);
-  background: var(--surface-3);
-  overflow: hidden;
-}
-
-.k-chat-ctxpop__bar > i {
-  display: block;
-  height: 100%;
-  background: var(--fg-3);
-}
-
-.k-chat-ctxpop--warn .k-chat-ctxpop__pct {
-  color: var(--warning-fg);
-}
-
-.k-chat-ctxpop--warn .k-chat-ctxpop__bar > i {
-  background: var(--warning);
-}
-
-.k-chat-ctxpop__nums {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 4px 12px;
-  margin: 0;
-  font-size: 12px;
-  color: var(--fg-2);
-}
-
-.k-chat-ctxpop__nums dt {
-  margin: 0;
-}
-
-.k-chat-ctxpop__nums dd {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-}
-
-.k-chat-ctxpop__foot {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.k-chat-ctxpop__note {
-  font-size: 12px;
-  color: var(--fg-3);
 }
 
 /* ---- lines above the box ---- */

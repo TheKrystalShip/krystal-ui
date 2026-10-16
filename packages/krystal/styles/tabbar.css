@@ -137,16 +137,17 @@
     display: none;
   }
 
-  /* While a person writes in a chat that is the page, the keyboard takes the bar's room. */
+  /* While a person writes in a chat that is the page, the keyboard takes the bar's room, and a dock
+     and the column end above the keyboard. */
   body.k-chat-typing .k-app--tabbed .k-tabbar {
     display: none;
   }
 
-  body.k-chat-typing .k-app--tabbed .k-assistant-dock {
+  body.k-chat-typing .k-assistant-dock {
     bottom: env(keyboard-inset-height, 0px);
   }
 
-  body.k-chat-typing .k-app--tabbed .k-app__main {
+  body.k-chat-typing .k-app__main {
     padding-bottom: env(keyboard-inset-height, 0px);
   }
 

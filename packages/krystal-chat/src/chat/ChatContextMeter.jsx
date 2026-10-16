@@ -1,11 +1,8 @@
-// ChatContextMeter — how full the conversation's context window is: a ring and a percentage in the
-// composer's bar, opening a popover with the figures and the way to compact. Nothing is drawn before
-// the assistant has reported a window, because a ring at 0% says nothing a fresh chat does not.
+// How full the conversation's context window is, as the chat options menu draws it: a ring, the
+// percentage and the way to compact. Nothing is drawn before the assistant has reported a window,
+// because a ring at 0% says nothing a fresh chat does not.
 
 import React from "react";
-import { createPortal } from "react-dom";
-import { Button } from "@thekrystalship/krystal";
-import { usePortalPopover } from "@thekrystalship/krystal";
 
 // The point past which the window is worth watching: the ring and the figures take the warning ink.
 const WARN_AT = 75;
@@ -70,59 +67,4 @@ function useCompact(onCompact, onDone) {
   return { compacting, note, setNote, run };
 }
 
-/**
- * @param {object} props
- * @param {import("./types.js").Usage | null} [props.usage]
- * @param {(() => Promise<import("./types.js").CompactResult>) | null} [props.onCompact]
- */
-function ChatContextMeter({ usage, onCompact }) {
-  const ctx = contextUsage(usage);
-  const [open, setOpen] = React.useState(false);
-  const ref = React.useRef(null);
-  const { pos, menuRef } = usePortalPopover(open, setOpen, ref);
-  const compact = useCompact(onCompact, () => setOpen(false));
-  const { setNote } = compact;
-  React.useEffect(() => { if (!open) setNote(null); }, [open, setNote]);
-
-  if (!ctx) return null;
-  const fmt = (n) => n.toLocaleString();
-
-  return (
-    <>
-      <Button ref={ref} variant="ghost" size="xs"
-        className={"k-chat-ctx-btn" + (ctx.warn ? " k-chat-ctx-btn--warn" : "")}
-        icon={<ContextRing pct={ctx.pct} />}
-        onClick={() => setOpen(o => !o)}
-        aria-label={"Context used: " + ctx.pct + "%"}
-        title={"Context window · " + fmt(ctx.used) + " of " + fmt(ctx.win) + " tokens"}
-        aria-haspopup="dialog"
-        aria-expanded={open}>
-        <span className="k-chat-ctx-btn__pct">{ctx.pct}%</span>
-      </Button>
-      {open && pos && createPortal(
-        <div className={"k-chat-ctxpop" + (ctx.warn ? " k-chat-ctxpop--warn" : "")} ref={menuRef} style={pos}
-          role="dialog" aria-label="Context window">
-          <div className="k-chat-ctxpop__head">
-            <span className="k-chat-ctxpop__pct">{ctx.pct}%</span>
-            <span className="k-chat-ctxpop__cap">of the context window used</span>
-          </div>
-          <div className="k-chat-ctxpop__bar"><i style={{ width: ctx.pct + "%" }} /></div>
-          <dl className="k-chat-ctxpop__nums">
-            <dt>Used</dt><dd>{fmt(ctx.used)}</dd>
-            <dt>Window</dt><dd>{fmt(ctx.win)}</dd>
-          </dl>
-          <div className="k-chat-ctxpop__foot">
-            <Button variant="outline" size="sm" icon="rotate-ccw" busy={compact.compacting}
-              disabled={!onCompact} onClick={compact.run}>
-              Compact
-            </Button>
-            {compact.note && <span className="k-chat-ctxpop__note">{compact.note}</span>}
-          </div>
-        </div>,
-        document.body,
-      )}
-    </>
-  );
-}
-
-export { ChatContextMeter, ContextRing, contextUsage, useCompact };
+export { ContextRing, contextUsage, useCompact };

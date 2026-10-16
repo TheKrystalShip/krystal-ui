@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.0.0]
+
+### Changed
+- **The composer's switches and its context stand behind one options button at every width.**
+  Thinking, Read aloud, Auto-run and the context window's figures are in the "Chat options" menu in a
+  dock, on a page and on a phone alike.
+- **A page in a dock leaves by its back button.** `Chat` with `layout="page"` and `onClose` closes from
+  the empty conversation through the header's back button, for a dock on a phone with no tab bar.
+- **A framed page runs edge to edge in the frame's column**: `layout="page"` with `framed` cancels the
+  column's side gutter itself, so the composer and the thread keep the chat's own inset.
+- **While a page chat is being written in, a dock and the main column end above the keyboard** on
+  every site, not only one with a tab bar.
+
+### Removed
+- **`ChatModal` and the chat's full-screen window**, with `Chat`'s `onExpand` and the full-screen exit
+  button. A site docks the chat or gives it a page.
+- **`Chat`'s `primer`** and the handle's `primer`: the greeting stands alone.
+
 ## [1.0.0]
 
 The complete system, as every consumer runs it. The API is 0.43.5's, unchanged; from this release

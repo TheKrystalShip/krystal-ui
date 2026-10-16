@@ -3,7 +3,7 @@
    docked, review), the conversation list in a sidebar, on a page of its own and
    in the rail, the main panel and its header, the history popover, the thread
    column, the ChatCard shell (`.k-chat-card`), the composer's two-layer input and
-   its markdown highlight, the slash-command menu, the full-screen pop-out, the
+   its markdown highlight, the slash-command menu, the
    review banner and the answer-feedback block. The chrome, turns, cards and
    composer controls drawn inside that frame are chat-chrome.css,
    chat-turns.css, chat-actions.css and chat-composer.css.
@@ -900,50 +900,6 @@
   }
 }
 
-/* ---- full-screen modal pop-out ---- */
-.k-chat-modal-scrim {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  background: color-mix(in srgb, var(--scrim-base) 70%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  padding: 24px;
-  animation: k-fade var(--d-base) var(--ease-out);
-}
-
-.k-chat-modal {
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  background: var(--surface-1);
-  border: var(--edge-strong);
-  border-radius: var(--r-sm);
-  box-shadow: var(--shadow-pop);
-  overflow: hidden;
-  animation: k-rise var(--d-base) var(--ease-out);
-}
-
-.k-chat-modal .k-chat-page {
-  height: 100%;
-  flex: 1;
-}
-
-/* The pop-out goes edge to edge on a phone. */
-@media (max-width: 768px) {
-  .k-chat-modal-scrim {
-    padding: 0;
-  }
-
-  .k-chat-modal {
-    border: none;
-    border-radius: 0;
-  }
-}
-
 /* A dock resized narrow tightens the composer toolbar so mic and send stay on screen — the phone
    rule below, triggered by the dock's width rather than the viewport's. */
 .k-assistant-dock--compact .k-chat-composer__bar {
@@ -1100,6 +1056,11 @@
    middle of the screen. */
 .k-chat-page--as-page {
   grid-template-columns: minmax(0, 1fr);
+}
+
+/* A page in the frame's column runs edge to edge: the composer and the thread keep their own inset. */
+.k-app__main .k-chat-page--as-page.k-chat-page--framed {
+  margin-inline: calc(var(--k-page-gutter) * -1);
 }
 
 /* A page keeps its conversations in the header's sheet at every width, never in a rail. */

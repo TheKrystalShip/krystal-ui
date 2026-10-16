@@ -21,7 +21,7 @@ import { ChatCommand } from "./ChatMessageParts.jsx";
 import { ChatCommandMenu } from "./ChatCommandMenu.jsx";
 import { MarkdownTextarea } from "./MarkdownTextarea.jsx";
 import { resolveCommand, suggestFor } from "./chatCommands.js";
-import { ChatContextMeter, ContextRing, contextUsage, useCompact } from "./ChatContextMeter.jsx";
+import { ContextRing, contextUsage, useCompact } from "./ChatContextMeter.jsx";
 import { ChatHistory } from "./ChatHistory.jsx";
 import { CHAT_PRIVACY_NOTICE, ChatContext, DefaultAboveComposer, DefaultStart, renderSlot } from "./slots.jsx";
 import { ChatThread } from "./ChatThread.jsx";
@@ -209,8 +209,7 @@ function ConversationOptions({ onCompact, onDelete }) {
  * @param {any} [props.user] the signed-in person, handed on to the renderers of the thread
  * @param {boolean} [props.docked] drawn in the dock's window
  * @param {{ prompt?: string, nonce?: number | string }} [props.seed] words put in the composer once per `nonce`
- * @param {() => void} [props.onClose] Called by the close button of a docked chat, and by the exit button of the full-screen one.
- * @param {() => void} [props.onExpand] Called by the docked chat's expand button; absent hides the button.
+ * @param {() => void} [props.onClose] Called by the close button of a docked chat, and by the back button of a page with nothing open.
  * @param {import("./types.js").AssistantHost} [props.assistantHost] the assistant addressed
  * @param {import("./types.js").AssistantHost[]} [props.assistantHosts] every assistant a picker offers
  * @param {(id: string, opts?: { chosen?: boolean }) => void} [props.onSelectAssistantHost] Called with the id of the assistant the person picked, `{ chosen: true }` for a pick and without it when the chat re-points itself at a stored choice.
@@ -242,7 +241,6 @@ function ConversationOptions({ onCompact, onDelete }) {
  * @param {import("./types.js").Profile} [props.profile] what a product shows of its own: cards, and how a proposed action reads
  * @param {import("./types.js").ToggleCopy} [props.toggleCopy] what each switch means in the state it stands at
  * @param {import("./types.js").Suggestion[]} [props.suggestions] the empty screen's opening suggestions
- * @param {string} [props.primer] the sentence under the greeting saying what the assistant can do for this caller
  * @param {string} [props.noAssistant] what the empty screen says when there is no assistant to talk to
  * @param {{ locked: string, on?: string, off?: string }} [props.autorunHint] the auto-run switch's tooltip
  * @param {(msg: import("./types.js").Message, key: number, api: import("./types.js").ChatApi) => import("react").ReactNode | undefined} [props.renderEntry] a product's own transcript roles; `undefined` falls through
@@ -250,7 +248,7 @@ function ConversationOptions({ onCompact, onDelete }) {
  * @param {() => Record<string, any> | null} [props.turnExtras] extra fields the next turn carries (a draft open for review)
  */
 function Chat({
-  user, docked, seed, onClose, onExpand,
+  user, docked, seed, onClose,
   assistantHost, assistantHosts = [], onSelectAssistantHost,
   showPin, pinned, pinDisabled, onTogglePin, review, onExitReview,
   // ---- the assistant ----
@@ -299,10 +297,8 @@ function Chat({
   assistantName = "Assistant",
   profile = DEFAULT_PROFILE,
   toggleCopy = DEFAULT_TOGGLE_COPY,
-  // The empty screen's opening suggestions, and the sentence under the greeting saying what the
-  // assistant can do for this caller.
+  // The empty screen's opening suggestions.
   suggestions = [],
-  primer = "",
   // What the empty screen says when there is no assistant to talk to.
   noAssistant = "No assistant is available right now.",
   // The auto-run switch's tooltip: `locked` when this caller may not turn it on, and `on` / `off`
@@ -1695,7 +1691,7 @@ function Chat({
     usable: assistantUsable,
     assistant: assistantHost || null,
     input,
-    greeting, primer, noAssistant, suggestions,
+    greeting, noAssistant, suggestions,
     conversations: convos, activeId,
     ask: (text) => { if (assistantUsable) send(text); },
     draft,
@@ -1934,8 +1930,11 @@ function Chat({
             to say. The connection shows here only when it is not fine \u2014 a healthy one is what the
             whole page already demonstrates. */}
         <div className={"k-chat-main__head k-chat-head" + (docked ? " k-chat-head--docked" : "") + (asPage && lifted ? " k-chat-head--lifted" : "")}>
-          {asPage && !empty && (
-            <IconButton icon="arrow-left" label="Back" variant="ghost" size="sm" className="k-chat-head__back" onClick={backToStart} />
+          {/* Back leaves a conversation for the empty one, and leaves the chat from the empty one where
+              the site gives a way out: a page in a dock has no tab bar to leave by. */}
+          {asPage && (!empty || onClose) && (
+            <IconButton icon="arrow-left" label={empty ? "Close assistant" : "Back"} variant="ghost" size="sm"
+              className="k-chat-head__back" onClick={empty ? onClose : backToStart} />
           )}
           <span className="k-chat-head__title" title={conversationTitle(active)}>{conversationTitle(active)}</span>
           {conn.tone !== "online" && (
@@ -1973,15 +1972,8 @@ function Chat({
                 pressed={!!pinned} disabled={pinDisabled} onClick={onTogglePin}
                 title={pinDisabled ? "Not enough room to pin" : pinned ? "Unpin \u00b7 float over the page" : "Pin \u00b7 push the page aside"} />
             )}
-            {docked && !asPage && onExpand && (
-              <IconButton icon="maximize-2" label="Expand to full screen" variant="ghost" size="sm" onClick={onExpand} />
-            )}
             {docked && !asPage && (
               <IconButton icon="x" label="Close assistant" variant="ghost" size="sm" onClick={onClose} />
-            )}
-            {!docked && onClose && (
-              <IconButton icon="minimize-2" label="Exit full screen" variant="ghost" size="sm" onClick={onClose}
-                title="Exit full screen (Esc)" />
             )}
           </div>
         </div>
@@ -2053,9 +2045,7 @@ function Chat({
                 active={commandMenu.active}
                 anchorRef={composerRef}
                 onPick={applyCompletion} />
-              {/* The switches are labelled buttons where the composer has the room, and one menu of
-                  them where it does not \u2014 both are drawn and the composer's width decides which shows
-                  (chat-composer.css), so a dock dragged narrow changes over without a re-render. */}
+              {/* The conversation's switches and its context stand behind one button, at every width. */}
               <div className="k-chat-composer__bar">
                 {/* Two pickers, because one cannot offer both: Chrome on Android shows a picture picker
                     as the camera and the photos, and only the File System Access picker as the phone's
@@ -2078,25 +2068,6 @@ function Chat({
                   </>
                 )}
                 {assistantHost && (
-                  <div className="k-chat-composer__switches">
-                    <Button variant="outline" size="xs" icon="lightbulb" pressed={thinkOn}
-                      onClick={toggleThinking} title={thinkTip}>
-                      Thinking
-                    </Button>
-                    <Button variant="outline" size="xs" icon={speakBlocked ? "volume-x" : "volume-2"} pressed={speak}
-                      onClick={toggleSpeak} title={speakTip}>
-                      Read aloud
-                    </Button>
-                    {canSeeActions && (
-                      <Button variant="outline" size="xs" icon="zap" pressed={autoAcceptActive}
-                        className="k-chat-switch--warn" disabled={!canUseActions}
-                        onClick={toggleActions} title={autorunTip}>
-                        Auto-run
-                      </Button>
-                    )}
-                  </div>
-                )}
-                {assistantHost && (
                   <div className="k-chat-composer__opts">
                     <IconButton ref={optsRef} icon="sliders-horizontal" variant="ghost" size="sm"
                       label={"Chat options" + ([thinkOn && "Thinking on", speak && "Read aloud on", autoAcceptActive && "Auto-run on"]
@@ -2111,9 +2082,6 @@ function Chat({
                   </div>
                 )}
                 <span className="k-chat-composer__bar-spacer"></span>
-                <span className="k-chat-composer__ctx">
-                  <ChatContextMeter usage={latestUsage(active && active.messages)} onCompact={compactHere} />
-                </span>
                 {!busy && !input.trim() && attached.length === 0 && assistantUsable && (
                   <IconButton icon="mic" label="Record a voice note" variant="ghost" size="sm" onClick={startVoice} />
                 )}

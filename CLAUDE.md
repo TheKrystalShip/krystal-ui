@@ -123,8 +123,8 @@ them, and keeps dropping everything else a site does not use.
 - Every change a consumer can see bumps it, with a `CHANGELOG.md` entry, in the same commit; the
   commit that bumps it is tagged `v<version>`. One `CHANGELOG.md` at the root covers both packages.
 - **Strict semver.** A breaking change (a removed or renamed export, prop, class or public token, or
-  a changed default a site can see) is a major; an addition is a minor; a fix is a patch. What is to be
-  removed is deprecated first: it keeps working through at least one minor, warns once in a development
-  build, and is marked deprecated in its JSDoc and the CHANGELOG, then goes in the next major.
+  a changed default a site can see) is a major; an addition is a minor; a fix is a patch. The consumers
+  are the workspace's own sites, so a major removes outright, with no deprecation step, and every
+  consumer moves to the new form in the same pass (`kgsm-docs/systems/design-system/README.md`).
 - Iterate with prerelease versions (`-dev.N`). Shipping a change is: bump → publish → bump each
   consumer's pin.
