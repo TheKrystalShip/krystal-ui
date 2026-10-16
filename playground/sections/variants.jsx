@@ -107,6 +107,12 @@ export default function VariantsSection() {
           <ShowcaseCard name="Underway" art={ART} corner={{ label: "42%", tone: "neutral", mono: true }} progress={0.42}
             status={{ label: "A long cast line that ends in an ellipsis as a block" }} specs={[{ icon: "star", value: "7.9", label: "Rating" }, { icon: "clock", value: "1h 28m", label: "Length" }]}
             action={{ label: "Open" }} />
+          <div style={{ width: 180 }}>
+            <ShowcaseCard name="Narrow" art={ART} compactFacts specs={[{ icon: "star", value: "7.9", label: "Rating" }, { icon: "clock", value: "1h 28m", label: "Length" }]} action={{ label: "Open" }} />
+          </div>
+          <div style={{ width: 180 }}>
+            <ShowcaseCard name="Narrow, icons kept" art={ART} specs={[{ icon: "star", value: "7.9", label: "Rating" }, { icon: "clock", value: "1h 28m", label: "Length" }]} action={{ label: "Open" }} />
+          </div>
           <ShowcaseCard name="Downloaded" art={ART} corner={{ label: "Saved", tone: "accent", icon: "check" }} progress={1} action={{ label: "Open" }} />
         </div>
         <div style={{ display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap" }}>

@@ -6,7 +6,7 @@
 
 @layer krystal.components {
 /* The card is a container (`showcase`), so a site can fit its facts to the card's own width — a site
-   whose values are long lets their icons go on a narrow card, as below 210px they do by default. */
+   whose values are long lets their icons go on a narrow card with `compactFacts`. */
 .k-showcase-card {
   container-type: inline-size;
   container-name: showcase;
@@ -410,14 +410,14 @@ fieldset:disabled .k-showcase-card__cta--act {
   color: var(--fg-3);
 }
 
-/* A narrow card keeps each fact's value and lets its icon go, so the values do not run into one
-   another. */
+/* `compactFacts`: a narrow card keeps each fact's value and lets its icon go, so the values do not run
+   into one another. */
 @container showcase (max-width: 210px) {
-  .k-showcase-spec__ico {
+  .k-showcase-card--compact-facts .k-showcase-spec__ico {
     display: none;
   }
 
-  .k-showcase-spec {
+  .k-showcase-card--compact-facts .k-showcase-spec {
     padding: 0 3px;
   }
 }

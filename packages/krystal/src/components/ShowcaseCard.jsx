@@ -9,6 +9,7 @@ import { Pill } from "./Pill.jsx";
 //            surface the card already has
 //   eyebrow  { label, icon?, tone?: "accent" }   what kind of thing it is, a short line set on the
 //            art above the name
+//   compactFacts  a narrow card (under 210px of its own width) keeps each fact's value and drops its icon
 //   corner   { label, icon?, title?, tone?: "neutral" | "accent", mono? }   a frosted chip on the art's top-left: a
 //            caution by default, `neutral` or `accent` for a fact that is not one, `mono` for figures
 //   badge   { label, tone: "accent" | "info", dot?: "idle" | "live", title? }   the art's top-right
@@ -46,14 +47,15 @@ import { Pill } from "./Pill.jsx";
  * @property {number} [progress] 0 to 1, a bar along the art's foot.
  * @property {number[]} [segments] Each 0 to 1, one short bar per part; takes the foot in place of `progress`.
  * @property {{ icon: string, iconOn?: string, on?: boolean, label: string, onClick: (event: import("react").MouseEvent<HTMLButtonElement>) => void, disabled?: boolean }} [ribbon] A keep switch hanging from the art's top-left edge.
+ * @property {boolean} [compactFacts] A card under 210px wide keeps each fact's value and drops its icon.
  * @property {string} [className] Extra class names on the root element.
  */
 /** @param {ShowcaseCardProps} props */
-function ShowcaseCard({ name, art, onPick, eyebrow, corner, badge, specs = [], status, action, tools, progress, segments, ribbon, className }) {
+function ShowcaseCard({ name, art, onPick, eyebrow, corner, badge, specs = [], status, action, tools, progress, segments, ribbon, compactFacts = false, className }) {
   const open = () => { if (onPick) onPick(); };
   return (
     <article
-      className={"k-showcase-card" + (className ? " " + className : "")}
+      className={"k-showcase-card" + (compactFacts ? " k-showcase-card--compact-facts" : "") + (className ? " " + className : "")}
       onClick={open}
       role="button" tabIndex={0}
       onKeyDown={e => { if ((e.key === "Enter" || e.key === " ") && e.target === e.currentTarget) { e.preventDefault(); open(); } }}

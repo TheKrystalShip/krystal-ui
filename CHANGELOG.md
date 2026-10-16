@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.43.1]
+
+### Added
+- **`ShowcaseCard` `compactFacts`**: a card under 210px wide keeps each fact's value and drops its icon.
+- **`ConfirmDialog` and `FormDialog` take `sheet` and `footLayout`** and hand them to their `Dialog`.
+
+### Fixed
+- **A `ShowcaseCard` keeps its facts' icons at any width** unless `compactFacts` asks otherwise.
+
 ## [0.43.0]
 
 ### Added

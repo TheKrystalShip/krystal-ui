@@ -26,6 +26,8 @@ import { Notice } from "./Notice.jsx";
  * @property {() => Promise<void | { refusal: import("react").ReactNode }>} onConfirm The change itself; resolve with nothing for success or `{ refusal }` (a string, or a node drawn as given) to keep the dialog open with the reason.
  * @property {() => void} onClose Called on cancel, Escape, the scrim and after a successful confirm.
  * @property {"md" | "lg"} [size] The sheet's width: `md` or `lg`.
+ * @property {boolean} [sheet] A full-screen sheet at phone width, as Dialog's.
+ * @property {"row" | "stack" | "pair"} [footLayout] How the foot lays out cancel and confirm, as Dialog's.
  * @property {string} [className] Extra classes on the sheet.
  * @property {import("react").ReactNode} [children] The consequence text.
  * @typedef {ConfirmDialogOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof ConfirmDialogOwnProps>} ConfirmDialogProps
@@ -33,7 +35,7 @@ import { Notice } from "./Notice.jsx";
 /** @param {ConfirmDialogProps} props */
 function ConfirmDialog({
   title, icon, tone = "neutral", confirm, busyLabel, cancel = "Cancel", onConfirm, onClose,
-  size = "md", className, children, ...rest
+  size = "md", sheet, footLayout, className, children, ...rest
 }) {
   const [busy, setBusy] = React.useState(false);
   const [refusal, setRefusal] = React.useState(/** @type {import("react").ReactNode} */ (null));
@@ -58,7 +60,7 @@ function ConfirmDialog({
 
   return (
     <Dialog title={title} icon={icon} size={size} onClose={onClose} canClose={!busy}
-      className={className}
+      sheet={sheet} footLayout={footLayout} className={className}
       foot={(
         <>
           <Button variant="outline" onClick={onClose} disabled={busy}>{cancel}</Button>

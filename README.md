@@ -538,10 +538,10 @@ classes (the Stylelint config reports them). What the components offer beyond th
   **`Meter`**: `stale`.
 - **`Rail`**: `perView` (a count, or stops keyed by the rail's own width), `className`, `style`; `--rail-per-view`
   set on the rail or an ancestor is the default.
-- **`Dialog`**: `sheet` (full screen at phone width), `artOverlap`, `footLayout` (`row`, `stack`, `pair`),
+- **`Dialog`**, **`ConfirmDialog`**, **`FormDialog`**: `sheet` (full screen at phone width), `artOverlap`, `footLayout` (`row`, `stack`, `pair`),
   and a function as `children` that receives `{ fullscreen }`. **`Drawer`**: `footLayout`; no children draws
   no body.
-- **`HeroButton`**: `iconTone`, `armed`. **`ShowcaseCard`**: `corner.tone` and `corner.mono`, the token
+- **`HeroButton`**: `iconTone`, `armed`. **`ShowcaseCard`**: `corner.tone` and `corner.mono`, `compactFacts` (under 210px wide the facts drop their icons), the token
   `--k-showcase-progress-track`. **`SubTabs`** and **`TabBar`**: a `disabled` item; `SubTabs` `fill`.
   **`ToolbarFilters`**: `framed`, `compact` (`true` or `"phone"`), `className`.
 - **`AppShell`**: `mainClassName`; `--k-app-bottom-inset` (room above the phone tab bar that the page, the

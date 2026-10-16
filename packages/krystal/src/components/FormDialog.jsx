@@ -27,19 +27,21 @@ import { FormError, FormScope, FormSubmit } from "./Form.jsx";
  * @property {import("react").ReactNode} [busyLabel] The submit button's words while the form submits, when `submit` is words.
  * @property {import("react").ReactNode} [cancel] The cancel button's words.
  * @property {import("react").ReactNode} [notice] Drawn at the top of the body in place of the form's own error; `null` draws nothing there.
+ * @property {boolean} [sheet] A full-screen sheet at phone width, as Dialog's.
+ * @property {"row" | "stack" | "pair"} [footLayout] How the foot lays out cancel and submit, as Dialog's.
  * @property {string} [className] Extra classes on the sheet.
  * @property {import("react").ReactNode} [children] The fields.
  * @typedef {FormDialogOwnProps & Omit<import("react").ComponentPropsWithoutRef<"div">, keyof FormDialogOwnProps | "title">} FormDialogProps
  */
 /** @param {FormDialogProps} props */
 function FormDialog({
-  form, title, sub, icon, size, onClose, submit = "Save", busyLabel, cancel = "Cancel", notice, className, children, ...rest
+  form, title, sub, icon, size, onClose, submit = "Save", busyLabel, cancel = "Cancel", notice, sheet, footLayout, className, children, ...rest
 }) {
   const words = typeof submit === "string" || typeof submit === "number";
   return (
     <FormScope form={form}>
       <Dialog title={title} icon={icon} sub={sub} size={size} as="form" onSubmit={form.submit}
-        onClose={onClose} canClose={!form.isSubmitting} className={className}
+        onClose={onClose} canClose={!form.isSubmitting} sheet={sheet} footLayout={footLayout} className={className}
         foot={(
           <>
             <Button variant="outline" onClick={onClose} disabled={form.isSubmitting}>{cancel}</Button>
