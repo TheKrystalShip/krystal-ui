@@ -26,7 +26,6 @@
 
 import React from "react";
 import { Icon } from "@thekrystalship/krystal";
-import { RecentConversations } from "./RecentConversations.jsx";
 
 /** @type {React.Context<import("./types.js").ChatHandle | null>} */
 const ChatContext = React.createContext(null);
@@ -65,25 +64,6 @@ function ChatGreeting() {
   );
 }
 
-/** The opening suggestions as a grid, each one put in the composer to finish. A suggestion is its words, or `{ text, icon }`. */
-function ChatSuggestions() {
-  const chat = useChat();
-  if (!chat.assistant || chat.suggestions.length === 0) return null;
-  return (
-    <div className="k-chat-start__suggestions">
-      {chat.suggestions.map((s, i) => {
-        const text = typeof s === "string" ? s : s.text;
-        return (
-          <button key={i} type="button" className="k-chat-start__suggestion" onClick={() => chat.draft(text)}>
-            <Icon name={(s && /** @type {{ icon?: string }} */ (s).icon) || "message-circle"} size={15} className="k-chat-start__suggestion-icon" />
-            <span>{text}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 /** The opening suggestions as a row of chips, each one sent as it is picked. */
 function ChatSuggestionChips() {
   const chat = useChat();
@@ -103,22 +83,6 @@ function ChatSuggestionChips() {
 }
 
 /**
- * The conversations to pick up again, newest first.
- * @param {object} props
- * @param {number} [props.max] how many conversations to list
- */
-function ChatRecent({ max }) {
-  const chat = useChat();
-  return <RecentConversations convos={chat.conversations} activeId={chat.activeId} onPick={chat.open} max={max} />;
-}
-
-/** That conversations are kept and may be read. */
-function ChatPrivacyNote() {
-  const chat = useChat();
-  return chat.assistant ? <p className="k-chat-start__privacy">{CHAT_PRIVACY_NOTICE}</p> : null;
-}
-
-/**
  * A site's block in the empty conversation's column: the column's width, its own content left-aligned.
  * @param {object} props
  * @param {string} [props.className] Extra class on the block.
@@ -131,30 +95,21 @@ function ChatBlock({ className = "", children }) {
 const CHAT_PRIVACY_NOTICE =
   "Conversations are saved and may be reviewed to improve the assistant.";
 
-/**
- * What the empty conversation's column holds when a site fills nothing: on a page, the greeting alone.
- * @param {object} props
- * @param {import("./types.js").ChatHandle} props.chat
- */
-function DefaultStart({ chat }) {
-  return (
-    <>
-      <ChatGreeting />
-      {chat.layout !== "page" && <><ChatSuggestions /><ChatRecent /><ChatPrivacyNote /></>}
-    </>
-  );
+/** What the empty conversation's column holds when a site fills nothing: the greeting alone. */
+function DefaultStart() {
+  return <ChatGreeting />;
 }
 
 /**
- * What stands over the composer when a site fills nothing: a page's suggestions until the person writes.
+ * What stands over the composer when a site fills nothing: the suggestions until the person writes.
  * @param {object} props
  * @param {import("./types.js").ChatHandle} props.chat
  */
 function DefaultAboveComposer({ chat }) {
-  return chat.layout === "page" && chat.empty && !chat.input.trim() ? <ChatSuggestionChips /> : null;
+  return chat.empty && !chat.input.trim() ? <ChatSuggestionChips /> : null;
 }
 
 export {
-  CHAT_PRIVACY_NOTICE, ChatBlock, ChatContext, ChatGreeting, ChatPrivacyNote, ChatRecent, ChatSuggestionChips,
-  ChatSuggestions, DefaultAboveComposer, DefaultStart, renderSlot, useChat,
+  CHAT_PRIVACY_NOTICE, ChatBlock, ChatContext, ChatGreeting, ChatSuggestionChips, DefaultAboveComposer, DefaultStart,
+  renderSlot, useChat,
 };

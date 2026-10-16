@@ -5,7 +5,7 @@
 import React from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "@thekrystalship/krystal";
-import { Button, IconButton } from "@thekrystalship/krystal";
+import { IconButton } from "@thekrystalship/krystal";
 import { Spinner } from "@thekrystalship/krystal";
 import { useModalBehaviour } from "@thekrystalship/krystal";
 import { usePortalPopover } from "@thekrystalship/krystal";
@@ -55,7 +55,6 @@ function HistoryRows({ convos, activeId, onPick, onDelete, loading, close, role 
  * The sheet: the screen's full height from its left edge, over a scrim that closes it, as Escape does; focus stays in it and the screen behind is inert.
  * @param {object} props
  * @param {() => void} props.close
- * @param {() => void} [props.onNew]
  * @param {import("react").ReactNode} [props.head]
  * @param {import("./types.js").Conversation[]} props.convos
  * @param {string | null} props.activeId
@@ -63,7 +62,7 @@ function HistoryRows({ convos, activeId, onPick, onDelete, loading, close, role 
  * @param {(id: string, event: import("react").MouseEvent) => void} props.onDelete
  * @param {boolean} [props.loading]
  */
-function HistorySheet({ close, onNew, head, ...rows }) {
+function HistorySheet({ close, head, ...rows }) {
   const root = React.useRef(null);
   useModalBehaviour(root, { onClose: close });
   return createPortal(
@@ -73,9 +72,6 @@ function HistorySheet({ close, onNew, head, ...rows }) {
         <div className="k-chat-sheet__head">
           <span className="k-chat-sheet__title">Chats</span>
           <IconButton icon="x" label="Close" variant="ghost" size="sm" onClick={close} />
-        </div>
-        <div className="k-chat-sheet__new">
-          <Button variant="outline" size="md" icon="square-pen" wide onClick={() => { onNew(); close(); }}>New chat</Button>
         </div>
         <div className="k-chat-sheet__list">
           {head}
@@ -98,10 +94,9 @@ function HistorySheet({ close, onNew, head, ...rows }) {
  * @param {() => void} [props.onOpen] called when the list opens
  * @param {boolean} [props.loading]
  * @param {boolean} [props.sheet] a sheet instead of a popover
- * @param {() => void} [props.onNew]
  * @param {import("react").ReactNode} [props.head] a site's block at the top of the list
  */
-function ChatHistory({ convos, activeId, onPick, onDelete, onOpen, loading, sheet = false, onNew, head = null }) {
+function ChatHistory({ convos, activeId, onPick, onDelete, onOpen, loading, sheet = false, head = null }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef(null);
   const { pos, menuRef } = usePortalPopover(open && !sheet, setOpen, ref);
@@ -113,7 +108,7 @@ function ChatHistory({ convos, activeId, onPick, onDelete, onOpen, loading, shee
       <div className="k-chat-hist">
         <IconButton ref={ref} icon="history" label="Chats" variant="ghost" size="sm"
           onClick={toggle} aria-haspopup="dialog" aria-expanded={open} />
-        {open && <HistorySheet {...rows} close={close} onNew={onNew} head={head} />}
+        {open && <HistorySheet {...rows} close={close} head={head} />}
       </div>
     );
   }

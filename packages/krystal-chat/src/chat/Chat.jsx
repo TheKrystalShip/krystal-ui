@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { Icon } from "@thekrystalship/krystal";
 import { Button, IconButton } from "@thekrystalship/krystal";
 import { EmptyState, useFollowTail } from "@thekrystalship/krystal";
-import { NavItem } from "@thekrystalship/krystal";
 import { Spinner } from "@thekrystalship/krystal";
 import { Toggle } from "@thekrystalship/krystal";
 import { usePortalPopover } from "@thekrystalship/krystal";
@@ -209,7 +208,7 @@ function ConversationOptions({ onCompact, onDelete }) {
  * @param {any} [props.user] the signed-in person, handed on to the renderers of the thread
  * @param {boolean} [props.docked] drawn in the dock's window
  * @param {{ prompt?: string, nonce?: number | string }} [props.seed] words put in the composer once per `nonce`
- * @param {() => void} [props.onClose] Called by the close button of a docked chat, and by the back button of a page with nothing open.
+ * @param {() => void} [props.onClose] Called by a docked chat's hide button; absent, a docked chat has none.
  * @param {import("./types.js").AssistantHost} [props.assistantHost] the assistant addressed
  * @param {import("./types.js").AssistantHost[]} [props.assistantHosts] every assistant a picker offers
  * @param {(id: string, opts?: { chosen?: boolean }) => void} [props.onSelectAssistantHost] Called with the id of the assistant the person picked, `{ chosen: true }` for a pick and without it when the chat re-points itself at a stored choice.
@@ -234,7 +233,7 @@ function ConversationOptions({ onCompact, onDelete }) {
  * @param {(() => void) | null} [props.onOpenSettings] the way to the surface's own settings, when the chat is the app
  * @param {HTMLElement | null} [props.railTarget] the element the conversation list is drawn into, for a site whose frame has a sidebar
  * @param {HTMLElement | null} [props.listTarget] a page of the site's own that shows the same list full width
- * @param {(() => void) | null} [props.onShowConversation] the person opened or started a conversation while the site shows something else
+ * @param {(() => void) | null} [props.onShowConversation] the person opened a conversation while the site shows something else
  * @param {boolean} [props.conversationShown] whether the chat is what is on screen
  * @param {string} [props.storageKey] where this browser caches the conversation list
  * @param {string} [props.assistantName] What the thread calls the assistant on its turns.
@@ -287,7 +286,7 @@ function Chat({
   // A site whose frame has a sidebar keeps the conversation list there instead of beside the chat:
   // `railTarget` is the element it is drawn into, and the chat takes the whole width. The list
   // stays the chat's — a site that shows something other than the chat while the list is in view
-  // learns through `onShowConversation` that the person opened or started one, and says through
+  // learns through `onShowConversation` that the person opened one, and says through
   // `conversationShown` whether the chat is what is on screen, so the sidebar lights the open one only then.
   // `listTarget` is a page of the site's own that shows the same list full width — a phone's tab of
   // conversations. A chat whose list a site draws elsewhere carries no history popover in its header.
@@ -1820,7 +1819,10 @@ function Chat({
   // reopened rather than a second one started beside it.
   const backToStart = () => {
     const hostId = assistantHost && assistantHost.id;
-    const waiting = convos.find(c => c.messages.length === 0 && (!hostId || !c.hostId || c.hostId === hostId));
+    // An empty one waiting to be written in is reused; a conversation the assistant lists whose turns are
+    // not read yet holds no messages here and is not empty.
+    const unsent = (c) => c.messages.length === 0 && !(c.remote && c.turns !== 0);
+    const waiting = convos.find(c => unsent(c) && (!hostId || !c.hostId || c.hostId === hostId));
     if (waiting) { setActiveId(waiting.id); setInput(""); }
     else newChat({ quiet: true });
   };
@@ -1847,7 +1849,6 @@ function Chat({
       + (asPage ? " k-chat-page--as-page" : "") + (framed ? " k-chat-page--framed" : "") + (pageClass ? " " + pageClass : "")}>
       {railTarget && createPortal(
         <div className="k-chat-convos">
-          <NavItem icon="square-pen" label="New chat" onClick={shown(newChat)} />
           {convos.length > 0 && <div className="k-sidebar__group-label k-chat-convos__label">Recent</div>}
           <div className="k-chat-convos__list">
             {convos.map(c => {
@@ -1871,7 +1872,6 @@ function Chat({
         railTarget)}
       {listTarget && createPortal(
         <div className="k-chat-list">
-          <Button variant="primary" size="lg" icon="square-pen" wide onClick={shown(newChat)}>New chat</Button>
           {convos.length === 0
             ? <EmptyState icon="messages-square" title="No conversations yet" />
             : (
@@ -1897,9 +1897,6 @@ function Chat({
         </div>,
         listTarget)}
       {!railTarget && <aside className="k-chat-rail">
-        <button className="k-chat-rail__new" onClick={newChat}>
-          <Icon name="plus" size={15} strokeWidth={2.2} /> New chat
-        </button>
         <div className="k-chat-rail__list">
           {convos.length === 0 && <div className="k-chat-rail__empty">No conversations yet.</div>}
           {convos.map(c => (
@@ -1929,12 +1926,11 @@ function Chat({
         {/* The header names the conversation being read; which assistant answers is the surface's
             to say. The connection shows here only when it is not fine \u2014 a healthy one is what the
             whole page already demonstrates. */}
-        <div className={"k-chat-main__head k-chat-head" + (docked ? " k-chat-head--docked" : "") + (asPage && lifted ? " k-chat-head--lifted" : "")}>
-          {/* Back leaves a conversation for the empty one, and leaves the chat from the empty one where
-              the site gives a way out: a page in a dock has no tab bar to leave by. */}
-          {asPage && (!empty || onClose) && (
-            <IconButton icon="arrow-left" label={empty ? "Close assistant" : "Back"} variant="ghost" size="sm"
-              className="k-chat-head__back" onClick={empty ? onClose : backToStart} />
+        <div className={"k-chat-main__head k-chat-head" + (docked ? " k-chat-head--docked" : "") + (lifted ? " k-chat-head--lifted" : "")}>
+          {/* Back leaves a conversation for the empty one, in every layout. */}
+          {!empty && (
+            <IconButton icon="arrow-left" label="Back" variant="ghost" size="sm"
+              className="k-chat-head__back" onClick={backToStart} />
           )}
           <span className="k-chat-head__title" title={conversationTitle(active)}>{conversationTitle(active)}</span>
           {conn.tone !== "online" && (
@@ -1953,10 +1949,9 @@ function Chat({
             {/* The phone-width and dock replacement for the rail (CSS decides, at the breakpoint
                 that hides it), so the rail's foot travels here with it. */}
             <div className="k-chat-head__nav">
-              {!asPage && <IconButton icon="square-pen" label="New chat" variant="ghost" size="sm" onClick={newChat} />}
               {!railTarget && !listTarget && (
                 <ChatHistory convos={convos} activeId={activeId} onPick={pickChat} onDelete={deleteChat} onOpen={loadServerHistory} loading={histLoading}
-                  sheet={asPage} onNew={backToStart} head={renderSlot(slots.history, chat)} />
+                  sheet={asPage} head={renderSlot(slots.history, chat)} />
               )}
               {onOpenSettings && (
                 <IconButton icon="settings" label="Settings" variant="ghost" size="sm" onClick={onOpenSettings} />
@@ -1972,8 +1967,10 @@ function Chat({
                 pressed={!!pinned} disabled={pinDisabled} onClick={onTogglePin}
                 title={pinDisabled ? "Not enough room to pin" : pinned ? "Unpin \u00b7 float over the page" : "Pin \u00b7 push the page aside"} />
             )}
-            {docked && !asPage && (
-              <IconButton icon="x" label="Close assistant" variant="ghost" size="sm" onClick={onClose} />
+            {/* A docked chat collapses into the side it stands on, as the sidebar collapses into its own;
+                a chat that is the page has nothing to collapse into. */}
+            {docked && onClose && (
+              <IconButton icon="panel-right-close" label="Hide assistant" title="Hide" variant="ghost" size="sm" onClick={onClose} />
             )}
           </div>
         </div>
@@ -1981,7 +1978,7 @@ function Chat({
         <div className="k-chat-scroll" ref={scrollRef} onScroll={onThreadScroll}>
           {empty ? (
             <div className="k-chat-start">
-              {slots.start != null ? renderSlot(slots.start, chat) : <DefaultStart chat={chat} />}
+              {slots.start != null ? renderSlot(slots.start, chat) : <DefaultStart />}
             </div>
           ) : (
             <ChatThread messages={active.messages} user={user} assistantName={assistantName}
@@ -2087,7 +2084,7 @@ function Chat({
                 )}
                 {turnRunning
                   ? <IconButton icon="square" label="Stop the answer" variant="outline" size="sm" onClick={stop} />
-                  : asPage && !input.trim() && attached.length === 0 ? null
+                  : !input.trim() && attached.length === 0 ? null
                   : <Button variant="primary" size="sm" icon="arrow-up" onClick={() => send()}
                       disabled={!canSend || !assistantUsable}
                       aria-label="Send" title={assistantUsable ? "Send" : "Assistant unavailable"} />}
@@ -2098,7 +2095,7 @@ function Chat({
               <VoiceComposerBar rec={voice} onSend={sendVoice} onCancel={voice.cancel} />
             </div>
           )}
-          {asPage && empty && assistantHost && <p className="k-chat-composer__note">{CHAT_PRIVACY_NOTICE}</p>}
+          {empty && assistantHost && <p className="k-chat-composer__note">{CHAT_PRIVACY_NOTICE}</p>}
           <ChatMenu open={attachOpen} setOpen={setAttachOpen} anchorRef={attachRef} label="Attach"
             align={asPage ? undefined : "start"} className="k-chat-menu--attach">
             <Button variant="ghost" size="sm" wide icon="image" role="menuitem" className="k-chat-menu__item"

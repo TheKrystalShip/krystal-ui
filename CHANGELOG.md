@@ -1,5 +1,27 @@
 # Changelog
 
+## [3.0.0]
+
+### Changed
+- **A panel is drawn as a page is.** Every chat stands on the page's background with the greeting
+  alone in the middle of the empty conversation, the suggestions as chips over a one-row composer, the
+  privacy note under it and the send button only once there is something to send; an answer carries no
+  name over it. The layout decides only the frame: a dock's window buttons and a popover of
+  conversations for a panel, a sheet and the keyboard's room for a page.
+- **The header's back arrow is in every layout**, on every conversation, and returns to the empty one;
+  it is how a new conversation starts.
+- **A docked chat hides into its side of the screen**: its close button is a hide button with the
+  sidebar's collapse icon mirrored, in a dock's panel and in a dock's page alike, and calls `onClose`.
+  A chat that is the page itself has none.
+- **Back reuses only an empty conversation.** A listed conversation whose turns are not read yet is
+  never mistaken for one.
+
+### Removed
+- **Every New chat button**: the header's, the conversation sheet's, the rail's, and the ones over a
+  site's sidebar list and conversations page.
+- **`ChatSuggestions`, `ChatRecent` and `ChatPrivacyNote`**: the empty conversation holds the greeting
+  and a site's blocks, with the suggestions over the composer and the privacy note under it.
+
 ## [2.0.0]
 
 ### Changed

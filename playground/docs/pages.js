@@ -324,7 +324,7 @@ export const PAGES = [
 
   // The assistant chat
   {
-    id: "chat", name: "Chat", group: "The assistant chat", exports: ["Chat", "ChatActivity", "ChatBlock", "ChatGreeting", "ChatPrivacyNote", "ChatRecent", "ChatSuggestionChips", "ChatSuggestions", "useChat", "ChatMessage", "ChatThread", "ChatEvidence", "ChatCommand", "ChatDaySeparator", "ChatEvent", "ChatEventRow", "ChatFileChange", "ChatVerify", "ChatMessageAttachments", "ComposerAttachments", "ChatLightbox", "MarkdownTextarea", "VoiceComposerBar", "VoiceNoteBubble", "useVoiceRecorder", "useConversationStream", "createAssistantClient", "renderMarkdown"], examples: ["chat-frame"],
+    id: "chat", name: "Chat", group: "The assistant chat", exports: ["Chat", "ChatActivity", "ChatBlock", "ChatGreeting", "ChatSuggestionChips", "useChat", "ChatMessage", "ChatThread", "ChatEvidence", "ChatCommand", "ChatDaySeparator", "ChatEvent", "ChatEventRow", "ChatFileChange", "ChatVerify", "ChatMessageAttachments", "ComposerAttachments", "ChatLightbox", "MarkdownTextarea", "VoiceComposerBar", "VoiceNoteBubble", "useVoiceRecorder", "useConversationStream", "createAssistantClient", "renderMarkdown"], examples: ["chat-frame"],
     summary: "The assistant chat, the parts it is drawn from, and the client of the assistant wire contract.",
   },
   {

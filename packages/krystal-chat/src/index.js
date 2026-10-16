@@ -12,7 +12,7 @@ export { Chat, CHAT_PRIVACY_NOTICE, DEFAULT_PROFILE as CHAT_DEFAULT_PROFILE, DEF
 export { ChatEvidence } from "./chat/ChatFrame.jsx";
 export { ChatActivity } from "./chat/ChatActivity.jsx";
 export {
-  ChatBlock, ChatGreeting, ChatPrivacyNote, ChatRecent, ChatSuggestionChips, ChatSuggestions, useChat,
+  ChatBlock, ChatGreeting, ChatSuggestionChips, useChat,
 } from "./chat/slots.jsx";
 export {
   ChatCommand, ChatDaySeparator, ChatEvent, ChatEventRow, ChatFileChange, ChatVerify,

@@ -28,8 +28,8 @@ const NO_PROFILE = {
 //
 // The assistant names every conversation it holds, including this one — `title` on a listing row is
 // never null. This covers the one conversation the assistant has no opinion on yet: the row this
-// browser mints between pressing New chat and the assistant answering. It has to be the assistant's
-// word, which is why the wire contract states the string rather than leaving each side to pick one.
+// browser mints between going back to the empty conversation and the assistant answering. It has to
+// be the assistant's word, which is why the wire contract states the string rather than leaving each side to pick one.
 const NEW_CHAT_TITLE = "New chat";
 
 // What to put on a conversation row. One helper rather than a fallback repeated at each render, so

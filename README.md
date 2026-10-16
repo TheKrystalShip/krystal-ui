@@ -839,20 +839,25 @@ functions that prepare a file are `prepareAttachment`, `acceptFor`, `textOverLim
 A site whose frame has a sidebar can keep the conversation list there: `railTarget` is the element
 the list is drawn into, and the chat takes the whole width. `framed` makes the
 chat fill an `AppShell`'s main column. When the site shows something other than the chat while the
-list stays in view, `onShowConversation` tells it the person opened or started a conversation, and
+list stays in view, `onShowConversation` tells it the person opened a conversation, and
 `conversationShown` says whether the chat is what is on screen, so the sidebar lights the open one
 only then. `listTarget` is a page of the site's own — a phone's tab of conversations — where the same
-list is drawn full width, with New chat above it and the open conversation marked. A chat whose list
+list is drawn full width, with the open conversation marked. A chat whose list
 a site draws elsewhere carries no history popover in its header.
 
-`layout` is where the chat stands. `"panel"`, the default, is a panel beside or over a page: its own
-surface, framed, with a dock's window buttons. `"page"` is the chat as the whole page, as a phone's
-tab opens it: it stands on the page's background with no frame, its header has a way back to the
-empty conversation and the conversation list as a sheet, its opening suggestions are a row of chips
-over a one-row composer, and while the person writes the site's tab bar gives its room to the
+Every chat is drawn one way: on the page's background, the greeting alone in the middle of the empty
+conversation, its opening suggestions as a row of chips over a one-row composer, the privacy note
+under it, and the send button only once there is something to send. `layout` is where it stands.
+`"panel"`, the default, is a panel beside or over a page, with a dock's window buttons and the
+conversation list as a popover. `"page"` is the chat as the whole page, as a phone's tab opens it: its
+conversation list is a sheet, and while the person writes the site's tab bar gives its room to the
 keyboard and the composer rises above it. Give a page `framed` as well, to fill the column edge to
-edge. A page in a dock, where there is no tab bar to leave by, takes `onClose`: the header's back
-button closes the chat from the empty conversation.
+edge.
+
+The header's back arrow, in every layout, leaves a conversation for the empty one, and that is how a
+new conversation starts; there is no New chat button. A `docked` chat, panel or page, also carries a
+hide button that collapses it into its side of the screen and calls `onClose`; a chat that is the page
+itself has none.
 
 `slots` puts a site's own blocks in the chat's frame, by place: `start` is the empty conversation's
 column, `aboveComposer` a row over the composer, `headerActions` buttons in the header and `history`
@@ -861,21 +866,16 @@ block inside the chat reads the same handle with `useChat()`: the `layout`, whet
 is `empty` and the assistant `usable`, the `conversations`, and `ask(text)` to send a turn,
 `draft(text)` to leave words in the composer for the person to finish, `newChat()` and `open(id)`.
 A place left empty draws the chat's own blocks, which are exported for a site composing its own:
-`ChatGreeting`, `ChatSuggestions` (a grid, each one drafted), `ChatSuggestionChips` (a row, each one
-sent), `ChatRecent` and `ChatPrivacyNote`, with `ChatBlock` to set a site's block in the column. The
-chat fetches nothing for a block; the site's block brings its own data.
+`ChatGreeting` and `ChatSuggestionChips` (a row, each one sent), with `ChatBlock` to set a site's
+block in the column. The chat fetches nothing for a block; the site's block brings its own data.
 
 ```jsx
 <Chat
   slots={{
-    // A page draws its suggestions as chips over the composer and its privacy note under it, so
-    // the column holds them only in a panel.
     start: (chat) => (
       <>
         <ChatGreeting />
-        {chat.layout !== "page" && <ChatSuggestions />}
         <ChatBlock><Alerts onPick={(alert) => chat.draft(alert.prompt)} /></ChatBlock>
-        {chat.layout !== "page" && <><ChatRecent /><ChatPrivacyNote /></>}
       </>
     ),
   }} />
