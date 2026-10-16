@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.43.2]
+
+### Fixed
+- **The main column no longer reserves a scrollbar gutter.** With classic scrollbars the reserved room
+  made the side gutters of a page that does not scroll unequal. A site that wants it sets
+  `scrollbar-gutter: stable` on its own class through `mainClassName`.
+
 ## [0.43.1]
 
 ### Added
