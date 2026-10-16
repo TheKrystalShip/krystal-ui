@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.43.4]
+
+### Fixed
+- **A carousel starts the slide's time over when focus arrives in its slides from outside**, as it
+  does for a key pressed in them. Focus moved into the slides by a key pressed elsewhere (Down from a
+  television's bar) no longer lands on an action the slide then turns away.
+
 ## [0.43.3]
 
 ### Fixed

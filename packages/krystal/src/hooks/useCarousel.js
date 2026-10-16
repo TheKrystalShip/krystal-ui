@@ -6,8 +6,9 @@ import React from "react";
 //
 // It holds still while a mouse is over the slides, while focus a keyboard moved is in them
 // (`pauseOnFocus`), while the page is hidden, while `paused` is set, and never turns by itself for
-// somebody whose system asks for reduced motion. A key pressed or a pointer put down in the slides
-// starts the slide's time over, so what is about to be chosen is not turned away under the press. A
+// somebody whose system asks for reduced motion. A key pressed or a pointer put down in the slides, and
+// focus arriving in them from outside, start the slide's time over, so what is about to be chosen is
+// not turned away under the press. A
 // touch swiped across the slides turns them by hand, as `go`, `next` and `prev` do, and the slide
 // chosen by hand is given its whole time.
 //
@@ -113,7 +114,10 @@ function useCarousel({ count, interval = 8000, start = 0, pauseOnFocus = true, p
     "aria-roledescription": "carousel",
     onPointerEnter: (e) => { if (e.pointerType === "mouse") setHover(true); },
     onPointerLeave: (e) => { if (e.pointerType === "mouse") setHover(false); },
-    onFocus: (e) => { if (e.target.matches && e.target.matches(":focus-visible")) setFocus(true); },
+    onFocus: (e) => {
+      if (!e.currentTarget.contains(e.relatedTarget)) restart();
+      if (e.target.matches && e.target.matches(":focus-visible")) setFocus(true);
+    },
     onBlur: (e) => { if (!e.currentTarget.contains(e.relatedTarget)) setFocus(false); },
     onKeyDown: () => restart(),
     onPointerDown: (e) => {
