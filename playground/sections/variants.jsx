@@ -43,7 +43,7 @@ export default function VariantsSection() {
               <Button size="sm">Look up</Button>
             </SettingsRow>
             <SettingsRow icon="hash" title="Port" controlsBelow>
-              <Input narrow align="end" type="number" suffix="udp" defaultValue={27015} />
+              <Input narrow align="end" type="number" suffix="udp" aria-label="Port" defaultValue={27015} />
             </SettingsRow>
             <SettingsRow icon="ruler" title="Heights" controlsBelow>
               <RadioGroup fill variant="segmented" label="Heights" value={heights} onChange={setHeights}
@@ -58,7 +58,7 @@ export default function VariantsSection() {
           <StatTile emphasis tone="ok" label="Online" value={3} sub="a long sub line that wraps over lines" wrapSub />
           <StatTile emphasis tone="info" label="Disk" value="62" unit="%" deltaEnd delta={<StatusDot tone="ok" label="Healthy" />} />
           <StatTile stale tone="off" label="CPU" value="12" unit="%" sub="Last reading" />
-          <StatTile label="Memory" value="8" unit="GB" spark={<Meter stale value={60} />} />
+          <StatTile label="Memory" value="8" unit="GB" spark={<Meter stale label="Memory" value={60} />} />
         </StatTiles>
       </Sub>
       <Sub title="Rail perView: stops keyed by the rail's own width">
@@ -120,7 +120,7 @@ export default function VariantsSection() {
           <ChatCard icon="server" title="Flush rows"><ChatCardRows flush><ChatCardRow label="State" value="Running" /></ChatCardRows></ChatCard>
           <Avatar size={72} shape="rounded" name="A" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='200'%3E%3Crect width='72' height='80' fill='%23c06040'/%3E%3Crect y='80' width='72' height='120' fill='%2340a0c0'/%3E%3C/svg%3E" imagePosition="center 10%" />
         </div>
-        <div style={{ display: "grid", gap: 12, maxWidth: 520, "--tv-poster-w": "90px", "--tv-poster-h": "135px", "--tv-dim": 0.55 }}>
+        <div style={{ display: "grid", gap: 12, maxWidth: 520, "--tv-poster-w": "90px", "--tv-poster-h": "135px" }}>
           <TvSpotlight titleSize="lg" overviewLines={2} title="Large name" overview="Two lines of an overview and then the rest is cut off by the clamp so a long story never pushes the page." />
           <div style={{ display: "flex", gap: 12 }}>
             <TvCard href="#" label="Card" onClick={(e) => e.preventDefault()} />

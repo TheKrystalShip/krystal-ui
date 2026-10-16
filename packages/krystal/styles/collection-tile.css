@@ -305,6 +305,6 @@
 }
 
 :root[data-tv] .k-tv-row__track:focus-within .k-collection-tile:not(:focus-visible) {
-  opacity: var(--tv-dim);
+  opacity: var(--tv-dim, 0.55);
 }
 }

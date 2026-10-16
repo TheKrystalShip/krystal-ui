@@ -651,7 +651,7 @@ export function FrameExamples() {
             <div style={{ border: "1px dashed var(--accent, currentColor)", padding: 8 }}>The page column: the frame pads its sides by --k-page-gutter.</div>
           </Container>
           <Footer wordmark="Playground" tagline="The footer's text lines up with the page column above it."
-            groups={[{ label: "Source", links: [{ label: "Repository", href: "#" }] }]} copy="Copyright" />
+            groups={[{ label: "Source", links: [{ name: "Repository", href: "#" }] }]} copy="Copyright" />
         </AppShell>
       </div>
     </>

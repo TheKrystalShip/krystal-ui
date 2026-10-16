@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.43.5]
+
+### Fixed
+- **A stale or `off` `StatTile` reads at 4.5:1.** Its label, sub line and the off figure take `--fg-3`.
+- **A television card stepped back reads at 4.5:1 on the light palette**, where `--tv-dim` is 0.65.
+  The dim falls back to 0.55 wherever `--tv-dim` is unset.
+
 ## [0.43.4]
 
 ### Fixed

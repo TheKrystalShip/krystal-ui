@@ -233,7 +233,7 @@
   margin-left: auto;
 }
 
-.k-stat--off .k-stat__value { color: var(--fg-4); }
+.k-stat--off .k-stat__value { color: var(--fg-3); }
 
 /* The last figure measured: a dashed frame, the words around it quiet, and the colours easing over
    when a figure goes stale or comes back. */
@@ -254,9 +254,9 @@
 }
 
 .k-stat.k-is-stale { border-style: dashed; }
-.k-stat.k-is-stale .k-stat__label { color: var(--fg-4); }
+.k-stat.k-is-stale .k-stat__label { color: var(--fg-3); }
 .k-stat.k-is-stale .k-stat__label > svg { opacity: 0.5; }
-.k-stat.k-is-stale .k-stat__sub { color: var(--fg-4); opacity: 0.85; }
+.k-stat.k-is-stale .k-stat__sub { color: var(--fg-3); }
 
 .k-stat__spark { min-width: 0; }
 
