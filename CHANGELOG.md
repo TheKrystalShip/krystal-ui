@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.1.0]
+
+### Added
+- **A site names its default theme and the pair `auto` follows.** `configureThemes({ default, auto })`
+  sets the palette a person with no stored preference gets and the light and dark palettes `auto`
+  resolves to; a site that configures nothing keeps Krystal Blue Dark and Krystal Blue Light/Dark.
+- **`themeBootScript()`** returns the script that puts the stored theme, or the site's default, on
+  `<html>` before the first frame, written from the theme list, the default and the pair, for a site
+  to write into a file at build time.
+- **`autoThemes()`** names the light and dark palettes `auto` resolves to; the theme picker's Auto
+  swatch draws that pair.
+
+### Fixed
+- **A cinematic `Hero` with no art reads in a light theme.** It drew its dark scrim and kept the
+  heading's light-on-dark colours over the bare surface; it now draws no scrim, and its heading, its
+  name (with no shadow) and its glass tags take the page's own colours.
+
 ## [3.0.4]
 
 ### Fixed

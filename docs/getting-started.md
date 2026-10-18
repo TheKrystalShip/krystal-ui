@@ -176,6 +176,20 @@ registerThemes([{ id: "harbour", label: "Harbour", mode: "dark" }]);
 The theme picker lists it, and a stored preference naming it takes effect. `mode` is the palette's own
 light or dark character and matches the `color-scheme` its block declares.
 
+A person with no stored preference gets Krystal Blue Dark, and `auto` follows the system between
+Krystal Blue Light and Dark. A site names its own default and pair once, after registering the
+palettes they name:
+
+```js
+import { configureThemes } from "@thekrystalship/krystal";
+configureThemes({ default: "harbour", auto: { light: "harbour-day", dark: "harbour" } });
+```
+
+The stored theme, or that default, has to be on `<html>` before the first frame, so the page's head
+starts with a script that sets it. `themeBootScript()` returns that script's source, written from the
+list, the default and the pair as configured; a site writes it into a file at build time, from the
+same registration its bundle runs, so the two never disagree.
+
 `krystal-check-theme` reads the `[data-theme]` blocks of the sheets it is given and fails on a missing
 required token, a token outside the permitted set, a missing `color-scheme`, and any `--on-*` ink under
 4.5:1 on its fill. A token a block does not define resolves against the package's `tokens.css`, as it

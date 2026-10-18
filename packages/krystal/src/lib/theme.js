@@ -4,7 +4,10 @@ import { createStore, useStore } from "./store.js";
 //
 // One user preference, persisted in this browser's localStorage under THEME_KEY. The
 // value is either "auto" — follow the OS via prefers-color-scheme, live-updating on
-// change — or the id of one concrete palette from THEME_OPTS below. "dark" is the default.
+// change — or the id of one concrete palette from THEME_OPTS below. With no preference the
+// site's default applies: "dark" unless the site names another with configureThemes, which
+// also names the light and dark palettes "auto" resolves to (Krystal Blue Light and Dark
+// unless named).
 //
 // The preference is RESOLVED to a concrete palette id and written to
 // <html data-theme="…">; tokens.css keys every color token off that attribute.
@@ -126,7 +129,8 @@ const THEME_OPTS = [
   { id: "cvd-mono-light",      label: "Monochrome Light",      mode: "light", cvd: "achromatopsia — no colour vision; status reads by lightness" },
 ];
 const VALID = THEME_OPTS.map(o => o.id);
-const DEFAULT = "dark";
+let defaultTheme = "dark";
+let autoPair = { light: "light", dark: "dark" };
 
 // A site's own palettes join the list a picker offers and the ids the store accepts. The entries
 // have the shape of THEME_OPTS entries; a palette's CSS is the site's own `[data-theme="<id>"]`
@@ -149,12 +153,64 @@ function registerThemes(options) {
     THEME_OPTS.push(o);
     VALID.push(o.id);
   }
-  const pref = readPref();
-  if (pref !== themeStore.getState().pref) {
-    const resolved = resolveTheme(pref);
-    applyResolved(resolved);
-    themeStore.setState({ pref, resolved });
+  reapply();
+}
+
+// A site's default palette and the pair "auto" resolves to, named once, before the first render and
+// after registering any palette they name. Each must be an offered id, and the pair's light and dark
+// palettes must be of that mode. A preference already stored still wins over the default.
+/**
+ * @param {object} config
+ * @param {string} [config.default] The palette (or "auto") a person with no stored preference gets.
+ * @param {{ light: string, dark: string }} [config.auto] The palettes "auto" resolves to.
+ * @returns {void}
+ */
+function configureThemes({ default: next, auto } = {}) {
+  const modeOf = (id) => THEME_OPTS.find((o) => o.id === id)?.mode;
+  if (next !== undefined && !VALID.includes(next)) throw new TypeError(`configureThemes: ${next} is not an offered theme`);
+  if (auto !== undefined) {
+    for (const mode of ["light", "dark"]) {
+      if (modeOf(auto[mode]) !== mode) throw new TypeError(`configureThemes: auto.${mode} needs a ${mode} palette, not ${auto[mode]}`);
+    }
+    autoPair = { light: auto.light, dark: auto.dark };
   }
+  if (next !== undefined) defaultTheme = next;
+  reapply();
+}
+
+// The light and dark palettes "auto" resolves to, for a picker drawing what auto shows.
+/** @returns {{ light: string, dark: string }} */
+const autoThemes = () => ({ ...autoPair });
+
+// The preference read again and the resolved palette painted again, after the list, the default or
+// the auto pair changed.
+function reapply() {
+  const pref = readPref();
+  const resolved = resolveTheme(pref);
+  const state = themeStore.getState();
+  if (pref === state.pref && resolved === state.resolved) return;
+  applyResolved(resolved);
+  themeStore.setState({ pref, resolved });
+}
+
+// The script a site runs as the first thing in its page's head, so the stored theme, or the site's
+// default, is on <html> before the first frame. Generated from the list, the default and the auto pair
+// as configured when it is called, so it agrees with this module; a site writes it into a file at
+// build time (its page's policy may forbid an inline script).
+/** @returns {string} */
+function themeBootScript() {
+  const ids = VALID.filter((id) => id !== "auto");
+  return `(function () {
+  var IDS = ${JSON.stringify(ids)};
+  var pref = ${JSON.stringify(defaultTheme)};
+  try {
+    var stored = localStorage.getItem(${JSON.stringify(THEME_KEY)});
+    if (stored === "auto" || IDS.indexOf(stored) >= 0) pref = stored;
+  } catch (e) {}
+  var light = window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches;
+  document.documentElement.setAttribute("data-theme", pref === "auto" ? (light ? ${JSON.stringify(autoPair.light)} : ${JSON.stringify(autoPair.dark)}) : pref);
+})();
+`;
 }
 
 // The browser's storage, or null outside a page: a runtime with a localStorage of its own (Node) warns
@@ -165,8 +221,8 @@ const storage = () => (typeof window !== "undefined" ? window.localStorage : nul
 function readPref() {
   try {
     const v = storage()?.getItem(THEME_KEY);
-    return VALID.includes(v) ? v : DEFAULT;
-  } catch { return DEFAULT; }
+    return VALID.includes(v) ? v : defaultTheme;
+  } catch { return defaultTheme; }
 }
 
 const prefersLight = () =>
@@ -180,7 +236,7 @@ const prefersLight = () =>
  */
 function resolveTheme(pref) {
   if (pref !== "auto") return pref;
-  return prefersLight() ? "light" : "dark";
+  return prefersLight() ? autoPair.light : autoPair.dark;
 }
 
 // Push the resolved theme onto <html> and keep the browser-chrome color honest.
@@ -236,4 +292,4 @@ const useThemePref = () => useStore(themeStore, s => s.pref);
 /** @returns {string} */
 const useResolvedTheme = () => useStore(themeStore, s => s.resolved);
 
-export { themeStore, useThemePref, useResolvedTheme, resolveTheme, registerThemes, THEME_KEY, THEME_OPTS };
+export { themeStore, useThemePref, useResolvedTheme, resolveTheme, registerThemes, configureThemes, autoThemes, themeBootScript, THEME_KEY, THEME_OPTS };

@@ -88,6 +88,6 @@ export { copyText } from "./lib/clipboard.js";
 export * as pushBrowser from "./lib/pushBrowser.js";
 export { createSpatialFocus, focusElement } from "./lib/spatialFocus.js";
 export { createStore, useStore } from "./lib/store.js";
-export { themeStore, useThemePref, useResolvedTheme, resolveTheme, registerThemes, THEME_KEY, THEME_OPTS } from "./lib/theme.js";
+export { themeStore, useThemePref, useResolvedTheme, resolveTheme, registerThemes, configureThemes, autoThemes, themeBootScript, THEME_KEY, THEME_OPTS } from "./lib/theme.js";
 export { fmtRelative } from "./lib/time.js";
 export { toast, toastStore, unreadCount, unreadTone } from "./lib/toasts.js";

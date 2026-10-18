@@ -8,7 +8,8 @@ import { Icon } from "./Icon.jsx";
 //                        content is laid out with the parts below: a HeroStatus pill floated
 //                        top-left, a HeroBody for the bottom block, a HeroHeading with the HeroName
 //                        and HeroTags on the art, and a HeroBar of HeroGroups and HeroButtons for
-//                        the frosted control bar.
+//                        the frosted control bar. With no `art` there is nothing to read over: no
+//                        scrim is drawn, and the heading and its tags take the page's own colours.
 //   card                 a bordered card with the art behind a veil that fades from the surface on
 //                        the left, and the children in a column over its left 60%: an `h1.k-hero__name`,
 //                        `.k-hero__tags` with `.k-hero__tag`s, and a row of actions.
@@ -31,9 +32,9 @@ function Hero({ art, variant = "cinematic", className, children }) {
     );
   }
   return (
-    <section className={"k-hero k-hero--cinematic" + (className ? " " + className : "")}>
-      {artLayer}
-      <div className="k-hero__scrim"></div>
+    <section className={"k-hero k-hero--cinematic" + (art ? "" : " k-hero--bare") + (className ? " " + className : "")}>
+      {art && artLayer}
+      {art && <div className="k-hero__scrim"></div>}
       {children}
     </section>
   );

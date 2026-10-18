@@ -104,9 +104,9 @@
    those keep the DARK foreground palette in every theme and stay light-on-dark over the scrim. The
    control bar is the other zone: it brings its own opaque surface, so it runs on the PAGE's tokens
    and follows the theme like any other panel. */
-.k-hero__statuspos,
-.k-hero--cinematic .k-hero__heading,
-.k-hero--cinematic .k-hero__on-art {
+.k-hero:not(.k-hero--bare) .k-hero__statuspos,
+.k-hero--cinematic:not(.k-hero--bare) .k-hero__heading,
+.k-hero--cinematic:not(.k-hero--bare) .k-hero__on-art {
   --fg-1: var(--art-fg-1);
   --fg-2: var(--art-fg-2);
   --fg-3: var(--art-fg-3);
@@ -172,6 +172,10 @@
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
 }
 
+.k-hero--bare .k-hero__name {
+  text-shadow: none;
+}
+
 /* Frosted backing so a tag stays legible over art. */
 .k-hero__tag--glass {
   background: var(--art-glass);
@@ -183,6 +187,14 @@
 
 .k-hero__tag--glass>svg {
   color: var(--fg-2);
+}
+
+/* A hero with no art: its tags sit on the page's own surface. */
+.k-hero--bare .k-hero__tag--glass {
+  background: var(--surface-2);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-color: var(--border-subtle);
 }
 
 /* The control bar — a themed panel floating on the art, not a hole cut in it. It is the one part of

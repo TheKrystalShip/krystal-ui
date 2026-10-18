@@ -1,5 +1,5 @@
 import { Icon } from "./Icon.jsx";
-import { themeStore, useThemePref, THEME_OPTS } from "../lib/theme.js";
+import { autoThemes, themeStore, useThemePref, THEME_OPTS } from "../lib/theme.js";
 
 // ThemePicker — the themes as swatches, grouped by the light or dark they are.
 //
@@ -122,8 +122,8 @@ function ThemeSwatch({ opt, selected }) {
         {isAuto
           ? (
             <>
-              <span className="k-theme-swatch__half k-theme-swatch__half--first"><Mini theme="dark" /></span>
-              <span className="k-theme-swatch__half"><Mini theme="light" /></span>
+              <span className="k-theme-swatch__half k-theme-swatch__half--first"><Mini theme={autoThemes().dark} /></span>
+              <span className="k-theme-swatch__half"><Mini theme={autoThemes().light} /></span>
             </>
           )
           : <Mini theme={opt.id} />}
