@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.2]
+
+### Fixed
+- **The assistant's mark holds still on a touch screen.** Its eyes blinked and looked around forever
+  there, and an endless animation on an SVG's parts is redrawn on the main thread every frame: on a
+  phone at 120 Hz it kept the page's renderer near half a core and the compositor near another half
+  for as long as the mark was on screen. On a desktop the eyes still blink and follow the pointer.
+
 ## [3.0.1]
 
 ### Fixed

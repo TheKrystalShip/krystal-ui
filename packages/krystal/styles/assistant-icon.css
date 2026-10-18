@@ -1,10 +1,11 @@
 /* ============================================================================
    assistant-icon.css — the assistant's mark (<AssistantFabIcon>): a bot whose
-   eyes blink and look around.
+   eyes blink and follow the pointer on a desktop, and hold still on a touch
+   screen.
 
-   Blink runs on the eye ellipses (scaleY), look runs on the group wrapper
+   Blink runs on the eye ellipses (scaleY), the follow on the group wrapper
    (translate). Because they're different elements in the SVG DOM, they compose
-   naturally — the eyes blink regardless of where they're looking.
+   naturally — the eyes blink wherever they're looking.
    ============================================================================ */
 @layer krystal.tokens, krystal.base, krystal.components;
 
@@ -12,7 +13,6 @@
 .k-assistant-icon__eye {
   transform-box: fill-box;
   transform-origin: center;
-  animation: assistant-icon-blink 3s ease-in-out infinite;
 }
 
 @keyframes assistant-icon-blink {
@@ -32,52 +32,16 @@
   }
 }
 
-.k-assistant-icon__eye-g {
-  will-change: translate;
-  animation: assistant-icon-look 8s ease-in-out infinite;
-}
-
-@keyframes assistant-icon-look {
-
-  0%,
-  25% {
-    translate: 0;
-  }
-
-  30% {
-    translate: -2px 0;
-  }
-
-  45% {
-    translate: -2px 0;
-  }
-
-  50% {
-    translate: 0;
-  }
-
-  70% {
-    translate: 0;
-  }
-
-  75% {
-    translate: 2px 0;
-  }
-
-  90% {
-    translate: 2px 0;
-  }
-
-  100% {
-    translate: 0;
-  }
-}
-
-/* Desktop: eyes follow cursor via CSS custom properties set by JS.
-   On touch devices this block doesn't match, so the keyframe above stays active. */
+/* Desktop: the eyes blink, and follow the pointer through custom properties set by JS. A touch
+   screen draws the mark still: an endless animation on an SVG's parts is restyled and repainted on
+   the main thread every frame, which keeps a phone's renderer busy for as long as the mark is on
+   screen. */
 @media (hover: hover) {
+  .k-assistant-icon__eye {
+    animation: assistant-icon-blink 3s ease-in-out infinite;
+  }
+
   .k-assistant-icon__eye-g {
-    animation: none;
     translate: var(--eye-x, 0) var(--eye-y, 0);
     transition: translate 0.1s ease-out;
   }
