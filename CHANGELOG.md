@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.0.4]
+
+### Fixed
+- **An `OptionList` detail that wraps to a line of its own starts with its first word.** The
+  separator before it hangs in the gap after the label, so it shows only between the two on one line.
+
 ## [3.0.3]
 
 ### Fixed

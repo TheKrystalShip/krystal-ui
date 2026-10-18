@@ -691,12 +691,17 @@
   background: var(--krystal-teal);
 }
 
+/* The detail's separator hangs before it, in the gap after the label. A detail that wraps to a line of
+   its own starts that line, so its separator falls left of the clipped edge and the line begins with
+   the detail's first word. */
 .k-optlist__text {
+  --k-optlist-sep: 0.8em;
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
-  column-gap: 5px;
+  column-gap: calc(5px + var(--k-optlist-sep));
   min-width: 0;
+  overflow: hidden;
 }
 
 .k-optlist__label {
@@ -708,11 +713,14 @@
 }
 
 .k-optlist__detail {
+  margin-left: calc(-1 * var(--k-optlist-sep));
   color: var(--fg-3);
 }
 
 .k-optlist__detail::before {
-  content: "· ";
+  content: "·";
+  display: inline-block;
+  width: var(--k-optlist-sep);
 }
 
 .k-optlist__aside {
