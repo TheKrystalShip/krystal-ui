@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.3]
+
+### Fixed
+- **A carousel's pager shows the shown mark whole on a touch screen**, rather than filling it over the
+  slide's time. The fill was redrawn with the slide behind it every frame: on a phone at 120 Hz a
+  turning carousel kept the compositor near a whole core. A desktop still fills it.
+
 ## [3.0.2]
 
 ### Fixed

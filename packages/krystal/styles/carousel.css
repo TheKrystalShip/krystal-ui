@@ -53,7 +53,9 @@
 }
 
 /* Slides that never turn by themselves show the shown mark whole; turning ones fill it over the slide's
-   time, held where it is while the slides are held still. */
+   time, held where it is while the slides are held still. A touch screen shows the mark whole either
+   way: the fill is redrawn with the slide behind it every frame, which keeps a phone's compositor
+   near a whole core while the slides turn. */
 .k-carousel-pager__fill {
   position: absolute;
   inset: 0;
@@ -61,13 +63,15 @@
   background: var(--fg-1);
 }
 
-.k-carousel-pager.k-is-auto .k-carousel-pager__fill {
-  transform-origin: left center;
-  animation: k-carousel-fill linear both;
-}
+@media (hover: hover) {
+  .k-carousel-pager.k-is-auto .k-carousel-pager__fill {
+    transform-origin: left center;
+    animation: k-carousel-fill linear both;
+  }
 
-.k-carousel-pager.k-is-auto.k-is-held .k-carousel-pager__fill {
-  animation-play-state: paused;
+  .k-carousel-pager.k-is-auto.k-is-held .k-carousel-pager__fill {
+    animation-play-state: paused;
+  }
 }
 
 @keyframes k-carousel-fill {
