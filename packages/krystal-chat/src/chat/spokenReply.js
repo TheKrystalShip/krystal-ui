@@ -28,10 +28,13 @@ function context() {
 
 // One turn's spoken answer: the sentences still to play, and what is playing now.
 /**
- * One turn's spoken answer: queues `audio.delta` frames and plays them back to back.
- * @returns {{ push: (frame: { mime: string, data: string }) => void, stop: () => void }}
+ * One turn's spoken answer: queues `audio.delta` frames and plays them back to back. `onIdle` is
+ * called each time the last sentence queued has been played, which is when a surface listening
+ * hands-free may listen again without hearing the assistant's own voice.
+ * @param {{ onIdle?: () => void }} [options]
+ * @returns {{ push: (frame: { mime: string, data: string }) => void, stop: () => void, readonly speaking: boolean }}
  */
-function createSpokenReply() {
+function createSpokenReply({ onIdle } = {}) {
   let queue = [];
   let playing = false;
   let source = null;
@@ -65,6 +68,7 @@ function createSpokenReply() {
     } finally {
       playing = false;
       if (!stopped) play();
+      if (!playing && queue.length === 0 && onIdle) onIdle();
     }
   };
 
@@ -93,7 +97,11 @@ function createSpokenReply() {
         try { source.stop(); } catch { /* already ended */ }
         source = null;
       }
+      if (onIdle) onIdle();
     },
+
+    // Whether a sentence is playing or waiting to.
+    get speaking() { return playing || queue.length > 0; },
   };
 }
 

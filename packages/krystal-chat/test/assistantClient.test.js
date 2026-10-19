@@ -265,3 +265,27 @@ describe("assistant client: confirm", () => {
     await expect(client.confirm({ token: "x" })).rejects.toMatchObject({ status: 410, envCode: "confirmation-expired" });
   });
 });
+
+describe("assistant client: speech", () => {
+  it("scans a window of PCM and reads the outcome, renewing a refused bearer", async () => {
+    const renewToken = vi.fn().mockResolvedValue("renewed");
+    const client = createAssistantClient({ baseUrl: "/a", getToken: () => fresh(), renewToken });
+    fetchMock
+      .mockResolvedValueOnce(json(401, { error: "expired", code: "unauthorized" }))
+      .mockResolvedValueOnce(json(200, { outcome: "ok", text: "hey assistant", tokens: [] }));
+    const pcm = new Int16Array(16000).buffer;
+    expect(await client.scan(pcm)).toEqual({ outcome: "ok", text: "hey assistant", tokens: [] });
+    expect(fetchMock.mock.calls[1][0]).toBe("/a/speech/scan");
+    expect(fetchMock.mock.calls[1][1].headers["Content-Type"]).toBe("application/octet-stream");
+  });
+
+  it("says a line and answers the audio, or refuses with the assistant's words", async () => {
+    const client = createAssistantClient({ baseUrl: "/a", getToken: () => fresh() });
+    fetchMock.mockResolvedValueOnce(new Response(new Uint8Array([1, 2, 3]), { status: 200, headers: { "Content-Type": "audio/wav" } }));
+    const blob = await client.say("Your potatoes are done.");
+    expect(blob.size).toBe(3);
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({ text: "Your potatoes are done.", format: "wav" });
+    fetchMock.mockResolvedValueOnce(json(503, { error: "Nothing can speak.", code: "speech-unavailable" }));
+    await expect(client.say("Hello")).rejects.toMatchObject({ status: 503, envCode: "speech-unavailable" });
+  });
+});

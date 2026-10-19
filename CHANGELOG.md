@@ -1,5 +1,22 @@
 # Changelog
 
+## [3.2.0]
+
+### Added
+- **Hands-free in the chat.** Where the assistant can scan, the chat's options offer *Hands-free*: the
+  microphone stays open, and a request opening with one of the `triggers` (default `"hey assistant,
+  hay assistant"`) is sent as the person's message and read aloud. Measured against the live
+  recogniser through a plugin's speech routes, synthesised requests at three speeds with and without
+  noise: the trigger heard in 46 of 48 and the request read right in 43, and none of 48 trigger-free
+  kitchen sentences taken for one.
+- **The hands-free pieces** for a surface of its own: `useHandsFree`, `createTriggerListener`,
+  `matchTrigger`, `triggerInScan`, `recoverRequest`, `parseTriggers`, `openMicrophone` and
+  `HANDS_FREE_LIMITS`.
+- **The client's `scan` and `say`**, `/speech/scan` and `/speech/say`; and `createSpokenReply` and
+  `armAudio` exported, for playing what the assistant says. A spoken reply takes `onIdle`, called
+  when its last sentence has played, and says whether it is `speaking`; the chat holds hands-free
+  listening until then, so it never hears its own voice.
+
 ## [3.1.0]
 
 ### Added

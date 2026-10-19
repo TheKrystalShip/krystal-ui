@@ -26,6 +26,8 @@ export { MarkdownTextarea } from "./chat/MarkdownTextarea.jsx";
 export { renderMarkdown } from "./chat/markdown.jsx";
 export { VoiceComposerBar, VoiceNoteBubble, useVoiceRecorder } from "./chat/VoiceNote.jsx";
 export { createAssistantClient } from "./lib/assistantClient.js";
+export { LIMITS as HANDS_FREE_LIMITS, createTriggerListener, matchTrigger, openMicrophone, parseTriggers, recoverRequest, triggerInScan, useHandsFree } from "./lib/handsFree.js";
+export { armAudio, createSpokenReply } from "./chat/spokenReply.js";
 export { useConversationStream } from "./chat/useConversationStream.js";
 export {
   NEW_CHAT_TITLE, conversationTitle, uid as chatUid, toolLabel, promotePendingCards, reduceTurnFrame,

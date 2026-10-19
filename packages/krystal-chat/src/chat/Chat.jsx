@@ -8,6 +8,7 @@ import { Toggle } from "@thekrystalship/krystal";
 import { usePortalPopover } from "@thekrystalship/krystal";
 import { VoiceComposerBar, useVoiceRecorder } from "./VoiceNote.jsx";
 import { createSpokenReply, armAudio } from "./spokenReply.js";
+import { useHandsFree } from "../lib/handsFree.js";
 import {
   NEW_CHAT_TITLE, conversationTitle,
   loadConversations, saveConversations,
@@ -245,6 +246,7 @@ function ConversationOptions({ onCompact, onDelete }) {
  * @param {(msg: import("./types.js").Message, key: number, api: import("./types.js").ChatApi) => import("react").ReactNode | undefined} [props.renderEntry] a product's own transcript roles; `undefined` falls through
  * @param {(msg: import("./types.js").Message, api: import("./types.js").ChatApi) => import("react").ReactNode} [props.renderCards] the cards under an answer
  * @param {() => Record<string, any> | null} [props.turnExtras] extra fields the next turn carries (a draft open for review)
+ * @param {string | string[]} [props.triggers] what a person says to address the assistant hands-free; several, comma-separated or a list, all equal
  */
 function Chat({
   user, docked, seed, onClose,
@@ -298,6 +300,9 @@ function Chat({
   toggleCopy = DEFAULT_TOGGLE_COPY,
   // The empty screen's opening suggestions.
   suggestions = [],
+  // What a person says to address the assistant hands-free. A list, because it is matched in what the
+  // recogniser wrote, and a variant it writes reliably is added here.
+  triggers = "hey assistant, hay assistant",
   // What the empty screen says when there is no assistant to talk to.
   noAssistant = "No assistant is available right now.",
   // The auto-run switch's tooltip: `locked` when this caller may not turn it on, and `on` / `off`
@@ -430,6 +435,19 @@ function Chat({
     return () => { live = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used (and in deps); the object is re-derived each render
   }, [assistantHost && assistantHost.id, assistantUsable, assistantAuthed]);
+  // Hands-free: the microphone stays open, and a request that opens with the trigger is sent as the
+  // person's message and answered aloud. Off until asked, like reading aloud, and offered only where the
+  // assistant can scan. Unlike a voice note, a hands-free request is sent as heard: the trigger is the
+  // person addressing the assistant, as they would in a voice channel, and their hands are busy.
+  const [handsFree, setHandsFree] = React.useState(false);
+  // Whether an answer is still being read aloud, after its turn may already have ended.
+  const [saying, setSaying] = React.useState(false);
+  const canHandsFree = !!(hostSpeech && hostSpeech.scan && hostSpeech.hear);
+  const handsFreeSendRef = React.useRef((/** @type {string} */ _text) => {});
+  const handsFreeClient = React.useMemo(
+    () => (handsFree && canHandsFree && assistantHost ? clientFor(assistantHost.id) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only assistantHost.id is used
+    [handsFree, canHandsFree, assistantHost && assistantHost.id]);
   // What a message may carry, as this assistant says (`wire-contract.md` §2.2), or null: nothing to
   // attach, and no `+`. A client without the attachment calls, or an assistant that cannot be asked,
   // offers none.
@@ -1128,7 +1146,7 @@ function Chat({
     // One answer is read aloud at a time: a new turn silences the last one rather than talking over
     // it. The player is opened before the request so the first frame has somewhere to land.
     if (spokenRef.current) spokenRef.current.stop();
-    spokenRef.current = speakRef.current ? createSpokenReply() : null;
+    spokenRef.current = speakRef.current ? createSpokenReply({ onIdle: () => setSaying(false) }) : null;
 
     // This POST is the turn's first attach. Its frames are the same ones every other surface receives,
     // so they are applied here directly and the event stream's copy of them is skipped — otherwise the
@@ -1164,7 +1182,7 @@ function Chat({
       // Audio is played, never rendered: it belongs to no message and changes no state, so it is
       // handled here rather than in the reducer.
       if (ev.type === "audio.delta") {
-        if (spokenRef.current) spokenRef.current.push(ev);
+        if (spokenRef.current) { setSaying(true); spokenRef.current.push(ev); }
         return;
       }
       if (ev.type === "turn.queue") {
@@ -1301,6 +1319,17 @@ function Chat({
     sendLive(convId, text, userMsg, undefined, carrying.map(a => a.info.id));
   };
 
+  // A request heard hands-free is sent as the person's message. Listening holds while an answer is
+  // being written and read, so the assistant's own voice is never taken for the person's.
+  handsFreeSendRef.current = (heard) => { if (heard) send(heard); };
+  const { state: handsFreeState } = useHandsFree({
+    client: handsFreeClient,
+    triggers,
+    enabled: !!handsFreeClient,
+    paused: !!liveTurn || saying,
+    onCommand: (heard) => handsFreeSendRef.current(heard),
+  });
+
   // Stop the conversation's turn, whoever started it. A call rather than an abort, because a surface
   // that is only watching holds no connection to end — and ending it must end it for everyone, which a
   // local abort could never do. Aborting our own POST as well just detaches this surface early.
@@ -1318,6 +1347,18 @@ function Chat({
     // Refused: the control says so itself rather than raising a toast. A toast is for a shell handler
     // that owns no control to render into, and this button is right here.
     setSpeakBlocked(!ready);
+  };
+
+  // Turning hands-free on is a gesture, so it arms the audio too: an answer to a request nobody typed
+  // is read aloud, or it would go unheard by somebody not looking at the screen.
+  const toggleHandsFree = async () => {
+    if (handsFree) { setHandsFree(false); return; }
+    if (!speak) {
+      const ready = await armAudio();
+      setSpeak(ready);
+      setSpeakBlocked(!ready);
+    }
+    setHandsFree(true);
   };
 
   const stop = () => {
@@ -1714,6 +1755,12 @@ function Chat({
     : speak
       ? "Reading answers aloud as they are written, so it starts before the answer is finished."
       : "Answers are silent. Turn on to have them read aloud as they are written.";
+  const firstTrigger = (Array.isArray(triggers) ? triggers[0] : String(triggers || "").split(",")[0] || "").trim();
+  const handsFreeTip = handsFreeState === "denied"
+    ? "The browser was refused the microphone. Allow it for this site to talk hands-free."
+    : handsFree
+      ? `Listening. Say “${firstTrigger}” and your request; the answer is read aloud.`
+      : `Talk without touching the screen: say “${firstTrigger}” and your request.`;
   const autorunTip = !canUseActions
     ? autorunHint.locked
     : autoAcceptActive
@@ -2067,13 +2114,14 @@ function Chat({
                 {assistantHost && (
                   <div className="k-chat-composer__opts">
                     <IconButton ref={optsRef} icon="sliders-horizontal" variant="ghost" size="sm"
-                      label={"Chat options" + ([thinkOn && "Thinking on", speak && "Read aloud on", autoAcceptActive && "Auto-run on"]
+                      label={"Chat options" + ([thinkOn && "Thinking on", speak && "Read aloud on", handsFree && "Hands-free on", autoAcceptActive && "Auto-run on"]
                         .filter(Boolean).map((s, i) => (i ? ", " : ": ") + s).join(""))}
                       title="Chat options"
                       aria-haspopup="dialog" aria-expanded={optsOpen} onClick={() => setOptsOpen(o => !o)} />
                     <span className="k-chat-composer__dots" aria-hidden="true">
                       {thinkOn && <i className="k-chat-composer__dot" />}
                       {speak && <i className="k-chat-composer__dot" />}
+                      {handsFree && <i className="k-chat-composer__dot" />}
                       {autoAcceptActive && <i className="k-chat-composer__dot k-chat-composer__dot--warn" />}
                     </span>
                   </div>
@@ -2119,6 +2167,13 @@ function Chat({
               <span className="k-chat-menu__label">Read aloud</span>
               <Toggle on={speak} label="Read aloud" onChange={toggleSpeak} />
             </div>
+            {canHandsFree && (
+              <div className="k-chat-menu__row" title={handsFreeTip}>
+                <Icon name={handsFreeState === "denied" ? "mic-off" : "audio-lines"} size={14} className="k-chat-menu__icon" />
+                <span className="k-chat-menu__label">Hands-free</span>
+                <Toggle on={handsFree} label="Hands-free" onChange={toggleHandsFree} />
+              </div>
+            )}
             {canSeeActions && (
               <div className="k-chat-menu__row k-chat-menu__row--warn" title={autorunTip}>
                 <Icon name="zap" size={14} className="k-chat-menu__icon" />

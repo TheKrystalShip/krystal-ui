@@ -341,6 +341,11 @@ export {};
  * What an assistant's speech can do: asked before a microphone is offered.
  * @typedef {{ hear: boolean, speak: boolean, scan?: boolean }} SpeechCapabilities
  */
+/**
+ * `POST /speech/scan`: `ok` with the words and their times, `busy` (offer the window again a moment
+ * later), or `unavailable`.
+ * @typedef {{ outcome: "ok" | "busy" | "unavailable", text?: string, tokens?: { text: string, startMs: number, endMs: number }[] }} ScanResult
+ */
 
 /**
  * `POST /speech/transcribe`: the words in a recording. An empty text is a quiet room.
@@ -648,6 +653,8 @@ export {};
  * @property {(opts?: CallOptions) => Promise<SpeechCapabilities>} speech
  * @property {(opts?: CallOptions) => Promise<any>} wakeSpeech
  * @property {(pcm: ArrayBuffer, opts?: CallOptions) => Promise<Transcript>} transcribe 16 kHz mono signed 16-bit PCM
+ * @property {(pcm: ArrayBuffer, opts?: CallOptions) => Promise<ScanResult>} scan a window of at most ten seconds of the same audio, read for what it holds
+ * @property {(text: string, opts?: CallOptions & { format?: "wav" | "pcm" }) => Promise<Blob>} say a line in the assistant's voice
  * @property {(opts?: CallOptions) => Promise<ConversationInfo[]>} conversations
  * @property {(id: string, opts?: CallOptions) => Promise<ConversationDetail>} conversation
  * @property {(id: string) => Promise<null>} deleteConversation

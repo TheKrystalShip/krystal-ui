@@ -424,6 +424,32 @@ function createAssistantClient({ baseUrl, getToken, renewToken, canRenew }) {
     return payload;
   };
 
+  // POST /speech/scan — a window of at most ten seconds of the same audio, read for what it holds:
+  // `{ outcome, text, tokens }`, `outcome` being `ok`, `busy` (offer it again a moment later) or
+  // `unavailable`. A scan is cheap and soon stale, so a refused bearer is renewed and it is sent again.
+  const scan = async (pcm, opts) => {
+    const res = await call("POST", "/speech/scan", {
+      headers: { "Content-Type": "application/octet-stream", Accept: "application/json" },
+      body: pcm,
+      signal: opts && opts.signal,
+    });
+    const payload = await payloadOf(res);
+    if (!res.ok) throw failure(res.status, payload);
+    return payload;
+  };
+
+  // POST /speech/say — a line in the assistant's voice, as a Blob of `format` (`wav` by default, or
+  // `pcm`). Saying a line twice says nothing new, so it is renewed and sent again like a read.
+  const say = async (text, opts) => {
+    const res = await call("POST", "/speech/say", {
+      headers: { "Content-Type": "application/json", Accept: "audio/*" },
+      body: JSON.stringify({ text, format: (opts && opts.format) || "wav" }),
+      signal: opts && opts.signal,
+    });
+    if (!res.ok) throw failure(res.status, await payloadOf(res));
+    return res.blob();
+  };
+
   // POST /attachments — one file, its body the file itself, answered with what the assistant took it
   // as: `{ id, kind, name, mimeType, size }`. Sent with XMLHttpRequest, the one browser request that
   // reports how much of its body has gone: `onProgress(sent, total)`. Sent once.
@@ -474,6 +500,8 @@ function createAssistantClient({ baseUrl, getToken, renewToken, canRenew }) {
     // The microphone is opening: speech is about to be wanted, so the models are loaded ahead of need.
     wakeSpeech: (opts) => json("POST", "/speech/wake", null, opts),
     transcribe,
+    scan,
+    say,
     conversations: (opts) => json("GET", "/conversations", null, opts).then(listOf("conversations")),
     conversation: (id, opts) => json("GET", "/conversations/" + enc(id), null, opts),
     deleteConversation: (id) => json("DELETE", "/conversations/" + enc(id)),

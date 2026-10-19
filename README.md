@@ -63,7 +63,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 
 | Kind | Exports |
 |---|---|
-| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatEvidence` (the column of evidence cards under an answer), `ChatActivity`, `ChatCommand`, `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
+| The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatEvidence` (the column of evidence cards under an answer), `ChatActivity`, `ChatCommand`, `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …), hands-free listening (`useHandsFree`, `createTriggerListener`, `matchTrigger`, `openMicrophone`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
 | The assistant's pages | `AssistantPage` (the reading-measure column a page about the assistant stands in), `AssistantChatsPage`, `AssistantMemoryPage`, `AssistantSkillsPage`, `AssistantNotifications`, `AssistantMemory`, `AssistantMemoryEditor`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
 
 Core stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
@@ -816,6 +816,20 @@ opens, `turns()` with `follow(turnId, { signal, onEvent })` reads the turns the 
 surface, and `attach` and `streamId` serve an assistant whose event stream names itself in a `hello`.
 A `question` frame is drawn as choices and a field for the person's own words, and the answers go out
 as the next turn's `answers`.
+
+**Hands-free.** Where the assistant's speech can scan (`speech()` answers `scan`), the chat's options
+offer *Hands-free*: the microphone stays open, and a request that opens with one of `triggers` (default
+`"hey assistant, hay assistant"`, a list because the trigger is matched in what the recogniser wrote) is
+sent as the person's message and answered aloud. Listening holds while an answer is being written. A
+voice note is still a draft the person looks at; a hands-free request is sent as heard, because the
+trigger is the person addressing the assistant. The pieces are exports for a surface of its own:
+`useHandsFree({ client, triggers, enabled, paused, onCommand })` hands each request to `onCommand` as
+text; `createTriggerListener` is the scanning and capturing, fed 16 kHz PCM and told the time (windows
+of three seconds every half second of speech, a command captured from the end of the word before the
+trigger until 600 ms of quiet, eight seconds at most); `matchTrigger`, `triggerInScan` and
+`recoverRequest` find the trigger in a transcript and in a scan's timed words; `openMicrophone` is the
+microphone as 16 kHz PCM. The client's `scan(pcm)` and `say(text, { format })` are `/speech/scan` and
+`/speech/say`, and `createSpokenReply`, `armAudio` play what is said.
 
 **Attachments.** A client with `attachmentLimits()`, `uploadAttachment(blob, name, { onProgress, signal })`
 and `attachment(conversationId, id)` (a Promise of a Blob) lets a person attach files: `+` at the
