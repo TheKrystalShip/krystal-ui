@@ -81,7 +81,8 @@ export default function MenuSection() {
             <div key={String(collapsed)} style={{ width: collapsed ? 56 : 260 }}>
               <SidebarAccount user={{ display: "Claude", name: "claude" }} sub="Owner" detail="Signed in with a password"
                 collapsed={collapsed}
-                items={[{ icon: "settings", label: "Settings" }, { icon: "log-out", label: "Sign out", danger: true }]} />
+                items={[{ icon: "settings", label: "Settings" }, { icon: "flag", label: "Report queue", aside: 17 },
+                  { separator: true }, { icon: "log-out", label: "Sign out", danger: true }]} />
             </div>
           ))}
         </div>

@@ -37,6 +37,15 @@ describe("ListPage and DetailPage empty states", () => {
   });
 });
 
+describe("Notice title", () => {
+  it("draws a strong first line and the message under it", () => {
+    render(<Notice tone="danger" title="May contain gluten.">Kruidenmix can't be checked.</Notice>);
+    const alert = screen.getByRole("alert");
+    expect(alert.querySelector("strong").textContent).toBe("May contain gluten.");
+    expect(alert.textContent).toContain("Kruidenmix can't be checked.");
+  });
+});
+
 describe("Notice action", () => {
   it("draws the action after the text, and nothing without one", () => {
     const { container, rerender } = render(<Notice tone="danger" action={<button>Retry</button>}>Failed.</Notice>);

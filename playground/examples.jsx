@@ -391,6 +391,7 @@ export function NoticeExamples() {
       <Sub title="Notice">
         <div style={{ display: "grid", gap: 10, maxWidth: 560 }}>
           {["info", "ok", "warn", "danger"].map((t) => <Notice key={t} tone={t}>A {t} notice.</Notice>)}
+          <Notice tone="danger" title="Stock cube may contain gluten, depending on the brand.">Kruidenmix can't be checked: look at the label.</Notice>
           <Notice block tone="info"><strong>Client secret</strong><code>kgsm_9f3a2c71</code><Button size="xs" variant="outline">Copy</Button></Notice>
           <Notice tone="danger" icon="circle-x" action={<Button variant="outline" size="xs" icon="rotate-cw">Retry</Button>}>
             <b>Couldn't refresh.</b> Showing the last known state.

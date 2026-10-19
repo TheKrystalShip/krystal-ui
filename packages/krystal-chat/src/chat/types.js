@@ -536,6 +536,9 @@ export {};
  * @property {boolean} [runnable] false draws a disabled button
  * @property {string} [unavailable] why it cannot run here
  * @property {string} [title] names the action when label and target do not read
+ * @property {import("react").ReactNode} [body] what the action does, drawn in the card under its title, in place of the summary line
+ * @property {string | null} [sub] the line under the title in place of the summary; null draws none
+ * @property {string} [declineLabel] the Decline button's words
  */
 
 /**

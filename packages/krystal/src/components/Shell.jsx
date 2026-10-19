@@ -2,7 +2,7 @@ import React from "react";
 import { AccountAvatar } from "./AccountAvatar.jsx";
 import { Pill } from "./Pill.jsx";
 import { Icon } from "./Icon.jsx";
-import { Menu, MenuItem } from "./Menu.jsx";
+import { Menu, MenuItem, MenuSeparator } from "./Menu.jsx";
 
 // The application frame: a sidebar beside a scrolling main column, with whatever floats over both
 // (a dock, its launcher, the toasts) after them. On wide screens the sidebar collapses to an icon
@@ -150,14 +150,16 @@ function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, close
 }
 
 // The signed-in person, at the bottom of the sidebar's foot: their avatar, their name and a `sub`
-// line under it, opening a menu upward of `items` — `{ icon, label, onClick, danger }`. `detail` is
-// what the menu's head says under the name. On the collapsed rail the row is the avatar alone.
+// line under it, opening a menu upward of `items` — `{ icon, label, onClick, danger, aside }`, or
+// `{ separator: true }` for a rule between runs of them. `aside` is a quiet value at an item's end, such
+// as a count. `detail` is what the menu's head says under the name. On the collapsed rail the row is
+// the avatar alone.
 /**
  * @param {object} props
  * @param {{ display?: string, name?: string }} props.user The signed-in person: `display` is the name shown, `name` the fallback.
  * @param {import("react").ReactNode} [props.sub] A line under the name.
  * @param {import("react").ReactNode} [props.detail] What the menu's head says under the name.
- * @param {{ icon: string, label: string, onClick?: () => void, danger?: boolean }[]} [props.items] The menu's entries, each `{ icon, label, onClick, danger }`.
+ * @param {{ icon?: string, label?: string, onClick?: () => void, danger?: boolean, aside?: import("react").ReactNode, separator?: boolean }[]} [props.items] The menu's entries, each `{ icon, label, onClick, danger, aside }`, or `{ separator: true }` for a rule between them.
  * @param {boolean} [props.collapsed] Draws the avatar alone, as on the collapsed rail.
  */
 function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
@@ -191,12 +193,14 @@ function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
             )}
           </button>
         )}>
-        {items.map((item) => (
-          <MenuItem key={item.label} icon={item.icon} tone={item.danger ? "danger" : undefined}
-            onSelect={() => item.onClick && item.onClick()}>
-            {item.label}
-          </MenuItem>
-        ))}
+        {items.map((item, i) => (item.separator
+          ? <MenuSeparator key={"sep-" + i} />
+          : (
+            <MenuItem key={item.label} icon={item.icon} tone={item.danger ? "danger" : undefined} aside={item.aside}
+              onSelect={() => item.onClick && item.onClick()}>
+              {item.label}
+            </MenuItem>
+          )))}
       </Menu>
     </div>
   );

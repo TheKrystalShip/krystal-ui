@@ -200,9 +200,13 @@ function useLapsed(expiresAt) {
  * @param {boolean} [props.runnable] False draws a disabled button instead of the confirm flow.
  * @param {string} [props.unavailable] why it cannot run here
  * @param {import("./types.js").Message} [props.verify] The outcome message; when present the card draws it instead of the proposal.
+ * @param {import("react").ReactNode} [props.body] What the action does, drawn in the card in place of the summary line.
+ * @param {string | null} [props.sub] The line under the title in place of the summary; null draws none.
+ * @param {string} [props.declineLabel] The Decline button's words.
  */
 function ChatCommand({
   msg, onRun, onDecline, meta, target, title: named, runnable = true, unavailable = "Not available here yet", verify,
+  body: given, sub: subGiven, declineLabel = "Decline",
 }) {
   const [armed, setArmed] = React.useState(false);
   const cancelRef = React.useRef(null);
@@ -230,8 +234,9 @@ function ChatCommand({
     return <ChatCard className="k-chat-actcard" tone="muted" icon="clock" title={title} sub="Expired" subMono={false} />;
   }
 
-  const body = file && <ChatFileChange file={file} />;
+  const body = file ? <ChatFileChange file={file} /> : given;
   const sub = file ? file.path : null;
+  const line = subGiven !== undefined ? subGiven : given != null ? null : msg.summary || msg.reason;
 
   if (!runnable) {
     return (
@@ -265,10 +270,10 @@ function ChatCommand({
 
   return (
     <ChatCard className="k-chat-actcard" tone={msg.error ? "warn" : "accent"} icon={file ? "file-pen" : meta.icon} title={title}
-      sub={file ? sub : msg.error || msg.summary || msg.reason} subMono={!!file}
+      sub={file ? sub : msg.error || line} subMono={!!file}
       action={(
         <div className="k-chat-actcard__btns">
-          {onDecline && <Button variant="ghost" size="sm" onClick={() => onDecline(msg)}>Decline</Button>}
+          {onDecline && <Button variant="ghost" size="sm" onClick={() => onDecline(msg)}>{declineLabel}</Button>}
           <Button variant="primary" size="sm" onClick={() => setArmed(true)}>
             {file ? "Save the file" : meta.label}
           </Button>

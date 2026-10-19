@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.3.0]
+
+### Added
+- **`SidebarAccount` items take `aside` and separators.** An item's `aside` is a quiet value at its
+  end, such as a count ("Report queue 17"), and `{ separator: true }` rules off a run of items from
+  the next.
+- **`Notice` takes a `title`:** a strong first line in the tone's colour, with the children under it in
+  the body's colour, so a line that only adds to the title does not shout with it.
+- **A product shapes a proposal's card.** `profile.proposal(msg)` may answer `body` (a node drawn in
+  the card in place of the summary line, as a file change is), `sub` (the line under the title in its
+  place; null for none) and `declineLabel` (the Decline button's words); `ChatCommand` takes the same
+  three props.
+
 ## [3.2.0]
 
 ### Added

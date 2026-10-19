@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Button, Menu, Popover, MenuCheckboxItem, MenuItem, MenuRadioGroup, MenuRadioItem, MenuSeparator } from "@thekrystalship/krystal";
+import { Button, Menu, Popover, MenuCheckboxItem, MenuItem, MenuRadioGroup, MenuRadioItem, MenuSeparator, SidebarAccount } from "@thekrystalship/krystal";
 
 const open = async (user) => {
   const trigger = screen.getByRole("button", { name: "Actions" });
@@ -178,5 +178,18 @@ describe("Menu container, sub and readOnly", () => {
     await user.keyboard("{Enter}");
     expect(onChange).not.toHaveBeenCalled();
     expect(screen.getByRole("menu")).toBeTruthy();
+  });
+});
+
+describe("SidebarAccount", () => {
+  it("draws an item's count beside it and a rule where a separator stands", async () => {
+    const user = userEvent.setup();
+    render(<SidebarAccount user={{ display: "Marta" }}
+      items={[{ icon: "flag", label: "Report queue", aside: 17 }, { separator: true }, { icon: "log-out", label: "Sign out", danger: true }]} />);
+    await user.click(screen.getByRole("button", { name: "Marta" }));
+    const queue = await screen.findByRole("menuitem", { name: /Report queue/ });
+    expect(queue.textContent).toContain("17");
+    expect(screen.getByRole("separator")).toBeTruthy();
+    expect(screen.getAllByRole("menuitem")).toHaveLength(2);
   });
 });

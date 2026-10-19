@@ -47,8 +47,10 @@ import { useConversationStream } from "./useConversationStream.js";
 //   profile.adaptCard(result)      a tool result → a card for `renderCards`, or null
 //   profile.proposalLabel(verb)    what a proposed action is offered as, absent its own sentence
 //   profile.proposal(msg)          { meta: { label, icon, tone }, target, targetName, runnable,
-//                                    unavailable, title? } for a proposed action's card and its
-//                                    outcome; `title` names it when label + target does not read
+//                                    unavailable, title?, body?, sub?, declineLabel? } for a proposed
+//                                    action's card and its outcome; `title` names it when label +
+//                                    target does not read, `body` draws what it does in the card,
+//                                    `sub` replaces the summary line (null for none)
 //   profile.verdict(msg, targetName, response)  { ok, headline, lines } for a confirmed action
 //   renderEntry(msg, key, api)     a product's own transcript roles; undefined falls through
 //   renderCards(msg, api)          the cards under an answer
@@ -1618,13 +1620,14 @@ function Chat({
     // leaves it off, because its confirm route would read the same request as a confirmation.
     const declines = assistantHost && clientFor(assistantHost.id).declines === true;
     return <ChatCommand key={i} msg={m} onRun={runLiveCommand} onDecline={declines ? declineLiveCommand : undefined}
-      meta={p.meta} target={p.target} title={p.title} runnable={p.runnable} unavailable={p.unavailable} />;
+      meta={p.meta} target={p.target} title={p.title} runnable={p.runnable} unavailable={p.unavailable}
+      body={p.body} sub={p.sub} declineLabel={p.declineLabel} />;
   };
   // A proposal in someone else's transcript is shown as it stood, and confirming it does nothing.
   const renderReviewCommand = (m, i) => {
     const p = profile.proposal(m);
     return <ChatCommand key={i} msg={m} onRun={() => {}} meta={p.meta} target={p.target} title={p.title}
-      runnable={p.runnable} unavailable={p.unavailable} />;
+      runnable={p.runnable} unavailable={p.unavailable} body={p.body} sub={p.sub} declineLabel={p.declineLabel} />;
   };
 
 

@@ -75,6 +75,20 @@
   align-items: flex-start;
 }
 
+.k-notice__text--titled {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.k-notice__title {
+  font-weight: var(--w-semibold);
+}
+
+.k-notice__body {
+  color: var(--fg-1);
+}
+
 .k-notice__action {
   flex-shrink: 0;
   align-self: center;

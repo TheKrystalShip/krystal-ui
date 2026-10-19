@@ -5,7 +5,8 @@ import { Icon } from "./Icon.jsx";
 // danger, and picks the icon unless `icon` names one. A danger notice is announced as an alert.
 // `action` is a control at the notice's end (a Retry button), centred against the text. `block` makes the
 // text a column that fills the notice, its children stacked and aligned to the start (a title over a
-// value to copy).
+// value to copy). `title` is a strong first line in the tone's colour; with it, the children read in
+// the body's colour under it, so a line that only adds to the title does not shout with it.
 const ICONS = { info: "info", ok: "check-circle-2", warn: "alert-triangle", danger: "alert-triangle" };
 
 /**
@@ -13,16 +14,20 @@ const ICONS = { info: "info", ok: "check-circle-2", warn: "alert-triangle", dang
  * @param {"info" | "ok" | "warn" | "danger"} [props.tone] `info`, `ok`, `warn` or `danger`; info by default.
  * @param {string} [props.icon] A Lucide name; defaults to the tone's icon.
  * @param {boolean} [props.block] The text fills the notice as a column of stacked children.
+ * @param {import("react").ReactNode} [props.title] A strong first line in the tone's colour; the children follow it in the body's colour.
  * @param {import("react").ReactNode} [props.action] A control at the notice's end, such as a Retry button.
  * @param {string} [props.className] Class name added to the root element.
  * @param {import("react").ReactNode} [props.children] The message.
  */
-function Notice({ tone = "info", icon, action, block = false, className, children }) {
+function Notice({ tone = "info", icon, title, action, block = false, className, children }) {
   return (
     <div className={"k-notice k-notice--" + tone + (className ? " " + className : "")}
       role={tone === "danger" ? "alert" : undefined}>
       <Icon name={icon || ICONS[tone] || ICONS.info} size={14} className="k-notice__icon" />
-      <div className={"k-notice__text" + (block ? " k-notice__text--block" : "")}>{children}</div>
+      <div className={"k-notice__text" + (block ? " k-notice__text--block" : "") + (title != null ? " k-notice__text--titled" : "")}>
+        {title != null && <strong className="k-notice__title">{title}</strong>}
+        {title != null ? (children != null && <span className="k-notice__body">{children}</span>) : children}
+      </div>
       {action != null && <div className="k-notice__action">{action}</div>}
     </div>
   );
