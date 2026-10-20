@@ -50,6 +50,7 @@ export { PageHeader } from "./components/PageHeader.jsx";
 export { Pagination, paginationWindow, useDebouncedValue } from "./components/Pagination.jsx";
 export { RadioGroup } from "./components/RadioGroup.jsx";
 export { Rail } from "./components/Rail.jsx";
+export { Shelf } from "./components/Shelf.jsx";
 export { ReversablePortal } from "./components/ReversablePortal.jsx";
 export { SearchField } from "./components/SearchField.jsx";
 export { Select } from "./components/Select.jsx";

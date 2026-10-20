@@ -13,7 +13,7 @@ const BUILT_IN = [
   ["controls", "Controls", [E.ButtonExamples, E.IconButtonExamples, E.InputExamples, E.FieldExamples, E.PasswordInputExamples,
     E.ProviderButtonExamples, E.CheckboxExamples, E.SelectExamples, E.OptionListExamples, E.MeterExamples]],
   ["badges", "Badges", [E.PillExamples, E.NavItemBadgeExamples, E.SubTabsExamples, E.ShowcaseCardExamples, E.TabBarExamples, E.BriefCardCountExamples]],
-  ["page", "Page", [E.PageHeaderExamples, E.NoticeExamples, E.EmptyStateExamples, E.BreadcrumbsExamples, E.ToolbarExamples]],
+  ["page", "Page", [E.PageHeaderExamples, E.ShelfExamples, E.NoticeExamples, E.EmptyStateExamples, E.BreadcrumbsExamples, E.ToolbarExamples]],
   ["settings", "Settings", [E.SettingsExamples]],
   ["dialogs", "Dialogs", [E.DialogExamples]],
   ["lists", "Lists", [E.ListExamples]],

@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.4.0]
+
+### Added
+- **`Shelf`**: a titled section of a page that lays its items out in a grid, with no frame of its own.
+  A heading (`headingLevel`), a `sub` line under it, an `action` opposite (a View all link), a
+  `controls` row under the heading (chips that narrow the items), then the items, `columns` across (4)
+  and `narrowColumns` (2) once the shelf is narrower than 560px, by container query; `empty` is drawn
+  when there are none. Its classes are `k-shelf` and its elements, and `--k-shelf-columns` and
+  `--k-shelf-narrow-columns` set on it or an ancestor are the defaults.
+
 ## [3.3.0]
 
 ### Added

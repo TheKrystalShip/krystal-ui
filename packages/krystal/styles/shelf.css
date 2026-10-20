@@ -1,0 +1,71 @@
+/* ============================================================================
+   shelf.css — a titled section laying its items out in a grid (<Shelf>): the heading, a line under
+   it and an action opposite, a controls row, then the grid. Items in a row are
+   --k-shelf-columns, and --k-shelf-narrow-columns once the shelf itself is narrower than 560px:
+   the shelf is the container its grid measures.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+.k-shelf {
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.k-shelf__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.k-shelf__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.k-shelf__title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--w-bold);
+  color: var(--fg-1);
+}
+
+.k-shelf__sub {
+  font-size: var(--text-md);
+  color: var(--fg-3);
+}
+
+.k-shelf__action {
+  flex: none;
+}
+
+.k-shelf__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.k-shelf__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--k-shelf-columns, 4), minmax(0, 1fr));
+  gap: var(--s-4);
+}
+
+.k-shelf__empty {
+  font-size: var(--text-md);
+  color: var(--fg-3);
+}
+
+@container (max-width: 560px) {
+  .k-shelf__grid {
+    grid-template-columns: repeat(var(--k-shelf-narrow-columns, 2), minmax(0, 1fr));
+    gap: var(--s-3);
+  }
+}
+}

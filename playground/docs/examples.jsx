@@ -40,6 +40,7 @@ export const EXAMPLES = {
   forms: fromSection("forms"),
   toolbar: E.ToolbarExamples,
   "page-header": E.PageHeaderExamples,
+  shelf: E.ShelfExamples,
   notice: E.NoticeExamples,
   "empty-state": E.EmptyStateExamples,
   settings: E.SettingsExamples,

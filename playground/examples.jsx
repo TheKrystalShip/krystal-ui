@@ -3,8 +3,8 @@
 // grouped into the sections the visual harness shoots (see docs/all.jsx).
 import React from "react";
 import {
-  AccountAvatar, AppShell, Footer, BriefItem, BriefList, Container, Breadcrumbs, BriefCard, Button, CardScreen, Checkbox, CopyField, Dialog, EmptyState, Field, IconButton, Input,
-  Icon, List, ListRow, Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, ShowcaseCard,
+  AccountAvatar, AppShell, Footer, BriefItem, BriefList, Container, Breadcrumbs, BriefCard, Button, Card, CardScreen, Checkbox, CopyField, Dialog, EmptyState, Field, IconButton, Input,
+  Icon, List, ListRow, Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, Shelf, ShowcaseCard,
   Sidebar, SidebarGroup, Skeleton, Spinner, StatusDot, SubTabs, Textarea, Toggle, Toolbar,
   ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
 } from "@thekrystalship/krystal";
@@ -380,6 +380,41 @@ export function PageHeaderExamples() {
       <Sub title="PageHeader">
         <PageHeader title="Page title" sub="A line under the title."
           actions={<><Button variant="outline" icon="refresh-cw">Refresh</Button><Button variant="primary" icon="plus">New</Button></>} />
+      </Sub>
+    </>
+  );
+}
+
+/** A stand-in for a card on a shelf: a picture area and a name. */
+function ShelfItem({ name }) {
+  return (
+    <Card padding="none">
+      <div style={{ aspectRatio: "4 / 3", background: "var(--surface-2)" }} />
+      <div style={{ padding: 12, fontWeight: 600 }}>{name}</div>
+    </Card>
+  );
+}
+
+export function ShelfExamples() {
+  const [picked, setPicked] = React.useState("quick");
+  const names = ["Stamppot", "Gado-gado", "Hachee", "Erwtensoep", "Pad thai", "Shakshuka", "Dal", "Bigos"];
+  return (
+    <>
+      <Sub title="Shelf">
+        <Shelf title="Quick meals" action={<Button variant="link" href="#">View all</Button>}>
+          {names.map((n) => <ShelfItem key={n} name={n} />)}
+        </Shelf>
+      </Sub>
+      <Sub title="Shelf with a line under the heading and controls">
+        <Shelf title="Eat well" sub="At least 20% of the energy from protein" action={<Button variant="link" href="#">View all</Button>}
+          controls={["quick", "protein", "vegan"].map((k) => (
+            <Button key={k} variant="outline" size="sm" pressed={picked === k} onClick={() => setPicked(k)}>{k}</Button>
+          ))}>
+          {names.slice(0, picked === "vegan" ? 3 : 8).map((n) => <ShelfItem key={n} name={n} />)}
+        </Shelf>
+      </Sub>
+      <Sub title="Shelf, three across, with nothing in it">
+        <Shelf title="Saved this week" columns={3} empty="Nothing saved yet." />
       </Sub>
     </>
   );

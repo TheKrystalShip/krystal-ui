@@ -105,6 +105,11 @@ export const PAGES = [
     summary: "A horizontal, scroll-snapped shelf inside a card, so one row reaches a whole collection.",
   },
   {
+    id: "shelf", name: "Shelf", group: "Choices and navigation", exports: ["Shelf"], examples: ["shelf"],
+    summary: "A titled section of a page laying its items out in a grid: a heading, a line under it, an action opposite and a row of controls.",
+    versus: "Rail for one row that scrolls through a whole collection inside a card.",
+  },
+  {
     id: "carousel", name: "useCarousel and CarouselPager", group: "Choices and navigation", exports: ["useCarousel", "CarouselPager"], examples: [],
     summary: "One of several slides at a time, turning by itself on an interval, and the marks under them.",
   },
