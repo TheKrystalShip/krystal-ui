@@ -60,6 +60,54 @@ export const BEHAVIOUR = {
       "Leaving the field puts the chosen option's label back in it.",
     ],
   },
+  "date-time-picker": {
+    keys: [
+      ["Enter, Space", "On the field: open the picker, focused on the chosen day (else today, else the first day that can be picked)"],
+      ["Tab", "Through the picker: the month buttons, the day, the time fields, the times, Clear and Done"],
+      ["Escape", "Close the picker and leave the value as it was"],
+    ],
+    semantics: [
+      "The field is a button with `aria-haspopup=\"dialog\"` and `aria-expanded`; a Field's label names it. The picker is a non-modal dialog (a Popover) on a desktop and a modal one (a Drawer) on a phone, named by `title`.",
+      "Done hands the draft over and returns focus to the field; Escape and a press outside hand nothing over. Times outside `min` and `max` are disabled buttons.",
+    ],
+  },
+  calendar: {
+    keys: [
+      ["Tab", "One stop, on the chosen day, else today, else the first day that can be picked"],
+      ["ArrowLeft, ArrowRight", "The day before or after, into the next month where it leads"],
+      ["ArrowUp, ArrowDown", "The same weekday a week before or after"],
+      ["Home, End", "The first or last day of the week"],
+      ["PageUp, PageDown", "The same day a month before or after; with Shift, a year"],
+      ["Enter, Space", "Pick the focused day"],
+    ],
+    semantics: [
+      "A `table` with `role=\"grid\"`, named by the month; the weekday headers carry the whole name in `abbr`. Each day is a button named by its whole date, in a cell that is `aria-selected` when it is the chosen day; today is `aria-current=\"date\"`.",
+      "A day outside `min` and `max` is `aria-disabled` and stays focusable, so the arrows cross it.",
+    ],
+  },
+  "time-grid": {
+    keys: [
+      ["Tab", "One stop, on the chosen time, else the first that can be picked"],
+      ["ArrowLeft, ArrowRight", "The time before or after"],
+      ["ArrowUp, ArrowDown", "The nearest time in the row above or below"],
+      ["Home, End", "The first or last time"],
+      ["Enter, Space", "Press the focused time"],
+    ],
+    semantics: [
+      "A `group` named by `label`, of buttons with `aria-pressed`; a time ruled out by `min`, `max` or `disable` is a disabled button.",
+    ],
+  },
+  "time-input": {
+    keys: [
+      ["Digits", "Type into the field; a full field, or a first digit that can start nothing longer, moves on to the minutes"],
+      [": or .", "From the hours to the minutes"],
+      ["ArrowUp, ArrowDown", "Step the field, the minutes by `minuteStep`, wrapping round the clock"],
+      ["Backspace", "In empty minutes, back to the hours"],
+    ],
+    semantics: [
+      "A `group` named by `label` holding two `spinbutton` fields named by `fieldLabels`, each with `aria-valuemin`, `aria-valuemax` and `aria-valuenow`.",
+    ],
+  },
   "option-list": {
     keys: [
       ["Tab", "Moves to the group; one stop on the chosen row of a single choice"],

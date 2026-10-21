@@ -1,5 +1,27 @@
 # Changelog
 
+## [3.5.0]
+
+### Added
+- **Dates and times.** `DateTimePicker` is a field in Input's frame and height ladder that shows a
+  moment in words ("Wed, 21 Oct 2026 · 21:00", the time in mono) and opens a picker: a Popover under it
+  on a desktop, a bottom Drawer on a phone. The picker holds a `Calendar` beside a time column (a
+  `TimeInput` over every `step` minutes of the day); picking changes a draft, Done hands it to
+  `onChange`, Clear hands it "", and Escape or a press outside changes nothing. `DatePicker` is the
+  same field for a day, whose picker is the Calendar alone and hands a day over in one press
+  (`clearable` adds Clear). Both take `min` and `max`, `locale` and `weekStartsOn`.
+- **`Calendar`**: one month as a WAI-ARIA date grid, inside `min` and `max`, with `marked` days
+  dotted and today ringed; the arrows, Home, End, PageUp and PageDown move through it across months.
+- **`TimeGrid`**: times of day as a grid of pressed-state buttons, one or several (`multiple`) chosen;
+  from the first step after now to 23:30 unless `from`, `to`, `step` or `times` say otherwise, with
+  `min`, `max` and `disable` ruling times out and `columns` fixing the count across.
+- **`TimeInput`**: a 24-hour time typed as two spin-button fields, hours and minutes, that report a
+  time once both hold one.
+- **`lib/datetime`**: the local keys every one of them reads and writes ("YYYY-MM-DD", "HH:mm",
+  "YYYY-MM-DDTHH:mm", the forms native date and time inputs hold) and `nextStep`, the first step
+  boundary after a time. Their classes are `k-calendar`, `k-timegrid`, `k-timeinput` and
+  `k-datetime`, in `styles/datetime.css`.
+
 ## [3.4.0]
 
 ### Added

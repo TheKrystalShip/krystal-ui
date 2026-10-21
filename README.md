@@ -48,7 +48,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 | Sign-in | `ProviderMark`, `providerLabel`, `ProviderButton` (a provider's mark and name, and a button carrying them) |
 | Forms | `useForm` (values, per-field rules and async `validate`, dirty and submitting state, server field errors from a returned or thrown `{ errors, message }`), `Form`, `FormScope`, `FormField`, `FormError`, `FormSubmit` |
 | Choices | `Tabs`, `TabList`, `Tab`, `TabPanel` (in-page panels behind a row of tabs), `RadioGroup` (a small single choice, inline or stacked, or a palette of swatches), `ColorInput` (the native colour picker as a round swatch), `Slider` (one number along a line), `Disclosure` and `Accordion` (a summary that opens its content, and a group of them) |
-| Controls | `Button` (`variant="bare"` draws no fill, border, padding or height, only a button's behaviour and focus ring, for a control the site's own class shapes), `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `Combobox`, `OptionList`, `Meter`, `StatusDot` (a lit dot in a tone, always named by `label`; `pulse` for live, `caption` for the age or state beside it) |
+| Controls | `Button` (`variant="bare"` draws no fill, border, padding or height, only a button's behaviour and focus ring, for a control the site's own class shapes), `IconButton`, `Spinner`, `Toggle`, `Input`, `PasswordInput`, `Textarea`, `Checkbox`, `Field`, `Select`, `Combobox`, `OptionList`, `DateTimePicker` and `DatePicker` (a field that opens a picker: a Popover on a desktop, a bottom Drawer on a phone), `Calendar` (a month to pick a day from), `TimeGrid` (times of day as buttons, from the next step after now), `TimeInput` (a 24-hour time typed as two spin buttons), `Meter`, `StatusDot` (a lit dot in a tone, always named by `label`; `pulse` for live, `caption` for the age or state beside it) |
 | Page furniture | `PageHeader`, `Notice` (`title` a strong first line in the tone's colour over the message in the body's; `block` stacks its children in a full-width text column), `EmptyState`, `ErrorBoundary` |
 | Settings furniture | `SettingsSection`, `SettingsRow` (`value` and `mono` draw a read-only figure in the control's place), `ThemePicker` |
 | Overlays | `Dialog`, `ConfirmDialog`, `FormDialog` (a dialog that is a `useForm` handle's form), `Drawer` (a modal sheet from the `bottom`, `right` or `left` edge, with Dialog's props, a drag handle, touch pull-to-dismiss, and `back`, `action`, `contained`, `role` and `theme` for a menu over a frame), `Modal`, `Popover`, `Tooltip`, `Menu` (+ `MenuItem`, `MenuCheckboxItem`, `MenuRadioGroup`, `MenuRadioItem`, `MenuGroup`, `MenuSeparator`), `ReversablePortal`, `usePortalPopover`, `useModalBehaviour` |
@@ -57,7 +57,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 | Feeds | `useFollowTail` (keeps a scrolling feed pinned to its bottom while the reader is there, counts what arrives while they are parked) |
 | Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
 | Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
-| State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS` + `registerThemes`, `copyText`, `pushBrowser`, `fmtRelative` |
+| State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS` + `registerThemes`, `copyText`, `pushBrowser`, `fmtRelative`, and `lib/datetime` (the local date, time and moment keys the date controls read and write, and `nextStep`) |
 
 `@thekrystalship/krystal-chat`:
 
@@ -82,7 +82,7 @@ and the button beside it sit on one line:
 | Size | xs | sm | md | lg | xl |
 |---|---|---|---|---|---|
 | `Button`, `IconButton` | 26 | 30 | 34 | 38 | 46 |
-| `Input`, `Select` | | 30 | 34 | 38 | |
+| `Input`, `Select`, `TimeInput`, `DateTimePicker`, `DatePicker` | | 30 | 34 | 38 | |
 
 `md` is the default, and a phone raises it to a 40px touch target.
 

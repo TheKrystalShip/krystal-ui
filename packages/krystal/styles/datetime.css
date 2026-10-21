@@ -1,0 +1,451 @@
+/* ============================================================================
+   datetime.css — <Calendar>, <TimeGrid>, <TimeInput>, and <DateTimePicker> and <DatePicker>: the field,
+   the picker's body (a Calendar beside a time column) in a Popover on a desktop and a bottom Drawer on
+   a phone. A chosen day is filled with the accent; a chosen time takes the pressed look every pressed
+   control here has. Times are drawn in mono.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+/* ---- Calendar ------------------------------------------------------------ */
+.k-calendar {
+  --k-calendar-cell: 38px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-width: 0;
+  color: var(--fg-1);
+  font-family: var(--font-ui);
+  user-select: none;
+}
+
+.k-calendar__head {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 34px;
+}
+
+.k-calendar__title {
+  flex: 1;
+  min-width: 0;
+  padding-left: 6px;
+  font-size: 14px;
+  font-weight: var(--w-semibold);
+}
+
+.k-calendar__grid {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 2px;
+  table-layout: fixed;
+}
+
+.k-calendar__weekday {
+  padding: 4px 0 6px;
+  font-size: 11px;
+  font-weight: var(--w-semibold);
+  letter-spacing: 0.02em;
+  color: var(--fg-3);
+  text-align: center;
+}
+
+.k-calendar__grid td {
+  padding: 0;
+}
+
+.k-calendar__day {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--k-calendar-cell);
+  margin: 0;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--fg-1);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  font-weight: var(--w-medium);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background var(--d-fast) var(--ease-out), border-color var(--d-fast) var(--ease-out);
+}
+
+.k-calendar__day:hover:not(.k-is-disabled):not(.k-is-selected) {
+  background: var(--surface-2);
+}
+
+.k-calendar__day:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+.k-calendar__day.k-is-today {
+  border-color: var(--border-accent);
+  color: var(--krystal-teal);
+  font-weight: var(--w-bold);
+}
+
+.k-calendar__day.k-is-marked::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: var(--r-pill);
+  background: var(--krystal-teal);
+}
+
+.k-calendar__day.k-is-selected {
+  border-color: var(--krystal-teal);
+  background: var(--krystal-teal);
+  color: var(--on-accent);
+  font-weight: var(--w-bold);
+}
+
+.k-calendar__day.k-is-selected::after {
+  background: var(--on-accent);
+}
+
+.k-calendar__day.k-is-disabled {
+  color: var(--fg-4);
+  cursor: default;
+}
+
+/* ---- TimeGrid ------------------------------------------------------------ */
+.k-timegrid {
+  --k-timegrid-slot: 72px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--k-timegrid-slot), 1fr));
+  gap: var(--s-2);
+  min-width: 0;
+}
+
+.k-timegrid--fixed {
+  grid-template-columns: repeat(var(--k-timegrid-columns), minmax(0, 1fr));
+}
+
+.k-timegrid__slot,
+.k-datetime__slot {
+  box-sizing: border-box;
+  height: 40px;
+  margin: 0;
+  padding: 0 8px;
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  color: var(--fg-1);
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  font-weight: var(--w-medium);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background var(--d-fast) var(--ease-out), border-color var(--d-fast) var(--ease-out);
+}
+
+.k-timegrid__slot:hover:not(:disabled):not([aria-pressed="true"]),
+.k-datetime__slot:hover:not(:disabled):not([aria-pressed="true"]) {
+  border-color: var(--border-strong);
+  background: var(--surface-3);
+}
+
+.k-timegrid__slot[aria-pressed="true"],
+.k-datetime__slot[aria-pressed="true"] {
+  border-color: var(--border-accent);
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal);
+  font-weight: var(--w-semibold);
+}
+
+.k-timegrid__slot:disabled,
+.k-datetime__slot:disabled {
+  background: transparent;
+  color: var(--fg-4);
+  cursor: default;
+}
+
+.k-timegrid__slot:focus-visible,
+.k-datetime__slot:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+
+.k-timegrid__empty {
+  font-size: 13px;
+  color: var(--fg-3);
+}
+
+/* ---- TimeInput ----------------------------------------------------------- */
+.k-timeinput {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  height: 34px;
+  padding: 0 10px;
+  background: var(--surface-3);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  color: var(--fg-3);
+  cursor: text;
+  transition: border-color var(--d-fast) var(--ease-out), box-shadow var(--d-fast) var(--ease-out);
+}
+
+.k-timeinput--sm { height: 30px; padding: 0 8px; }
+.k-timeinput--lg { height: 38px; }
+
+.k-timeinput:focus-within {
+  border-color: var(--border-accent);
+  box-shadow: var(--ring-input);
+}
+
+.k-timeinput.k-is-invalid {
+  border-color: var(--danger);
+}
+
+.k-timeinput.k-is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.k-timeinput__icon {
+  flex: none;
+  margin-right: 6px;
+}
+
+.k-timeinput__field {
+  box-sizing: content-box;
+  width: 2ch;
+  margin: 0;
+  padding: 2px 2px;
+  border: 0;
+  border-radius: var(--r-sm);
+  outline: none;
+  background: transparent;
+  color: var(--fg-1);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: var(--w-medium);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  caret-color: transparent;
+}
+
+.k-timeinput--sm .k-timeinput__field {
+  font-size: 13px;
+}
+
+.k-timeinput__field::placeholder {
+  color: var(--fg-4);
+}
+
+.k-timeinput__field:focus {
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal);
+}
+
+.k-timeinput__field:disabled {
+  cursor: not-allowed;
+}
+
+.k-timeinput__sep {
+  font-family: var(--font-mono);
+  color: var(--fg-3);
+}
+
+/* ---- The pickers' field -------------------------------------------------- */
+.k-datetime {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  height: 34px;
+  margin: 0;
+  padding: 0 10px 0 12px;
+  background: var(--surface-3);
+  border: var(--edge);
+  border-radius: var(--r-sm);
+  color: var(--fg-1);
+  font-family: var(--font-ui);
+  font-size: 13.5px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--d-fast) var(--ease-out), box-shadow var(--d-fast) var(--ease-out);
+}
+
+.k-datetime--sm { height: 30px; padding: 0 8px 0 10px; font-size: 13px; gap: 8px; }
+.k-datetime--lg { height: 38px; }
+.k-datetime--wide { width: 100%; }
+
+.k-datetime:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+
+.k-datetime:focus-visible,
+.k-datetime.k-is-open {
+  outline: none;
+  border-color: var(--border-accent);
+  box-shadow: var(--ring-focus);
+}
+
+.k-datetime.k-is-invalid {
+  border-color: var(--danger);
+}
+
+.k-datetime:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.k-datetime__icon,
+.k-datetime__chev {
+  flex: none;
+  color: var(--fg-3);
+}
+
+.k-datetime__value,
+.k-datetime__placeholder {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.k-datetime__placeholder {
+  color: var(--fg-3);
+}
+
+.k-datetime__time {
+  font-family: var(--font-mono);
+  font-weight: var(--w-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- The picker ---------------------------------------------------------- */
+.k-popover.k-datetime__panel {
+  max-height: none;
+  overflow: visible;
+}
+
+.k-datetime__body {
+  display: grid;
+  grid-template-columns: 292px 156px;
+}
+
+.k-datetime__body--date {
+  grid-template-columns: 292px;
+}
+
+.k-datetime__calendar {
+  padding: 12px 14px 10px;
+}
+
+.k-datetime__times {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-width: 0;
+  padding: 12px;
+  border-left: var(--edge);
+}
+
+.k-datetime__times .k-timeinput {
+  width: 100%;
+}
+
+.k-datetime__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 236px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.k-datetime__list .k-datetime__slot {
+  flex: none;
+  height: 32px;
+  border-color: transparent;
+  background: transparent;
+  text-align: left;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+.k-datetime__list .k-datetime__slot:hover:not(:disabled):not([aria-pressed="true"]) {
+  border-color: transparent;
+  background: var(--surface-2);
+}
+
+.k-datetime__list .k-datetime__slot[aria-pressed="true"] {
+  border-color: var(--border-accent);
+  background: var(--krystal-teal-dim);
+}
+
+.k-datetime__foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: 10px 12px;
+  border-top: var(--edge);
+}
+
+.k-datetime__summary {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--fg-2);
+}
+
+.k-datetime__summary .k-datetime__time {
+  color: var(--fg-1);
+}
+
+/* On a phone the picker is a bottom sheet: the Calendar across it, the times a strip under it. */
+.k-datetime__sheet .k-datetime__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.k-datetime__sheet .k-datetime__calendar {
+  --k-calendar-cell: 42px;
+  padding: 4px 2px 8px;
+}
+
+.k-datetime__sheet .k-datetime__times {
+  padding: 12px 0 4px;
+  border-left: 0;
+  border-top: var(--edge);
+}
+
+.k-datetime__sheet .k-datetime__list {
+  flex-direction: row;
+  gap: var(--s-2);
+  height: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.k-datetime__sheet .k-datetime__list .k-datetime__slot {
+  height: 44px;
+  min-width: 68px;
+  border: var(--edge);
+  background: var(--surface-2);
+  text-align: center;
+  font-size: 14px;
+}
+
+.k-datetime__sheet .k-datetime__list .k-datetime__slot:disabled {
+  background: transparent;
+}
+
+}

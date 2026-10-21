@@ -44,6 +44,26 @@ export const PAGES = [
     versus: "Select for a short fixed list. A site that searches a server passes `inputValue` and `onInputChange`.",
   },
   {
+    id: "date-time-picker", name: "DateTimePicker and DatePicker", group: "Controls", exports: ["DateTimePicker", "DatePicker"], examples: ["date-time-picker"],
+    summary: "A field that shows a moment or a day and opens a picker for it: a Popover on a desktop, a bottom Drawer on a phone.",
+    versus: "Calendar, TimeGrid and TimeInput are the parts, for a page that lays a picker out in the open. DatePicker picks a day in one press; DateTimePicker waits for Done.",
+  },
+  {
+    id: "calendar", name: "Calendar", group: "Controls", exports: ["Calendar"], examples: ["calendar"],
+    summary: "One month as a grid of days to pick a date from, inside a range, with marked days and today ringed.",
+    versus: "DatePicker puts it behind a field; use Calendar when the month stays on the page.",
+  },
+  {
+    id: "time-grid", name: "TimeGrid", group: "Controls", exports: ["TimeGrid"], examples: ["time-grid"],
+    summary: "Times of day as a grid of buttons, one or several chosen, from the next step after now when nothing else is said.",
+    versus: "TimeInput for a time typed to the minute; TimeGrid for times on a step, seen at once.",
+  },
+  {
+    id: "time-input", name: "TimeInput", group: "Controls", exports: ["TimeInput"], examples: ["time-input"],
+    summary: "A time of day typed as hours and minutes on the 24-hour clock, each a spin button.",
+    versus: "TimeGrid shows times on a step to press; DateTimePicker holds a TimeInput beside its Calendar.",
+  },
+  {
     id: "option-list", name: "OptionList", group: "Controls", exports: ["OptionList"], examples: ["option-list"],
     summary: "Choices as full-width rows in one bordered group, the whole row the hit target; single or multiple.",
     versus: "RadioGroup is the compact single choice for a handful of short labels; OptionList is the form field with detail and asides.",
