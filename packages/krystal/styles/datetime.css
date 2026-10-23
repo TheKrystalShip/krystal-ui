@@ -127,7 +127,7 @@
 }
 
 .k-timegrid--fixed {
-  grid-template-columns: repeat(var(--k-timegrid-columns), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--k-timegrid-columns, 4), minmax(0, 1fr));
 }
 
 .k-timegrid__slot,

@@ -1,5 +1,11 @@
 # Changelog
 
+## [4.0.1]
+
+### Fixed
+- **`TimeGrid`'s column count has a fallback** in `datetime.css` (`var(--k-timegrid-columns, 4)`), so a
+  site's check that every `var()` without a fallback resolves passes over the package's sheets.
+
 ## [4.0.0]
 
 ### Changed
