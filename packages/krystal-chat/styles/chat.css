@@ -374,6 +374,19 @@
   min-height: 0;
 }
 
+/* The conversation stays mounted while what the assistant remembers stands in its place. */
+.k-chat-scroll[hidden],
+.k-chat-composer[hidden] {
+  display: none;
+}
+
+/* What the assistant remembers, in the conversation's place: the thread's measure, and room for the
+   editor's notes to take what the panel leaves. */
+.k-chat-memory {
+  display: flex;
+  flex-direction: column;
+}
+
 /* The thread spaces its entries, turns, cards and event rows alike; nothing in it carries a margin
    or a rule of its own between neighbours. Every entry spans the column. */
 .k-chat-thread {

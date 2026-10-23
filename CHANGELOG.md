@@ -1,5 +1,26 @@
 # Changelog
 
+## [4.0.0]
+
+### Changed
+- **What the assistant remembers is part of the chat.** The chat's header carries an options menu
+  (`⋯`) in every layout, holding *Memory* and, with a conversation open, *Delete conversation*.
+  *Memory* shows the person's memories in the conversation's place, with their count against the
+  assistant's cap and *Write one*; a memory opens in an editor in the list's place, and the header
+  names what is open while its back arrow leads to the list and then to the conversation, kept as it
+  was left. `Chat` takes `MemoryBodyEditor` and `memoryKeyPlaceholder` for the editor's notes field and
+  a new memory's example name.
+- **Forget asks twice**, in the list and in the editor: the first press arms the button, and the
+  second forgets.
+- **Compact is the composer's.** The header's menu no longer holds it; the composer's options offer it
+  whenever there is a conversation to compact, beside how full the context window is once a reply has
+  reported it.
+
+### Removed
+- `AssistantMemoryPage`, `AssistantMemory` and `AssistantMemoryEditor` as exports: the chat is the one
+  place a person reads, corrects and forgets what the assistant remembers. `AssistantMemoryEditor` is
+  drawn in the chat's panel and is no longer a `Dialog`.
+
 ## [3.5.0]
 
 ### Added

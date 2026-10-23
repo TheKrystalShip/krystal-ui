@@ -64,7 +64,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 | Kind | Exports |
 |---|---|
 | The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatEvidence` (the column of evidence cards under an answer), `ChatActivity`, `ChatCommand` (a proposal's card; the profile's `proposal` may give its `body`, `sub` and `declineLabel`), `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …), hands-free listening (`useHandsFree`, `createTriggerListener`, `matchTrigger`, `openMicrophone`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
-| The assistant's pages | `AssistantPage` (the reading-measure column a page about the assistant stands in), `AssistantChatsPage`, `AssistantMemoryPage`, `AssistantSkillsPage`, `AssistantNotifications`, `AssistantMemory`, `AssistantMemoryEditor`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
+| The assistant's pages | `AssistantPage` (the reading-measure column a page about the assistant stands in), `AssistantChatsPage`, `AssistantSkillsPage`, `AssistantNotifications`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
 
 Core stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
 theme, and the Inter / JetBrains Mono faces), `styles/motion.css` (shared keyframes),
@@ -785,8 +785,8 @@ A proposed action is one card that changes in place, from proposed through the c
 verified, not verified or failed; a `write_file` proposal shows a line diff when the proposal carries
 the file's current content. Switches, scope changes, compaction and the assistant coming and going
 are event rows (`ChatEvent`), with a day row where the date changes. The conversation's switches
-(Thinking, Read aloud, Auto-run) and how full its context window is stand behind the composer's one
-options button, at every width.
+(Thinking, Read aloud, Auto-run), how full its context window is and Compact stand behind the
+composer's one options button, at every width.
 
 `profile` is how the product reads what the assistant sends: `adaptCard(result)` turns a tool's
 structured result into a card for `renderCards`, `proposal(msg)` names a proposed action and says
@@ -875,6 +875,16 @@ new conversation starts; there is no New chat button. A `docked` chat, panel or 
 hide button that collapses it into its side of the screen and calls `onClose`; a chat that is the page
 itself has none.
 
+**Memory.** The header's options menu (`⋯`), in every layout, holds *Memory* and, with a
+conversation open, *Delete conversation*, which asks twice. *Memory* shows what the assistant has
+written down about the person in the conversation's place, from `/memories` with its count against
+`/memories/limits`: each memory opens in an editor in the list's place, and Forget, in the list or the
+editor, asks twice. The header names what is open and its back arrow leads out, a memory to the list
+and the list to the conversation, which is kept as it was left. It is the one place a person reads,
+corrects and forgets what the assistant remembers. `MemoryBodyEditor` (a component taking
+`{ value, onChange, path, readOnly }`, lazy if it likes) draws a memory's notes in place of the plain
+text area, and `memoryKeyPlaceholder` is a new memory's example name.
+
 `slots` puts a site's own blocks in the chat's frame, by place: `start` is the empty conversation's
 column, `aboveComposer` a row over the composer, `headerActions` buttons in the header and `history`
 the head of the conversation list. A slot is a node or a function of the chat's handle, and any
@@ -906,27 +916,19 @@ leaving out `label` makes a full-width row.
 
 ## The assistant's pages
 
-What a person does around the conversation — reading what the assistant remembers, seeing what it
-can do, being told when it waits on them — is the same on every site that hosts an assistant, so the
-pages are here. Each takes the assistant client (`createAssistantClient`, stable across renders) and
+What a person does around the conversation — seeing what it can do, being told when it waits on
+them — is the same on every site that hosts an assistant, so the pages are here. Each takes the assistant client (`createAssistantClient`, stable across renders) and
 names no product:
 
 ```jsx
 <AssistantChatsPage listRef={setListEl} />          // Chat's `listTarget`, as a page
-<AssistantMemoryPage client={client} />
 <AssistantSkillsPage client={client} onUse={(name) => seedComposer("/" + name + " ")} />
 <AssistantNotifications client={client}>
   <Notice>Where everything else you are told about is switched.</Notice>
 </AssistantNotifications>
 ```
 
-`AssistantMemory` is the Memory page's section on its own, for a site's own settings page: the list
-from `/memories` with its counts against `/memories/limits`, each memory editable in
-`AssistantMemoryEditor` (a `Dialog`) and forgettable in place. With no `client` it shows
-`unavailable`, the site's own words for why there is nothing to read; `whose` names the assistant in
-its line where a site talks to more than one; `BodyEditor` (a component taking
-`{ value, onChange, path, readOnly }`, lazy if it likes) draws a memory's body in place of the plain
-text area, and `keyPlaceholder` is a new memory's example name. `AssistantSkillsPage` lists
+`AssistantSkillsPage` lists
 `/commands` and `/tools`, already filtered to the caller, and offers a command through `onUse`.
 `AssistantNotifications` is this browser's push subscription to the assistant, on and off, over
 `lib/pushBrowser`; `offSub` is its sentence when the assistant sends nothing at all.
@@ -934,7 +936,7 @@ text area, and `keyPlaceholder` is a new memory's example name. `AssistantSkills
 without the section.
 
 The pages sit at a reading measure (`.k-assistant-page`); `styles/assistant-pages.css` draws it and
-the memory editor, after `settings.css`.
+the chat's memory view, after `settings.css`.
 
 ## Developing
 

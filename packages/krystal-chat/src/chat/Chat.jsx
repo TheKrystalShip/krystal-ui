@@ -2,6 +2,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 import { Icon } from "@thekrystalship/krystal";
 import { Button, IconButton } from "@thekrystalship/krystal";
+import { Notice } from "@thekrystalship/krystal";
 import { EmptyState, useFollowTail } from "@thekrystalship/krystal";
 import { Spinner } from "@thekrystalship/krystal";
 import { Toggle } from "@thekrystalship/krystal";
@@ -23,6 +24,7 @@ import { MarkdownTextarea } from "./MarkdownTextarea.jsx";
 import { resolveCommand, suggestFor } from "./chatCommands.js";
 import { ContextRing, contextUsage, useCompact } from "./ChatContextMeter.jsx";
 import { ChatHistory } from "./ChatHistory.jsx";
+import { AssistantMemory } from "../assistant/AssistantMemory.jsx";
 import { CHAT_PRIVACY_NOTICE, ChatContext, DefaultAboveComposer, DefaultStart, renderSlot } from "./slots.jsx";
 import { ChatThread } from "./ChatThread.jsx";
 import { ComposerAttachments } from "./ChatAttachments.jsx";
@@ -175,29 +177,34 @@ function ChatMenu({ open, setOpen, anchorRef, role = "menu", label, align, class
     document.body);
 }
 
-// The header's menu for the open conversation. Deleting asks twice: the second press is on the same
-// row, which now says what it is about to do.
-function ConversationOptions({ onCompact, onDelete }) {
+// The header's menu: what the assistant remembers, and deleting the open conversation. Deleting asks
+// twice: the second press is on the same row, which now says what it is about to do. Either entry is
+// drawn only when there is something for it to do.
+function ChatOptions({ onMemory, onDelete }) {
   const [open, setOpen] = React.useState(false);
   const [armed, setArmed] = React.useState(false);
   const ref = React.useRef(null);
   React.useEffect(() => { if (!open) setArmed(false); }, [open]);
+  if (!onMemory && !onDelete) return null;
   return (
     <>
-      <IconButton ref={ref} icon="ellipsis" label="Conversation options" variant="ghost" size="sm"
+      <IconButton ref={ref} icon="ellipsis" label="Options" variant="ghost" size="sm"
         aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(o => !o)} />
-      <ChatMenu open={open} setOpen={setOpen} anchorRef={ref} label="Conversation options">
-        <Button variant="ghost" size="sm" wide icon="rotate-ccw" role="menuitem" className="k-chat-menu__item"
-          disabled={!onCompact}
-          onClick={() => { setOpen(false); Promise.resolve(onCompact()).catch(() => {}); }}>
-          Compact
-        </Button>
-        <div className="k-chat-menu__sep" role="separator" />
-        <Button variant={armed ? "danger" : "ghost"} size="sm" wide icon="trash-2" role="menuitem"
-          className="k-chat-menu__item k-chat-menu__item--danger"
-          onClick={() => { if (!armed) { setArmed(true); return; } setOpen(false); onDelete(); }}>
-          {armed ? "Delete for good" : "Delete conversation"}
-        </Button>
+      <ChatMenu open={open} setOpen={setOpen} anchorRef={ref} label="Options">
+        {onMemory && (
+          <Button variant="ghost" size="sm" wide icon="brain" role="menuitem" className="k-chat-menu__item"
+            onClick={() => { setOpen(false); onMemory(); }}>
+            Memory
+          </Button>
+        )}
+        {onMemory && onDelete && <div className="k-chat-menu__sep" role="separator" />}
+        {onDelete && (
+          <Button variant={armed ? "danger" : "ghost"} size="sm" wide icon="trash-2" role="menuitem"
+            className="k-chat-menu__item k-chat-menu__item--danger"
+            onClick={() => { if (!armed) { setArmed(true); return; } setOpen(false); onDelete(); }}>
+            {armed ? "Delete for good" : "Delete conversation"}
+          </Button>
+        )}
       </ChatMenu>
     </>
   );
@@ -249,6 +256,8 @@ function ConversationOptions({ onCompact, onDelete }) {
  * @param {(msg: import("./types.js").Message, api: import("./types.js").ChatApi) => import("react").ReactNode} [props.renderCards] the cards under an answer
  * @param {() => Record<string, any> | null} [props.turnExtras] extra fields the next turn carries (a draft open for review)
  * @param {string | string[]} [props.triggers] what a person says to address the assistant hands-free; several, comma-separated or a list, all equal
+ * @param {import("react").ComponentType<import("./types.js").MemoryBodyEditorProps>} [props.MemoryBodyEditor] A component that edits a memory's notes in place of the plain textarea, given `MemoryBodyEditorProps`.
+ * @param {string} [props.memoryKeyPlaceholder] The placeholder in the name field of a memory being written.
  */
 function Chat({
   user, docked, seed, onClose,
@@ -311,6 +320,9 @@ function Chat({
   // where a product words them apart from `toggleCopy.actions`.
   autorunHint = { locked: "Auto-run is not available to you" },
   renderEntry, renderCards, turnExtras,
+  // What the assistant remembers is opened from the header's menu, in the place of the conversation.
+  // A site may give the editor its own component for a memory's notes, and its own example of a name.
+  MemoryBodyEditor, memoryKeyPlaceholder,
 }) {
   const conn = connection || { tone: "muted", label: "No assistant", usable: false, message: null };
   const asPage = layout === "page";
@@ -1745,6 +1757,18 @@ function Chat({
   // A transcript under review offers nothing to act on.
   const reviewChat = { ...chat, usable: false, ask: () => {}, draft: () => {}, newChat: () => {}, open: () => {} };
 
+  // What the assistant remembers, shown in the conversation's place: null while the conversation is
+  // shown, else `{ editing }` — null for the list, `{ memory }` for one open in the editor (a null
+  // memory is a new one). Opening a conversation, or turning to another assistant, leaves it.
+  const [memoryView, setMemoryView] = React.useState(null);
+  const memoryHostId = assistantHost ? assistantHost.id : null;
+  React.useEffect(() => { setMemoryView(null); }, [activeId, memoryHostId]);
+  const memoryClient = React.useMemo(
+    () => (memoryHostId && assistantAuthed && assistantUsable ? clientFor(memoryHostId) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- clientFor is the surface's fixed capability; the host and whether it answers decide the client
+    [memoryHostId, assistantAuthed, assistantUsable]);
+  const openMemory = assistantAuthed ? () => setMemoryView({ editing: null }) : null;
+
   // The composer's switches, gathered into one menu where the composer is too narrow to label them.
   const [optsOpen, setOptsOpen] = React.useState(false);
   const optsRef = React.useRef(null);
@@ -1977,28 +2001,38 @@ function Chat({
             to say. The connection shows here only when it is not fine \u2014 a healthy one is what the
             whole page already demonstrates. */}
         <div className={"k-chat-main__head k-chat-head" + (docked ? " k-chat-head--docked" : "") + (lifted ? " k-chat-head--lifted" : "")}>
-          {/* Back leaves a conversation for the empty one, in every layout. */}
-          {!empty && (
+          {/* Back leaves a conversation for the empty one, in every layout; in what the assistant
+              remembers, it leaves a memory for the list and the list for the conversation. */}
+          {memoryView ? (
+            <IconButton icon="arrow-left" label="Back" variant="ghost" size="sm" className="k-chat-head__back"
+              onClick={() => setMemoryView(memoryView.editing ? { editing: null } : null)} />
+          ) : !empty && (
             <IconButton icon="arrow-left" label="Back" variant="ghost" size="sm"
               className="k-chat-head__back" onClick={backToStart} />
           )}
-          <span className="k-chat-head__title" title={conversationTitle(active)}>{conversationTitle(active)}</span>
+          {memoryView ? (
+            <span className="k-chat-head__title">
+              {!memoryView.editing ? "Memory" : memoryView.editing.memory ? "Edit memory" : "Write a memory"}
+            </span>
+          ) : (
+            <span className="k-chat-head__title" title={conversationTitle(active)}>{conversationTitle(active)}</span>
+          )}
           {conn.tone !== "online" && (
             <span className={"k-chat-head__conn k-chat-head__conn--" + conn.tone} role="status">
               <span className="k-chat-head__dot" aria-hidden="true"></span>
               {conn.label}
             </span>
           )}
-          {HostPicker && (
+          {HostPicker && !memoryView && (
             <span className="k-chat-head__host">
               <HostPicker hosts={assistantHosts} current={assistantHost} onSelect={pickAssistantHost} />
             </span>
           )}
           <div className="k-chat-head__actions">
-            {renderSlot(slots.headerActions, chat)}
+            {!memoryView && renderSlot(slots.headerActions, chat)}
             {/* The phone-width and dock replacement for the rail (CSS decides, at the breakpoint
                 that hides it), so the rail's foot travels here with it. */}
-            <div className="k-chat-head__nav">
+            {!memoryView && <div className="k-chat-head__nav">
               {!railTarget && !listTarget && (
                 <ChatHistory convos={convos} activeId={activeId} onPick={pickChat} onDelete={deleteChat} onOpen={loadServerHistory} loading={histLoading}
                   sheet={asPage} head={renderSlot(slots.history, chat)} />
@@ -2006,11 +2040,9 @@ function Chat({
               {onOpenSettings && (
                 <IconButton icon="settings" label="Settings" variant="ghost" size="sm" onClick={onOpenSettings} />
               )}
-            </div>
-            {!docked && !asPage && active && (
-              <ConversationOptions
-                onCompact={compactHere}
-                onDelete={() => deleteChat(active.id)} />
+            </div>}
+            {!memoryView && (
+              <ChatOptions onMemory={openMemory} onDelete={active ? () => deleteChat(active.id) : null} />
             )}
             {docked && !asPage && showPin && (
               <IconButton icon={pinned ? "pin" : "pin-off"} label={pinned ? "Unpin" : "Pin"} variant="ghost" size="sm"
@@ -2025,7 +2057,21 @@ function Chat({
           </div>
         </div>
 
-        <div className="k-chat-scroll" ref={scrollRef} onScroll={onThreadScroll}>
+        {/* What the assistant remembers stands in the conversation's place. The thread and the composer
+            stay mounted under it, so going back finds the conversation as it was left: its scroll,
+            the draft in the composer. */}
+        {memoryView && (
+          <div className="k-chat-scroll k-chat-memory">
+            <AssistantMemory
+              client={memoryClient}
+              unavailable={<Notice tone="warn">The assistant can’t be reached, so what it remembers can’t be read until it’s back.</Notice>}
+              editing={memoryView.editing}
+              onEdit={(editing) => setMemoryView({ editing })}
+              BodyEditor={MemoryBodyEditor}
+              keyPlaceholder={memoryKeyPlaceholder} />
+          </div>
+        )}
+        <div className="k-chat-scroll" ref={scrollRef} onScroll={onThreadScroll} hidden={!!memoryView}>
           {empty ? (
             <div className="k-chat-start">
               {slots.start != null ? renderSlot(slots.start, chat) : <DefaultStart />}
@@ -2038,7 +2084,7 @@ function Chat({
           )}
         </div>
 
-        <div className="k-chat-composer">
+        <div className="k-chat-composer" hidden={!!memoryView}>
           {!assistantUsable && (
             <div className="k-chat-composer__downhint" role="status">
               <Icon name="triangle-alert" size={14} />
@@ -2184,12 +2230,16 @@ function Chat({
                 <Toggle on={autoAcceptActive} label="Auto-run" disabled={!canUseActions} onChange={toggleActions} />
               </div>
             )}
-            {ctxUsage && (
+            {/* Compacting is offered here, beside how full the conversation is, whenever there is a
+                conversation to compact; a reply that reported no usage leaves the measure out. */}
+            {(ctxUsage || compactHere) && (
               <>
                 <div className="k-chat-menu__sep" role="separator" />
-                <div className={"k-chat-menu__row" + (ctxUsage.warn ? " k-chat-menu__row--ctxwarn" : "")}>
-                  <ContextRing pct={ctxUsage.pct} />
-                  <span className="k-chat-menu__label">Context {ctxUsage.pct}% used</span>
+                <div className={"k-chat-menu__row" + (ctxUsage && ctxUsage.warn ? " k-chat-menu__row--ctxwarn" : "")}>
+                  {ctxUsage
+                    ? <ContextRing pct={ctxUsage.pct} />
+                    : <Icon name="rotate-ccw" size={14} className="k-chat-menu__icon" />}
+                  <span className="k-chat-menu__label">{ctxUsage ? `Context ${ctxUsage.pct}% used` : "Context"}</span>
                   <Button variant="outline" size="xs" busy={optsCompact.compacting} disabled={!compactHere}
                     onClick={optsCompact.run}>
                     Compact

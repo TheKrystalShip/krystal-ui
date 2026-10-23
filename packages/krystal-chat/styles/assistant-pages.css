@@ -1,9 +1,9 @@
 /* ============================================================================
    assistant-pages.css — the pages beside an assistant's chat (AssistantChatsPage,
-   AssistantMemoryPage, AssistantSkillsPage) and the memory editor's dialog
-   (AssistantMemoryEditor). The sections on them are settings furniture
-   (settings.css); only the page's measure and what is particular to a memory
-   are spelled out here.
+   AssistantSkillsPage) and what the assistant remembers, drawn by the chat in
+   the conversation's place (AssistantMemory, AssistantMemoryEditor). The
+   sections on them are settings furniture (settings.css); only the page's
+   measure and what is particular to a memory are spelled out here.
    ============================================================================ */
 @layer krystal.tokens, krystal.base, krystal.components;
 
@@ -30,7 +30,63 @@
   }
 }
 
+/* ---- What the assistant remembers ----------------------------------------- */
+
+/* The list and the editor, at the thread's measure. A container, because the panel it stands in is
+   as narrow as a phone on a desktop's dock: a memory's buttons go under its words by the panel's
+   width, not the window's. */
+.k-assistant-memory {
+  box-sizing: border-box;
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  container-type: inline-size;
+}
+
+@container (max-width: 560px) {
+  .k-assistant-memory .k-settings-row--below {
+    align-items: flex-start;
+  }
+
+  .k-assistant-memory .k-settings-row--below .k-brief__item-title,
+  .k-assistant-memory .k-settings-row--below .k-brief__titletext {
+    white-space: normal;
+  }
+
+  .k-assistant-memory .k-settings-row--below > .k-settings-row__controls {
+    width: calc(100% - 38px);
+    margin-left: 38px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+}
+
 /* ---- The memory editor --------------------------------------------------- */
+
+/* The fields stacked, the notes taking what the others leave, and the buttons at the foot. */
+.k-assistant-memory-editor {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.k-assistant-memory-editor__lead {
+  margin: 0;
+  font-size: 13px;
+  color: var(--fg-2);
+}
+
+.k-assistant-memory-editor__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
 
 /* A field's length against the assistant's cap. */
 .k-assistant-memory-editor__count {

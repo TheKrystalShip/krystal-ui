@@ -357,8 +357,8 @@ export const PAGES = [
     summary: "The card a product draws under an answer.",
   },
   {
-    id: "assistant-pages", name: "The assistant's pages", group: "The assistant chat", exports: ["AssistantChatsPage", "AssistantMemoryPage", "AssistantPage", "AssistantSkillsPage", "AssistantNotifications", "AssistantMemory", "AssistantMemoryEditor", "assistantPushStatus", "assistantPushSubscribe", "assistantPushUnsubscribe"], examples: [],
-    summary: "The chats, memory and skills pages, the notification switch and the push calls that register with an assistant.",
+    id: "assistant-pages", name: "The assistant's pages", group: "The assistant chat", exports: ["AssistantChatsPage", "AssistantPage", "AssistantSkillsPage", "AssistantNotifications", "assistantPushStatus", "assistantPushSubscribe", "assistantPushUnsubscribe"], examples: [],
+    summary: "The chats and skills pages, the notification switch and the push calls that register with an assistant.",
   },
   {
     id: "chat-conversation", name: "Conversation functions", group: "The assistant chat", exports: ["conversationTitle", "promotePendingCards", "reduceTurnFrame", "proposalMessage", "waitingProposal", "settleProposal", "questionMessage", "answersText", "scaffoldHistory", "scaffoldConversation", "scaffoldLiveTurn", "latestUsage", "adoptServerConversation", "mergeServerConversations", "prepareAttachment", "acceptFor", "textOverLimit", "sizeLabel", "chatUid", "toolLabel", "NEW_CHAT_TITLE", "CHAT_PRIVACY_NOTICE", "CHAT_DEFAULT_PROFILE", "CHAT_TOGGLE_COPY"], examples: [],

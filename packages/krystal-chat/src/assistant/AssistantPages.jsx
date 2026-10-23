@@ -5,10 +5,9 @@ import { PageHeader } from "@thekrystalship/krystal";
 import { SettingsRow, SettingsSection } from "@thekrystalship/krystal";
 import { Skeleton } from "@thekrystalship/krystal";
 import { toolLabel } from "../chat/conversation.js";
-import { AssistantMemory } from "./AssistantMemory.jsx";
 
 // The pages a site hosting an assistant gives it beside the chat, each at a reading measure
-// (`.k-assistant-page`): its conversations, what it remembers, and what it can do. Each talks to the
+// (`.k-assistant-page`): its conversations and what it can do. Each talks to the
 // assistant through `client` (`createAssistantClient`), stable across renders.
 
 // AssistantPage — the column a page beside the chat stands in: a reading measure, centred, with the
@@ -33,25 +32,6 @@ function AssistantChatsPage({ listRef, title = "Chats" }) {
     <AssistantPage>
       <PageHeader title={title} />
       <div ref={listRef} />
-    </AssistantPage>
-  );
-}
-
-// What the assistant has written down about you, as a page of its own: somewhere a person goes back
-// to — to check what it believes and to correct it — rather than a preference set once. Every prop
-// besides `title` is AssistantMemory's.
-/**
- * @typedef {object} AssistantMemoryPageOwnProps
- * @property {string} [title] the page's heading
- */
-/**
- * @param {AssistantMemoryPageOwnProps & Parameters<typeof AssistantMemory>[0]} props every prop besides `title` is AssistantMemory's
- */
-function AssistantMemoryPage({ title = "Memory", ...memory }) {
-  return (
-    <AssistantPage>
-      <PageHeader title={title} />
-      <AssistantMemory {...memory} />
     </AssistantPage>
   );
 }
@@ -127,4 +107,4 @@ function AssistantSkillsPage({ client, onUse, title = "Skills" }) {
   );
 }
 
-export { AssistantChatsPage, AssistantMemoryPage, AssistantPage, AssistantSkillsPage };
+export { AssistantChatsPage, AssistantPage, AssistantSkillsPage };
