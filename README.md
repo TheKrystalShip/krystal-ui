@@ -723,6 +723,7 @@ export default {
   mark: ["M17 21a1 1 0 0 0 1-1v-5.35…", "M6 17h12", { d: "M16 7.5a.5.5 0 1 0 1 0…", fill: true }],
   palettes: ["src/themes.css"],   // the site's own [data-theme] sheets
   android: "../android/res",      // the app on the TKS shell, when there is one
+  androidPalettes: true,          // its launcher icon follows the palette its page shows
 };
 ```
 
@@ -741,7 +742,10 @@ export default {
 All of it is files under the site's `base`, so a page under a policy with no inline script or style
 runs it. The fixed artwork comes from `krystal-icons` (needs `rsvg-convert`), run by hand, its output
 committed: the icons, maskable icon and launch images under `public/`, and with `android` the launcher
-icon (glyph, ground and the themed-icon layer), all in the site's default palette.
+icon (glyph, ground and the themed-icon layer), all in the site's default palette. With
+`androidPalettes` it also writes a launcher icon per palette the site offers (`icon_<palette>`, and
+`icon_default` naming the default's), which the TKS shell makes a launcher entry each and switches to
+the palette the page shows when the app leaves the screen.
 
 ```json
 { "scripts": { "icons": "krystal-icons" } }

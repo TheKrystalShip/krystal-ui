@@ -1,5 +1,13 @@
 # Changelog
 
+## [8.2.0]
+
+### Added
+- `krystal-icons` writes a launcher icon per palette the site offers when its identity says
+  `androidPalettes: true` (`mipmap/icon_<palette>`, its foreground and ground, and `icon_default`), for
+  the TKS shell to switch the app's launcher icon to the palette its page shows. A run without it
+  removes what an earlier one wrote.
+
 ## [8.1.0]
 
 ### Added

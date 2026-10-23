@@ -5,14 +5,15 @@
 //   krystal-icons [identity.js]        (needs rsvg-convert; run by hand when the mark or a palette changes)
 //
 // The identity module (default `./identity.js`) imports the site's theme configuration and exports
-// as its default `{ mark, palettes, public?, android? }`: the glyph's paths, the site's own palette
-// sheets, the directory the web artwork goes to (`public`), and the Android app's `res/` directory,
-// all relative to the module. Everything is drawn in the palette a person with no stored preference
+// as its default `{ mark, palettes, public?, android?, androidPalettes? }`: the glyph's paths, the
+// site's own palette sheets, the directory the web artwork goes to (`public`), the Android app's `res/`
+// directory, all relative to the module, and whether the app's launcher icon follows the palette its
+// page shows (an icon per palette, which the TKS shell switches between). Everything is drawn in the palette a person with no stored preference
 // sees (`fixedPalette`); the page's own icon and splash follow the theme it shows (`siteIdentity`).
 // The output is committed, and nothing in a build runs this: a build must not depend on a system
 // package that only this task needs.
 import { execFileSync } from "node:child_process";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { themeConfig } from "../dist/lib/theme.js";
@@ -75,24 +76,36 @@ if (android) {
   // 72dp a launcher shows, and well inside the middle two thirds every launcher keeps.
   const scale = 33 / 24;
   const offset = 54 - 12 * scale;
-  const paths = mark.map((p) => {
-    const d = androidPathData(typeof p === "string" ? p : p.d);
-    const fill = typeof p === "object" && p.fill ? ` android:fillColor="${argb(c.ink)}"` : "";
-    return `    <path${fill} android:strokeColor="${argb(c.ink)}" android:strokeWidth="${STROKE}" android:strokeLineCap="round" android:strokeLineJoin="round"\n        android:pathData="${d}" />`;
-  }).join("\n");
   const write = (rel, text) => {
     mkdirSync(dirname(resolve(res, rel)), { recursive: true });
     writeFileSync(resolve(res, rel), text);
   };
-  write("drawable/icon_foreground.xml", `<?xml version="1.0" encoding="utf-8"?>
-<!-- Written by krystal-icons from the site's identity: its glyph in the accent of ${palette}. -->
+  const foreground = (ink, of) => {
+    const paths = mark.map((p) => {
+      const d = androidPathData(typeof p === "string" ? p : p.d);
+      const fill = typeof p === "object" && p.fill ? ` android:fillColor="${argb(ink)}"` : "";
+      return `    <path${fill} android:strokeColor="${argb(ink)}" android:strokeWidth="${STROKE}" android:strokeLineCap="round" android:strokeLineJoin="round"\n        android:pathData="${d}" />`;
+    }).join("\n");
+    return `<?xml version="1.0" encoding="utf-8"?>
+<!-- Written by krystal-icons from the site's identity: its glyph in the accent of ${of}. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
   <group android:scaleX="${+scale.toFixed(4)}" android:scaleY="${+scale.toFixed(4)}" android:translateX="${+offset.toFixed(4)}" android:translateY="${+offset.toFixed(4)}">
 ${paths}
   </group>
 </vector>
-`);
+`;
+  };
+  const adaptive = (suffix) => `<?xml version="1.0" encoding="utf-8"?>
+<!-- Written by krystal-icons: a launcher icon, and the splash Android draws from it while the app
+     starts; the glyph alone is the themed icon Android draws in the person's colours. -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+  <background android:drawable="@color/icon_background${suffix}" />
+  <foreground android:drawable="@drawable/icon_foreground${suffix}" />
+  <monochrome android:drawable="@drawable/icon_foreground${suffix}" />
+</adaptive-icon>
+`;
+  write("drawable/icon_foreground.xml", foreground(c.ink, palette));
   write("values/colors.xml", `<?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!-- Written by krystal-icons: the accent's tint over the canvas of ${palette}, the ground of the icon,
@@ -100,14 +113,31 @@ ${paths}
   <color name="icon_background">${argb(c.ground)}</color>
 </resources>
 `);
-  write("mipmap-anydpi/icon.xml", `<?xml version="1.0" encoding="utf-8"?>
-<!-- Written by krystal-icons: the launcher icon, and the splash Android draws from it while the app
-     starts; the glyph alone is the themed icon Android draws in the person's colours. -->
-<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-  <background android:drawable="@color/icon_background" />
-  <foreground android:drawable="@drawable/icon_foreground" />
-  <monochrome android:drawable="@drawable/icon_foreground" />
-</adaptive-icon>
+  write("mipmap-anydpi/icon.xml", adaptive(""));
+
+  // With `androidPalettes`, an icon per palette the site offers as well, `icon_<palette>`, which the
+  // TKS shell makes a launcher entry each and switches to the palette the page shows; `icon_default`
+  // names the one a fresh install shows. Without it, none, and a run removes any an earlier one wrote.
+  const entry = (id) => id.replace(/-/g, "_");
+  for (const [dir, pattern] of [["mipmap-anydpi", /^icon_[a-z0-9_]+\.xml$/], ["drawable", /^icon_foreground_[a-z0-9_]+\.xml$/], ["values", /^icon_palettes\.xml$/]]) {
+    if (!existsSync(resolve(res, dir))) continue;
+    for (const f of readdirSync(resolve(res, dir))) if (pattern.test(f)) rmSync(resolve(res, dir, f));
+  }
+  if (identity.androidPalettes) {
+    const ids = themeConfig().ids.filter((id) => colours[id]);
+    for (const id of ids) {
+      write(`drawable/icon_foreground_${entry(id)}.xml`, foreground(colours[id].ink, id));
+      write(`mipmap-anydpi/icon_${entry(id)}.xml`, adaptive("_" + entry(id)));
+    }
+    write("values/icon_palettes.xml", `<?xml version="1.0" encoding="utf-8"?>
+<!-- Written by krystal-icons: each palette's icon ground, and the palette a fresh install's icon is in. -->
+<resources>
+  <string name="icon_default" translatable="false">${entry(palette)}</string>
+${ids.map((id) => `  <color name="icon_background_${entry(id)}">${argb(colours[id].ground)}</color>`).join("\n")}
+</resources>
 `);
-  console.log(`wrote the launcher icon to ${res}`);
+    console.log(`wrote the launcher icon and one for each of ${ids.length} palettes to ${res}`);
+  } else {
+    console.log(`wrote the launcher icon to ${res}`);
+  }
 }
