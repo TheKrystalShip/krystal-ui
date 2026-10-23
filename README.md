@@ -670,7 +670,11 @@ design system draws it:
   `footer` is a slot under the rows. A row opens when `canOpen(item)` allows (one with a `url` by
   default) and calls `onOpen(item)`.
 - `NotificationSettings` is a section of a switch for each kind the product lets the person switch off,
-  this browser's push on or off over `lib/pushBrowser`, and how many devices receive pushes.
+  this browser's push on or off over `lib/pushBrowser`, and how many devices receive pushes. Push is on
+  for a server when the browser has a subscription whose endpoint the server lists. Switching it on
+  registers the browser's existing subscription when its key is the server's, and replaces it only when
+  the key differs; switching it off removes only that server's registration and leaves the subscription,
+  which the site's other servers may use.
 
 ```jsx
 const client = createNotificationsClient({ request: (method, path, body) => api(method, "/api" + path, body) });

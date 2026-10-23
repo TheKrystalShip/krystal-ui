@@ -94,7 +94,7 @@ async function currentEndpoint() {
 }
 
 /**
- * Get a subscription bound to `publicKey`, prompting for permission if needed.
+ * Get the subscription bound to `publicKey`, the browser's existing one when its key matches, prompting for permission if needed.
  *
  * Throws with a readable message rather than resolving false, so a caller can surface the reason —
  * "you blocked this" and "this build has no worker" want different sentences and neither is a bug.
@@ -114,9 +114,11 @@ async function acquire(publicKey) {
       : "Notification permission wasn't granted.");
   }
 
-  // A subscription made against a DIFFERENT application server key cannot be reused: the browser
-  // bakes the key in at subscribe time and re-subscribing with another throws. Drop it and make a
-  // new one, rather than registering something this host could never sign for.
+  // A subscription made for the same application server key is reused as it is, so servers of one
+  // site that share a key pair share the browser's one subscription. One made against a DIFFERENT
+  // key cannot be reused: the browser bakes the key in at subscribe time and re-subscribing with
+  // another throws. Drop it and make a new one, rather than registering something this host could
+  // never sign for.
   let sub = await reg.pushManager.getSubscription();
   if (sub && !sameKey(sub, publicKey)) {
     try { await sub.unsubscribe(); } catch { /* it is going away regardless */ }
@@ -132,10 +134,11 @@ async function acquire(publicKey) {
 }
 
 /**
- * Give up this browser's subscription, telling the backend first.
+ * Take this browser off one server, telling that server.
  *
- * The order matters. If the browser-side unsubscribe succeeded and the backend call then failed,
- * the host would keep pushing to a dead endpoint until it collected enough 410s to retire it.
+ * The browser's subscription stays: a browser holds one per site, and every server of the site that
+ * pushes to it shares that one, so removing it would silence the others. It is also why `acquire`
+ * reuses a subscription whose key matches rather than making a new one.
  *
  * @param {(endpoint: string) => Promise<void>} unregister
  * @returns {Promise<void>}
@@ -143,11 +146,7 @@ async function acquire(publicKey) {
 async function release(unregister) {
   const sub = await currentSubscription();
   if (!sub) return;
-  try {
-    await unregister(sub.endpoint);
-  } finally {
-    try { await sub.unsubscribe(); } catch { /* already gone */ }
-  }
+  await unregister(sub.endpoint);
 }
 
 /**

@@ -1,5 +1,14 @@
 # Changelog
 
+## [6.0.1]
+
+### Fixed
+- **`NotificationSettings` and `pushBrowser` share the browser's one subscription between servers.** A
+  browser holds one push subscription per site, so switching push off unsubscribed the browser and
+  silenced every other server of the site. Switching off now removes only this server's registration
+  (`release` no longer unsubscribes), and switching on reuses the subscription when its key is this
+  server's, replacing it only when the key differs.
+
 ## [6.0.0]
 
 ### Added

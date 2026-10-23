@@ -12,7 +12,10 @@ import { acquire, currentEndpoint, release, support } from "../lib/pushBrowser.j
 // words come from the product (`kinds()`), the switches' values from `preferences()`; a kind that
 // cannot be switched is not offered. The push row is per browser, because a subscription is: it asks
 // the browser for permission from the press itself, since a prompt the person did not ask for is
-// refused. The row says why when this browser cannot receive pushes, and when the product sends none.
+// refused. It is on when the browser has a subscription and this server lists its endpoint; switching
+// it on registers the browser's existing subscription with this server when its key is the server's,
+// and switching it off removes only this server's registration, since the browser's one subscription
+// per site may serve other servers. The row says why when this browser cannot receive pushes, and when the product sends none.
 //
 //   <NotificationSettings client={client} />
 //
