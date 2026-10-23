@@ -1,8 +1,8 @@
 /* ============================================================================
    assistant-pages.css — the page beside an assistant's chat (AssistantChatsPage)
    and what the chat draws in the conversation's place: what the assistant
-   remembers (AssistantMemory, AssistantMemoryEditor) and what it knows how to
-   do (AssistantSkills). The sections on them are settings furniture
+   remembers (AssistantMemory, AssistantMemoryEditor), what it knows how to do
+   (AssistantSkills) and what it can use (AssistantTools). The sections on them are settings furniture
    (settings.css); only the measure and what is particular to a memory are
    spelled out here.
    ============================================================================ */

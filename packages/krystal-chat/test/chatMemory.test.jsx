@@ -15,6 +15,10 @@ function fakeClient() {
     memoryLimits: vi.fn(() => Promise.resolve({ maxPerPerson: 50, maxSummaryLength: 160, maxBodyLength: 4000 })),
     writeMemory: vi.fn((key, m) => Promise.resolve({ key, ...m, writtenAt: "2026-10-23T10:00:00Z", source: "person", plugin: "kgsm" })),
     deleteMemory: vi.fn(() => Promise.resolve(null)),
+    tools: vi.fn(() => Promise.resolve([
+      { name: "server_status", class: "read", description: "Current state of game servers, read live.\n- With server: running or stopped." },
+      { name: "server_action", class: "staged", description: "Propose an action on one server. Nothing happens until the person confirms; say it is waiting for them.\n- One action per call." },
+    ])),
     skills: vi.fn(() => Promise.resolve([
       { name: "restore-backup", description: "Roll a server back to an earlier backup safely." },
       { name: "find-a-forgotten-film", description: "Identify a film someone half remembers." },
@@ -134,5 +138,19 @@ describe("Chat's skills", () => {
     expect(document.querySelector(".k-chat-composer").hidden).toBe(true);
     fireEvent.click(screen.getByRole("button", { name: "Back" }));
     expect(screen.queryByText("Restore backup")).toBeNull();
+  });
+});
+
+describe("Chat's tools", () => {
+  it("lists each tool by a readable name and the first sentence of its description", async () => {
+    renderChat(fakeClient());
+    fireEvent.click(screen.getByRole("button", { name: "Options" }));
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Tools" }));
+    expect(await screen.findByText("Server status")).toBeTruthy();
+    expect(screen.getByText("Current state of game servers, read live.")).toBeTruthy();
+    // What it tells the model about calling it is not the person's to read.
+    expect(screen.queryByText(/With server/)).toBeNull();
+    expect(screen.getByText("Propose an action on one server. · Asks you to confirm first")).toBeTruthy();
+    expect(screen.getByText("Tools")).toBeTruthy();
   });
 });

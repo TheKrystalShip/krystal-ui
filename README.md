@@ -875,9 +875,10 @@ new conversation starts; there is no New chat button. A `docked` chat, panel or 
 hide button that collapses it into its side of the screen and calls `onClose`; a chat that is the page
 itself has none.
 
-**Memory and skills.** The header's options menu (`⋯`), in every layout, holds *Memory*, *Skills*
-(where the client has `skills()`) and, with a conversation open, *Delete conversation*, which asks
-twice. Each of the first two stands in the conversation's place, which is kept as it was left; the
+**Memory, skills and tools.** The header's options menu (`⋯`), in every layout, holds *Memory*,
+*Skills* and *Tools* (each of the last two where the client has `skills()` or `tools()`) and, with a
+conversation open, *Delete conversation*, which asks twice. Each of the first three stands in the
+conversation's place, which is kept as it was left; the
 header names what is open and its back arrow leads out.
 
 - *Memory* shows what the assistant has written down about the person, from `/memories` with its count
@@ -889,6 +890,9 @@ header names what is open and its back arrow leads out.
 - *Skills* lists what the assistant knows how to do, from `/skills`: each skill by its name made
   readable and the description the assistant reads for it. A skill is used by asking for what it
   describes, so the list offers nothing to press.
+- *Tools* lists what the assistant can use on the person's behalf, from `/tools`: each tool by its name
+  made readable and the first sentence of its description (the rest is written for the model), with
+  "Asks you to confirm first" on a tool that proposes rather than acts.
 
 What the assistant writes down or forgets during a turn follows that turn's answer as an event line,
 "Remembered: …" or "Forgot: …", read from the memory card its `remember` or `forget` carries (wire

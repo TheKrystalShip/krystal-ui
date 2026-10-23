@@ -25,7 +25,7 @@ import { resolveCommand, suggestFor } from "./chatCommands.js";
 import { ContextRing, contextUsage, useCompact } from "./ChatContextMeter.jsx";
 import { ChatHistory } from "./ChatHistory.jsx";
 import { AssistantMemory } from "../assistant/AssistantMemory.jsx";
-import { AssistantSkills } from "../assistant/AssistantSkills.jsx";
+import { AssistantSkills, AssistantTools } from "../assistant/AssistantCatalog.jsx";
 import { CHAT_PRIVACY_NOTICE, ChatContext, DefaultAboveComposer, DefaultStart, renderSlot } from "./slots.jsx";
 import { ChatThread } from "./ChatThread.jsx";
 import { ComposerAttachments } from "./ChatAttachments.jsx";
@@ -178,15 +178,15 @@ function ChatMenu({ open, setOpen, anchorRef, role = "menu", label, align, class
     document.body);
 }
 
-// The header's menu: what the assistant remembers and what it knows how to do, and deleting the open
-// conversation. Deleting asks twice: the second press is on the same row, which now says what it is
+// The header's menu: what the assistant remembers, what it knows how to do and what it can use, and
+// deleting the open conversation. Deleting asks twice: the second press is on the same row, which now says what it is
 // about to do. Each entry is drawn only when there is something for it to do.
-function ChatOptions({ onMemory, onSkills, onDelete }) {
+function ChatOptions({ onMemory, onSkills, onTools, onDelete }) {
   const [open, setOpen] = React.useState(false);
   const [armed, setArmed] = React.useState(false);
   const ref = React.useRef(null);
   React.useEffect(() => { if (!open) setArmed(false); }, [open]);
-  if (!onMemory && !onSkills && !onDelete) return null;
+  if (!onMemory && !onSkills && !onTools && !onDelete) return null;
   return (
     <>
       <IconButton ref={ref} icon="ellipsis" label="Options" variant="ghost" size="sm"
@@ -204,7 +204,13 @@ function ChatOptions({ onMemory, onSkills, onDelete }) {
             Skills
           </Button>
         )}
-        {(onMemory || onSkills) && onDelete && <div className="k-chat-menu__sep" role="separator" />}
+        {onTools && (
+          <Button variant="ghost" size="sm" wide icon="wrench" role="menuitem" className="k-chat-menu__item"
+            onClick={() => { setOpen(false); onTools(); }}>
+            Tools
+          </Button>
+        )}
+        {(onMemory || onSkills || onTools) && onDelete && <div className="k-chat-menu__sep" role="separator" />}
         {onDelete && (
           <Button variant={armed ? "danger" : "ghost"} size="sm" wide icon="trash-2" role="menuitem"
             className="k-chat-menu__item k-chat-menu__item--danger"
@@ -1767,7 +1773,8 @@ function Chat({
   // What stands in the conversation's place: null while the conversation is shown, else
   // `{ view: "memory", editing }` for what the assistant remembers — `editing` null for the list,
   // `{ memory }` for one open in the editor (a null memory is a new one), `{ key }` for the one a line in
-  // the conversation names — or `{ view: "skills" }` for what it knows how to do. Opening a
+  // the conversation names — `{ view: "skills" }` for what it knows how to do, or `{ view: "tools" }` for
+  // what it can use. Opening a
   // conversation, or turning to another assistant, leaves it.
   const [panel, setPanel] = React.useState(null);
   const panelHostId = assistantHost ? assistantHost.id : null;
@@ -1779,11 +1786,13 @@ function Chat({
   const openMemory = assistantAuthed ? () => setPanel({ view: "memory", editing: null }) : null;
   const openMemoryKey = assistantAuthed ? (key) => setPanel({ view: "memory", editing: { key } }) : undefined;
   const editMemory = React.useCallback((editing) => setPanel({ view: "memory", editing }), []);
-  // A site's own client offers skills only when it has the call.
-  const offersSkills = !!panelHostId && assistantAuthed && typeof clientFor(panelHostId).skills === "function";
-  const openSkills = offersSkills ? () => setPanel({ view: "skills" }) : null;
+  // A site's own client offers skills and tools only when it has the call.
+  const offers = (call) => !!panelHostId && assistantAuthed && typeof clientFor(panelHostId)[call] === "function";
+  const openSkills = offers("skills") ? () => setPanel({ view: "skills" }) : null;
+  const openTools = offers("tools") ? () => setPanel({ view: "tools" }) : null;
   const panelTitle = !panel ? null
     : panel.view === "skills" ? "Skills"
+    : panel.view === "tools" ? "Tools"
       : !panel.editing ? "Memory"
         : panel.editing.memory === null ? "Write a memory" : "Edit memory";
 
@@ -2058,7 +2067,7 @@ function Chat({
               )}
             </div>}
             {!panel && (
-              <ChatOptions onMemory={openMemory} onSkills={openSkills}
+              <ChatOptions onMemory={openMemory} onSkills={openSkills} onTools={openTools}
                 onDelete={active ? () => deleteChat(active.id) : null} />
             )}
             {docked && !asPage && showPin && (
@@ -2074,7 +2083,7 @@ function Chat({
           </div>
         </div>
 
-        {/* What the assistant remembers, or what it knows how to do, stands in the conversation's place.
+        {/* What the assistant remembers, knows how to do or can use stands in the conversation's place.
             The thread and the composer stay mounted under it, so going back finds the conversation as
             it was left: its scroll, the draft in the composer. */}
         {panel && (
@@ -2082,6 +2091,9 @@ function Chat({
             {panel.view === "skills" ? (
               <AssistantSkills client={panelClient}
                 unavailable={<Notice tone="warn">The assistant can’t be reached, so what it can do can’t be read until it’s back.</Notice>} />
+            ) : panel.view === "tools" ? (
+              <AssistantTools client={panelClient}
+                unavailable={<Notice tone="warn">The assistant can’t be reached, so what it can use can’t be read until it’s back.</Notice>} />
             ) : (
               <AssistantMemory
                 client={panelClient}

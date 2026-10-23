@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.1.0]
+
+### Added
+- **Tools.** The chat's options menu holds *Tools* where the client has `tools()`: what the assistant
+  can use on the person's behalf, each tool by its readable name and the first sentence of its
+  description, with "Asks you to confirm first" on a tool that proposes, in the conversation's place
+  as *Skills* is.
+
 ## [5.0.0]
 
 ### Added
