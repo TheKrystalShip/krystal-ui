@@ -182,14 +182,39 @@ describe("Menu container, sub and readOnly", () => {
 });
 
 describe("SidebarAccount", () => {
-  it("draws an item's count beside it and a rule where a separator stands", async () => {
+  it("offers Profile, Settings, a rule and Sign out, each calling its handler", async () => {
     const user = userEvent.setup();
-    render(<SidebarAccount user={{ display: "Marta" }}
-      items={[{ icon: "flag", label: "Report queue", aside: 17 }, { separator: true }, { icon: "log-out", label: "Sign out", danger: true }]} />);
+    const calls = [];
+    render(<SidebarAccount user={{ display: "Marta" }} onProfile={() => calls.push("profile")}
+      onSettings={() => calls.push("settings")} onSignOut={() => calls.push("out")} />);
     await user.click(screen.getByRole("button", { name: "Marta" }));
-    const queue = await screen.findByRole("menuitem", { name: /Report queue/ });
-    expect(queue.textContent).toContain("17");
+    await screen.findByRole("menu");
+    expect(screen.getAllByRole("menuitem").map((i) => i.textContent)).toEqual(["Profile", "Settings", "Sign out"]);
     expect(screen.getByRole("separator")).toBeTruthy();
-    expect(screen.getAllByRole("menuitem")).toHaveLength(2);
+    await user.click(screen.getByRole("menuitem", { name: "Settings" }));
+    expect(calls).toEqual(["settings"]);
+  });
+
+  it("puts a site's own entries after Settings and before the rule", async () => {
+    const user = userEvent.setup();
+    render(<SidebarAccount user={{ display: "Marta" }} onProfile={() => {}} onSettings={() => {}} onSignOut={() => {}}
+      items={[{ icon: "flag", label: "Report queue", aside: 17 }]} />);
+    await user.click(screen.getByRole("button", { name: "Marta" }));
+    await screen.findByRole("menu");
+    const items = screen.getAllByRole("menuitem").map((i) => i.textContent);
+    expect(items[0]).toBe("Profile");
+    expect(items[1]).toBe("Settings");
+    expect(items[2]).toContain("Report queue");
+    expect(items[2]).toContain("17");
+    expect(items[3]).toBe("Sign out");
+  });
+
+  it("leaves out the rule and Sign out without onSignOut", async () => {
+    const user = userEvent.setup();
+    render(<SidebarAccount user={{ display: "Marta" }} onProfile={() => {}} onSettings={() => {}} />);
+    await user.click(screen.getByRole("button", { name: "Marta" }));
+    await screen.findByRole("menu");
+    expect(screen.getAllByRole("menuitem").map((i) => i.textContent)).toEqual(["Profile", "Settings"]);
+    expect(screen.queryByRole("separator")).toBeNull();
   });
 });

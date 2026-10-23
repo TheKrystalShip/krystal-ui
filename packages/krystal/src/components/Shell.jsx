@@ -149,32 +149,29 @@ function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, close
   );
 }
 
-// The signed-in person, at the bottom of the sidebar's foot: their avatar, their name and a `sub`
-// line under it, opening a menu upward of `items` — `{ icon, label, onClick, danger, aside }`, or
-// `{ separator: true }` for a rule between runs of them. `aside` is a quiet value at an item's end, such
-// as a count. `detail` is what the menu's head says under the name. On the collapsed rail the row is
-// the avatar alone.
+// The signed-in person, at the bottom of the sidebar's foot: their avatar and their name, opening a
+// menu upward headed by the name. Every site's menu has Profile, Settings, a rule, and Sign out:
+// Profile is the person's account, Settings this site's own settings. A site's own entries (`items`)
+// come after Settings and before the rule. A site that cannot end
+// the session (one embedded where only leaving ends it) passes no `onSignOut`, and the rule and Sign out
+// are left out. On the collapsed rail the row is the avatar alone.
 /**
  * @param {object} props
  * @param {{ display?: string, name?: string }} props.user The signed-in person: `display` is the name shown, `name` the fallback.
- * @param {import("react").ReactNode} [props.sub] A line under the name.
- * @param {import("react").ReactNode} [props.detail] What the menu's head says under the name.
- * @param {{ icon?: string, label?: string, onClick?: () => void, danger?: boolean, aside?: import("react").ReactNode, separator?: boolean }[]} [props.items] The menu's entries, each `{ icon, label, onClick, danger, aside }`, or `{ separator: true }` for a rule between them.
+ * @param {() => void} props.onProfile Opens the person's profile.
+ * @param {() => void} props.onSettings Opens this site's settings.
+ * @param {() => void} [props.onSignOut] Ends the session; without it the menu has no Sign out.
+ * @param {{ icon?: string, label?: string, onClick?: () => void, danger?: boolean, aside?: import("react").ReactNode, separator?: boolean }[]} [props.items] The site's own entries after Settings, each `{ icon, label, onClick, danger, aside }` (`aside` a quiet value at its end, such as a count), or `{ separator: true }` for a rule between them.
  * @param {boolean} [props.collapsed] Draws the avatar alone, as on the collapsed rail.
  */
-function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
+function SidebarAccount({ user, onProfile, onSettings, onSignOut, items = [], collapsed }) {
   const [open, setOpen] = React.useState(false);
   const name = user.display || user.name;
   return (
     <div className="k-sidebar__account-wrap">
       <Menu open={open} onOpenChange={setOpen} placement="top-start" matchWidth label={name}
         className="k-sidebar__account-menu"
-        header={(
-          <>
-            <div className="k-sidebar__account-menu__name">{name}</div>
-            {detail && <div className="k-sidebar__account-menu__detail">{detail}</div>}
-          </>
-        )}
+        header={<div className="k-sidebar__account-menu__name">{name}</div>}
         trigger={(
           <button
             type="button"
@@ -184,15 +181,14 @@ function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
             <AccountAvatar user={user} size={28} />
             {!collapsed && (
               <>
-                <span className="k-sidebar__account__text">
-                  <span className="k-sidebar__account__name">{name}</span>
-                  {sub && <span className="k-sidebar__account__sub">{sub}</span>}
-                </span>
+                <span className="k-sidebar__account__name">{name}</span>
                 <Icon name="chevrons-up-down" size={14} className="k-sidebar__account__caret" />
               </>
             )}
           </button>
         )}>
+        <MenuItem icon="user" onSelect={() => onProfile && onProfile()}>Profile</MenuItem>
+        <MenuItem icon="settings" onSelect={() => onSettings && onSettings()}>Settings</MenuItem>
         {items.map((item, i) => (item.separator
           ? <MenuSeparator key={"sep-" + i} />
           : (
@@ -201,6 +197,8 @@ function SidebarAccount({ user, sub, detail, items = [], collapsed }) {
               {item.label}
             </MenuItem>
           )))}
+        {onSignOut && <MenuSeparator />}
+        {onSignOut && <MenuItem icon="log-out" tone="danger" onSelect={onSignOut}>Sign out</MenuItem>}
       </Menu>
     </div>
   );

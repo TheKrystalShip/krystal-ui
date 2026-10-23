@@ -79,10 +79,9 @@ export default function MenuSection() {
         <div style={{ ...row, paddingTop: 150, alignItems: "flex-end" }}>
           {[false, true].map((collapsed) => (
             <div key={String(collapsed)} style={{ width: collapsed ? 56 : 260 }}>
-              <SidebarAccount user={{ display: "Claude", name: "claude" }} sub="Owner" detail="Signed in with a password"
-                collapsed={collapsed}
-                items={[{ icon: "settings", label: "Settings" }, { icon: "flag", label: "Report queue", aside: 17 },
-                  { separator: true }, { icon: "log-out", label: "Sign out", danger: true }]} />
+              <SidebarAccount user={{ display: "Claude", name: "claude" }} collapsed={collapsed}
+                onProfile={() => {}} onSettings={() => {}} onSignOut={() => {}}
+                items={[{ icon: "flag", label: "Report queue", aside: 17 }]} />
             </div>
           ))}
         </div>

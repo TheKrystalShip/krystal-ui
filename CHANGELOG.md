@@ -1,5 +1,18 @@
 # Changelog
 
+## [8.0.0]
+
+### Changed
+- **`SidebarAccount` draws the account menu every site shares.** The row is the avatar and the name;
+  the menu, headed by the name, is Profile, Settings, the site's own `items`, a rule and Sign out.
+  `onProfile` and `onSettings` open the person's profile and the site's settings, and `onSignOut` ends
+  the session (without it the rule and Sign out are left out). `items` keeps its shape (`{ icon, label,
+  onClick, danger, aside }` or `{ separator: true }`) and holds only the site's own entries.
+
+### Removed
+- `SidebarAccount`'s `sub` and `detail`, and the `k-sidebar__account__text`, `k-sidebar__account__sub`
+  and `k-sidebar__account-menu__detail` classes.
+
 ## [7.0.0]
 
 ### Changed

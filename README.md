@@ -34,7 +34,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 
 | Kind | Exports |
 |---|---|
-| The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem` (`badge`, `tone`, and `compact` with an `aside` node for the sub-rows under a group: the icon on a tile, a smaller label, the tile alone on the rail), `SidebarAccount` (items with an `aside` such as a count, and `{ separator: true }` between runs of them), `MobileNavToggle`, `TabBar`, `useStoredFlag`, `useEdgeSwipe` |
+| The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem` (`badge`, `tone`, and `compact` with an `aside` node for the sub-rows under a group: the icon on a tile, a smaller label, the tile alone on the rail), `SidebarAccount` (the person's avatar and name, opening the account menu every site shares: Profile, Settings, the site's own `items`, a rule and Sign out), `MobileNavToggle`, `TabBar`, `useStoredFlag`, `useEdgeSwipe` |
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` (`cinematic`, or `variant="card"`: the bordered veil card), and the parts its content is drawn from: `HeroStatus`, `HeroBody`, `HeroHeading`, `HeroName`, `HeroTags`, `HeroTag` (`glass`, `verbatim`, `icon`), `HeroBar`, `HeroGroup`, `HeroDivider`, `HeroNote` (a line on the art), `HeroButton` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
@@ -729,9 +729,8 @@ useEdgeSwipe(drawerOpen, setDrawerOpen, dock.open, dock.setOpen);
       top={<label className="k-sidebar__search">…</label>}
       closeNav
       foot={<>
-        <NavItem icon="settings" label="Settings" onClick={…} />
-        <SidebarAccount user={user} sub="@name" collapsed={dock.desktop && collapsed}
-          items={[{ icon: "log-out", label: "Sign out", danger: true, onClick: … }]} />
+        <SidebarAccount user={user} collapsed={dock.desktop && collapsed}
+          onProfile={…} onSettings={…} onSignOut={…} />
       </>}>
       <SidebarGroup>
         <NavItem icon="home" label="Home" active onClick={…} />
