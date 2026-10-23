@@ -322,9 +322,14 @@ export const PAGES = [
 
   // Telling a person
   {
-    id: "toasts", name: "Toasts and notifications", group: "Telling a person", exports: ["Toasts", "NotificationsPanel", "toast", "toastStore", "unreadCount", "unreadTone"], examples: [],
-    summary: "The live stack of outcome cards, the history behind them, and the call a site makes to raise one.",
-    versus: "Notice for something inside the content it is about.",
+    id: "toasts", name: "Toasts", group: "Telling a person", exports: ["Toasts", "toast", "toastStore"], examples: [],
+    summary: "The live stack of outcome cards, and the call a site makes to raise one. Nothing is kept once a card is gone.",
+    versus: "Notice for something inside the content it is about; Notifications for what a person is told and keeps.",
+  },
+  {
+    id: "notifications", name: "Notifications", group: "Telling a person", exports: ["NotificationTray", "NotificationList", "NotificationSettings", "createNotificationsClient", "createNotificationInbox"], examples: ["notifications"],
+    summary: "What a person is told, kept by the product's server: the tray beside the sidebar or in a drawer on a phone, the list grouped by day, the settings, and the client and inbox store they read. The service-worker half is `sw/notifications.js`.",
+    versus: "Toasts for the outcome of what the person just did.",
   },
 
   // Television
@@ -357,7 +362,7 @@ export const PAGES = [
     summary: "The card a product draws under an answer.",
   },
   {
-    id: "assistant-pages", name: "The assistant's pages", group: "The assistant chat", exports: ["AssistantChatsPage", "AssistantPage", "AssistantNotifications", "assistantPushStatus", "assistantPushSubscribe", "assistantPushUnsubscribe"], examples: [],
+    id: "assistant-pages", name: "The assistant's pages", group: "The assistant chat", exports: ["AssistantChatsPage", "AssistantPage"], examples: [],
     summary: "The chats page, the notification switch and the push calls that register with an assistant.",
   },
   {

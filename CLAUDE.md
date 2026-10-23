@@ -113,8 +113,8 @@ React, React DOM and `lucide-react` are externals and peer dependencies of both 
 by the site's bundler. The chat's externals also include `@thekrystalship/krystal` and its subpaths, and it declares
 core as a peer dependency at its own exact version, so a site installs both and holds one copy of core.
 Each `package.json`'s `sideEffects` names the modules that do something on load — core's `lib/theme.js`
-applies the stored theme to the document, `lib/toasts.js` reads its history — so a bundler never drops
-them, and keeps dropping everything else a site does not use.
+applies the stored theme to the document — so a bundler never drops them, and keeps dropping
+everything else a site does not use.
 
 ## Version tracking
 

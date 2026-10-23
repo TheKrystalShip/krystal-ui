@@ -6,6 +6,7 @@ import { Notice } from "@thekrystalship/krystal";
 import { EmptyState, useFollowTail } from "@thekrystalship/krystal";
 import { Spinner } from "@thekrystalship/krystal";
 import { Toggle } from "@thekrystalship/krystal";
+import { createNotificationInbox, createNotificationsClient, createStore, useStore } from "@thekrystalship/krystal";
 import { usePortalPopover } from "@thekrystalship/krystal";
 import { VoiceComposerBar, useVoiceRecorder } from "./VoiceNote.jsx";
 import { createSpokenReply, armAudio } from "./spokenReply.js";
@@ -26,6 +27,7 @@ import { ContextRing, contextUsage, useCompact } from "./ChatContextMeter.jsx";
 import { ChatHistory } from "./ChatHistory.jsx";
 import { AssistantMemory } from "../assistant/AssistantMemory.jsx";
 import { AssistantSkills, AssistantTools } from "../assistant/AssistantCatalog.jsx";
+import { AssistantInbox } from "../assistant/AssistantInbox.jsx";
 import { CHAT_PRIVACY_NOTICE, ChatContext, DefaultAboveComposer, DefaultStart, renderSlot } from "./slots.jsx";
 import { ChatThread } from "./ChatThread.jsx";
 import { ComposerAttachments } from "./ChatAttachments.jsx";
@@ -178,19 +180,31 @@ function ChatMenu({ open, setOpen, anchorRef, role = "menu", label, align, class
     document.body);
 }
 
-// The header's menu: what the assistant remembers, what it knows how to do and what it can use, and
-// deleting the open conversation. Deleting asks twice: the second press is on the same row, which now says what it is
+// The assistant's notifications, kept fresh for as long as the chat stands: a hook that tolerates
+// having no inbox (a client without the routes), which `inbox.useInbox` could not.
+const NO_INBOX = createStore({ unread: 0, items: null, more: false, kinds: [], error: null });
+function useWatchedInbox(inbox) {
+  React.useEffect(() => (inbox ? inbox.watch() : undefined), [inbox]);
+  return useStore(inbox ? inbox.store : NO_INBOX);
+}
+
+// The header's menu: what the assistant remembers, what it knows how to do, what it can use, what it has
+// told the person (with how many are unread, and a dot on the button while any are), and deleting the
+// open conversation. Deleting asks twice: the second press is on the same row, which now says what it is
 // about to do. Each entry is drawn only when there is something for it to do.
-function ChatOptions({ onMemory, onSkills, onTools, onDelete }) {
+function ChatOptions({ onMemory, onSkills, onTools, onNotifications, unread = 0, onDelete }) {
   const [open, setOpen] = React.useState(false);
   const [armed, setArmed] = React.useState(false);
   const ref = React.useRef(null);
   React.useEffect(() => { if (!open) setArmed(false); }, [open]);
-  if (!onMemory && !onSkills && !onTools && !onDelete) return null;
+  if (!onMemory && !onSkills && !onTools && !onNotifications && !onDelete) return null;
   return (
     <>
-      <IconButton ref={ref} icon="ellipsis" label="Options" variant="ghost" size="sm"
-        aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(o => !o)} />
+      <span className="k-chat-options">
+        <IconButton ref={ref} icon="ellipsis" label={unread > 0 ? "Options, " + unread + " unread" : "Options"} variant="ghost" size="sm"
+          aria-haspopup="menu" aria-expanded={open} onClick={() => setOpen(o => !o)} />
+        {unread > 0 && <span className="k-chat-options__dot" aria-hidden="true" />}
+      </span>
       <ChatMenu open={open} setOpen={setOpen} anchorRef={ref} label="Options">
         {onMemory && (
           <Button variant="ghost" size="sm" wide icon="brain" role="menuitem" className="k-chat-menu__item"
@@ -210,7 +224,14 @@ function ChatOptions({ onMemory, onSkills, onTools, onDelete }) {
             Tools
           </Button>
         )}
-        {(onMemory || onSkills || onTools) && onDelete && <div className="k-chat-menu__sep" role="separator" />}
+        {onNotifications && (
+          <Button variant="ghost" size="sm" wide icon="bell" role="menuitem" className="k-chat-menu__item"
+            onClick={() => { setOpen(false); onNotifications(); }}>
+            Notifications
+            {unread > 0 && <span className="k-chat-menu__count">{unread}</span>}
+          </Button>
+        )}
+        {(onMemory || onSkills || onTools || onNotifications) && onDelete && <div className="k-chat-menu__sep" role="separator" />}
         {onDelete && (
           <Button variant={armed ? "danger" : "ghost"} size="sm" wide icon="trash-2" role="menuitem"
             className="k-chat-menu__item k-chat-menu__item--danger"
@@ -1774,7 +1795,8 @@ function Chat({
   // `{ view: "memory", editing }` for what the assistant remembers — `editing` null for the list,
   // `{ memory }` for one open in the editor (a null memory is a new one), `{ key }` for the one a line in
   // the conversation names — `{ view: "skills" }` for what it knows how to do, or `{ view: "tools" }` for
-  // what it can use. Opening a
+  // what it can use, or `{ view: "notifications", settings }` for what it has told the person — `settings`
+  // true for the switches in place of the list. Opening a
   // conversation, or turning to another assistant, leaves it.
   const [panel, setPanel] = React.useState(null);
   const panelHostId = assistantHost ? assistantHost.id : null;
@@ -1783,6 +1805,23 @@ function Chat({
     () => (panelHostId && assistantAuthed && assistantUsable ? clientFor(panelHostId) : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- clientFor is the surface's fixed capability; the host and whether it answers decide the client
     [panelHostId, assistantAuthed, assistantUsable]);
+  // What the assistant has told the person is read from its own `/notifications` routes, through the
+  // client's `request`. It is offered when the plugin answers `GET /notifications/kinds` with at least one
+  // kind; a client without `request`, or a plugin without the routes, offers nothing. The inbox lives as
+  // long as the host does so the unread count can mark the options button before the view is opened.
+  const notificationsInbox = React.useMemo(() => {
+    const client = panelClient;
+    if (!client || typeof client.request !== "function") return null;
+    return createNotificationInbox(createNotificationsClient({ request: (method, path, body) => client.request(method, path, body) }));
+  }, [panelClient]);
+  const inboxState = useWatchedInbox(notificationsInbox);
+  const offersNotifications = !!notificationsInbox && inboxState.kinds.length > 0;
+  const openNotifications = offersNotifications ? () => setPanel({ view: "notifications", settings: false }) : null;
+  const openConversationFromInbox = (id) => {
+    setPanel(null);
+    if (!convos.some(c => c.id === id)) loadServerHistory();
+    pickChat(id);
+  };
   const openMemory = assistantAuthed ? () => setPanel({ view: "memory", editing: null }) : null;
   const openMemoryKey = assistantAuthed ? (key) => setPanel({ view: "memory", editing: { key } }) : undefined;
   const editMemory = React.useCallback((editing) => setPanel({ view: "memory", editing }), []);
@@ -1793,6 +1832,7 @@ function Chat({
   const panelTitle = !panel ? null
     : panel.view === "skills" ? "Skills"
     : panel.view === "tools" ? "Tools"
+    : panel.view === "notifications" ? (panel.settings ? "Notification settings" : "Notifications")
       : !panel.editing ? "Memory"
         : panel.editing.memory === null ? "Write a memory" : "Edit memory";
 
@@ -2032,7 +2072,8 @@ function Chat({
               conversation's place, it leaves a memory for the list and the list for the conversation. */}
           {panel ? (
             <IconButton icon="arrow-left" label="Back" variant="ghost" size="sm" className="k-chat-head__back"
-              onClick={() => setPanel(panel.view === "memory" && panel.editing ? { view: "memory", editing: null } : null)} />
+              onClick={() => setPanel(panel.view === "memory" && panel.editing ? { view: "memory", editing: null }
+                : panel.view === "notifications" && panel.settings ? { view: "notifications", settings: false } : null)} />
           ) : !empty && (
             <IconButton icon="arrow-left" label="Back" variant="ghost" size="sm"
               className="k-chat-head__back" onClick={backToStart} />
@@ -2068,6 +2109,7 @@ function Chat({
             </div>}
             {!panel && (
               <ChatOptions onMemory={openMemory} onSkills={openSkills} onTools={openTools}
+                onNotifications={openNotifications} unread={offersNotifications ? inboxState.unread : 0}
                 onDelete={active ? () => deleteChat(active.id) : null} />
             )}
             {docked && !asPage && showPin && (
@@ -2094,6 +2136,11 @@ function Chat({
             ) : panel.view === "tools" ? (
               <AssistantTools client={panelClient}
                 unavailable={<Notice tone="warn">The assistant can’t be reached, so what it can use can’t be read until it’s back.</Notice>} />
+            ) : panel.view === "notifications" ? (
+              <AssistantInbox inbox={notificationsInbox} settings={!!panel.settings}
+                onSettings={() => setPanel({ view: "notifications", settings: true })}
+                onOpenConversation={openConversationFromInbox}
+                unavailable={<Notice tone="warn">The assistant can’t be reached, so what it has told you can’t be read until it’s back.</Notice>} />
             ) : (
               <AssistantMemory
                 client={panelClient}

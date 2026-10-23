@@ -1,5 +1,4 @@
-/* toast.css — the live outcome cards (<Toasts>) and the history popover they
-   fall into (<NotificationsPanel>). */
+/* toast.css — the live outcome cards (<Toasts>). */
 @layer krystal.tokens, krystal.base, krystal.components;
 
 @layer krystal.components {
@@ -74,8 +73,7 @@
   color: var(--fg-1);
 }
 
-.k-toast__count,
-.k-notifications__count {
+.k-toast__count {
   flex: none;
   padding: 0 5px;
   background: var(--surface-2);
@@ -121,131 +119,6 @@
 }
 
 .k-toast__close:hover { color: var(--fg-1); background: var(--surface-2); }
-
-/* ---- the history popover ------------------------------------------------ */
-
-.k-notifications__menu {
-  position: fixed;
-  z-index: 95;
-  width: min(340px, calc(100vw - 24px));
-  max-height: min(460px, 70vh);
-  display: flex;
-  flex-direction: column;
-  background: var(--surface-1);
-  border: var(--edge);
-  border-radius: var(--r-sm);
-  box-shadow: var(--shadow-pop);
-  overflow: hidden;
-}
-
-.k-notifications__head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 12px;
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.k-notifications__head-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  color: var(--fg-3);
-}
-
-.k-notifications__clear {
-  margin-left: auto;
-  padding: 0;
-  background: none;
-  border: none;
-  font: inherit;
-  font-size: 11.5px;
-  color: var(--fg-3);
-  cursor: pointer;
-}
-
-.k-notifications__clear:hover { color: var(--fg-1); }
-
-.k-notifications__list {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-}
-
-.k-notifications__empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  padding: 30px 20px;
-  text-align: center;
-  color: var(--fg-3);
-  font-size: 12.5px;
-}
-
-.k-notifications__empty > svg { color: var(--fg-4); }
-
-.k-notifications__empty-sub {
-  font-size: 11.5px;
-  color: var(--fg-3);
-}
-
-.k-notifications__item {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  padding: 10px 12px;
-}
-
-.k-notifications__item + .k-notifications__item { border-top: 1px solid var(--border-subtle); }
-
-.k-notifications__item--link { cursor: pointer; }
-.k-notifications__item--link:hover { background: var(--surface-2); }
-
-.k-notifications__icon { flex: none; margin-top: 1px; }
-.k-notifications__item--error   .k-notifications__icon { color: var(--danger-fg); }
-.k-notifications__item--success .k-notifications__icon { color: var(--success-fg); }
-.k-notifications__item--info    .k-notifications__icon { color: var(--info-fg); }
-
-.k-notifications__body {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.k-notifications__title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--fg-1);
-}
-
-.k-notifications__detail {
-  font-size: 11.5px;
-  line-height: 1.45;
-  color: var(--fg-3);
-  overflow-wrap: anywhere;
-}
-
-.k-notifications__meta {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 2px;
-  font-size: 10.5px;
-  color: var(--fg-3);
-}
-
-.k-notifications__code {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--fg-3);
-}
 
 /* ---- phones -------------------------------------------------------------- */
 

@@ -300,6 +300,13 @@ export const BEHAVIOUR = {
     keys: [],
     semantics: ["The stack is a live region (`aria-live`); an error toast has `role=\"alert\"` and the others `role=\"status\"`."],
   },
+  notifications: {
+    keys: [
+      ["Enter / Space", "Opens the focused row, where it has a link"],
+      ["Escape", "Closes the tray and returns focus to its opener"],
+    ],
+    semantics: ["A row with a link is a button; an unread row carries an \"Unread\" mark. The popover is a non-modal dialog and the phone drawer a modal one."],
+  },
   notice: {
     keys: [],
     semantics: ["A danger notice has `role=\"alert\"` and is announced; the others carry no live role."],

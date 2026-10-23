@@ -55,7 +55,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 | Page patterns | `ListPage` (heading, toolbar, rows, table or grid, pager and the loading, failed and empty states, from the site's data and flags), `DetailPage` (crumbs, a head or a Hero, tabs, an aside column and the whole-page loading, failed and not-found states), `SettingsPage` (sections of rows, a side nav that becomes a select at phone width, and a save bar that follows a form's dirty state), `SignInScreen` (the sign-in card: providers, a username and password form on the form layer, a refusal and a foot) |
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Feeds | `useFollowTail` (keeps a scrolling feed pinned to its bottom while the reader is there, counts what arrives while they are parked) |
-| Telling a person | `Toasts`, `NotificationsPanel`, `toast`, `toastStore` |
+| Telling a person | `Toasts` and `toast` (the outcome of what a person just did: a live stack, no history), `NotificationTray`, `NotificationList`, `NotificationSettings`, `createNotificationsClient`, `createNotificationInbox` (what a person is told, kept by the product's server) |
 | Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
 | State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS` + `registerThemes`, `copyText`, `pushBrowser`, `fmtRelative`, and `lib/datetime` (the local date, time and moment keys the date controls read and write, and `nextStep`) |
 
@@ -64,7 +64,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 | Kind | Exports |
 |---|---|
 | The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatEvidence` (the column of evidence cards under an answer), `ChatActivity`, `ChatCommand` (a proposal's card; the profile's `proposal` may give its `body`, `sub` and `declineLabel`), `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …), hands-free listening (`useHandsFree`, `createTriggerListener`, `matchTrigger`, `openMicrophone`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
-| The assistant's pages | `AssistantPage` (the reading-measure column a page about the assistant stands in), `AssistantChatsPage`, `AssistantNotifications`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
+| The assistant's pages | `AssistantPage` (the reading-measure column a page about the assistant stands in), `AssistantChatsPage` |
 
 Core stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
 theme, and the Inter / JetBrains Mono faces), `styles/motion.css` (shared keyframes),
@@ -642,6 +642,65 @@ picks, Escape closes then clears. It takes `Input`'s `size`, `invalid`, `wide` a
 </Field>
 ```
 
+## Telling a person
+
+A **toast** is the outcome of what the person just did: `toast.success`, `toast.info`, `toast.error`
+and `toast.fromError(err, title)`, drawn by one `<Toasts />` per surface. An error stays until it is
+dismissed, a repeat folds into a count, and nothing is kept once a card is gone.
+
+A **notification** is something the person is told, kept by the product's server for a year and pushed
+to their devices. Every product serves one route shape (`/notifications`, `/push/...`) and the
+design system draws it:
+
+- `createNotificationsClient({ request })` is the calls of those routes over the site's own signed-in
+  `request(method, path, body)` with its route prefix applied: `list({ before })`, `markRead(ids?)`,
+  `kinds()`, `preferences()`, `setPreferences(map)`, `pushKey()`, `subscribe(subscription)`,
+  `unsubscribe(endpoint)` and `devices()`. Each answers the route's reply.
+- `createNotificationInbox(client, { everyMs })` answers `{ useInbox(), watch(), refresh(), markRead(ids?),
+  loadMore(), store }`. `useInbox()` is `{ unread, items, more, kinds, error }`, read on an interval (a
+  minute by default) and whenever the page is shown again, and a mark shows at once.
+- `NotificationTray` is the opener and the list it opens, beside the sidebar on a wide screen and in a
+  `Drawer` on a phone, with *Mark all read* in its head. `trigger` draws the opener from
+  `{ open, toggle, unread }`; `onOpen(item)` is called after the tray closes, and `footer` (a node, or a
+  function of `{ close }`) is drawn under the rows.
+- `NotificationList` is the rows alone: an icon in a square toned by the row's kind, the line, a second
+  line, how long ago, the words of its link and a mark while unread, under a heading for each day.
+  A kind's icon and tone come from the product (`kinds`); `kindStyles` overrides them by kind id.
+  `items` null is a list being read, `error` draws a failed read, an empty list says "Nothing yet.", and
+  `footer` is a slot under the rows. A row opens when `canOpen(item)` allows (one with a `url` by
+  default) and calls `onOpen(item)`.
+- `NotificationSettings` is a section of a switch for each kind the product lets the person switch off,
+  this browser's push on or off over `lib/pushBrowser`, and how many devices receive pushes.
+
+```jsx
+const client = createNotificationsClient({ request: (method, path, body) => api(method, "/api" + path, body) });
+const inbox = createNotificationInbox(client);
+
+<NotificationTray inbox={inbox} onOpen={(n) => navigate(n.url)}
+  footer={({ close }) => <Button variant="ghost" size="sm" icon="settings-2"
+    onClick={() => { close(); navigate("/settings/notifications"); }}>Notification settings</Button>}
+  trigger={({ open, toggle, unread }) => (
+    <NavItem icon="bell" label="Notifications" badge={unread} active={open} onClick={toggle} role="button"
+      aria-haspopup="dialog" aria-expanded={open} />
+  )} />
+
+<NotificationSettings client={client} />
+```
+
+The service-worker half is a plain module with no imports, `@thekrystalship/krystal/sw/notifications.js`,
+for the site's `sw.js`:
+
+```js
+import { handleNotificationPush, handleNotificationClick } from "@thekrystalship/krystal/sw/notifications.js";
+self.addEventListener("push", (event) => handleNotificationPush(event, { icon: "/icons/icon-192.png" }));
+self.addEventListener("notificationclick", handleNotificationClick);
+```
+
+A push payload is `{ title, body, url?, tag, actions?, data? }`. A tap opens or focuses `url` in a window
+of the site; a button (`actions: [{ id, title, url }]`) posts to its `url`, the product's anonymous
+`POST /push/actions/{handle}`, and the worker shows the `message` it answers as a follow-up under the
+same `tag`. `styles/notifications.css` draws the list and the tray.
+
 ## The frame
 
 A site is a sidebar beside a scrolling main column, with a dock that slides in from the right:
@@ -875,9 +934,9 @@ new conversation starts; there is no New chat button. A `docked` chat, panel or 
 hide button that collapses it into its side of the screen and calls `onClose`; a chat that is the page
 itself has none.
 
-**Memory, skills and tools.** The header's options menu (`⋯`), in every layout, holds *Memory*,
-*Skills* and *Tools* (each of the last two where the client has `skills()` or `tools()`) and, with a
-conversation open, *Delete conversation*, which asks twice. Each of the first three stands in the
+**Memory, skills, tools and notifications.** The header's options menu (`⋯`), in every layout, holds *Memory*,
+*Skills*, *Tools* and *Notifications* (*Skills* and *Tools* where the client has `skills()` or `tools()`, *Notifications* as described below) and, with a
+conversation open, *Delete conversation*, which asks twice. Each of the first four stands in the
 conversation's place, which is kept as it was left; the
 header names what is open and its back arrow leads out.
 
@@ -893,6 +952,13 @@ header names what is open and its back arrow leads out.
 - *Tools* lists what the assistant can use on the person's behalf, from `/tools`: each tool by its name
   made readable and the first sentence of its description (the rest is written for the model), with
   "Asks you to confirm first" on a tool that proposes rather than acts.
+- *Notifications* lists what the assistant has told the person, with `NotificationList`, from the
+  plugin's `/notifications` routes through the client's `request`. It is offered when
+  `GET /notifications/kinds` answers with at least one kind; the menu entry carries the unread count and
+  the `⋯` button a dot while any is unread. *Mark all read* and *Settings* head the view; a row that
+  carries `data.conversationId` opens that conversation, and *Settings* turns the view to
+  `NotificationSettings` (the per-kind switches and this browser's push), whose back arrow returns to
+  the list.
 
 What the assistant writes down or forgets during a turn follows that turn's answer as an event line,
 "Remembered: …" or "Forgot: …", read from the memory card its `remember` or `forget` carries (wire
@@ -930,22 +996,12 @@ leaving out `label` makes a full-width row.
 
 ## The assistant's pages
 
-What a person does around the conversation — finding a conversation, being told when the assistant
-waits on them — is the same on every site that hosts an assistant, so the pages are here. They name no
-product:
+What a person does around the conversation — finding a conversation — is the same on every site that
+hosts an assistant, so the page is here. It names no product:
 
 ```jsx
 <AssistantChatsPage listRef={setListEl} />          // Chat's `listTarget`, as a page
-<AssistantNotifications client={client}>
-  <Notice>Where everything else you are told about is switched.</Notice>
-</AssistantNotifications>
 ```
-
-`AssistantNotifications` takes the assistant client (`createAssistantClient`, stable across renders)
-and is this browser's push subscription to the assistant, on and off, over
-`lib/pushBrowser`; `offSub` is its sentence when the assistant sends nothing at all.
-`assistantPushStatus`, `assistantPushSubscribe` and `assistantPushUnsubscribe` are the same calls
-without the section.
 
 The pages sit at a reading measure (`.k-assistant-page`); `styles/assistant-pages.css` draws it and
 what the chat shows in the conversation's place (`.k-assistant-panel`), after `settings.css`.

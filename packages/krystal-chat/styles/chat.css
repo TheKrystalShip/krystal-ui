@@ -387,6 +387,15 @@
   flex-direction: column;
 }
 
+/* The notifications view's bar: Mark all read, and the way to the settings. */
+.k-chat-inbox__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: 0 0 var(--s-2);
+}
+
 /* The thread spaces its entries, turns, cards and event rows alike; nothing in it carries a margin
    or a rule of its own between neighbours. Every entry spans the column. */
 .k-chat-thread {

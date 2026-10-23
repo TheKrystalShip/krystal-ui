@@ -7,8 +7,8 @@ import { toast, toastStore } from "../lib/toasts.js";
 // Toasts — the live stack of outcome cards. Mounted once per surface; portals to
 // <body> like Modal.jsx, so it never inherits a page's stacking or overflow.
 //
-// What is NOT here: any notion of what happened on the fleet. See lib/toasts.js
-// for the rule, and NotificationsPanel.jsx for the history these fall into.
+// What is NOT here: any notion of what happened on the fleet, or any history. See lib/toasts.js
+// for the rule; what a person keeps is NotificationList.
 
 const TONE_ICON = { error: "circle-alert", success: "circle-check", info: "info" };
 

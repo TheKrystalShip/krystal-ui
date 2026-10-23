@@ -28,9 +28,8 @@ copies; the packages declare them as peers. The registry scope line in `.npmrc` 
 
 Everything the chat package's `index.js` exports imports from `@thekrystalship/krystal-chat`: `Chat`,
 `ChatCard` and its rows, the chat's parts and conversation functions, `createAssistantClient`,
-`useConversationStream`, `MarkdownTextarea`, `renderMarkdown`, the assistant's pages
-(`AssistantChatsPage`, `AssistantNotifications`) and the push calls (`assistantPushStatus`,
-`assistantPushSubscribe`, `assistantPushUnsubscribe`). Everything else imports from
+`useConversationStream`, `MarkdownTextarea`, `renderMarkdown`, the assistant's chats page
+(`AssistantChatsPage`). Everything else imports from
 `@thekrystalship/krystal`.
 
 ```js

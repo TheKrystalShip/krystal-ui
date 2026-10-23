@@ -184,6 +184,33 @@
   background: var(--danger-bg);
 }
 
+/* The options button, with a dot while the assistant has told the person something unread. */
+.k-chat-options {
+  position: relative;
+  display: inline-flex;
+}
+
+.k-chat-options__dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-pill);
+  background: var(--krystal-teal);
+  pointer-events: none;
+}
+
+.k-chat-menu__count {
+  margin-left: auto;
+  padding: 0 6px;
+  border-radius: var(--r-pill);
+  background: var(--krystal-teal-dim);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--krystal-teal);
+}
+
 .k-chat-menu__sep {
   height: 1px;
   margin: 4px -4px;

@@ -37,7 +37,7 @@ Each package ships its own type declarations (`dist/**/*.d.ts`, named by the `ty
 JavaScript too: each component's props, each hook's arguments and each store's state type are read from
 the JSDoc beside the source.
 
-The modules under core's `lib/` (`store`, `theme`, `toasts`, `time`, `clipboard`, `pushBrowser`, `sse`, `spatialFocus`) are also
+The modules under core's `lib/` (`store`, `theme`, `toasts`, `time`, `clipboard`, `pushBrowser`, `notificationsClient`, `sse`, `spatialFocus`) are also
 addressable one at a time — `@thekrystalship/krystal/lib/time` — for code that runs outside a
 browser and must not load React.
 

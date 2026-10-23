@@ -1,5 +1,35 @@
 # Changelog
 
+## [6.0.0]
+
+### Added
+- **Notifications.** What a person is told is kept by the product's server and drawn by one set of
+  components over one route shape (`/notifications`, `/push/...`):
+  - `createNotificationsClient({ request })` and `createNotificationInbox(client, { everyMs })`
+    (`lib/notificationsClient`, `lib/notificationInbox`), the calls of the routes and the store a bell
+    reads, fresh on an interval and when the page is shown again, with optimistic marking.
+  - `NotificationTray`: the opener (a render prop) and its list, a `Popover` beside the sidebar on a wide
+    screen and a `Drawer` on a phone, with *Mark all read*.
+  - `NotificationList`: rows of icon, text, detail, time, link words and an unread mark, grouped by day,
+    with the empty, loading and error states and a footer slot.
+  - `NotificationSettings`: a switch for each switchable kind, this browser's push on or off and the
+    device count.
+  - `sw/notifications.js` (`@thekrystalship/krystal/sw/notifications.js`): `handleNotificationPush` and
+    `handleNotificationClick` for a site's service worker, including a push button's post and its
+    follow-up.
+  - `styles/notifications.css`.
+- **The chat's *Notifications*.** The options menu holds *Notifications* where the plugin's
+  `GET /notifications/kinds` answers with a kind: the assistant's notifications in the conversation's
+  place with *Mark all read* and *Settings*, the unread count in the menu and a dot on the `⋯` button.
+  A row with `data.conversationId` opens that conversation.
+
+### Removed
+- `NotificationsPanel` and the toast history: `toast.markAllRead`, `toast.clearHistory`, `unreadCount`,
+  `unreadTone`, the `subject` and `read` of a toast and the `.k-notifications__*` classes. `toast` and
+  `<Toasts />` keep only the live stack. `lib/toasts.js` is no longer a side-effect module.
+- `AssistantNotifications` and the chat's push calls `assistantPushStatus`, `assistantPushSubscribe` and
+  `assistantPushUnsubscribe`: `NotificationSettings` and `lib/pushBrowser` are the browser's push.
+
 ## [5.1.0]
 
 ### Added
