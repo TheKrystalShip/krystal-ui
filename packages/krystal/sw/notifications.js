@@ -1,12 +1,14 @@
 // notifications.js — the service-worker half of the notifications system: shows a push, opens the
 // page it names, and posts a button's handle.
 //
-// A plain module with no imports, for a site's `sw.js` to import (or to copy into a worker that
-// takes none):
+// A classic worker script, for a site's `sw.js` to load with `importScripts`; it defines
+// `self.krystalNotifications` and imports nothing. The `notificationsWorker()` Vite plugin
+// (`@thekrystalship/krystal/vite`) serves it at `/krystal-notifications.js` in development and emits it
+// at the build root:
 //
-//   import { handleNotificationPush, handleNotificationClick } from "@thekrystalship/krystal/sw/notifications.js";
-//   self.addEventListener("push", (event) => handleNotificationPush(event, { icon: "/icons/icon-192.png" }));
-//   self.addEventListener("notificationclick", handleNotificationClick);
+//   importScripts("/krystal-notifications.js");
+//   self.addEventListener("push", (event) => self.krystalNotifications.handleNotificationPush(event, { icon: "/icons/icon-192.png" }));
+//   self.addEventListener("notificationclick", (event) => self.krystalNotifications.handleNotificationClick(event));
 //
 // The push payload is `{ title, body, url?, tag, actions?: [{ id, title, url }], data? }`. `tag` is
 // `<kind>:<key>`, so an update to a row replaces its notification on the shade. A button's `url` is
@@ -102,4 +104,4 @@ async function answerButton(shown, button) {
   });
 }
 
-export { handleNotificationClick, handleNotificationPush };
+self.krystalNotifications = { handleNotificationClick, handleNotificationPush };

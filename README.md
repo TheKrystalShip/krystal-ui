@@ -687,13 +687,16 @@ const inbox = createNotificationInbox(client);
 <NotificationSettings client={client} />
 ```
 
-The service-worker half is a plain module with no imports, `@thekrystalship/krystal/sw/notifications.js`,
-for the site's `sw.js`:
+The service-worker half is a classic worker script, `sw/notifications.js`, which defines
+`self.krystalNotifications`. The `notificationsWorker()` Vite plugin (`@thekrystalship/krystal/vite`, Node
+only) serves it at `/krystal-notifications.js` in development and emits it at the build root, and the
+site's classic `sw.js` loads it:
 
 ```js
-import { handleNotificationPush, handleNotificationClick } from "@thekrystalship/krystal/sw/notifications.js";
-self.addEventListener("push", (event) => handleNotificationPush(event, { icon: "/icons/icon-192.png" }));
-self.addEventListener("notificationclick", handleNotificationClick);
+// vite.config.js: plugins: [react(), notificationsWorker()]
+importScripts("/krystal-notifications.js");
+self.addEventListener("push", (event) => self.krystalNotifications.handleNotificationPush(event, { icon: "/icons/icon-192.png" }));
+self.addEventListener("notificationclick", (event) => self.krystalNotifications.handleNotificationClick(event));
 ```
 
 A push payload is `{ title, body, url?, tag, actions?, data? }`. A tap opens or focuses `url` in a window

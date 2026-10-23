@@ -14,9 +14,10 @@
     with the empty, loading and error states and a footer slot.
   - `NotificationSettings`: a switch for each switchable kind, this browser's push on or off and the
     device count.
-  - `sw/notifications.js` (`@thekrystalship/krystal/sw/notifications.js`): `handleNotificationPush` and
-    `handleNotificationClick` for a site's service worker, including a push button's post and its
-    follow-up.
+  - `sw/notifications.js`, a classic worker script defining `self.krystalNotifications`
+    (`handleNotificationPush`, `handleNotificationClick`, including a push button's post and its
+    follow-up), and the `notificationsWorker()` Vite plugin (`@thekrystalship/krystal/vite`) that serves
+    it at `/krystal-notifications.js` in development and emits it at the build root.
   - `styles/notifications.css`.
 - **The chat's *Notifications*.** The options menu holds *Notifications* where the plugin's
   `GET /notifications/kinds` answers with a kind: the assistant's notifications in the conversation's

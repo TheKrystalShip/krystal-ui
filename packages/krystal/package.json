@@ -1,6 +1,6 @@
 {
   "name": "@thekrystalship/krystal",
-  "version": "6.0.0-dev.1",
+  "version": "6.0.0-dev.2",
   "description": "The Krystal design system as React components, stores and stylesheets, shared by every TheKrystalShip web surface.",
   "license": "GPL-3.0-only",
   "type": "module",
@@ -16,6 +16,7 @@
     "dist",
     "styles",
     "sw",
+    "vite.js",
     "styles.css",
     "fonts",
     "assets",
@@ -40,6 +41,7 @@
       "default": "./dist/lib/*.js"
     },
     "./sw/*": "./sw/*",
+    "./vite": "./vite.js",
     "./eslint": "./lint/eslint.js",
     "./stylelint": "./lint/stylelint.js",
     "./theme-contract.json": "./theme-contract.json",
