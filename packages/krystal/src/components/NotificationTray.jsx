@@ -6,7 +6,7 @@ import { Popover } from "./Popover.jsx";
 import { usePhone } from "../hooks/usePhone.js";
 
 // NotificationTray — the trigger and the list it opens: beside the sidebar on a wide screen, in a
-// drawer on a phone, with Mark all read in its head.
+// drawer on a phone (or wherever `drawer` says so), with Mark all read in its head.
 //
 // `trigger` is a render function that draws the opener and receives `{ open, toggle, unread }`: a
 // sidebar `NavItem` with `badge={unread}` (`role="button"`, `aria-haspopup="dialog"`), or an
@@ -30,11 +30,12 @@ import { usePhone } from "../hooks/usePhone.js";
  * @property {Record<string, { icon?: string, tone?: string }>} [kindStyles] Overrides a kind's icon and tone, by kind id.
  * @property {import("react").ReactNode | ((api: { close: () => void }) => import("react").ReactNode)} [footer] Drawn under the rows, for a link to the settings.
  * @property {import("@floating-ui/react-dom").Placement} [placement] Which side of the opener the popover takes on a wide screen; `right-end` by default.
+ * @property {boolean} [drawer] Draws the list in the drawer whatever the width, for a surface (a television) the popover cannot be driven on; a phone's width does so on its own.
  * @property {string} [title] The heading; `Notifications` by default.
  * @property {string} [className] Class name added to the root element.
  */
 /** @param {NotificationTrayOwnProps} props */
-function NotificationTray({ inbox, trigger, onOpen, canOpen, kindStyles, footer, placement = "right-end", title = "Notifications", className }) {
+function NotificationTray({ inbox, trigger, onOpen, canOpen, kindStyles, footer, placement = "right-end", drawer = false, title = "Notifications", className }) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
   const phone = usePhone();
@@ -59,7 +60,7 @@ function NotificationTray({ inbox, trigger, onOpen, canOpen, kindStyles, footer,
   return (
     <div className={"k-notification-tray" + (className ? " " + className : "")} ref={anchorRef}>
       {trigger({ open, toggle: () => setOpen((o) => !o), unread })}
-      {phone ? open && (
+      {phone || drawer ? open && (
         <Drawer title={title} action={markAll} onClose={close} className="k-notification-tray__drawer">
           {list}
         </Drawer>

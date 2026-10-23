@@ -9,7 +9,7 @@
     (`lib/notificationsClient`, `lib/notificationInbox`), the calls of the routes and the store a bell
     reads, fresh on an interval and when the page is shown again, with optimistic marking.
   - `NotificationTray`: the opener (a render prop) and its list, a `Popover` beside the sidebar on a wide
-    screen and a `Drawer` on a phone, with *Mark all read*.
+    screen and a `Drawer` on a phone or wherever `drawer` is set, with *Mark all read*.
   - `NotificationList`: rows of icon, text, detail, time, link words and an unread mark, grouped by day,
     with the empty, loading and error states and a footer slot.
   - `NotificationSettings`: a switch for each switchable kind, this browser's push on or off and the

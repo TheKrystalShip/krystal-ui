@@ -660,7 +660,7 @@ design system draws it:
   loadMore(), store }`. `useInbox()` is `{ unread, items, more, kinds, error }`, read on an interval (a
   minute by default) and whenever the page is shown again, and a mark shows at once.
 - `NotificationTray` is the opener and the list it opens, beside the sidebar on a wide screen and in a
-  `Drawer` on a phone, with *Mark all read* in its head. `trigger` draws the opener from
+  `Drawer` on a phone, or at any width with `drawer`, with *Mark all read* in its head. `trigger` draws the opener from
   `{ open, toggle, unread }`; `onOpen(item)` is called after the tray closes, and `footer` (a node, or a
   function of `{ close }`) is drawn under the rows.
 - `NotificationList` is the rows alone: an icon in a square toned by the row's kind, the line, a second
