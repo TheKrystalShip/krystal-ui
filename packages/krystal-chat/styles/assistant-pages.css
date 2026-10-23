@@ -1,9 +1,10 @@
 /* ============================================================================
-   assistant-pages.css — the pages beside an assistant's chat (AssistantChatsPage,
-   AssistantSkillsPage) and what the assistant remembers, drawn by the chat in
-   the conversation's place (AssistantMemory, AssistantMemoryEditor). The
-   sections on them are settings furniture (settings.css); only the page's
-   measure and what is particular to a memory are spelled out here.
+   assistant-pages.css — the page beside an assistant's chat (AssistantChatsPage)
+   and what the chat draws in the conversation's place: what the assistant
+   remembers (AssistantMemory, AssistantMemoryEditor) and what it knows how to
+   do (AssistantSkills). The sections on them are settings furniture
+   (settings.css); only the measure and what is particular to a memory are
+   spelled out here.
    ============================================================================ */
 @layer krystal.tokens, krystal.base, krystal.components;
 
@@ -30,12 +31,12 @@
   }
 }
 
-/* ---- What the assistant remembers ----------------------------------------- */
+/* ---- What the chat shows in the conversation's place ------------------------ */
 
-/* The list and the editor, at the thread's measure. A container, because the panel it stands in is
-   as narrow as a phone on a desktop's dock: a memory's buttons go under its words by the panel's
-   width, not the window's. */
-.k-assistant-memory {
+/* What the assistant remembers and what it knows how to do, at the thread's measure. A container,
+   because the panel it stands in is as narrow as a phone on a desktop's dock: a row's buttons go
+   under its words by the panel's width, not the window's. */
+.k-assistant-panel {
   box-sizing: border-box;
   flex: 1 0 auto;
   width: 100%;
@@ -48,16 +49,16 @@
 }
 
 @container (max-width: 560px) {
-  .k-assistant-memory .k-settings-row--below {
+  .k-assistant-panel .k-settings-row--below {
     align-items: flex-start;
   }
 
-  .k-assistant-memory .k-settings-row--below .k-brief__item-title,
-  .k-assistant-memory .k-settings-row--below .k-brief__titletext {
+  .k-assistant-panel .k-settings-row--below .k-brief__item-title,
+  .k-assistant-panel .k-settings-row--below .k-brief__titletext {
     white-space: normal;
   }
 
-  .k-assistant-memory .k-settings-row--below > .k-settings-row__controls {
+  .k-assistant-panel .k-settings-row--below > .k-settings-row__controls {
     width: calc(100% - 38px);
     margin-left: 38px;
     margin-top: 8px;

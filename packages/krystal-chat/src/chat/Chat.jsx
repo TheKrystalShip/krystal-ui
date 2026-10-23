@@ -25,6 +25,7 @@ import { resolveCommand, suggestFor } from "./chatCommands.js";
 import { ContextRing, contextUsage, useCompact } from "./ChatContextMeter.jsx";
 import { ChatHistory } from "./ChatHistory.jsx";
 import { AssistantMemory } from "../assistant/AssistantMemory.jsx";
+import { AssistantSkills } from "../assistant/AssistantSkills.jsx";
 import { CHAT_PRIVACY_NOTICE, ChatContext, DefaultAboveComposer, DefaultStart, renderSlot } from "./slots.jsx";
 import { ChatThread } from "./ChatThread.jsx";
 import { ComposerAttachments } from "./ChatAttachments.jsx";
@@ -177,15 +178,15 @@ function ChatMenu({ open, setOpen, anchorRef, role = "menu", label, align, class
     document.body);
 }
 
-// The header's menu: what the assistant remembers, and deleting the open conversation. Deleting asks
-// twice: the second press is on the same row, which now says what it is about to do. Either entry is
-// drawn only when there is something for it to do.
-function ChatOptions({ onMemory, onDelete }) {
+// The header's menu: what the assistant remembers and what it knows how to do, and deleting the open
+// conversation. Deleting asks twice: the second press is on the same row, which now says what it is
+// about to do. Each entry is drawn only when there is something for it to do.
+function ChatOptions({ onMemory, onSkills, onDelete }) {
   const [open, setOpen] = React.useState(false);
   const [armed, setArmed] = React.useState(false);
   const ref = React.useRef(null);
   React.useEffect(() => { if (!open) setArmed(false); }, [open]);
-  if (!onMemory && !onDelete) return null;
+  if (!onMemory && !onSkills && !onDelete) return null;
   return (
     <>
       <IconButton ref={ref} icon="ellipsis" label="Options" variant="ghost" size="sm"
@@ -197,7 +198,13 @@ function ChatOptions({ onMemory, onDelete }) {
             Memory
           </Button>
         )}
-        {onMemory && onDelete && <div className="k-chat-menu__sep" role="separator" />}
+        {onSkills && (
+          <Button variant="ghost" size="sm" wide icon="sparkles" role="menuitem" className="k-chat-menu__item"
+            onClick={() => { setOpen(false); onSkills(); }}>
+            Skills
+          </Button>
+        )}
+        {(onMemory || onSkills) && onDelete && <div className="k-chat-menu__sep" role="separator" />}
         {onDelete && (
           <Button variant={armed ? "danger" : "ghost"} size="sm" wide icon="trash-2" role="menuitem"
             className="k-chat-menu__item k-chat-menu__item--danger"
@@ -1757,17 +1764,28 @@ function Chat({
   // A transcript under review offers nothing to act on.
   const reviewChat = { ...chat, usable: false, ask: () => {}, draft: () => {}, newChat: () => {}, open: () => {} };
 
-  // What the assistant remembers, shown in the conversation's place: null while the conversation is
-  // shown, else `{ editing }` — null for the list, `{ memory }` for one open in the editor (a null
-  // memory is a new one). Opening a conversation, or turning to another assistant, leaves it.
-  const [memoryView, setMemoryView] = React.useState(null);
-  const memoryHostId = assistantHost ? assistantHost.id : null;
-  React.useEffect(() => { setMemoryView(null); }, [activeId, memoryHostId]);
-  const memoryClient = React.useMemo(
-    () => (memoryHostId && assistantAuthed && assistantUsable ? clientFor(memoryHostId) : null),
+  // What stands in the conversation's place: null while the conversation is shown, else
+  // `{ view: "memory", editing }` for what the assistant remembers — `editing` null for the list,
+  // `{ memory }` for one open in the editor (a null memory is a new one), `{ key }` for the one a line in
+  // the conversation names — or `{ view: "skills" }` for what it knows how to do. Opening a
+  // conversation, or turning to another assistant, leaves it.
+  const [panel, setPanel] = React.useState(null);
+  const panelHostId = assistantHost ? assistantHost.id : null;
+  React.useEffect(() => { setPanel(null); }, [activeId, panelHostId]);
+  const panelClient = React.useMemo(
+    () => (panelHostId && assistantAuthed && assistantUsable ? clientFor(panelHostId) : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- clientFor is the surface's fixed capability; the host and whether it answers decide the client
-    [memoryHostId, assistantAuthed, assistantUsable]);
-  const openMemory = assistantAuthed ? () => setMemoryView({ editing: null }) : null;
+    [panelHostId, assistantAuthed, assistantUsable]);
+  const openMemory = assistantAuthed ? () => setPanel({ view: "memory", editing: null }) : null;
+  const openMemoryKey = assistantAuthed ? (key) => setPanel({ view: "memory", editing: { key } }) : undefined;
+  const editMemory = React.useCallback((editing) => setPanel({ view: "memory", editing }), []);
+  // A site's own client offers skills only when it has the call.
+  const offersSkills = !!panelHostId && assistantAuthed && typeof clientFor(panelHostId).skills === "function";
+  const openSkills = offersSkills ? () => setPanel({ view: "skills" }) : null;
+  const panelTitle = !panel ? null
+    : panel.view === "skills" ? "Skills"
+      : !panel.editing ? "Memory"
+        : panel.editing.memory === null ? "Write a memory" : "Edit memory";
 
   // The composer's switches, gathered into one menu where the composer is too narrow to label them.
   const [optsOpen, setOptsOpen] = React.useState(false);
@@ -2001,19 +2019,17 @@ function Chat({
             to say. The connection shows here only when it is not fine \u2014 a healthy one is what the
             whole page already demonstrates. */}
         <div className={"k-chat-main__head k-chat-head" + (docked ? " k-chat-head--docked" : "") + (lifted ? " k-chat-head--lifted" : "")}>
-          {/* Back leaves a conversation for the empty one, in every layout; in what the assistant
-              remembers, it leaves a memory for the list and the list for the conversation. */}
-          {memoryView ? (
+          {/* Back leaves a conversation for the empty one, in every layout; in what stands in the
+              conversation's place, it leaves a memory for the list and the list for the conversation. */}
+          {panel ? (
             <IconButton icon="arrow-left" label="Back" variant="ghost" size="sm" className="k-chat-head__back"
-              onClick={() => setMemoryView(memoryView.editing ? { editing: null } : null)} />
+              onClick={() => setPanel(panel.view === "memory" && panel.editing ? { view: "memory", editing: null } : null)} />
           ) : !empty && (
             <IconButton icon="arrow-left" label="Back" variant="ghost" size="sm"
               className="k-chat-head__back" onClick={backToStart} />
           )}
-          {memoryView ? (
-            <span className="k-chat-head__title">
-              {!memoryView.editing ? "Memory" : memoryView.editing.memory ? "Edit memory" : "Write a memory"}
-            </span>
+          {panel ? (
+            <span className="k-chat-head__title">{panelTitle}</span>
           ) : (
             <span className="k-chat-head__title" title={conversationTitle(active)}>{conversationTitle(active)}</span>
           )}
@@ -2023,16 +2039,16 @@ function Chat({
               {conn.label}
             </span>
           )}
-          {HostPicker && !memoryView && (
+          {HostPicker && !panel && (
             <span className="k-chat-head__host">
               <HostPicker hosts={assistantHosts} current={assistantHost} onSelect={pickAssistantHost} />
             </span>
           )}
           <div className="k-chat-head__actions">
-            {!memoryView && renderSlot(slots.headerActions, chat)}
+            {!panel && renderSlot(slots.headerActions, chat)}
             {/* The phone-width and dock replacement for the rail (CSS decides, at the breakpoint
                 that hides it), so the rail's foot travels here with it. */}
-            {!memoryView && <div className="k-chat-head__nav">
+            {!panel && <div className="k-chat-head__nav">
               {!railTarget && !listTarget && (
                 <ChatHistory convos={convos} activeId={activeId} onPick={pickChat} onDelete={deleteChat} onOpen={loadServerHistory} loading={histLoading}
                   sheet={asPage} head={renderSlot(slots.history, chat)} />
@@ -2041,8 +2057,9 @@ function Chat({
                 <IconButton icon="settings" label="Settings" variant="ghost" size="sm" onClick={onOpenSettings} />
               )}
             </div>}
-            {!memoryView && (
-              <ChatOptions onMemory={openMemory} onDelete={active ? () => deleteChat(active.id) : null} />
+            {!panel && (
+              <ChatOptions onMemory={openMemory} onSkills={openSkills}
+                onDelete={active ? () => deleteChat(active.id) : null} />
             )}
             {docked && !asPage && showPin && (
               <IconButton icon={pinned ? "pin" : "pin-off"} label={pinned ? "Unpin" : "Pin"} variant="ghost" size="sm"
@@ -2057,21 +2074,26 @@ function Chat({
           </div>
         </div>
 
-        {/* What the assistant remembers stands in the conversation's place. The thread and the composer
-            stay mounted under it, so going back finds the conversation as it was left: its scroll,
-            the draft in the composer. */}
-        {memoryView && (
-          <div className="k-chat-scroll k-chat-memory">
-            <AssistantMemory
-              client={memoryClient}
-              unavailable={<Notice tone="warn">The assistant can’t be reached, so what it remembers can’t be read until it’s back.</Notice>}
-              editing={memoryView.editing}
-              onEdit={(editing) => setMemoryView({ editing })}
-              BodyEditor={MemoryBodyEditor}
-              keyPlaceholder={memoryKeyPlaceholder} />
+        {/* What the assistant remembers, or what it knows how to do, stands in the conversation's place.
+            The thread and the composer stay mounted under it, so going back finds the conversation as
+            it was left: its scroll, the draft in the composer. */}
+        {panel && (
+          <div className="k-chat-scroll k-chat-panel">
+            {panel.view === "skills" ? (
+              <AssistantSkills client={panelClient}
+                unavailable={<Notice tone="warn">The assistant can’t be reached, so what it can do can’t be read until it’s back.</Notice>} />
+            ) : (
+              <AssistantMemory
+                client={panelClient}
+                unavailable={<Notice tone="warn">The assistant can’t be reached, so what it remembers can’t be read until it’s back.</Notice>}
+                editing={panel.editing}
+                onEdit={editMemory}
+                BodyEditor={MemoryBodyEditor}
+                keyPlaceholder={memoryKeyPlaceholder} />
+            )}
           </div>
         )}
-        <div className="k-chat-scroll" ref={scrollRef} onScroll={onThreadScroll} hidden={!!memoryView}>
+        <div className="k-chat-scroll" ref={scrollRef} onScroll={onThreadScroll} hidden={!!panel}>
           {empty ? (
             <div className="k-chat-start">
               {slots.start != null ? renderSlot(slots.start, chat) : <DefaultStart />}
@@ -2080,11 +2102,11 @@ function Chat({
             <ChatThread messages={active.messages} user={user} assistantName={assistantName}
               renderEntry={renderOwnEntry} renderCommand={renderCommand} renderCards={renderOwnCards}
               onRate={rateTurn} onUseCommand={offerCommand} onAnswer={answerQuestions}
-              loadAttachment={loadOwnAttachment} />
+              loadAttachment={loadOwnAttachment} onOpenMemory={openMemoryKey} />
           )}
         </div>
 
-        <div className="k-chat-composer" hidden={!!memoryView}>
+        <div className="k-chat-composer" hidden={!!panel}>
           {!assistantUsable && (
             <div className="k-chat-composer__downhint" role="status">
               <Icon name="triangle-alert" size={14} />

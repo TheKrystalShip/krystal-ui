@@ -717,7 +717,7 @@ export function ChatFrameExamples() {
     <>
       <Sub title="AssistantPage: the reading-measure column">
         <div style={{ border: "var(--edge)" }}>
-          <AssistantPage><PageHeader title="Skills" /><p>Rows stand in a column at a reading measure.</p></AssistantPage>
+          <AssistantPage><PageHeader title="Chats" /><p>Rows stand in a column at a reading measure.</p></AssistantPage>
         </div>
       </Sub>
     </>

@@ -212,6 +212,20 @@
   color: var(--fg-3);
 }
 
+/* A memory the assistant wrote or forgot: one line, cut short, so the icon, the words and Edit stay
+   together as one centred group. */
+.k-chat-event--memory .k-chat-event__text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* The one control an event offers, at the line's end and no taller than the line. */
+.k-chat-event__action {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
 /* The assistant gone: the line changes what the person can do, so all of it carries the warning. */
 .k-chat-event--alert,
 .k-chat-event--alert .k-chat-event__time {

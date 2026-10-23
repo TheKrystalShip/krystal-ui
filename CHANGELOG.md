@@ -1,5 +1,26 @@
 # Changelog
 
+## [5.0.0]
+
+### Added
+- **What the assistant writes down is seen where it happens.** A turn's `remember` or `forget` follows
+  its answer as an event line, "Remembered: …" or "Forgot: …", read from the memory card the harness
+  attaches to the call (`{ kind: "memory", action, key, summary }`), live and from a conversation's
+  history alike; it never reaches `profile.adaptCard`. A memory written offers *Edit*, which opens it
+  in the memory view. A message carries them as `memories`.
+- **Skills.** The chat's options menu holds *Skills* where the client has `skills()`: what the
+  assistant knows how to do, each skill by its readable name and its description, in the
+  conversation's place. `createAssistantClient` has `skills()` (`GET /skills`).
+- `ChatEventRow` takes an `action`, one control at the end of the line.
+
+### Changed
+- What the chat shows in the conversation's place is `.k-assistant-panel` (and `.k-chat-panel` for its
+  scroll), for the memory and skills views alike, in place of `.k-assistant-memory` and `.k-chat-memory`.
+
+### Removed
+- `AssistantSkillsPage`: the commands and tools it listed are `/help` and `/tools` in the chat, and
+  *Skills* is the assistant's skills.
+
 ## [4.0.1]
 
 ### Fixed

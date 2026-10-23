@@ -288,7 +288,8 @@ function ChatCommand({
 // Something that happened to the conversation rather than in it: one quiet centred line, an icon, a
 // few words, the time. Colour is on the icon only, and only for a mode or an outcome — `tone` accent,
 // warning or success; `alert` sets the whole line in the warning colour, for the one event that
-// changes what the person can do next. `icon` is a Lucide name or a node.
+// changes what the person can do next. `icon` is a Lucide name or a node. `action` is one quiet
+// control at the line's end, for the event a person may want to act on where they read it.
 /**
  * @param {object} props
  * @param {string | import("react").ReactNode} [props.icon] a Lucide name or a node
@@ -296,9 +297,11 @@ function ChatCommand({
  * @param {boolean} [props.alert] sets the whole line in the warning colour
  * @param {number | null} [props.at] epoch ms
  * @param {string} [props.className] Extra class on the row.
+ * @param {import("react").ReactNode} [props.action] One control at the end of the line.
+ * @param {string} [props.title] The event's words in full, for a line that cuts them short.
  * @param {import("react").ReactNode} [props.children] The words of the event.
  */
-function ChatEventRow({ icon, tone, alert = false, at, className, children }) {
+function ChatEventRow({ icon, tone, alert = false, at, className, action, title, children }) {
   const time = clockOf(entryTime({ at }));
   return (
     <div className={"k-chat-event" + (alert ? " k-chat-event--alert" : "") + (className ? " " + className : "")}>
@@ -307,9 +310,33 @@ function ChatEventRow({ icon, tone, alert = false, at, className, children }) {
           {typeof icon === "string" ? <Icon name={icon} size={14} strokeWidth={2} /> : icon}
         </span>
       )}
-      <span className="k-chat-event__text">{children}</span>
+      <span className="k-chat-event__text" title={title}>{children}</span>
       {time && <span className="k-chat-event__time">{"· " + time}</span>}
+      {action && <span className="k-chat-event__action">{action}</span>}
     </div>
+  );
+}
+
+// What the assistant wrote down or forgot about the person during a turn, under that turn's answer, on
+// one line as every event is: a long memory is cut short, and read whole by pointing at it or opening it.
+// A memory written is offered for correcting where it is read; one forgotten is gone and offers
+// nothing. `onOpen(key)` opens the memory; without it (a transcript under review, where the memory is
+// somebody else's) the line is only read.
+/**
+ * @param {object} props
+ * @param {import("./types.js").MemoryNote} props.note
+ * @param {((key: string) => void) | null} [props.onOpen] Opens the memory written, to read or correct it.
+ */
+function ChatMemoryNote({ note, onOpen }) {
+  const written = note.action === "remembered";
+  return (
+    <ChatEventRow icon="brain" tone={written ? "accent" : undefined} className="k-chat-event--memory"
+      title={note.summary}
+      action={written && onOpen
+        ? <Button variant="ghost" size="xs" onClick={() => onOpen(note.key)}>Edit</Button>
+        : null}>
+      {(written ? "Remembered: " : "Forgot: ") + note.summary}
+    </ChatEventRow>
   );
 }
 
@@ -367,5 +394,5 @@ function ChatEvent({ msg }) {
 }
 
 export {
-  ChatCommand, ChatVerify, ChatEvent, ChatEventRow, ChatDaySeparator, ChatFileChange, entryTime, dayKeyOf,
+  ChatCommand, ChatVerify, ChatEvent, ChatEventRow, ChatMemoryNote, ChatDaySeparator, ChatFileChange, entryTime, dayKeyOf,
 };

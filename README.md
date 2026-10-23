@@ -64,7 +64,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 | Kind | Exports |
 |---|---|
 | The assistant chat | `Chat`, `createAssistantClient`, `useConversationStream`, `ChatCard` (the card a product draws under an answer) with `ChatCardRows`, `ChatCardRow` and `ConfidenceBadge`, the parts it is drawn from (`ChatThread`, `ChatMessage`, `ChatEvidence` (the column of evidence cards under an answer), `ChatActivity`, `ChatCommand` (a proposal's card; the profile's `proposal` may give its `body`, `sub` and `declineLabel`), `ChatEvent`, `ChatEventRow`, `ChatDaySeparator`, `ChatFileChange`, `MarkdownTextarea`, `useVoiceRecorder`, …), hands-free listening (`useHandsFree`, `createTriggerListener`, `matchTrigger`, `openMicrophone`, …) and the conversation functions (`reduceTurnFrame`, `scaffoldHistory`, `mergeServerConversations`, …) |
-| The assistant's pages | `AssistantPage` (the reading-measure column a page about the assistant stands in), `AssistantChatsPage`, `AssistantSkillsPage`, `AssistantNotifications`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
+| The assistant's pages | `AssistantPage` (the reading-measure column a page about the assistant stands in), `AssistantChatsPage`, `AssistantNotifications`, and the push calls `assistantPushStatus`, `assistantPushSubscribe`, `assistantPushUnsubscribe` |
 
 Core stylesheets: `styles/tokens.css` (every colour, type, spacing, radius and motion token, every
 theme, and the Inter / JetBrains Mono faces), `styles/motion.css` (shared keyframes),
@@ -875,15 +875,25 @@ new conversation starts; there is no New chat button. A `docked` chat, panel or 
 hide button that collapses it into its side of the screen and calls `onClose`; a chat that is the page
 itself has none.
 
-**Memory.** The header's options menu (`⋯`), in every layout, holds *Memory* and, with a
-conversation open, *Delete conversation*, which asks twice. *Memory* shows what the assistant has
-written down about the person in the conversation's place, from `/memories` with its count against
-`/memories/limits`: each memory opens in an editor in the list's place, and Forget, in the list or the
-editor, asks twice. The header names what is open and its back arrow leads out, a memory to the list
-and the list to the conversation, which is kept as it was left. It is the one place a person reads,
-corrects and forgets what the assistant remembers. `MemoryBodyEditor` (a component taking
-`{ value, onChange, path, readOnly }`, lazy if it likes) draws a memory's notes in place of the plain
-text area, and `memoryKeyPlaceholder` is a new memory's example name.
+**Memory and skills.** The header's options menu (`⋯`), in every layout, holds *Memory*, *Skills*
+(where the client has `skills()`) and, with a conversation open, *Delete conversation*, which asks
+twice. Each of the first two stands in the conversation's place, which is kept as it was left; the
+header names what is open and its back arrow leads out.
+
+- *Memory* shows what the assistant has written down about the person, from `/memories` with its count
+  against `/memories/limits`: each memory opens in an editor in the list's place, and Forget, in the
+  list or the editor, asks twice. It is the one place a person reads, corrects and forgets what the
+  assistant remembers. `MemoryBodyEditor` (a component taking `{ value, onChange, path, readOnly }`,
+  lazy if it likes) draws a memory's notes in place of the plain text area, and
+  `memoryKeyPlaceholder` is a new memory's example name.
+- *Skills* lists what the assistant knows how to do, from `/skills`: each skill by its name made
+  readable and the description the assistant reads for it. A skill is used by asking for what it
+  describes, so the list offers nothing to press.
+
+What the assistant writes down or forgets during a turn follows that turn's answer as an event line,
+"Remembered: …" or "Forgot: …", read from the memory card its `remember` or `forget` carries (wire
+contract §5) live and from history alike. A memory written offers *Edit*, which opens it in the
+memory view; `ChatEventRow` takes that one control as its `action`.
 
 `slots` puts a site's own blocks in the chat's frame, by place: `start` is the empty conversation's
 column, `aboveComposer` a row over the composer, `headerActions` buttons in the header and `history`
@@ -916,27 +926,25 @@ leaving out `label` makes a full-width row.
 
 ## The assistant's pages
 
-What a person does around the conversation — seeing what it can do, being told when it waits on
-them — is the same on every site that hosts an assistant, so the pages are here. Each takes the assistant client (`createAssistantClient`, stable across renders) and
-names no product:
+What a person does around the conversation — finding a conversation, being told when the assistant
+waits on them — is the same on every site that hosts an assistant, so the pages are here. They name no
+product:
 
 ```jsx
 <AssistantChatsPage listRef={setListEl} />          // Chat's `listTarget`, as a page
-<AssistantSkillsPage client={client} onUse={(name) => seedComposer("/" + name + " ")} />
 <AssistantNotifications client={client}>
   <Notice>Where everything else you are told about is switched.</Notice>
 </AssistantNotifications>
 ```
 
-`AssistantSkillsPage` lists
-`/commands` and `/tools`, already filtered to the caller, and offers a command through `onUse`.
-`AssistantNotifications` is this browser's push subscription to the assistant, on and off, over
+`AssistantNotifications` takes the assistant client (`createAssistantClient`, stable across renders)
+and is this browser's push subscription to the assistant, on and off, over
 `lib/pushBrowser`; `offSub` is its sentence when the assistant sends nothing at all.
 `assistantPushStatus`, `assistantPushSubscribe` and `assistantPushUnsubscribe` are the same calls
 without the section.
 
 The pages sit at a reading measure (`.k-assistant-page`); `styles/assistant-pages.css` draws it and
-the chat's memory view, after `settings.css`.
+what the chat shows in the conversation's place (`.k-assistant-panel`), after `settings.css`.
 
 ## Developing
 

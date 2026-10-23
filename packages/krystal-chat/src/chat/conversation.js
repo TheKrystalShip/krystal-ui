@@ -95,6 +95,19 @@ function toolLabel(tool, label) {
   return tool.charAt(0).toUpperCase() + tool.slice(1).replace(/_/g, " ");
 }
 
+// The assistant's own change to the person's memory, from the card its `remember` or `forget` carries
+// (wire contract §5): `{ action, key, summary }`, or null for any other card. It is the chat's, not a
+// product's, so it never reaches `profile.adaptCard`.
+/**
+ * @param {any} card
+ * @returns {import("./types.js").MemoryNote | null}
+ */
+function memoryNote(card) {
+  if (!card || card.kind !== "memory" || typeof card.key !== "string") return null;
+  if (card.action !== "remembered" && card.action !== "forgotten") return null;
+  return { action: card.action, key: card.key, summary: typeof card.summary === "string" ? card.summary : card.key };
+}
+
 // Cards gathered from tool.result frames ride on `bubble.pendingCards` while the assistant is still
 // streaming its answer, then move to `bubble.cards` when the turn ends (done/error/dropped). The card
 // stays hidden until the streamed text is complete, so the thread reads top-to-bottom (answer, then
@@ -289,7 +302,10 @@ function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
       if (bubble.steps && bubble.steps.length && ev.result && ev.result.tool === "create_blueprint") {
         next = { ...next, steps: bubble.steps.map(s => s.status === "active" ? { ...s, status: "done" } : s) };
       }
-      if (ev.result) {
+      const note = memoryNote(ev.result);
+      if (note) {
+        next = { ...next, memories: (bubble.memories || []).concat(note) };
+      } else if (ev.result) {
         const card = profile.adaptCard(ev.result);
         // Hold the card back until the turn finishes streaming (see promotePendingCards).
         if (card) next = { ...next, pendingCards: (bubble.pendingCards || []).concat(card) };
@@ -449,7 +465,10 @@ function scaffoldHistory(entries, profile = NO_PROFILE) {
     /** @type {import("./types.js").ToolRow[]} */
     const tools = used.map((tl, ti) => ({ id: "h" + ei + "_" + ti, label: toolLabel(tl.tool, tl.label), state: "done", summary: tl.summary || "" }));
     if (tools.length) bubble.tools = tools;
+    const memories = used.map(tl => memoryNote(tl.card || tl.result)).filter(Boolean);
+    if (memories.length) bubble.memories = memories;
     const cards = used
+      .filter(tl => !memoryNote(tl.card || tl.result))
       .map(tl => { const card = tl.card || tl.result; return card ? profile.adaptCard(card) : null; })
       .filter(Boolean);
     if (cards.length) bubble.cards = cards;
@@ -540,7 +559,9 @@ function scaffoldLiveTurn(messages, attach, profile = NO_PROFILE) {
     state: t.state === "done" ? "done" : "pending",
     summary: t.summary || "",
   }));
+  const memories = (attach.tools || []).map(t => memoryNote(t.card)).filter(Boolean);
   const cards = (attach.tools || [])
+    .filter(t => !memoryNote(t.card))
     .map(t => (t.card ? profile.adaptCard(t.card) : null))
     .filter(Boolean);
 
@@ -555,6 +576,7 @@ function scaffoldLiveTurn(messages, attach, profile = NO_PROFILE) {
     // Cards are held back until the turn finishes, exactly as a watched turn holds them — so a
     // mirrored turn and a first-hand one reach their final shape through the same step.
     pendingCards: cards.length ? cards : undefined,
+    memories: memories.length ? memories : undefined,
   };
 
   return [

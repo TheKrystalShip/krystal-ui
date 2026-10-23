@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   NEW_CHAT_TITLE, adoptServerConversation, answersText, conversationTitle, mergeServerConversations,
   questionMessage, reduceTurnFrame, scaffoldConversation, scaffoldHistory, scaffoldLiveTurn, settleProposal,
@@ -69,6 +69,22 @@ describe("reduceTurnFrame", () => {
     expect(out[0].cards).toEqual([{ kind: "card", tool: "t" }]);
     expect(out[0].pendingCards).toBeUndefined();
     expect(out[0]).toMatchObject({ content: "answer", turnId: 12, usage: { in: 1 }, ts: Date.parse("2026-10-14T10:00:00Z") });
+  });
+
+  it("takes the memory the assistant wrote or forgot as a note, never as a product's card", () => {
+    const adaptCard = vi.fn(() => ({ kind: "card" }));
+    const profile = { adaptCard, proposalLabel: (v) => v, proposal: () => ({}), verdict: () => ({}) };
+    const out = run([bubble()], [
+      { type: "tool.result", id: "1", tool: "remember", summary: "Remembered", result: { kind: "memory", action: "remembered", key: "drink", summary: "Prefers tea." } },
+      { type: "tool.result", id: "2", tool: "forget", summary: "Forgotten", result: { kind: "memory", action: "forgotten", key: "old", summary: "Likes coffee." } },
+      { type: "done", text: "ok" },
+    ], profile);
+    expect(out[0].memories).toEqual([
+      { action: "remembered", key: "drink", summary: "Prefers tea." },
+      { action: "forgotten", key: "old", summary: "Likes coffee." },
+    ]);
+    expect(out[0].cards).toBeUndefined();
+    expect(adaptCard).not.toHaveBeenCalled();
   });
 
   it("falls back to the summary alone for a tool whose result the product draws no card for", () => {
@@ -183,6 +199,15 @@ describe("scaffoldHistory and scaffoldConversation", () => {
   const entry = (extra, turn) => ({
     kind: "turn", createdAt: "2026-10-14T10:00:02Z", startedAt: "2026-10-14T10:00:00Z", recordId: 41,
     turn: { prompt: "hi", final: "hello", outcome: "ok", ...turn }, ...extra,
+  });
+
+  it("rebuilds what a turn wrote to the person's memory from its calls' cards", () => {
+    const out = scaffoldHistory([entry({}, { tools: [
+      { tool: "remember", summary: "Remembered", card: { kind: "memory", action: "remembered", key: "drink", summary: "Prefers tea." } },
+      { tool: "recall", summary: "'drink': Prefers tea." },
+    ] })]);
+    expect(out[1].memories).toEqual([{ action: "remembered", key: "drink", summary: "Prefers tea." }]);
+    expect(out[1].cards).toBeUndefined();
   });
 
   it("rebuilds a prompt and its reply with the record id, timing and verdict", () => {

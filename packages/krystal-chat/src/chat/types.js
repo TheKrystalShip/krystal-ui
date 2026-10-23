@@ -405,6 +405,16 @@ export {};
  */
 
 /**
+ * A skill the assistant's product registered, as `GET /skills` lists it.
+ * @typedef {{ name: string, description: string }} SkillInfo
+ */
+
+/**
+ * A change the assistant made to the person's memory during a turn, from its `remember` or `forget`.
+ * @typedef {{ action: "remembered" | "forgotten", key: string, summary: string }} MemoryNote
+ */
+
+/**
  * One step a long-running tool reported.
  * @typedef {{ key: string, label: string, status: "active" | "done" }} StepRow
  */
@@ -419,7 +429,7 @@ export {};
  * drawn by `renderEntry` and carry whatever fields the product sets.
  *
  * - `user`: `content`, `ts`, `attachments`, `voice`.
- * - `assistant`: `content`, `thinking`, `tools`, `steps`, `cards`, `pendingCards`, `usage`, `turnId`,
+ * - `assistant`: `content`, `thinking`, `tools`, `steps`, `cards`, `pendingCards`, `memories`, `usage`, `turnId`,
  *   `feedback`, `ts`, `startedAt`, `endedAt`, `live`, `error`, `errorText`, `waiting`, `compacting`.
  * - `command`: a proposed action: `cmdId`, `verb`, `subject`, `target`, `summary`, `confirm`, `token`
  *   (the handle that redeems it), `file`, `expiresAt`, `state`, and a product's `subjectId`,
@@ -444,6 +454,7 @@ export {};
  * @property {StepRow[]} [steps] the progress steps of a stepping tool, checked off as they finish
  * @property {ChatCardData[]} [cards] cards drawn under the finished answer
  * @property {ChatCardData[]} [pendingCards] cards held back until the turn ends
+ * @property {MemoryNote[]} [memories] what the assistant wrote down or forgot about the person during the turn
  * @property {Usage} [usage] what the context window held when the turn ended
  * @property {number} [turnId] the record id feedback names
  * @property {{ rating: "up" | "down", note: string | null } | null} [feedback] the person's rating of the answer, with an optional note; null when unrated
@@ -666,6 +677,7 @@ export {};
  * @property {(opts?: CallOptions) => Promise<CommandInfo[]>} commands
  * @property {(name: string, body?: { conversationId?: string, argument?: string }) => Promise<CommandResult>} runCommand sent once
  * @property {(opts?: CallOptions) => Promise<ToolInfo[]>} tools
+ * @property {(opts?: CallOptions) => Promise<SkillInfo[]>} [skills] what the assistant knows how to do; a client without it offers no Skills page
  * @property {(opts?: CallOptions) => Promise<Memory[]>} memories
  * @property {(opts?: CallOptions) => Promise<MemoryLimits>} memoryLimits
  * @property {(key: string, memory: MemoryWrite) => Promise<Memory>} writeMemory

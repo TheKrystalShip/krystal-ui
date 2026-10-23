@@ -15,16 +15,20 @@ function fakeClient() {
     memoryLimits: vi.fn(() => Promise.resolve({ maxPerPerson: 50, maxSummaryLength: 160, maxBodyLength: 4000 })),
     writeMemory: vi.fn((key, m) => Promise.resolve({ key, ...m, writtenAt: "2026-10-23T10:00:00Z", source: "person", plugin: "kgsm" })),
     deleteMemory: vi.fn(() => Promise.resolve(null)),
+    skills: vi.fn(() => Promise.resolve([
+      { name: "restore-backup", description: "Roll a server back to an earlier backup safely." },
+      { name: "find-a-forgotten-film", description: "Identify a film someone half remembers." },
+    ])),
   };
   return new Proxy(impl, {
     get: (target, prop) => (prop in target ? target[prop] : prop === "declines" || prop === "then" ? undefined : () => new Promise(() => {})),
   });
 }
 
-function renderChat(client) {
+function renderChat(client, storageKey = "test:" + Math.random()) {
   return render(
     <Chat docked assistantHost={{ id: "a", name: "Assistant" }} clientFor={() => client} authed
-      connection={{ tone: "online", label: "Connected", usable: true }} storageKey={"test:" + Math.random()} />,
+      connection={{ tone: "online", label: "Connected", usable: true }} storageKey={storageKey} />,
   );
 }
 
@@ -83,5 +87,52 @@ describe("Chat's memory", () => {
     await screen.findByText("Does not like horror films");
     expect(client.deleteMemory).toHaveBeenCalledWith("diet");
     expect(screen.queryByText("Vegetarian; eats fish occasionally")).toBeNull();
+  });
+});
+
+describe("What the assistant wrote down, in the conversation", () => {
+  // A conversation this browser holds, whose answer wrote one memory and forgot another.
+  function seeded() {
+    const key = "test:seeded:" + Math.random();
+    localStorage.setItem(key, JSON.stringify([{
+      id: "c1", title: "Dinner", hostId: "a", loaded: true,
+      messages: [
+        { role: "user", content: "I don't eat meat" },
+        { role: "assistant", content: "Noted.", memories: [
+          { action: "remembered", key: "diet", summary: "Vegetarian; eats fish occasionally" },
+          { action: "forgotten", key: "old-diet", summary: "Eats everything" },
+        ] },
+      ],
+    }]));
+    return key;
+  }
+
+  it("follows the answer as one line per change, and Edit opens that memory", async () => {
+    renderChat(fakeClient(), seeded());
+    expect(screen.getByText("Remembered: Vegetarian; eats fish occasionally")).toBeTruthy();
+    expect(screen.getByText("Forgot: Eats everything")).toBeTruthy();
+    // Only the memory written is offered for correcting.
+    expect(screen.getAllByRole("button", { name: "Edit" })).toHaveLength(1);
+    fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+    expect(await screen.findByDisplayValue("Vegetarian; eats fish occasionally")).toBeTruthy();
+    expect(screen.getByText("Edit memory")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Back" }));
+    await screen.findByText("Does not like horror films");
+  });
+});
+
+describe("Chat's skills", () => {
+  it("lists each skill by a readable name and its description, in the conversation's place", async () => {
+    const client = fakeClient();
+    renderChat(client);
+    fireEvent.click(screen.getByRole("button", { name: "Options" }));
+    fireEvent.click(await screen.findByRole("menuitem", { name: "Skills" }));
+    expect(await screen.findByText("Restore backup")).toBeTruthy();
+    expect(screen.getByText("Roll a server back to an earlier backup safely.")).toBeTruthy();
+    expect(screen.getByText("Find a forgotten film")).toBeTruthy();
+    expect(screen.getByText("Skills")).toBeTruthy();
+    expect(document.querySelector(".k-chat-composer").hidden).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: "Back" }));
+    expect(screen.queryByText("Restore backup")).toBeNull();
   });
 });

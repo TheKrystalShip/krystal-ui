@@ -12,7 +12,7 @@
 // `onUseCommand(name)` is handed to the /help card's Use buttons, and `loadAttachment(attachment)` reads
 // a sent attachment back for the bubble that shows it.
 
-import { ChatEvent, ChatVerify, ChatDaySeparator, entryTime, dayKeyOf } from "./ChatMessageParts.jsx";
+import { ChatEvent, ChatMemoryNote, ChatVerify, ChatDaySeparator, entryTime, dayKeyOf } from "./ChatMessageParts.jsx";
 import { ChatMessage } from "./ChatMessage.jsx";
 import { ChatCommandHelp, ChatCommandTools } from "./ChatCommandCards.jsx";
 import { ChatQuestions } from "./ChatQuestions.jsx";
@@ -32,10 +32,11 @@ const EVENT_ROLES = new Set(["system", "scope", "checkpoint", "toggle"]);
  * @param {(name: string) => void} [props.onUseCommand] given to the /help card's Use buttons
  * @param {(msg: import("./types.js").Message, answers: import("./types.js").Answer[]) => void} [props.onAnswer] Called with the question message and the person's answers when they answer an asked question.
  * @param {(attachment: import("./types.js").AttachmentInfo) => Promise<Blob>} [props.loadAttachment] Reads a sent attachment back as a Blob.
+ * @param {(key: string) => void} [props.onOpenMemory] Opens a memory the assistant wrote, from the line under its answer; without it the line is only read.
  */
 function ChatThread({
   messages, user, assistantName, renderEntry, renderCommand, renderCards, onRate, readOnlyFeedback, onUseCommand,
-  onAnswer, loadAttachment,
+  onAnswer, loadAttachment, onOpenMemory,
 }) {
   // Questions are answerable while they are the last thing said: once the person has written
   // something else beneath them, they stay on the page as plain text.
@@ -99,6 +100,10 @@ function ChatThread({
           ? <ChatVerify key={i} msg={m} />
           : turn(m, i),
     );
+    // What the turn changed in the person's memory follows its answer, one line per change.
+    if (m.role === "assistant" && m.memories) {
+      m.memories.forEach((note, n) => out.push(<ChatMemoryNote key={i + ":memory:" + n} note={note} onOpen={onOpenMemory} />));
+    }
   });
 
   return <div className="k-chat-thread">{out}</div>;

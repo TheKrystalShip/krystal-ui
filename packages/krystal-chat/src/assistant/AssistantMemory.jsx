@@ -16,7 +16,9 @@ import { AssistantMemoryEditor } from "./AssistantMemoryEditor.jsx";
 //
 // Which memory is open is the chat's to hold, because the chat's header names it and its back button
 // leaves it: `editing` is null for the list and `{ memory }` for the editor, a null memory being a new
-// one, and `onEdit` is called with the next value.
+// one, and `onEdit` is called with the next value. `{ key }` opens the memory under that key once the
+// list has been read (a line in the conversation names a memory by key), or the list when there is
+// none any more.
 //
 // Forgetting asks twice: the first press arms the button, which then says what the second does.
 
@@ -44,7 +46,7 @@ function withWritten(rows, memory) {
  * @param {object} props
  * @param {import("../chat/types.js").AssistantClient | null} props.client The assistant's client; its memory calls read, write and delete the rows. Null shows `unavailable`.
  * @param {import("react").ReactNode} [props.unavailable] why there is nothing to show
- * @param {{ memory: import("../chat/types.js").Memory | null } | null} props.editing the memory open in the editor (a null memory is a new one), or null for the list
+ * @param {{ memory?: import("../chat/types.js").Memory | null, key?: string } | null} props.editing the memory open in the editor (a null memory is a new one, a `key` the one under it), or null for the list
  * @param {(editing: { memory: import("../chat/types.js").Memory | null } | null) => void} props.onEdit Called with the memory to open, or null to go back to the list.
  * @param {import("react").ComponentType<import("../chat/types.js").MemoryBodyEditorProps>} [props.BodyEditor] A component that edits a memory's body in place of the plain textarea, given `MemoryBodyEditorProps`.
  * @param {string} [props.keyPlaceholder] The placeholder in the editor's key field.
@@ -82,6 +84,14 @@ function AssistantMemory({ client, unavailable = null, editing, onEdit, BodyEdit
   // press just made.
   React.useEffect(() => { setArmed(null); }, [editing]);
 
+  // A memory asked for by key is opened from the list as read.
+  const wantedKey = editing && editing.memory === undefined ? editing.key : null;
+  React.useEffect(() => {
+    if (!wantedKey || loading) return;
+    const found = memories.find((m) => m.key === wantedKey);
+    onEdit(found ? { memory: found } : null);
+  }, [wantedKey, loading, memories, onEdit]);
+
   // Resolves once the memory is gone and rejects with the assistant's sentence, which the list shows
   // and the editor shows against the memory still open.
   const forgetNow = (key) => {
@@ -112,12 +122,20 @@ function AssistantMemory({ client, unavailable = null, editing, onEdit, BodyEdit
     });
 
   if (!client) {
-    return <div className="k-assistant-memory">{unavailable}</div>;
+    return <div className="k-assistant-panel">{unavailable}</div>;
+  }
+
+  if (wantedKey) {
+    return (
+      <div className="k-assistant-panel">
+        <SettingsRow icon="brain" title={<Skeleton w={160} />} sub={<Skeleton w="70%" h={10} />} />
+      </div>
+    );
   }
 
   if (editing) {
     return (
-      <div className="k-assistant-memory">
+      <div className="k-assistant-panel">
         <AssistantMemoryEditor
           key={editing.memory ? editing.memory.key : ""}
           memory={editing.memory}
@@ -138,7 +156,7 @@ function AssistantMemory({ client, unavailable = null, editing, onEdit, BodyEdit
   const meta = cap != null && !loading ? `${lead} ${memories.length} of ${cap} kept.` : lead;
 
   return (
-    <div className="k-assistant-memory">
+    <div className="k-assistant-panel">
       <SettingsSection icon="brain" title="Written down" meta={meta}
         action={(
           <Button variant="outline" icon="plus" disabled={loading || !!err || full}

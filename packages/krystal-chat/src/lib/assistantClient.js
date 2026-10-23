@@ -514,6 +514,8 @@ function createAssistantClient({ baseUrl, getToken, renewToken, canRenew }) {
     // The tools the assistant may use on the caller's behalf: `[{ name, description, parameters }]`.
     // The description is written for the model.
     tools: (opts) => json("GET", "/tools", null, opts).then(listOf("tools")),
+    // What the assistant knows how to do: `[{ name, description }]`, the skills its product registered.
+    skills: (opts) => json("GET", "/skills", null, opts).then(listOf("skills")),
     // What the assistant has written down about the caller, and what one memory may weigh. Writing
     // one creates or corrects it, because a memory is revised by rewriting its key.
     memories: (opts) => json("GET", "/memories", null, opts).then(listOf("memories")),
