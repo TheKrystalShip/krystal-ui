@@ -14,7 +14,7 @@
   overflow-x: auto;
   background: var(--surface-1);
   border: var(--edge);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);
 }
 
 .k-table--state {
@@ -180,7 +180,7 @@
   .k-table .k-table__col--hide-phone { display: none; }
 
   .k-table { overflow-x: visible; background: none; border: 0; border-radius: 0; }
-  .k-table--state { background: var(--surface-1); border: var(--edge); border-radius: var(--r-md); }
+  .k-table--state { background: var(--surface-1); border: var(--edge); border-radius: var(--r-sm); }
 
   .k-table__grid,
   .k-table__grid tbody { display: block; }
@@ -201,7 +201,7 @@
     padding: 10px 14px;
     background: var(--surface-1);
     border: var(--edge);
-    border-radius: var(--r-md);
+    border-radius: var(--r-sm);
     overflow: hidden;
   }
 

@@ -39,7 +39,7 @@
   max-height: 92dvh;
   border: var(--edge-strong);
   border-bottom: none;
-  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
   padding-bottom: env(safe-area-inset-bottom);
 }
 

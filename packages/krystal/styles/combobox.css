@@ -19,7 +19,7 @@
   padding: 4px;
   background: var(--surface-1);
   border: var(--edge-strong);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);
   box-shadow: var(--shadow-2);
   font-family: var(--font-ui);
   font-size: 13px;

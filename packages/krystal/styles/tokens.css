@@ -72,8 +72,8 @@
    THE SHAPE SURFACE. Most of what is here is invariant, but a theme
    may re-value this closed set — and nothing else:
 
-       --r-sm  --r-md  --r-lg  --r-xl        corner geometry
-       --r-pill                              chips, badges, status pills
+       --r-sm                                every UI component's corners
+       --r-pill                              pills, avatars, round marks
        --edge  --edge-strong  --edge-accent  border width + style
        --shadow-1  --shadow-2  --shadow-pop  elevation
        --ring-focus  --ring-input            focus
@@ -86,13 +86,15 @@
    are what keep a page laid out the way it was designed. A theme
    changes how the furniture is SHAPED, never where it stands.
 
-   Two of these carry nearly all the weight: --r-sm is ~260 of the
-   radius declarations in the kit and --r-pill another ~150, so between
-   them one line re-values the corner geometry of the whole app. That
-   only holds while radii go through the tokens — `npm run check:tokens`
-   catches a reference to a property that does not exist, but a raw
-   `border-radius: 4px` is legal CSS and simply will not follow a theme.
-   Add radii as var(--r-*).
+   Corners have two values. --r-sm is the radius of every UI component:
+   cards, tiles, panels, popovers, menus, drawers, fields, buttons,
+   bubbles, images. --r-pill is for what is meant to be round: pills,
+   chips, badges, avatars, dots, toggles and scrollbar thumbs. There is
+   no third radius, so one line re-values the corners of the whole app.
+   That only holds while radii go through the tokens: `npm run
+   check:tokens` catches a reference to a property that does not exist,
+   but a raw `border-radius: 4px` is legal CSS and simply will not follow
+   a theme. Add radii as var(--r-sm) or var(--r-pill).
 
    WHICH themes use it: only the tribute pack. A theme named after an
    upstream editor scheme — Nord, Gruvbox, Solarized, Ayu — re-values
@@ -154,11 +156,8 @@
   --s-16: 64px;
   --s-20: 80px;
 
-  /* ---------- RADIUS --------------------------------------- */
+  /* ---------- RADIUS: --r-sm for UI, --r-pill for round ---- */
   --r-sm: 4px;
-  --r-md: 8px;
-  --r-lg: 12px;
-  --r-xl: 16px;
   --r-pill: 999px;
 
   /* ---------- EDGE — the whole border shorthand ------------
@@ -2807,9 +2806,6 @@
      bloom under a modal.
      -------------------------------------------------------- */
   --r-sm: 0;
-  --r-md: 0;
-  --r-lg: 0;
-  --r-xl: 0;
   --r-pill: 0;
   --font-ui: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --edge: 1px solid var(--border-strong);
@@ -2925,9 +2921,6 @@
      ours to ship; Inter still catches the fall.
      -------------------------------------------------------- */
   --r-sm: 0;
-  --r-md: 0;
-  --r-lg: 0;
-  --r-xl: 0;
   --r-pill: 0;
   --font-ui: Tahoma, Verdana, "Inter", system-ui, sans-serif;
   --edge: 2px solid var(--border-strong);
@@ -3030,9 +3023,6 @@
      player answered a click immediately.
      -------------------------------------------------------- */
   --r-sm: 0;
-  --r-md: 0;
-  --r-lg: 0;
-  --r-xl: 0;
   --r-pill: 0;
   --edge: 1px solid var(--border-strong);
   --shadow-1: none;
@@ -3141,9 +3131,6 @@
      is separated by a ring in the brand orange instead.
      -------------------------------------------------------- */
   --r-sm: 8px;
-  --r-md: 14px;
-  --r-lg: 22px;
-  --r-xl: 30px;
   --edge: 2px solid var(--border-subtle);
   --edge-strong: 2px solid var(--border-strong);
   --shadow-1: none;
@@ -3235,9 +3222,6 @@
      gets a 1px yellow keyline over a much deeper scrim.
      -------------------------------------------------------- */
   --r-sm: 0;
-  --r-md: 0;
-  --r-lg: 0;
-  --r-xl: 0;
   --r-pill: 0;
   --edge: 1px solid var(--border-strong);
   --shadow-1: none;
@@ -3340,9 +3324,6 @@
      repainted.
      -------------------------------------------------------- */
   --r-sm: 0;
-  --r-md: 0;
-  --r-lg: 0;
-  --r-xl: 0;
   --r-pill: 0;
   --font-ui: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --edge: 1px solid var(--border-strong);
@@ -3457,9 +3438,6 @@
      animation — a 1MHz machine drew the character and moved on.
      -------------------------------------------------------- */
   --r-sm: 0;
-  --r-md: 0;
-  --r-lg: 0;
-  --r-xl: 0;
   --r-pill: 0;
   --font-ui: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --edge: 2px solid var(--border-strong);
@@ -3566,9 +3544,6 @@
      text modes this is a console, and it runs at 30fps.
      -------------------------------------------------------- */
   --r-sm: 0;
-  --r-md: 0;
-  --r-lg: 0;
-  --r-xl: 0;
   --r-pill: 0;
   --font-ui: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --edge: 1px solid var(--border-strong);

@@ -25,7 +25,7 @@
 .k-avatar--circle .k-avatar__img { border-radius: var(--r-pill); }
 
 .k-avatar--rounded,
-.k-avatar--rounded .k-avatar__img { border-radius: var(--r-md); }
+.k-avatar--rounded .k-avatar__img { border-radius: var(--r-sm); }
 
 .k-avatar__img {
   display: block;

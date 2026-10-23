@@ -4,7 +4,7 @@ import { Section, Sub } from "../kit.jsx";
 
 function Frame({ children }) {
   return (
-    <div style={{ border: "var(--edge)", borderRadius: "var(--r-md)", padding: "var(--s-4)", background: "var(--surface-0)" }}>
+    <div style={{ border: "var(--edge)", borderRadius: "var(--r-sm)", padding: "var(--s-4)", background: "var(--surface-0)" }}>
       {children}
     </div>
   );

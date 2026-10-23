@@ -3,7 +3,7 @@ import { Button, CopyField, FormField, SignInScreen } from "@thekrystalship/krys
 import tksMark from "../../packages/krystal/assets/tks-mark.png";
 import { Section, Sub } from "../kit.jsx";
 
-const box = (h) => ({ ["--k-cardscreen-height"]: "100%", height: h, overflow: "auto", border: "var(--edge)", borderRadius: "var(--r-md)" });
+const box = (h) => ({ ["--k-cardscreen-height"]: "100%", height: h, overflow: "auto", border: "var(--edge)", borderRadius: "var(--r-sm)" });
 
 function Password() {
   const [last, setLast] = React.useState("none yet");

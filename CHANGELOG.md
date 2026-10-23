@@ -1,5 +1,19 @@
 # Changelog
 
+## [7.0.0]
+
+### Changed
+- **Two corner radii.** Every UI component takes `--r-sm` (4px in the base palettes): cards, stat
+  tiles, popovers (the notification tray among them), menus, combobox and search panels, tables,
+  lists, collection tiles, the drawer's sheet, the toolbar's framed filter, rounded avatars, and the
+  chat's bubbles, composer, pictures and lightbox. Scrollbar thumbs take `--r-pill`.
+- The Stylelint config accepts only `var(--r-sm)` and `var(--r-pill)` (or `0`, `50%`, `100%`,
+  `inherit`) for a radius.
+
+### Removed
+- **`--r-md`, `--r-lg` and `--r-xl`**, from `tokens.css`, every built-in palette and
+  `theme-contract.json`. A site's own rule takes `--r-sm`, or `--r-pill` for something round.
+
 ## [6.0.1]
 
 ### Fixed

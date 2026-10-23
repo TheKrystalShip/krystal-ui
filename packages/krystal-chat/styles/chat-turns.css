@@ -39,7 +39,7 @@
   max-width: 72%;
   min-width: 0;
   padding: 10px 14px;
-  border-radius: var(--r-lg) var(--r-lg) var(--r-sm) var(--r-lg);
+  border-radius: var(--r-sm);
   background: var(--surface-3);
   color: var(--fg-1);
   font-size: 14px;
@@ -541,7 +541,7 @@
   height: 132px;
   padding: 0;
   border: var(--edge);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-sm);
   background: var(--surface-3);
   overflow: hidden;
   cursor: zoom-in;
@@ -617,7 +617,7 @@ span.k-chat-attachment--sent {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);
   cursor: default;
 }
 

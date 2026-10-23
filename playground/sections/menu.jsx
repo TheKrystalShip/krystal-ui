@@ -7,7 +7,7 @@ import { Section, Sub, row } from "../kit.jsx";
 function FrameMenu() {
   const [frame, setFrame] = React.useState(null);
   return (
-    <div ref={setFrame} data-testid="menu-frame" style={{ position: "relative", ...row, padding: 12, border: "var(--edge)", borderRadius: "var(--r-md)" }}>
+    <div ref={setFrame} data-testid="menu-frame" style={{ position: "relative", ...row, padding: 12, border: "var(--edge)", borderRadius: "var(--r-sm)" }}>
       <Menu container={frame} trigger={<Button variant="secondary">Menu in the frame</Button>}>
         <MenuItem>Inside</MenuItem>
         <MenuItem>The frame</MenuItem>

@@ -9,7 +9,7 @@
 //
 // What it reads: no literal colour (hex, rgb(), hsl() and the other colour functions, named colours),
 // except transparent, currentColor and the CSS-wide keywords, and neutral black or white in shadows,
-// filters and masks; a border-radius that is var(--r-*), 0, 50%, 100% or inherit; a four-sided
+// filters and masks; a border-radius that is var(--r-sm), var(--r-pill), 0, 50%, 100% or inherit; a four-sided
 // `border` shorthand that is var(--edge*), none, 0 or transparent. A one-sided hairline
 // (`border-top: 1px solid var(--border-subtle)`) is legitimate and looks the same as a surface
 // outline to a syntactic rule, so which borders are surface outlines is left to review.
@@ -19,7 +19,7 @@
 // sheets, which are made of those classes, are exempt.
 
 const NO_COLOUR_SCOPE = "/^(?!(?:box|text)-shadow$|filter$|(?:-webkit-)?mask)/";
-const RADIUS_PART = String.raw`(?:0|50%|100%|inherit|var\(\s*--r-[\w-]+\s*\))`;
+const RADIUS_PART = String.raw`(?:0|50%|100%|inherit|var\(\s*--r-(?:sm|pill)\s*\))`;
 const RADIUS_LIST = String.raw`${RADIUS_PART}(?:\s+${RADIUS_PART}){0,3}`;
 
 export default {

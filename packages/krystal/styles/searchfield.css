@@ -57,7 +57,7 @@
   height: 60px;
   padding: 0 8px 0 20px;
   gap: 14px;
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);
 }
 
 .k-searchfield--xl .k-searchfield__input {

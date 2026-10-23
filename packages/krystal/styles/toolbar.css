@@ -195,7 +195,7 @@
   padding: 0 18px;
   font-size: 14px;
   border: var(--edge-strong);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);
 }
 
 /* Compact: the icon and the count, the label kept as the accessible name. */

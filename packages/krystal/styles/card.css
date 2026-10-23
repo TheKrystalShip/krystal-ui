@@ -16,7 +16,7 @@
   overflow: hidden;
   background: var(--surface-1);
   border: var(--edge);
-  border-radius: var(--r-md);
+  border-radius: var(--r-sm);
   color: var(--fg-2);
 }
 

@@ -137,7 +137,7 @@ export default { extends: ["@thekrystalship/krystal/stylelint"] };   // defaultS
 The Stylelint rules report a hex colour, a colour function or a named colour outside `transparent`,
 `currentColor` and the CSS-wide keywords (neutral black and white stay allowed in `box-shadow`,
 `text-shadow`, `filter` and masks, and a colour keyword inside a function such as `color-mix()`), a
-`border-radius` that is not `var(--r-*)`, `0`, `50%`, `100%` or `inherit`, and a four-sided `border`
+`border-radius` that is not `var(--r-sm)`, `var(--r-pill)`, `0`, `50%`, `100%` or `inherit`, and a four-sided `border`
 that is not `var(--edge*)`, `none`, `0` or transparent. Whether a one-sided hairline is a surface
 outline is a judgement the rules cannot make, so `border-top: 1px solid var(--border-subtle)` is left
 to review.

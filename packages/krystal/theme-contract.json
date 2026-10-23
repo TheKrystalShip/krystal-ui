@@ -13,7 +13,7 @@
     "--on-accent", "--on-success", "--on-danger", "--on-warning", "--on-update", "--on-info"
   ],
   "structural": [
-    "--r-sm", "--r-md", "--r-lg", "--r-xl", "--r-pill", "--edge", "--edge-strong", "--edge-accent",
+    "--r-sm", "--r-pill", "--edge", "--edge-strong", "--edge-accent",
     "--shadow-1", "--shadow-2", "--shadow-pop", "--ring-focus", "--ring-input", "--font-ui", "--d-fast",
     "--d-base", "--d-slow", "--ease-out", "--ease-in-out"
   ],
