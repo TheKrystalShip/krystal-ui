@@ -56,8 +56,9 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 | Loading | `Skeleton` (one shimmering placeholder block, laid out by the site in the footprint its content will take; still under reduced motion) |
 | Feeds | `useFollowTail` (keeps a scrolling feed pinned to its bottom while the reader is there, counts what arrives while they are parked) |
 | Telling a person | `Toasts` and `toast` (the outcome of what a person just did: a live stack, no history), `NotificationTray`, `NotificationList`, `NotificationSettings`, `createNotificationsClient`, `createNotificationInbox` (what a person is told, kept by the product's server) |
+| The splash | `holdSplash` (keeps the splash up until the function it hands back is called), `settleSplash` (lets it go a frame after a commit nothing holds it through), `SPLASH_CAP_MS` |
 | Marks | `Icon` (Lucide, by kebab-case name), `Avatar` (an image or initials, with a status dot), `AccountAvatar`, `AssistantFabIcon` |
-| State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS` + `registerThemes`, `copyText`, `pushBrowser`, `fmtRelative`, and `lib/datetime` (the local date, time and moment keys the date controls read and write, and `nextStep`) |
+| State and helpers | `createStore`/`useStore`, `themeStore` + `THEME_OPTS` + `registerThemes` + `themeConfig`, `copyText`, `pushBrowser`, `fmtRelative`, and `lib/datetime` (the local date, time and moment keys the date controls read and write, and `nextStep`) |
 
 `@thekrystalship/krystal-chat`:
 
@@ -707,6 +708,44 @@ A push payload is `{ title, body, url?, tag, actions?, data? }`. A tap opens or 
 of the site; a button (`actions: [{ id, title, url }]`) posts to its `url`, the product's anonymous
 `POST /push/actions/{handle}`, and the worker shows the `message` it answers as a follow-up under the
 same `tag`. `styles/notifications.css` draws the list and the tray.
+
+## A site's identity
+
+A site has a name and a mark: a Lucide glyph, given as the paths of its 24-unit viewBox in the site's
+`identity.js`. The mark is always the same tile, the glyph stroked in the palette's accent
+(`--krystal-teal`) on the accent's tint (`--krystal-teal-dim`) over the canvas, so it is drawn in
+every palette with nothing copied out of a stylesheet.
+
+```js
+// identity.js
+import "./src/themes.js";   // the registration and configuration the bundle runs, when the site has any
+export default {
+  mark: ["M17 21a1 1 0 0 0 1-1v-5.35…", "M6 17h12", { d: "M16 7.5a.5.5 0 1 0 1 0…", fill: true }],
+  palettes: ["src/themes.css"],   // the site's own [data-theme] sheets
+  android: "../android/res",      // the app on the TKS shell, when there is one
+};
+```
+
+`siteIdentity(identity)`, the Vite plugin beside `notificationsWorker()`, gives every page of the site:
+
+- **`krystal-boot.js`**, the first element of the head. It puts the stored theme, or the site's default,
+  on `<html>`, and from then on keeps the tab's icon, `theme-color` and the splash in whichever palette
+  `data-theme` names, a theme picked included. A browser that follows a changed icon redraws the tab.
+- **The splash**: `krystal-splash.css` and the tile on the canvas as the body's first child, drawn only
+  when the boot script has run, so a page read without script shows what it carries. It stays until
+  the site lets it go: the site calls `settleSplash()` from an effect at its root, and a screen still
+  waiting for what it shows calls `holdSplash()` (a data hook holding it while the first answer is
+  out covers most pages). It goes at `SPLASH_CAP_MS` whatever holds it.
+- **The artwork links**: the favicon, the home-screen icons and a launch image per iPhone and iPad.
+
+All of it is files under the site's `base`, so a page under a policy with no inline script or style
+runs it. The fixed artwork comes from `krystal-icons` (needs `rsvg-convert`), run by hand, its output
+committed: the icons, maskable icon and launch images under `public/`, and with `android` the launcher
+icon (glyph, ground and the themed-icon layer), all in the site's default palette.
+
+```json
+{ "scripts": { "icons": "krystal-icons" } }
+```
 
 ## The frame
 

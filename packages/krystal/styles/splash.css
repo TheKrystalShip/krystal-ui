@@ -1,0 +1,67 @@
+/* ============================================================================
+   splash.css — the splash: the site's mark on the canvas, over everything, from the document's
+   first frame until the page lets it go (lib/splash.js).
+   The page links this sheet by itself, ahead of the bundle, because the splash is drawn before any
+   other sheet has arrived. Its colours are the palette's, set on <html> by the boot script
+   (tools/identity.js) as --k-splash-*. It is drawn only once that script has marked <html>
+   (data-k-splash), so a page read without script shows what it carries, and it hides itself at
+   4s whatever happens, so a bundle that never runs never leaves it standing; lib/splash.js lets it go
+   sooner.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.base {
+#k-splash {
+  display: none;
+}
+
+:root[data-k-splash] #k-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  background: var(--k-splash-canvas, var(--canvas));
+  transition: opacity 280ms ease-out;
+  animation: k-splash-cap 0s 4s forwards;
+}
+
+@keyframes k-splash-cap {
+  to {
+    visibility: hidden;
+  }
+}
+
+#k-splash svg {
+  display: block;
+  width: 90px;
+  height: 90px;
+}
+
+#k-splash .k-splash__ground {
+  fill: var(--k-splash-ground, var(--krystal-teal-dim));
+}
+
+#k-splash .k-splash__glyph {
+  fill: none;
+  stroke: var(--k-splash-ink, var(--krystal-teal));
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#k-splash .k-splash__fill {
+  fill: var(--k-splash-ink, var(--krystal-teal));
+}
+
+#k-splash.k-is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-k-splash] #k-splash {
+    transition: none;
+  }
+}
+}

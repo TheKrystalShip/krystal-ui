@@ -1,6 +1,6 @@
 {
   "name": "@thekrystalship/krystal",
-  "version": "8.0.0",
+  "version": "8.1.0",
   "description": "The Krystal design system as React components, stores and stylesheets, shared by every TheKrystalShip web surface.",
   "license": "GPL-3.0-only",
   "type": "module",
@@ -29,7 +29,8 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "krystal-check-theme": "./bin/krystal-check-theme.mjs"
+    "krystal-check-theme": "./bin/krystal-check-theme.mjs",
+    "krystal-icons": "./bin/krystal-icons.mjs"
   },
   "exports": {
     ".": {
@@ -53,7 +54,8 @@
   },
   "sideEffects": [
     "*.css",
-    "./dist/lib/theme.js"
+    "./dist/lib/theme.js",
+    "./dist/lib/splash.js"
   ],
   "scripts": {
     "build": "vite build && tsc",

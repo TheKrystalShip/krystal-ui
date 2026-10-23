@@ -186,9 +186,9 @@ configureThemes({ default: "harbour", auto: { light: "harbour-day", dark: "harbo
 ```
 
 The stored theme, or that default, has to be on `<html>` before the first frame, so the page's head
-starts with a script that sets it. `themeBootScript()` returns that script's source, written from the
-list, the default and the pair as configured; a site writes it into a file at build time, from the
-same registration its bundle runs, so the two never disagree.
+starts with a script that sets it. `siteIdentity` writes it (README, "A site's identity"), from the
+same registration its bundle runs, so the two never disagree; `themeBootScript()` returns the bare
+script's source for a page that wants only the theme.
 
 `krystal-check-theme` reads the `[data-theme]` blocks of the sheets it is given and fails on a missing
 required token, a token outside the permitted set, a missing `color-scheme`, and any `--on-*` ink under

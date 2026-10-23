@@ -213,6 +213,11 @@ function themeBootScript() {
 `;
 }
 
+// The configuration as it stands: every palette id a preference may name, the site's default and the
+// pair "auto" resolves to, for a build writing a boot script of its own (`siteIdentity` in `../vite.js`).
+/** @returns {{ ids: string[], default: string, auto: { light: string, dark: string }, key: string }} */
+const themeConfig = () => ({ ids: VALID.filter((id) => id !== "auto"), default: defaultTheme, auto: { ...autoPair }, key: THEME_KEY });
+
 // The browser's storage, or null outside a page: a runtime with a localStorage of its own (Node) warns
 // on reading it, and a module a site's tests import must load there quietly.
 const storage = () => (typeof window !== "undefined" ? window.localStorage : null);
@@ -292,4 +297,4 @@ const useThemePref = () => useStore(themeStore, s => s.pref);
 /** @returns {string} */
 const useResolvedTheme = () => useStore(themeStore, s => s.resolved);
 
-export { themeStore, useThemePref, useResolvedTheme, resolveTheme, registerThemes, configureThemes, autoThemes, themeBootScript, THEME_KEY, THEME_OPTS };
+export { themeStore, useThemePref, useResolvedTheme, resolveTheme, registerThemes, configureThemes, autoThemes, themeBootScript, themeConfig, THEME_KEY, THEME_OPTS };

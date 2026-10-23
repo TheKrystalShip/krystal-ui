@@ -1,5 +1,18 @@
 # Changelog
 
+## [8.1.0]
+
+### Added
+- **A site's identity follows its theme.** `siteIdentity({ mark, palettes })`, a Vite plugin in
+  `@thekrystalship/krystal/vite`, writes `krystal-boot.js` (the stored theme on `<html>` before the
+  first frame, and the tab's icon, `theme-color` and the splash kept in the palette shown), the splash
+  (`krystal-splash.css` and its markup) and the artwork links, all under the site's `base`.
+- **The splash**: `holdSplash`, `settleSplash` and `SPLASH_CAP_MS`. It is drawn only once the boot
+  script has run, and hides itself at 4s if no bundle lets it go.
+- **`krystal-icons`**, a bin writing a site's install icons, launch images and Android launcher icon
+  from its `identity.js`, in its default palette.
+- `themeConfig()`: the palette ids, default and auto pair as configured.
+
 ## [8.0.0]
 
 ### Changed
