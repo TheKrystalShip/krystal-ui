@@ -152,7 +152,64 @@ describe("FilterDrawer", () => {
     const columns = document.querySelectorAll(".k-filters__column");
     expect(columns).toHaveLength(2);
     expect(within(columns[0]).getByRole("group", { name: "Watched" })).toBeTruthy();
-    expect(columns[1].querySelector(".k-filters__grid").style.gridTemplateRows).toBe("repeat(7, auto)");
+    expect(columns[1].querySelector(".k-filters__grid").style.gridTemplateRows).toBe("repeat(10, auto)");
+  });
+
+  const order = { id: "sort", label: "Sort by", kind: "sort", base: "added", options: [
+    { value: "added", label: "Recently added" }, { value: "first", label: "First added" },
+    { value: "best", label: "Highest rated" }, { value: "worst", label: "Lowest rated" },
+  ] };
+
+  it("draws a sort first, in a column of its own, and never counts it, chips it or clears it", async () => {
+    const user = userEvent.setup();
+    const onValues = vi.fn();
+    render(<Page list={[...sections, order]} start={{ genre: ["drama"], sort: "best" }} onValues={onValues} />);
+    expect(trigger().getAttribute("aria-label")).toBe("Filters (1)");
+    await user.click(trigger());
+    const columns = document.querySelectorAll(".k-filters__column");
+    expect(within(columns[0]).getByRole("group", { name: "Sort by" })).toBeTruthy();
+    expect(within(columns[0]).queryByRole("group", { name: "Kind" })).toBeNull();
+    expect(within(columns[0]).getByRole("button", { name: "Highest rated" }).getAttribute("aria-pressed")).toBe("true");
+
+    const foot = document.querySelector(".k-filters__foot");
+    expect(within(foot).queryByRole("button", { name: /Highest rated/ })).toBeNull();
+    await user.click(within(columns[0]).getByRole("button", { name: "Lowest rated" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ sort: "worst" }));
+    expect(trigger().getAttribute("aria-label")).toBe("Filters (1)");
+
+    await user.click(screen.getByRole("button", { name: "Clear all" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ sort: "worst", genre: [] }));
+  });
+
+  it("on a phone opens on the sort, its row naming the order in force", async () => {
+    const user = userEvent.setup();
+    const original = window.matchMedia;
+    window.matchMedia = (query) => ({ ...original(query), matches: query === "(max-width: 768px)" });
+    try {
+      const onValues = vi.fn();
+      render(<Page list={[...sections, order]} onValues={onValues} />);
+      await user.click(trigger());
+      const body = document.querySelector(".k-filters__body");
+      const head = body.firstElementChild.querySelector(".k-filters__fold-head");
+      expect(head.getAttribute("aria-expanded")).toBe("true");
+      expect(head.textContent).toContain("Sort by");
+      expect(head.textContent).toContain("Recently added");
+      await user.click(screen.getByRole("button", { name: "First added" }));
+      expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ sort: "first" }));
+      expect(head.textContent).toContain("First added");
+    } finally {
+      window.matchMedia = original;
+    }
+  });
+
+  it("on a television starts its rail on the sort", async () => {
+    document.documentElement.setAttribute("data-tv", "");
+    const user = userEvent.setup();
+    render(<Page list={[...sections, order]} />);
+    await user.click(trigger());
+    expect(document.activeElement).toBe(document.querySelector('[data-filter-rail="sort"]'));
+    const pane = document.querySelector(".k-filters__pane");
+    expect(within(pane).getByRole("button", { name: "Recently added" }).getAttribute("aria-pressed")).toBe("true");
   });
 
   it("on a phone folds its sections, keeps a short one-of row in view and draws toggles as switches", async () => {

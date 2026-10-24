@@ -278,6 +278,7 @@ export const BEHAVIOUR = {
     semantics: [
       "The button names the drawer and its count (`aria-expanded`, `aria-controls`); each option is a button with `aria-pressed`.",
       "Each section is a `group` named by its heading; a phone's folding row has `aria-expanded`, and a toggle is a `switch`.",
+      "A sort's orders are buttons with `aria-pressed` like any option; the button's count and its name never include the order.",
       "It stays open while options are picked and closes on a press outside it or on the field's search.",
       "`onOpenChange(open)` tells the page each time it opens and closes; the page needs nothing else to know it is open.",
     ],

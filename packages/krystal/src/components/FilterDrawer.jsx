@@ -19,7 +19,7 @@ import { onTelevision } from "../lib/television.js";
 //
 // It knows nothing about what is filtered. The page hands it sections, built from what the page can
 // show, and the values; every change comes back as the next whole `values`, and the page keeps them
-// (in its address, so a filtered page can be linked). A section is one of six kinds:
+// (in its address, so a filtered page can be linked). A section is one of seven kinds:
 //
 //   one       exactly one option, starting on `base`        { value: "movies" }
 //   optional  none or one option                            { value: "8" } or null
@@ -27,15 +27,21 @@ import { onTelevision } from "../lib/television.js";
 //   toggle    its one `option`, on or off, starting on `base` true
 //   range     a number from `min` to `max`; `any` is the value that filters nothing
 //   tokens    words the person types                        ["tomatoes"]
+//   sort      the order of what the page shows, one of its named `options`, starting on `base`
+//
+// A sort is no filter: it is never a chip, the button never counts it, Clear all leaves it as it is,
+// and it is drawn first wherever the page passes it, each option a ring that is filled on the order in
+// force.
 //
 // A picked option is shown by colour alone. The drawer is drawn three ways:
-// - on a desktop, in columns: each section a heading over its options, a list longer than eight
+// - on a desktop, in columns: each section a heading over its options, a list longer than ten
 //   wrapping into balanced sub-columns, a short section joining the first earlier column with room
 //   under it, the columns sharing the width and wrapping onto another line when they do not fit; a
-//   footer of one removable chip per pick and Clear all;
-// - on a phone, a `one` section of up to four options as a segmented row, a toggle as a switch row at
-//   the end, and every other section as a row that opens to its options as tags, one at a time; a
-//   footer of Clear all and Done;
+//   sort in a column of its own, one order to a line; a footer of one removable chip per pick and
+//   Clear all;
+// - on a phone, a sort as the first row, a `one` section of up to four options as a segmented row, a
+//   toggle as a switch row at the end, and every other section as a row that opens to its options,
+//   one at a time, a sort's as a list and the rest's as tags; a footer of Clear all and Done;
 // - on a television (lib/television.js), a rail of the sections beside the controls of the one the
 //   rail is on. It moves no focus between controls, which is the site's navigator's; it places focus
 //   when it opens and when Back steps out of a section, as a dialog does.
@@ -57,10 +63,10 @@ import { onTelevision } from "../lib/television.js";
  * @typedef {object} FilterSection
  * @property {string} id The section's key in `values`.
  * @property {string} label Its heading.
- * @property {"one" | "optional" | "many" | "toggle" | "range" | "tokens"} kind What it holds.
+ * @property {"one" | "optional" | "many" | "toggle" | "range" | "tokens" | "sort"} kind What it holds.
  * @property {FilterOption[]} [options] A list section's options, in the page's order.
- * @property {string | boolean} [base] Where a section starts, which counts as no filter: a `one` section's
- *   option, or whether a toggle starts on (off by default).
+ * @property {string | boolean} [base] Where a section starts, which counts as no filter: a `one` or `sort`
+ *   section's option, or whether a toggle starts on (off by default).
  * @property {string} [option] A toggle's one option, the words of its switch and of its chip when on.
  * @property {string} [offOption] The words of a toggle's chip when it is off and its `base` is on; `option` by default.
  * @property {string} [note] A line under a toggle's option.
@@ -81,7 +87,7 @@ import { onTelevision } from "../lib/television.js";
 /**
  * @typedef {object} FilterDrawerProps
  * @property {FilterSection[]} sections The sections, in order; a page leaves out one with fewer than two options.
- * @property {Record<string, any>} values Each section's value by id: a string for `one` and `optional` (null for none), an array for `many` and `tokens`, a boolean for `toggle`, a number for `range`.
+ * @property {Record<string, any>} values Each section's value by id: a string for `one`, `sort` and `optional` (null for none), an array for `many` and `tokens`, a boolean for `toggle`, a number for `range`.
  * @property {(next: Record<string, any>) => void} onChange Receives the next whole `values`.
  * @property {string} [label] The button's accessible name and the drawer's; "Filters" by default.
  * @property {string} [clearLabel] Clear all's words.
@@ -93,23 +99,25 @@ import { onTelevision } from "../lib/television.js";
  * @property {string} [className] Extra class names on the root element.
  */
 
-const MaxRows = 8;
+const MaxRows = 10;
 // The field's stacking order while the drawer is open, one over the dimming's.
 const FieldLayer = "36";
 // A television's option cell: room beside its name (padding, border and a picked option's heavier
 // weight), and the widest name it is sized for; a longer one ends in an ellipsis.
 const CellRoom = 32;
 const CellMax = 320;
-const ColumnRows = MaxRows + 2;
+// How tall a column of short sections grows, in rows, before the next starts a column of its own.
+const ColumnRows = 10;
 const ShortSection = 5.5;
 
 const isList = (/** @type {FilterSection} */ s) => s.kind === "one" || s.kind === "optional" || s.kind === "many";
+const isOrder = (/** @type {FilterSection} */ s) => s.kind === "sort";
 const rangeAny = (/** @type {FilterSection} */ s) => (s.any != null ? s.any : s.max);
 
 /** A section's value as the drawer reads it, whatever the page left out. */
 function valueOf(/** @type {FilterSection} */ s, /** @type {Record<string, any>} */ values) {
   const v = values ? values[s.id] : undefined;
-  if (s.kind === "one") return v != null ? v : s.base;
+  if (s.kind === "one" || s.kind === "sort") return v != null ? v : s.base;
   if (s.kind === "optional") return v != null ? v : null;
   if (s.kind === "many" || s.kind === "tokens") return Array.isArray(v) ? v : [];
   if (s.kind === "toggle") return v != null ? !!v : !!s.base;
@@ -118,7 +126,7 @@ function valueOf(/** @type {FilterSection} */ s, /** @type {Record<string, any>}
 
 /** A section with nothing picked. */
 function blankOf(/** @type {FilterSection} */ s) {
-  if (s.kind === "one") return s.base;
+  if (s.kind === "one" || s.kind === "sort") return s.base;
   if (s.kind === "optional") return null;
   if (s.kind === "toggle") return !!s.base;
   if (s.kind === "range") return rangeAny(s);
@@ -137,6 +145,7 @@ const labelOf = (/** @type {FilterSection} */ s, /** @type {string} */ value) =>
  * @returns {{ label: string, without: any }[]}
  */
 function picksOf(s, v) {
+  if (s.kind === "sort") return [];
   if (s.kind === "one") return v != null && v !== s.base ? [{ label: labelOf(s, v), without: s.base }] : [];
   if (s.kind === "optional") return v != null ? [{ label: labelOf(s, v), without: null }] : [];
   if (s.kind === "many") return v.map((x) => ({ label: labelOf(s, x), without: v.filter((y) => y !== x) }));
@@ -145,7 +154,7 @@ function picksOf(s, v) {
   return v.map((x) => ({ label: x, without: v.filter((y) => y !== x) }));
 }
 
-/** A list section's sub-columns: at most eight rows, balanced. */
+/** A list section's sub-columns: at most ten rows, balanced. */
 function rowsOf(/** @type {FilterSection} */ s) {
   const n = (s.options || []).length;
   const cols = Math.max(1, Math.ceil(n / MaxRows));
@@ -154,6 +163,7 @@ function rowsOf(/** @type {FilterSection} */ s) {
 
 /** A section's height on a desktop, in rows of options. */
 function heightOf(/** @type {FilterSection} */ s) {
+  if (isOrder(s)) return 1.5 + (s.options || []).length;
   if (isList(s)) return 1.5 + rowsOf(s);
   if (s.kind === "tokens") return 4;
   return s.note ? 3.5 : 2.5;
@@ -161,7 +171,7 @@ function heightOf(/** @type {FilterSection} */ s) {
 
 /**
  * The desktop's columns: sections in the page's order, a short one joining the first earlier column of
- * short ones it fits under.
+ * short ones it fits under, and a sort alone in its own.
  * @param {FilterSection[]} sections
  * @returns {FilterSection[][]}
  */
@@ -170,7 +180,7 @@ function packColumns(sections) {
   const cols = [];
   for (const s of sections) {
     const h = heightOf(s);
-    const short = h <= ShortSection;
+    const short = h <= ShortSection && !isOrder(s);
     const room = short && cols.find((c) => c.short && c.h + 0.8 + h <= ColumnRows);
     if (room) { room.items.push(s); room.h += 0.8 + h; } else cols.push({ items: [s], h, short });
   }
@@ -216,15 +226,16 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
   const panelRef = React.useRef(/** @type {HTMLDivElement | null} */ (null));
   const panelId = React.useId();
 
-  const shown = sections || [];
+  // A sort comes first, whatever its place among the page's sections.
+  const shown = [...(sections || []).filter(isOrder), ...(sections || []).filter((s) => !isOrder(s))];
   const read = (/** @type {FilterSection} */ s) => (s.kind === "range" && drafts[s.id] != null ? drafts[s.id] : valueOf(s, values));
   const set = (/** @type {string} */ id, /** @type {any} */ v) => onChange({ ...values, [id]: v });
   const picks = shown.flatMap((s) => picksOf(s, valueOf(s, values)).map((p) => ({ ...p, id: s.id })));
-  const clear = () => onChange({ ...values, ...Object.fromEntries(shown.map((s) => [s.id, blankOf(s)])) });
+  const clear = () => onChange({ ...values, ...Object.fromEntries(shown.filter((s) => !isOrder(s)).map((s) => [s.id, blankOf(s)])) });
 
   const choose = (/** @type {FilterSection} */ s, /** @type {string} */ option) => {
     const v = valueOf(s, values);
-    if (s.kind === "one") set(s.id, option);
+    if (s.kind === "one" || isOrder(s)) set(s.id, option);
     else if (s.kind === "optional") set(s.id, v === option ? null : option);
     else set(s.id, v.includes(option) ? v.filter((/** @type {string} */ x) => x !== option) : [...v, option]);
   };
@@ -235,7 +246,7 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
   const summary = (/** @type {FilterSection} */ s) => {
     const v = read(s);
     if (s.kind === "range") return (s.format || String)(v);
-    if (s.kind === "one") return labelOf(s, v);
+    if (s.kind === "one" || isOrder(s)) return labelOf(s, v);
     const p = picksOf(s, v);
     return !p.length ? anyLabel : p.length <= 2 ? p.map((x) => x.label).join(", ") : countLabel(p.length);
   };
@@ -379,6 +390,12 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
 
   const note = (/** @type {FilterSection} */ s) => s.note && <span className="k-filters__note">{s.note}</span>;
 
+  const orders = (/** @type {FilterSection} */ s) => (
+    <div className="k-filters__orders">
+      {(s.options || []).map((o) => optionButton(s, o, "k-filters__option k-filters__order"))}
+    </div>
+  );
+
   const desk = () => (
     <>
       <div className="k-filters__columns">
@@ -388,6 +405,7 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
               {col.map((s) => (
                 <div key={s.id} className="k-filters__section" role="group" aria-label={s.label}>
                   <span className="k-filters__heading">{s.label}</span>
+                  {isOrder(s) && orders(s)}
                   {isList(s) && (
                     <div className="k-filters__grid" style={{ gridTemplateRows: `repeat(${rowsOf(s)}, auto)` }}>
                       {(s.options || []).map((o) => optionButton(s, o, "k-filters__option"))}
@@ -421,36 +439,44 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
     </>
   );
 
+  // A section that folds: a row naming it and what it holds, opening to its options.
+  const fold = (/** @type {FilterSection} */ s) => {
+    const unfolded = openFold === s.id;
+    const marked = picksOf(s, read(s)).length > 0;
+    const summaryClass = "k-filters__summary" + (isOrder(s) ? " k-filters__summary--order" : marked ? " k-is-on" : "");
+    return (
+      <div key={s.id} className={"k-filters__fold" + (unfolded ? " k-is-open" : "")}>
+        <button type="button" className="k-filters__fold-head" aria-expanded={unfolded}
+          onClick={() => setFolded(unfolded ? null : s.id)}>
+          <span className="k-filters__fold-label">{s.label}</span>
+          <span className={summaryClass}>{summary(s)}</span>
+          <Icon name="chevron-down" size={16} className="k-filters__chevron" />
+        </button>
+        {unfolded && (
+          <div className="k-filters__fold-body" role="group" aria-label={s.label}>
+            {isOrder(s) && orders(s)}
+            {isList(s) && <div className="k-filters__tags">{(s.options || []).map((o) => optionButton(s, o, "k-filters__tag"))}</div>}
+            {s.kind === "range" && rangeControl(s)}
+            {s.kind === "tokens" && tokensControl(s, "k-filters__tag")}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const segmented = (/** @type {FilterSection} */ s) => s.kind === "one" && (s.options || []).length <= 4;
+
   const phoneView = () => (
     <>
       <div className="k-filters__body">
-        {shown.filter((s) => s.kind === "one" && (s.options || []).length <= 4).map((s) => (
+        {shown.filter(isOrder).map(fold)}
+        {shown.filter(segmented).map((s) => (
           <div key={s.id} className="k-filters__segments" role="group" aria-label={s.label}
             style={{ gridTemplateColumns: `repeat(${(s.options || []).length}, 1fr)` }}>
             {(s.options || []).map((o) => optionButton(s, o, "k-filters__segment"))}
           </div>
         ))}
-        {shown.filter((s) => s.kind !== "toggle" && !(s.kind === "one" && (s.options || []).length <= 4)).map((s) => {
-          const unfolded = openFold === s.id;
-          const marked = picksOf(s, read(s)).length > 0;
-          return (
-            <div key={s.id} className={"k-filters__fold" + (unfolded ? " k-is-open" : "")}>
-              <button type="button" className="k-filters__fold-head" aria-expanded={unfolded}
-                onClick={() => setFolded(unfolded ? null : s.id)}>
-                <span className="k-filters__fold-label">{s.label}</span>
-                <span className={"k-filters__summary" + (marked ? " k-is-on" : "")}>{summary(s)}</span>
-                <Icon name="chevron-down" size={16} className="k-filters__chevron" />
-              </button>
-              {unfolded && (
-                <div className="k-filters__fold-body" role="group" aria-label={s.label}>
-                  {isList(s) && <div className="k-filters__tags">{(s.options || []).map((o) => optionButton(s, o, "k-filters__tag"))}</div>}
-                  {s.kind === "range" && rangeControl(s)}
-                  {s.kind === "tokens" && tokensControl(s, "k-filters__tag")}
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {shown.filter((s) => s.kind !== "toggle" && !segmented(s) && !isOrder(s)).map(fold)}
         {shown.filter((s) => s.kind === "toggle").map((s) => (
           <div key={s.id} className="k-filters__switch">
             <span className="k-filters__switch-text">
@@ -487,7 +513,7 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
             <span className="k-filters__rail-label">{s.kind === "toggle" ? (s.option || s.label) : s.label}</span>
             {s.kind === "toggle"
               ? <span className={"k-filters__rail-switch" + (valueOf(s, values) ? " k-is-on" : "")} aria-hidden="true" />
-              : <span className={"k-filters__summary" + (picksOf(s, read(s)).length ? " k-is-on" : "")}>{summary(s)}</span>}
+              : <span className={"k-filters__summary" + (isOrder(s) ? " k-filters__summary--order" : picksOf(s, read(s)).length ? " k-is-on" : "")}>{summary(s)}</span>}
           </button>
         ))}
         {picks.length > 0 && <button type="button" className="k-filters__rail-item k-filters__rail-clear" onClick={clear}>{clearLabel}</button>}
@@ -496,7 +522,7 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
         {railSection && railSection.kind !== "toggle" && (
           <>
             <span className="k-filters__heading">{railSection.label}</span>
-            {isList(railSection) && (
+            {(isList(railSection) || isOrder(railSection)) && (
               <div className="k-filters__targets">
                 {(railSection.options || []).map((o) => optionButton(railSection, o, "k-filters__target"))}
               </div>

@@ -209,9 +209,12 @@ On a television an option's cell is as wide as the section's longest name. The p
 change arrives as the next whole `values`. A section is `{ id, label, kind }` with `kind` one of `one`
 (exactly one option, starting on `base`), `optional`, `many`, `toggle` (its `option`, with an optional
 `note`, starting on `base`, off by default, and counting only away from it; `offOption` words its chip
-when it is off and its `base` is on), `range` (`min`, `max`, `step`, `any`, `format`, `chip`) and `tokens` (`placeholder`); a list
-kind takes `options` as `{ value, label }`. A desktop draws columns, a phone folding sections, a page
-marked `data-tv` a rail of sections beside the controls of the one it is on. Its words are props:
+when it is off and its `base` is on), `range` (`min`, `max`, `step`, `any`, `format`, `chip`), `tokens` (`placeholder`) and `sort` (the
+order of what the page shows, one of its `options`, starting on `base`); a list kind and a sort take
+`options` as `{ value, label }`. A sort is no filter: the button never counts it, it is never a chip and
+Clear all leaves it, and it is drawn first, its orders one to a line with a ring on the one in force. A
+desktop draws columns, a phone folding sections, a page marked `data-tv` a rail of sections beside the
+controls of the one it is on. Its words are props:
 `label`, `clearLabel`, `doneLabel`, `anyLabel`, `countLabel(n)`, `removeLabel(label)`.
 
 ```jsx

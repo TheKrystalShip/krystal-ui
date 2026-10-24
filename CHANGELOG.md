@@ -1,5 +1,18 @@
 # Changelog
 
+## [9.2.0]
+
+### Added
+- **`FilterDrawer` takes a `sort` section**: the order of what the page shows, one of its named
+  `options`, starting on `base`. It is no filter: the button never counts it, it is never a chip, and
+  Clear all leaves it as it is. It is drawn first wherever the page passes it: on a desktop in a
+  column of its own, one order to a line with a ring filled on the order in force; on a phone as the
+  first row, which opens to the same list and names the order in force; on a television as the
+  rail's first section.
+
+### Changed
+- A `FilterDrawer` list on a desktop runs to ten rows before it wraps into another sub-column.
+
 ## [9.1.0]
 
 ### Added

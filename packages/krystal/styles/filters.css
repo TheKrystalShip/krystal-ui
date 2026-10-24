@@ -261,6 +261,32 @@
   box-shadow: var(--ring-focus);
 }
 
+/* A sort's orders: one to a line, a ring before each that is filled on the order in force. */
+.k-filters__orders {
+  display: flex;
+  flex-direction: column;
+}
+
+.k-filters__order {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.k-filters__order::before {
+  content: "";
+  flex: none;
+  box-sizing: border-box;
+  width: 12px;
+  height: 12px;
+  border: var(--edge-strong);
+  border-radius: var(--r-pill);
+}
+
+.k-filters__order.k-is-on::before {
+  border: 4px solid var(--krystal-teal);
+}
+
 /* ---- Phone: a segmented row, sections that fold open to tags, switch rows. */
 .k-filters__body {
   flex: 1;
@@ -346,6 +372,11 @@
   color: var(--krystal-teal);
 }
 
+/* A sort's summary names the order in force, which filters nothing, so it is never the colour of a pick. */
+.k-filters__summary--order {
+  color: var(--fg-2);
+}
+
 .k-filters__chevron {
   flex: none;
   color: var(--fg-4);
@@ -358,6 +389,29 @@
 
 .k-filters__fold-body {
   padding: 8px 14px 16px;
+}
+
+.k-filters__body > .k-filters__fold:first-child {
+  border-top: none;
+}
+
+.k-filters__fold + .k-filters__segments {
+  border-top: var(--edge);
+}
+
+.k-filters--phone .k-filters__order {
+  min-height: 42px;
+  padding: 0;
+  font-size: var(--text-md);
+}
+
+.k-filters--phone .k-filters__order::before {
+  width: 18px;
+  height: 18px;
+}
+
+.k-filters--phone .k-filters__order.k-is-on::before {
+  border-width: 6px;
 }
 
 .k-filters__tags {

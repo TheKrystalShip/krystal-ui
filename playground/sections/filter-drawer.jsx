@@ -4,8 +4,14 @@ import { Section, Sub } from "../kit.jsx";
 
 const opts = (...labels) => labels.map((label) => ({ value: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"), label }));
 
-// A film library's filters: Kind always holds one, Watched is a toggle.
+// A film library's filters: an order it is shown in, Kind always holds one, Watched is a toggle.
 const films = [
+  { id: "sort", label: "Sort by", kind: "sort", base: "added", options: [
+    { value: "added", label: "Recently added" }, { value: "first", label: "First added" },
+    { value: "name", label: "Name A\u2013Z" }, { value: "name-desc", label: "Name Z\u2013A" },
+    { value: "best", label: "Highest rated" }, { value: "worst", label: "Lowest rated" },
+    { value: "newest", label: "Newest first" }, { value: "oldest", label: "Oldest first" },
+  ] },
   { id: "kind", label: "Kind", kind: "one", base: "all", options: opts("All", "Movies", "TV shows", "Anime") },
   { id: "genre", label: "Genre", kind: "many", options: opts("Action", "Action & Adventure", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Mystery", "Romance", "Sci-Fi & Fantasy", "Science Fiction", "TV Movie", "Thriller", "War", "War & Politics", "Western") },
   { id: "decade", label: "Decade", kind: "many", options: opts("2020s", "2010s", "2000s", "1990s", "1980s", "1970s", "1960s", "1950s", "1940s") },
@@ -45,7 +51,7 @@ function Example({ id, sections, start, placeholder }) {
 export default function FilterDrawerSection() {
   return (
     <Section id="filter-drawer" title="FilterDrawer">
-      <Sub title="A film library: one, many, optional and a toggle">
+      <Sub title="A film library: a sort, one, many, optional and a toggle">
         <Example id="filters-films" sections={films} placeholder="Any movie or show"
           start={{ kind: "all", genre: ["comedy", "horror"], decade: ["1980s"] }} />
       </Sub>
