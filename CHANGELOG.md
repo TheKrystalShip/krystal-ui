@@ -1,5 +1,19 @@
 # Changelog
 
+## [8.3.0]
+
+### Added
+- **`FilterDrawer`**, the filters of whatever a page shows. It stands in a SearchField's new `filters`
+  slot as an icon button counting the picks, and drops a drawer from the field across its width, over
+  the page, which dims. The page passes `sections` built from what it can show, each `one`,
+  `optional`, `many`, `toggle`, `range` or `tokens`, and keeps `values`, receiving each change as the
+  next whole `values`. A desktop draws the sections in columns, a long list in balanced sub-columns and
+  a short section under an earlier one, with a chip per pick and Clear all; a phone draws a short
+  `one` section as a segmented row, toggles as switches and the rest as sections that fold open to
+  tags; a television draws a rail of the sections beside the controls of the one it is on, and
+  `ref.current.back()` answers its Back. A picked option is drawn by colour alone.
+- `SearchField` takes `filters`, drawn in the leading icon's place.
+
 ## [8.2.0]
 
 ### Added

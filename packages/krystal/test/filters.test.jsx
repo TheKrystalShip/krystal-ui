@@ -1,0 +1,187 @@
+import React from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { FilterDrawer, SearchField } from "@thekrystalship/krystal";
+
+const options = (...labels) => labels.map((label) => ({ value: label.toLowerCase(), label }));
+const sections = [
+  { id: "kind", label: "Kind", kind: "one", base: "all", options: options("All", "Movies", "Shows") },
+  { id: "genre", label: "Genre", kind: "many", options: options("Comedy", "Drama", "Horror") },
+  { id: "rating", label: "Rating", kind: "optional", options: options("Eight", "Seven") },
+  { id: "watched", label: "Watched", kind: "toggle", option: "Hide watched", note: "From your history" },
+  { id: "count", label: "Ingredients", kind: "range", min: 1, max: 10, any: 10, format: (v) => (v === 10 ? "Any" : "Up to " + v) },
+  { id: "have", label: "I have", kind: "tokens", placeholder: "Add one" },
+];
+
+/** A page holding the values, as a site does in its address. */
+function Page({ start = {}, onValues = () => {}, onSubmit = () => {}, drawerRef }) {
+  const [values, setValues] = React.useState(start);
+  return (
+    <>
+      <SearchField value="" onSubmit={onSubmit} placeholder="Search"
+        filters={<FilterDrawer ref={drawerRef} sections={sections} values={values} onChange={(v) => { setValues(v); onValues(v); }} />} />
+      <p>Outside</p>
+    </>
+  );
+}
+
+const trigger = () => screen.getByRole("button", { name: /^Filters/ });
+
+describe("FilterDrawer", () => {
+  afterEach(() => {
+    document.documentElement.removeAttribute("data-tv");
+  });
+
+  it("stands in the field's icon place and counts what is picked", () => {
+    render(<Page start={{ genre: ["comedy", "horror"], kind: "movies" }} />);
+    expect(trigger().getAttribute("aria-label")).toBe("Filters (3)");
+    expect(trigger().getAttribute("aria-expanded")).toBe("false");
+    expect(trigger().closest("form").className).toContain("k-searchfield--filters");
+  });
+
+  it("stays open while options are picked, each section answering its own kind", async () => {
+    const user = userEvent.setup();
+    const onValues = vi.fn();
+    render(<Page onValues={onValues} />);
+    await user.click(trigger());
+    const panel = screen.getByRole("group", { name: "Filters" });
+
+    await user.click(within(panel).getByRole("button", { name: "Comedy" }));
+    await user.click(within(panel).getByRole("button", { name: "Horror" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ genre: ["comedy", "horror"] }));
+
+    await user.click(within(panel).getByRole("button", { name: "Eight" }));
+    await user.click(within(panel).getByRole("button", { name: "Seven" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ rating: "seven" }));
+    await user.click(within(panel).getByRole("button", { name: "Seven" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ rating: null }));
+
+    await user.click(within(panel).getByRole("button", { name: "Movies" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ kind: "movies" }));
+
+    await user.click(within(panel).getByRole("button", { name: "Hide watched" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ watched: true }));
+
+    expect(within(panel).getByRole("button", { name: "Comedy" }).getAttribute("aria-pressed")).toBe("true");
+    expect(trigger().getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("adds a typed word without submitting the search", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    const onValues = vi.fn();
+    render(<Page onSubmit={onSubmit} onValues={onValues} />);
+    await user.click(trigger());
+    await user.type(screen.getByRole("textbox", { name: "I have" }), "eggs{Enter}");
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ have: ["eggs"] }));
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(trigger().getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("puts a chip on every pick in its footer, each taking its pick off, and Clear all every one", async () => {
+    const user = userEvent.setup();
+    const onValues = vi.fn();
+    render(<Page onValues={onValues} start={{ kind: "shows", genre: ["drama"], count: 4, watched: true, have: ["eggs"] }} />);
+    await user.click(trigger());
+    await user.click(screen.getByRole("button", { name: "Remove Drama" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ genre: [] }));
+    await user.click(screen.getByRole("button", { name: "Remove Up to 4" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ count: 10 }));
+    await user.click(screen.getByRole("button", { name: "Clear all" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({
+      kind: "all", genre: [], rating: null, watched: false, count: 10, have: [],
+    }));
+    expect(trigger().getAttribute("aria-label")).toBe("Filters");
+  });
+
+  it("closes on a press outside it, on the search and on Escape", async () => {
+    const user = userEvent.setup();
+    render(<Page />);
+    await user.click(trigger());
+    fireEvent.pointerDown(screen.getByText("Outside"));
+    expect(screen.queryByRole("group", { name: "Filters" })).toBeNull();
+
+    await user.click(trigger());
+    fireEvent.submit(trigger().closest("form"));
+    expect(screen.queryByRole("group", { name: "Filters" })).toBeNull();
+
+    await user.click(trigger());
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("group", { name: "Filters" })).toBeNull();
+    expect(document.activeElement).toBe(trigger());
+  });
+
+  it("packs a short section under an earlier one and wraps a long list into sub-columns", async () => {
+    const user = userEvent.setup();
+    const many = { id: "region", label: "Region", kind: "many", options: Array.from({ length: 20 }, (_, i) => ({ value: "r" + i, label: "Region " + i })) };
+    const short = [
+      { id: "kind", label: "Kind", kind: "one", base: "a", options: options("A", "B", "C") },
+      many,
+      { id: "watched", label: "Watched", kind: "toggle", option: "Hide watched" },
+    ];
+    render(<SearchField filters={<FilterDrawer sections={short} values={{}} onChange={() => {}} />} />);
+    await user.click(trigger());
+    const columns = document.querySelectorAll(".k-filters__column");
+    expect(columns).toHaveLength(2);
+    expect(within(columns[0]).getByRole("group", { name: "Watched" })).toBeTruthy();
+    expect(columns[1].querySelector(".k-filters__grid").style.gridTemplateRows).toBe("repeat(7, auto)");
+  });
+
+  it("on a phone folds its sections, keeps a short one-of row in view and draws toggles as switches", async () => {
+    const user = userEvent.setup();
+    const original = window.matchMedia;
+    window.matchMedia = (query) => ({ ...original(query), matches: query === "(max-width: 768px)" });
+    try {
+      const onValues = vi.fn();
+      render(<Page onValues={onValues} start={{ genre: ["drama"] }} />);
+      await user.click(trigger());
+      expect(screen.getByRole("button", { name: "Movies" })).toBeTruthy();
+      const genre = screen.getByRole("button", { name: /^Genre/ });
+      expect(genre.getAttribute("aria-expanded")).toBe("true");
+      expect(genre.textContent).toContain("Drama");
+      await user.click(screen.getByRole("button", { name: /^Rating/ }));
+      expect(screen.getByRole("button", { name: /^Genre/ }).getAttribute("aria-expanded")).toBe("false");
+      await user.click(screen.getByRole("button", { name: "Eight" }));
+      expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ rating: "eight" }));
+      await user.click(screen.getByRole("switch", { name: "Hide watched" }));
+      expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ watched: true }));
+      await user.click(screen.getByRole("button", { name: "Done" }));
+      expect(screen.queryByRole("group", { name: "Filters" })).toBeNull();
+    } finally {
+      window.matchMedia = original;
+    }
+  });
+
+  it("on a television shows the rail's section beside it, and Back leaves the section and then closes", async () => {
+    document.documentElement.setAttribute("data-tv", "");
+    const user = userEvent.setup();
+    const ref = React.createRef();
+    const onValues = vi.fn();
+    render(<Page drawerRef={ref} onValues={onValues} />);
+    expect(ref.current.back()).toBe(false);
+    await user.click(trigger());
+    const rail = (name) => document.querySelector(`[data-filter-rail="${name}"]`);
+    expect(document.activeElement).toBe(rail("kind"));
+
+    await user.click(rail("watched"));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ watched: true }));
+
+    fireEvent.focus(rail("genre"));
+    const pane = document.querySelector(".k-filters__pane");
+    expect(within(pane).getByRole("button", { name: "Horror" })).toBeTruthy();
+    await user.click(rail("genre"));
+    await user.click(within(pane).getByRole("button", { name: "Horror" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ genre: ["horror"] }));
+
+    within(pane).getByRole("button", { name: "Horror" }).focus();
+    let used;
+    act(() => { used = ref.current.back(); });
+    expect(used).toBe(true);
+    expect(document.activeElement).toBe(rail("genre"));
+    act(() => { used = ref.current.back(); });
+    expect(used).toBe(true);
+    expect(screen.queryByRole("group", { name: "Filters" })).toBeNull();
+    expect(document.activeElement).toBe(trigger());
+  });
+});

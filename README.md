@@ -38,7 +38,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` (`cinematic`, or `variant="card"`: the bordered veil card), and the parts its content is drawn from: `HeroStatus`, `HeroBody`, `HeroHeading`, `HeroName`, `HeroTags`, `HeroTag` (`glass`, `verbatim`, `icon`), `HeroBar`, `HeroGroup`, `HeroDivider`, `HeroNote` (a line on the art), `HeroButton` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
-| Cards and lists | `BriefCard` (with `BriefList`, `BriefItem` (a row: `tone`, `icon`, `title`, `escalated` for a row that needs a person, `controls` at its end, `detail`, `action`, a button with `onClick` or a link with `href`), `BriefEmpty` and `FactList` for its body), `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art, a `ribbon` hanging from its top edge for keeping the thing, an `eyebrow` above the name saying what kind of thing it is, and along its foot a `progress` bar or one short bar per part in `segments`), `CollectionTile` (a set of titles as a link: `fan` draws three posters fanned beside its mark and name, `strip` its posters in order, numbered, and with `total` and `watched` follows somebody through it; it fills its slot at a fixed shape and takes a TvCard's focus on a television), `Rail`, `Shelf` (a titled section laying its items out in a grid on the page: a heading, a `sub` line, an `action` opposite such as View all, a `controls` row, `columns` across and `narrowColumns` once the shelf is narrow, an `empty` node), `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Steps` (where somebody is in a sequence they can move around in: a numbered `rail` with each step's label and detail, or `dots`), `SearchField` (a large pill: icon, input and a submit button in one frame, a `form` that calls `onSubmit(value)`), `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
+| Cards and lists | `BriefCard` (with `BriefList`, `BriefItem` (a row: `tone`, `icon`, `title`, `escalated` for a row that needs a person, `controls` at its end, `detail`, `action`, a button with `onClick` or a link with `href`), `BriefEmpty` and `FactList` for its body), `ShowcaseCard` (key art, three facts, a status and an action, with optional round `tools` on the art, a `ribbon` hanging from its top edge for keeping the thing, an `eyebrow` above the name saying what kind of thing it is, and along its foot a `progress` bar or one short bar per part in `segments`), `CollectionTile` (a set of titles as a link: `fan` draws three posters fanned beside its mark and name, `strip` its posters in order, numbered, and with `total` and `watched` follows somebody through it; it fills its slot at a fixed shape and takes a TvCard's focus on a television), `Rail`, `Shelf` (a titled section laying its items out in a grid on the page: a heading, a `sub` line, an `action` opposite such as View all, a `controls` row, `columns` across and `narrowColumns` once the shelf is narrow, an `empty` node), `Pagination`, `Breadcrumbs` (a one-line trail of real links that ellipsizes at phone width; the site computes the `items`, `onNavigate` lets a single-page site take a plain click), `SubTabs`, `Steps` (where somebody is in a sequence they can move around in: a numbered `rail` with each step's label and detail, or `dots`), `SearchField` (a large pill: icon, input and a submit button in one frame, a `form` that calls `onSubmit(value)`), `FilterDrawer` (the filters of whatever a page shows, from its `sections`, in a SearchField's `filters` slot), `Toolbar` (+ `ToolbarSearch`, `ToolbarFilters`, `ToolbarSort`, `ToolbarButton`, `ToolbarCount`, `ToolbarSpacer`, `useFilters`) |
 | Slides | `useCarousel` (one of several slides at a time, turning by itself on an interval: held still under a mouse, under keyboard focus, on a hidden page and while `paused`, never turning by itself under reduced motion, its time started over by a key or a press in it, and turned by a swipe), `CarouselPager` (a mark a slide, the shown one filling over the slide's time; `indicator` for a television, where the marks are not focused) |
 | Labels | `Pill` (a count, a state or a kind as a small non-interactive label), `Kbd` (a key, or a chord with `keys`, in mono) |
 | Layout | `Stack` (a column), `Cluster` (a wrapping row), `Grid` (columns of a `min` width, or `cols`), `Container` (the centred page column, `size` sm to xl or full); each takes `gap` as a spacing step or `xs` to `xl`, and `as` |
@@ -193,10 +193,27 @@ to the next enabled option and choose it. Use it for a few short labels beside o
 
 `SearchField` is the field a page opens with, whose answer waits for a press (`ToolbarSearch` is the small
 live filter): `value`, `onChange(value)`, `onSubmit(value)`, `placeholder`, `icon`, `submitLabel`, `actions`
-before the submit, `inputProps` (spread onto the inner `<input>`: `data-*`, `inputMode`), and `size` `lg` or `xl`.
+before the submit, `inputProps` (spread onto the inner `<input>`: `data-*`, `inputMode`), `filters` (a
+`FilterDrawer`, in the icon's place), and `size` `lg` or `xl`.
 
 ```jsx
 <SearchField value={draft} onChange={setDraft} onSubmit={run} placeholder="Any movie or show" size="xl" />
+```
+
+`FilterDrawer` is the filters of whatever a page shows, in a SearchField's `filters` slot: an icon button
+counting the picks, and a drawer across the field's width over the page, open while somebody picks and
+closed by a press outside it, the search, Escape or a television's Back (`ref.current.back()`, which says
+whether it used the key). The page builds `sections` from what it can show and keeps `values`; each
+change arrives as the next whole `values`. A section is `{ id, label, kind }` with `kind` one of `one`
+(exactly one option, starting on `base`), `optional`, `many`, `toggle` (its `option`, with an optional
+`note`), `range` (`min`, `max`, `step`, `any`, `format`, `chip`) and `tokens` (`placeholder`); a list
+kind takes `options` as `{ value, label }`. A desktop draws columns, a phone folding sections, a page
+marked `data-tv` a rail of sections beside the controls of the one it is on. Its words are props:
+`label`, `clearLabel`, `doneLabel`, `anyLabel`, `countLabel(n)`, `removeLabel(label)`.
+
+```jsx
+<SearchField size="xl" value={q} onChange={setQ} onSubmit={run} placeholder="Any movie or show"
+  filters={<FilterDrawer sections={sections} values={values} onChange={setValues} />} />
 ```
 
 `Slider` picks one number along a line (`min`, `max`, `step`, `value` and `onChange`, or `defaultValue`)

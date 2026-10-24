@@ -52,6 +52,7 @@ export const EXAMPLES = {
   fullscreen: fromSection("fullscreen"),
   confirm: fromSection("confirm"),
   "search-field": fromSection("search-field"),
+  "filter-drawer": fromSection("filter-drawer"),
   steps: fromSection("steps"),
   "form-dialog": fromSection("form-dialog"),
   drawer: fromSection("drawer"),

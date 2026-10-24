@@ -212,6 +212,11 @@ export const PAGES = [
     versus: "ToolbarSearch for the small filter that narrows a list as it is typed.",
   },
   {
+    id: "filter-drawer", name: "FilterDrawer", group: "Forms and page furniture", exports: ["FilterDrawer"], examples: ["filter-drawer"],
+    summary: "The filters of whatever a page shows: a button at the start of a SearchField and a drawer across the field's width, in columns, folds or a television's rail.",
+    versus: "ToolbarFilters for a list's few single-choice filters in a toolbar.",
+  },
+  {
     id: "toolbar", name: "Toolbar", group: "Forms and page furniture", exports: ["Toolbar", "ToolbarSearch", "ToolbarFilters", "ToolbarSort", "ToolbarButton", "ToolbarCount", "ToolbarSpacer", "useFilters"], examples: ["toolbar"],
     summary: "The filter, search, sort and action bar that sits directly on a page.",
   },

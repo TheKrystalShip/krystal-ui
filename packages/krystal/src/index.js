@@ -23,6 +23,7 @@ export { ErrorBoundary } from "./components/ErrorBoundary.jsx";
 export { CarouselPager } from "./components/CarouselPager.jsx";
 export { CollectionTile } from "./components/CollectionTile.jsx";
 export { Dock, DockFab, useDock } from "./components/Dock.jsx";
+export { FilterDrawer } from "./components/FilterDrawer.jsx";
 export { FormDialog } from "./components/FormDialog.jsx";
 export { Form, FormError, FormField, FormScope, FormSubmit } from "./components/Form.jsx";
 export { Footer, GithubMark } from "./components/Footer.jsx";

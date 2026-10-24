@@ -248,6 +248,19 @@ export const BEHAVIOUR = {
     ],
     semantics: ["A `<form role=\"search\">`; the input is named by `label`, or the placeholder."],
   },
+  "filter-drawer": {
+    keys: [
+      ["Enter / Space", "On the button, opens and closes the drawer; on an option, picks it or lets it go"],
+      ["Escape", "Closes the drawer and returns focus to the button; on a television, Back does this through `back()`"],
+      ["Enter", "In a tokens field, adds the word without submitting the search"],
+      ["Tab", "Moves through the sections' options in order"],
+    ],
+    semantics: [
+      "The button names the drawer and its count (`aria-expanded`, `aria-controls`); each option is a button with `aria-pressed`.",
+      "Each section is a `group` named by its heading; a phone's folding row has `aria-expanded`, and a toggle is a `switch`.",
+      "It stays open while options are picked and closes on a press outside it or on the field's search.",
+    ],
+  },
   "confirm-dialog": {
     keys: [["Escape", "Cancels; held while the confirmation is working"]],
     semantics: ["A Dialog: the confirm is a danger Button with the dialog's icon, and `busyLabel` replaces its label while it works."],

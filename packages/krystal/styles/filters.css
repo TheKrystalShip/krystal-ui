@@ -1,0 +1,533 @@
+/* ============================================================================
+   filters.css — <FilterDrawer>: the button at the start of a SearchField and the drawer it drops from
+   the field's lower edge, across the field's width and over the page, which dims behind it. A picked
+   option is drawn by colour alone: the accent's ink, and on a tag or a target its border and tint.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+/* The field holds the drawer: it is what the drawer hangs from, and it rises over the dimmed page. */
+.k-searchfield--filters {
+  position: relative;
+  padding-left: 6px;
+}
+
+.k-searchfield--xl.k-searchfield--filters {
+  padding-left: 8px;
+}
+
+.k-searchfield:has(> .k-filters.k-is-open) {
+  z-index: 36;
+  border-color: var(--border-accent);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.k-filters {
+  display: contents;
+}
+
+/* ---- The button: an icon with no frame until it is pointed at, the accent and a count once anything
+   is picked. */
+.k-filters__trigger {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--fg-3);
+  cursor: pointer;
+  transition: border-color var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out);
+}
+
+.k-searchfield--xl .k-filters__trigger {
+  width: 44px;
+  height: 44px;
+}
+
+.k-filters__trigger:hover,
+.k-filters__trigger:focus-visible {
+  border-color: var(--border-strong);
+  color: var(--fg-1);
+  outline: none;
+}
+
+.k-filters__trigger.k-is-on {
+  color: var(--krystal-teal);
+}
+
+.k-filters__badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: var(--r-pill);
+  background: var(--krystal-teal);
+  color: var(--on-accent);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: var(--w-bold);
+  line-height: 17px;
+  text-align: center;
+}
+
+.k-filters__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 35;
+  background: color-mix(in srgb, var(--scrim-base) 45%, transparent);
+}
+
+/* ---- The drawer, under the field and as wide as it. */
+.k-filters__panel {
+  position: absolute;
+  top: 100%;
+  left: -1px;
+  right: -1px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: var(--edge-accent);
+  border-top: var(--edge);
+  border-radius: 0 0 var(--r-sm) var(--r-sm);
+  background: var(--surface-1);
+  box-shadow: var(--shadow-2);
+  color: var(--fg-2);
+  font-size: var(--text-sm);
+  text-align: left;
+  overflow: hidden;
+}
+
+.k-filters__heading {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--fg-4);
+  font-size: 10.5px;
+  font-weight: var(--w-semibold);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.k-filters__note {
+  display: block;
+  margin-top: 4px;
+  color: var(--fg-4);
+  font-size: var(--text-xs);
+  line-height: var(--lh-snug);
+}
+
+.k-filters__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 26px;
+  border-top: var(--edge);
+}
+
+.k-filters__spacer {
+  flex: 1;
+}
+
+.k-filters__clear {
+  padding: 4px 0;
+  border: none;
+  background: none;
+  color: var(--fg-3);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.k-filters__clear:hover {
+  color: var(--fg-1);
+}
+
+.k-filters__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 8px 0 10px;
+  border: 1px solid var(--border-accent);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--krystal-teal);
+  font: inherit;
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.k-filters__chip:hover {
+  background: var(--krystal-teal-dim);
+}
+
+.k-filters__tokens {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 200px;
+}
+
+.k-filters__token-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.k-filters__range {
+  min-width: 200px;
+}
+
+/* ---- Desktop: columns of plain options. */
+.k-filters__columns {
+  min-height: 0;
+  padding: 22px 26px 18px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Every column draws its divider; the lines start one divider and its room to the left, where the
+   drawer's edge hides it, so the first column on each line, wrapped or not, has none. */
+.k-filters__lines {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 22px;
+  margin-left: -31px;
+}
+
+.k-filters__column {
+  flex: 1 1 auto;
+  padding: 0 30px;
+  border-left: var(--edge);
+}
+
+.k-filters__section + .k-filters__section {
+  margin-top: 20px;
+}
+
+.k-filters__grid {
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: start;
+  column-gap: 24px;
+}
+
+.k-filters__option {
+  display: block;
+  padding: 4px 0;
+  border: none;
+  background: none;
+  color: var(--fg-2);
+  font: inherit;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.k-filters__option:hover {
+  color: var(--fg-1);
+}
+
+.k-filters__option.k-is-on {
+  color: var(--krystal-teal);
+  font-weight: var(--w-semibold);
+}
+
+.k-filters__option:focus-visible {
+  outline: none;
+  border-radius: var(--r-sm);
+  box-shadow: var(--ring-focus);
+}
+
+/* ---- Phone: a segmented row, sections that fold open to tags, switch rows. */
+.k-filters__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.k-filters__segments {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+}
+
+.k-filters__segment,
+.k-filters__tag {
+  border: var(--edge-strong);
+  background: transparent;
+  color: var(--fg-2);
+  font: inherit;
+  cursor: pointer;
+}
+
+.k-filters__segment {
+  height: 38px;
+  padding: 0 4px;
+  border-radius: var(--r-sm);
+}
+
+.k-filters__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--r-pill);
+}
+
+.k-filters__segment.k-is-on,
+.k-filters__tag.k-is-on {
+  border-color: var(--border-accent);
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal);
+  font-weight: var(--w-semibold);
+}
+
+.k-filters__fold {
+  border-top: var(--edge);
+}
+
+.k-filters__fold-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 52px;
+  padding: 0 14px;
+  border: none;
+  background: none;
+  color: var(--fg-1);
+  font: inherit;
+  font-size: var(--text-md);
+  text-align: left;
+  cursor: pointer;
+}
+
+.k-filters__fold.k-is-open .k-filters__fold-head {
+  background: var(--veil-1);
+}
+
+.k-filters__summary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--fg-4);
+  font-size: var(--text-sm);
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.k-filters__summary.k-is-on {
+  color: var(--krystal-teal);
+}
+
+.k-filters__chevron {
+  flex: none;
+  color: var(--fg-4);
+  transition: transform var(--d-fast) var(--ease-out);
+}
+
+.k-filters__fold.k-is-open .k-filters__chevron {
+  transform: rotate(180deg);
+}
+
+.k-filters__fold-body {
+  padding: 8px 14px 16px;
+}
+
+.k-filters__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.k-filters__switch {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 14px;
+  border-top: var(--edge);
+  color: var(--fg-1);
+  font-size: var(--text-md);
+}
+
+.k-filters__switch-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.k-filters--phone .k-filters__foot {
+  padding: 10px 14px;
+}
+
+/* ---- Television: the rail of sections beside the controls of the one it is on. */
+.k-filters__tv {
+  display: flex;
+  min-height: 0;
+  height: 350px;
+  max-height: 100%;
+}
+
+.k-filters__rail {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 236px;
+  padding: 10px;
+  border-right: var(--edge);
+  overflow: hidden;
+}
+
+.k-filters__rail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 12px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--fg-1);
+  font: inherit;
+  font-size: var(--text-base);
+  text-align: left;
+  cursor: pointer;
+}
+
+.k-filters__rail-label {
+  flex: none;
+}
+
+.k-filters__rail-item .k-filters__summary {
+  font-size: var(--text-xs);
+}
+
+.k-filters__rail-item.k-is-current {
+  background: var(--veil-1);
+}
+
+.k-filters__rail-clear {
+  margin-top: auto;
+  color: var(--fg-3);
+}
+
+.k-filters__rail-switch {
+  position: relative;
+  flex: none;
+  width: 32px;
+  height: 18px;
+  margin-left: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-pill);
+  background: var(--surface-3);
+}
+
+.k-filters__rail-switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--r-pill);
+  background: var(--fg-2);
+}
+
+.k-filters__rail-switch.k-is-on {
+  border-color: transparent;
+  background: var(--krystal-teal);
+}
+
+.k-filters__rail-switch.k-is-on::after {
+  left: 16px;
+  background: var(--on-accent);
+}
+
+.k-filters__pane {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.k-filters__targets {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.k-filters__target {
+  display: block;
+  height: 34px;
+  padding: 0 12px;
+  line-height: 32px;
+  text-align: left;
+  overflow: hidden;
+  border: var(--edge-strong);
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--fg-2);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.k-filters__target.k-is-on {
+  border-color: var(--border-accent);
+  background: var(--krystal-teal-dim);
+  color: var(--krystal-teal);
+  font-weight: var(--w-semibold);
+}
+
+.k-filters--tv .k-filters__token-list .k-filters__target {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.k-filters--tv .k-filters__tokens .k-filters__token-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.k-filters--tv .k-filters__range {
+  max-width: 480px;
+}
+
+/* Focus on a television turns a rail item or a target into the light pill every control becomes. */
+:root[data-tv] :is(.k-filters__rail-item, .k-filters__target, .k-filters__trigger):focus-visible {
+  border-color: transparent;
+  background: var(--fg-1);
+  color: var(--canvas);
+  box-shadow: var(--glow-accent);
+}
+
+:root[data-tv] .k-filters__rail-item:focus-visible .k-filters__summary {
+  color: var(--canvas);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-filters__trigger,
+  .k-filters__chevron {
+    transition: none;
+  }
+}
+}
