@@ -15,12 +15,12 @@ const sections = [
 ];
 
 /** A page holding the values, as a site does in its address. */
-function Page({ start = {}, onValues = () => {}, onSubmit = () => {}, drawerRef }) {
+function Page({ start = {}, onValues = () => {}, onSubmit = () => {}, drawerRef, list = sections }) {
   const [values, setValues] = React.useState(start);
   return (
     <>
       <SearchField value="" onSubmit={onSubmit} placeholder="Search"
-        filters={<FilterDrawer ref={drawerRef} sections={sections} values={values} onChange={(v) => { setValues(v); onValues(v); }} />} />
+        filters={<FilterDrawer ref={drawerRef} sections={list} values={values} onChange={(v) => { setValues(v); onValues(v); }} />} />
       <p>Outside</p>
     </>
   );
@@ -92,6 +92,33 @@ describe("FilterDrawer", () => {
     expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({
       kind: "all", genre: [], rating: null, watched: false, count: 10, have: [],
     }));
+    expect(trigger().getAttribute("aria-label")).toBe("Filters");
+  });
+
+  it("counts a toggle only away from its base, and Clear all puts it back on", async () => {
+    const user = userEvent.setup();
+    const onValues = vi.fn();
+    const list = [
+      { id: "genre", label: "Genre", kind: "many", options: options("Comedy", "Drama") },
+      { id: "allergens", label: "Allergens", kind: "toggle", option: "Hide my allergens", offOption: "Showing my allergens", base: true, note: "Peanuts" },
+    ];
+    render(<Page list={list} onValues={onValues} />);
+    expect(trigger().getAttribute("aria-label")).toBe("Filters");
+    await user.click(trigger());
+    const panel = screen.getByRole("group", { name: "Filters" });
+    expect(within(panel).getByRole("button", { name: "Hide my allergens" }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.queryByRole("button", { name: /^Remove/ })).toBeNull();
+
+    await user.click(within(panel).getByRole("button", { name: "Hide my allergens" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ allergens: false }));
+    expect(trigger().getAttribute("aria-label")).toBe("Filters (1)");
+    await user.click(screen.getByRole("button", { name: "Remove Showing my allergens" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ allergens: true }));
+
+    await user.click(within(panel).getByRole("button", { name: "Hide my allergens" }));
+    await user.click(within(panel).getByRole("button", { name: "Comedy" }));
+    await user.click(screen.getByRole("button", { name: "Clear all" }));
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ genre: [], allergens: true }));
     expect(trigger().getAttribute("aria-label")).toBe("Filters");
   });
 

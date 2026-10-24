@@ -15,7 +15,7 @@ const films = [
   { id: "watched", label: "Watched", kind: "toggle", option: "Hide watched" },
 ];
 
-// A recipe collection's filters: a slider, typed words, a long list and toggles with a note.
+// A recipe collection's filters: a slider, typed words, a long list and toggles, one starting on with a note.
 const recipes = [
   { id: "time", label: "Time", kind: "optional", options: opts("Under 30 min", "Under 60 min") },
   { id: "difficulty", label: "Difficulty", kind: "many", options: opts("Easy", "Medium", "Hard") },
@@ -25,7 +25,8 @@ const recipes = [
   { id: "region", label: "Region", kind: "many", options: opts("Dutch", "Belgian", "German", "Swiss", "British", "Irish", "Spanish", "Catalan", "Basque", "Bosnian", "Croatian", "Serbian", "Italian", "French", "Greek", "Portuguese", "Turkish", "Middle Eastern", "Moroccan", "North African", "Indian", "Indonesian", "Thai", "Chinese", "Japanese", "Mexican", "American", "Brazilian", "Peruvian", "Caribbean", "Korean", "Vietnamese") },
   { id: "label", label: "Nutrition and diet", kind: "many", options: opts("High protein", "High fibre", "Low fat", "Low sugar", "Low salt", "Under 500 kcal", "Vegetarian", "Vegan") },
   { id: "season", label: "Season", kind: "toggle", option: "In season only" },
-  { id: "allergens", label: "Allergens", kind: "toggle", option: "Hide my allergens", note: "Peanuts, shellfish" },
+  { id: "allergens", label: "Allergens", kind: "toggle", option: "Hide my allergens", offOption: "Showing my allergens",
+    base: true, note: "Peanuts, shellfish" },
 ];
 
 function Example({ id, sections, start, placeholder }) {
@@ -48,7 +49,7 @@ export default function FilterDrawerSection() {
         <Example id="filters-films" sections={films} placeholder="Any movie or show"
           start={{ kind: "all", genre: ["comedy", "horror"], decade: ["1980s"] }} />
       </Sub>
-      <Sub title="A recipe collection: a range, typed words, a long list and a toggle with a note">
+      <Sub title="A recipe collection: a range, typed words, a long list and a toggle starting on, with a note">
         <Example id="filters-recipes" sections={recipes} placeholder="Recipes, ingredients, regions"
           start={{ time: "under-30-min", region: ["italian"], label: ["vegetarian"], have: ["tomatoes"] }} />
       </Sub>

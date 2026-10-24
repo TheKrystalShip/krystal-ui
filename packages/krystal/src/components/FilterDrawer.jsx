@@ -24,7 +24,7 @@ import { onTelevision } from "../lib/television.js";
 //   one       exactly one option, starting on `base`        { value: "movies" }
 //   optional  none or one option                            { value: "8" } or null
 //   many      any number of options                         ["comedy", "horror"]
-//   toggle    its one `option`, on or off                   true
+//   toggle    its one `option`, on or off, starting on `base` true
 //   range     a number from `min` to `max`; `any` is the value that filters nothing
 //   tokens    words the person types                        ["tomatoes"]
 //
@@ -59,8 +59,10 @@ import { onTelevision } from "../lib/television.js";
  * @property {string} label Its heading.
  * @property {"one" | "optional" | "many" | "toggle" | "range" | "tokens"} kind What it holds.
  * @property {FilterOption[]} [options] A list section's options, in the page's order.
- * @property {string} [base] A `one` section's starting option, which counts as no filter.
- * @property {string} [option] A toggle's one option, the words of its switch and its chip.
+ * @property {string | boolean} [base] Where a section starts, which counts as no filter: a `one` section's
+ *   option, or whether a toggle starts on (off by default).
+ * @property {string} [option] A toggle's one option, the words of its switch and of its chip when on.
+ * @property {string} [offOption] The words of a toggle's chip when it is off and its `base` is on; `option` by default.
  * @property {string} [note] A line under a toggle's option.
  * @property {number} [min] A range's lowest value.
  * @property {number} [max] A range's highest value.
@@ -110,7 +112,7 @@ function valueOf(/** @type {FilterSection} */ s, /** @type {Record<string, any>}
   if (s.kind === "one") return v != null ? v : s.base;
   if (s.kind === "optional") return v != null ? v : null;
   if (s.kind === "many" || s.kind === "tokens") return Array.isArray(v) ? v : [];
-  if (s.kind === "toggle") return !!v;
+  if (s.kind === "toggle") return v != null ? !!v : !!s.base;
   return typeof v === "number" ? v : rangeAny(s);
 }
 
@@ -118,7 +120,7 @@ function valueOf(/** @type {FilterSection} */ s, /** @type {Record<string, any>}
 function blankOf(/** @type {FilterSection} */ s) {
   if (s.kind === "one") return s.base;
   if (s.kind === "optional") return null;
-  if (s.kind === "toggle") return false;
+  if (s.kind === "toggle") return !!s.base;
   if (s.kind === "range") return rangeAny(s);
   return [];
 }
@@ -138,7 +140,7 @@ function picksOf(s, v) {
   if (s.kind === "one") return v != null && v !== s.base ? [{ label: labelOf(s, v), without: s.base }] : [];
   if (s.kind === "optional") return v != null ? [{ label: labelOf(s, v), without: null }] : [];
   if (s.kind === "many") return v.map((x) => ({ label: labelOf(s, x), without: v.filter((y) => y !== x) }));
-  if (s.kind === "toggle") return v ? [{ label: s.option || s.label, without: false }] : [];
+  if (s.kind === "toggle") return v !== !!s.base ? [{ label: (v ? s.option : s.offOption || s.option) || s.label, without: !!s.base }] : [];
   if (s.kind === "range") return v !== rangeAny(s) ? [{ label: (s.chip || s.format || String)(v), without: rangeAny(s) }] : [];
   return v.map((x) => ({ label: x, without: v.filter((y) => y !== x) }));
 }

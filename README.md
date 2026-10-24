@@ -208,7 +208,8 @@ drawn in the field's parent, under the field, so the two share any stacking cont
 On a television an option's cell is as wide as the section's longest name. The page builds `sections` from what it can show and keeps `values`; each
 change arrives as the next whole `values`. A section is `{ id, label, kind }` with `kind` one of `one`
 (exactly one option, starting on `base`), `optional`, `many`, `toggle` (its `option`, with an optional
-`note`), `range` (`min`, `max`, `step`, `any`, `format`, `chip`) and `tokens` (`placeholder`); a list
+`note`, starting on `base`, off by default, and counting only away from it; `offOption` words its chip
+when it is off and its `base` is on), `range` (`min`, `max`, `step`, `any`, `format`, `chip`) and `tokens` (`placeholder`); a list
 kind takes `options` as `{ value, label }`. A desktop draws columns, a phone folding sections, a page
 marked `data-tv` a rail of sections beside the controls of the one it is on. Its words are props:
 `label`, `clearLabel`, `doneLabel`, `anyLabel`, `countLabel(n)`, `removeLabel(label)`.
