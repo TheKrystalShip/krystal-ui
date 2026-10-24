@@ -7,7 +7,7 @@ const opts = (...labels) => labels.map((label) => ({ value: label.toLowerCase().
 // A film library's filters: Kind always holds one, Watched is a toggle.
 const films = [
   { id: "kind", label: "Kind", kind: "one", base: "all", options: opts("All", "Movies", "TV shows", "Anime") },
-  { id: "genre", label: "Genre", kind: "many", options: opts("Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Mystery", "Romance", "Science Fiction", "TV Movie", "Thriller", "War", "Western") },
+  { id: "genre", label: "Genre", kind: "many", options: opts("Action", "Action & Adventure", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Mystery", "Romance", "Sci-Fi & Fantasy", "Science Fiction", "TV Movie", "Thriller", "War", "War & Politics", "Western") },
   { id: "decade", label: "Decade", kind: "many", options: opts("2020s", "2010s", "2000s", "1990s", "1980s", "1970s", "1960s", "1950s", "1940s") },
   { id: "length", label: "Length", kind: "many", options: opts("Under 90 min", "90 to 150 min", "Over 150 min") },
   { id: "rating", label: "Rating", kind: "optional", options: opts("8 and up", "7 and up", "6 and up") },
@@ -31,11 +31,12 @@ const recipes = [
 function Example({ id, sections, start, placeholder }) {
   const [values, setValues] = React.useState(start);
   const [q, setQ] = React.useState("");
+  const [open, setOpen] = React.useState(false);
   return (
     <div style={{ display: "grid", gap: 10 }}>
       <SearchField id={id} size="xl" value={q} onChange={setQ} onSubmit={() => {}} placeholder={placeholder}
-        filters={<FilterDrawer sections={sections} values={values} onChange={setValues} />} />
-      <code style={{ fontSize: 12, color: "var(--fg-3)" }}>{JSON.stringify(values)}</code>
+        filters={<FilterDrawer sections={sections} values={values} onChange={setValues} onOpenChange={setOpen} />} />
+      <code style={{ fontSize: 12, color: "var(--fg-3)" }}>{(open ? "open " : "closed ") + JSON.stringify(values)}</code>
     </div>
   );
 }

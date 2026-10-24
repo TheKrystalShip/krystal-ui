@@ -184,4 +184,52 @@ describe("FilterDrawer", () => {
     expect(screen.queryByRole("group", { name: "Filters" })).toBeNull();
     expect(document.activeElement).toBe(trigger());
   });
+  it("tells the page each opening and closing, and nothing on its first render", async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn();
+    render(
+      <SearchField value="" onSubmit={() => {}} placeholder="Search"
+        filters={<FilterDrawer sections={sections} values={{}} onChange={() => {}} onOpenChange={onOpenChange} />} />,
+    );
+    expect(onOpenChange).not.toHaveBeenCalled();
+    await user.click(trigger());
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+    await user.keyboard("{Escape}");
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    expect(onOpenChange).toHaveBeenCalledTimes(2);
+  });
+
+  it("dims beside the field, in its parent, with the field raised over it until it closes", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <div className="frame">
+        <SearchField value="" onSubmit={() => {}} placeholder="Search" style={{ zIndex: 1 }}
+          filters={<FilterDrawer sections={sections} values={{}} onChange={() => {}} />} />
+      </div>,
+    );
+    const frame = container.querySelector(".frame");
+    const field = trigger().closest("form");
+    await user.click(trigger());
+    const scrim = document.querySelector(".k-filters__scrim");
+    expect(scrim.parentElement).toBe(frame);
+    expect(field.style.zIndex).toBe("36");
+    await user.keyboard("{Escape}");
+    expect(document.querySelector(".k-filters__scrim")).toBeNull();
+    expect(field.style.zIndex).toBe("1");
+  });
+
+  it("on a television sizes its option cells for the longest name", async () => {
+    document.documentElement.setAttribute("data-tv", "");
+    const user = userEvent.setup();
+    const long = [{ id: "genre", label: "Genre", kind: "many", options: options("War", "Action & Adventure", "Drama") }];
+    // Every character is 7px wide here, so the longest name is 126px.
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(/** @type {any} */ ({ font: "", measureText: (t) => ({ width: t.length * 7 }) }));
+    render(
+      <SearchField value="" onSubmit={() => {}} placeholder="Search"
+        filters={<FilterDrawer sections={long} values={{}} onChange={() => {}} />} />,
+    );
+    await user.click(trigger());
+    const targets = document.querySelector(".k-filters__targets");
+    expect(targets.style.getPropertyValue("--k-filters-cell")).toBe(18 * 7 + 32 + "px");
+  });
 });

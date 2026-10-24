@@ -1,5 +1,19 @@
 # Changelog
 
+## [8.4.0]
+
+### Added
+- `FilterDrawer` takes `onOpenChange(open)`, called each time the drawer opens and closes.
+
+### Fixed
+- The drawer's edges land on the same pixels as the field it hangs from at every width and zoom: the
+  field's frame is an inset line, so the drawer hangs from the field's own outer box.
+- The dimming is drawn in the field's parent and the field is raised on its own element while the
+  drawer is open, so the drawer stands over the dimming inside a fixed frame or a television's page,
+  whatever a site's own rules say about the field.
+- On a television an option's cell is as wide as the section's longest name, and the grid takes as many
+  columns as fit; a name ends in an ellipsis only when it is wider than the whole row.
+
 ## [8.3.0]
 
 ### Added

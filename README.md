@@ -203,7 +203,9 @@ before the submit, `inputProps` (spread onto the inner `<input>`: `data-*`, `inp
 `FilterDrawer` is the filters of whatever a page shows, in a SearchField's `filters` slot: an icon button
 counting the picks, and a drawer across the field's width over the page, open while somebody picks and
 closed by a press outside it, the search, Escape or a television's Back (`ref.current.back()`, which says
-whether it used the key). The page builds `sections` from what it can show and keeps `values`; each
+whether it used the key); `onOpenChange(open)` tells the page each opening and closing. The dimming is
+drawn in the field's parent, under the field, so the two share any stacking context a page sets them in.
+On a television an option's cell is as wide as the section's longest name. The page builds `sections` from what it can show and keeps `values`; each
 change arrives as the next whole `values`. A section is `{ id, label, kind }` with `kind` one of `one`
 (exactly one option, starting on `base`), `optional`, `many`, `toggle` (its `option`, with an optional
 `note`), `range` (`min`, `max`, `step`, `any`, `format`, `chip`) and `tokens` (`placeholder`); a list

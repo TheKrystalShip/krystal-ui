@@ -6,19 +6,29 @@
 @layer krystal.tokens, krystal.base, krystal.components;
 
 @layer krystal.components {
-/* The field holds the drawer: it is what the drawer hangs from, and it rises over the dimmed page. */
+/* The field holds the drawer: it is what the drawer hangs from, and it rises over the dimmed page (the
+   drawer sets its stacking order on the element, so a site's own rules for the field cannot sink it).
+   Its frame is an inset line rather than a border, so its box is its outer edge; the drawer hangs from
+   that same box and draws its frame the same way, inside a 1px padding its content never covers, so
+   both edges land on the same pixels at every width and zoom. */
 .k-searchfield--filters {
   position: relative;
-  padding-left: 6px;
+  padding: 0 7px;
+  border: none;
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+  transition: box-shadow var(--d-fast) var(--ease-out);
 }
 
 .k-searchfield--xl.k-searchfield--filters {
-  padding-left: 8px;
+  padding: 0 9px;
+}
+
+.k-searchfield--filters:focus-within,
+.k-searchfield:has(> .k-filters.k-is-open) {
+  box-shadow: inset 0 0 0 1px var(--border-accent);
 }
 
 .k-searchfield:has(> .k-filters.k-is-open) {
-  z-index: 36;
-  border-color: var(--border-accent);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
@@ -85,20 +95,24 @@
   background: color-mix(in srgb, var(--scrim-base) 45%, transparent);
 }
 
-/* ---- The drawer, under the field and as wide as it. */
+/* ---- The drawer, under the field and exactly as wide as it. */
 .k-filters__panel {
   position: absolute;
   top: 100%;
-  left: -1px;
-  right: -1px;
+  left: 0;
+  right: 0;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  border: var(--edge-accent);
-  border-top: var(--edge);
+  padding: 1px;
   border-radius: 0 0 var(--r-sm) var(--r-sm);
   background: var(--surface-1);
-  box-shadow: var(--shadow-2);
+  box-shadow:
+    inset 1px 0 0 var(--border-accent),
+    inset -1px 0 0 var(--border-accent),
+    inset 0 -1px 0 var(--border-accent),
+    inset 0 1px 0 var(--border-subtle),
+    var(--shadow-2);
   color: var(--fg-2);
   font-size: var(--text-sm);
   text-align: left;
@@ -464,10 +478,14 @@
   overflow-y: auto;
 }
 
-.k-filters__targets {
+/* As many columns as fit cells wide enough for the section's longest name (`--k-filters-cell`, which
+   the drawer measures), so a name ends with an ellipsis only when it outgrows a whole row. */
+.k-filters__targets,
+.k-filters--tv .k-filters__tokens .k-filters__token-list {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--k-filters-cell, 160px)), 1fr));
   gap: 8px;
+  font-size: var(--text-sm);
 }
 
 .k-filters__target {
@@ -500,12 +518,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-}
-
-.k-filters--tv .k-filters__tokens .k-filters__token-list {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
 }
 
 .k-filters--tv .k-filters__range {

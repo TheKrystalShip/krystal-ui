@@ -41,7 +41,12 @@ import { onTelevision } from "../lib/television.js";
 //   when it opens and when Back steps out of a section, as a dialog does.
 //
 // `back()` on the ref is for the television's Back: from a section's controls it returns to the rail,
-// from the rail it closes the drawer, and it answers whether it used the key.
+// from the rail it closes the drawer, and it answers whether it used the key. `onOpenChange` tells the
+// page each time the drawer opens or closes.
+//
+// The dimming is drawn beside the field, in its parent, so the field and the dimming share whatever
+// stacking context the page puts them in (a fixed frame, a television's page) and the field, raised on
+// its own element, always stands over it.
 
 /**
  * @typedef {object} FilterOption
@@ -82,10 +87,17 @@ import { onTelevision } from "../lib/television.js";
  * @property {string} [anyLabel] A section's summary with nothing picked; "Any" by default.
  * @property {(n: number) => string} [countLabel] A section's summary with more than two picked.
  * @property {(label: string) => string} [removeLabel] A chip's accessible name.
+ * @property {(open: boolean) => void} [onOpenChange] Called with `true` when the drawer opens and `false` when it closes.
  * @property {string} [className] Extra class names on the root element.
  */
 
 const MaxRows = 8;
+// The field's stacking order while the drawer is open, one over the dimming's.
+const FieldLayer = "36";
+// A television's option cell: room beside its name (padding, border and a picked option's heavier
+// weight), and the widest name it is sized for; a longer one ends in an ellipsis.
+const CellRoom = 32;
+const CellMax = 320;
 const ColumnRows = MaxRows + 2;
 const ShortSection = 5.5;
 
@@ -163,10 +175,30 @@ function packColumns(sections) {
   return cols.map((c) => c.items);
 }
 
+/** @type {CanvasRenderingContext2D | null} */
+let measurer = null;
+
+/**
+ * Sizes a television's grid of option cells for its longest name, measured in the cells' own font at
+ * the weight of a picked option.
+ * @param {HTMLElement} grid
+ */
+function sizeCells(grid) {
+  const cells = /** @type {HTMLElement[]} */ ([...grid.children]);
+  if (!cells.length) return;
+  if (!measurer) measurer = document.createElement("canvas").getContext("2d");
+  const m = measurer;
+  if (!m) return;
+  const style = getComputedStyle(cells[0]);
+  m.font = `600 ${style.fontSize} ${style.fontFamily}`;
+  const widest = Math.max(...cells.map((c) => m.measureText(c.textContent || "").width));
+  grid.style.setProperty("--k-filters-cell", Math.ceil(Math.min(CellMax, widest + CellRoom)) + "px");
+}
+
 /** @type {import("react").ForwardRefExoticComponent<FilterDrawerProps & import("react").RefAttributes<FilterDrawerHandle>>} */
 const FilterDrawer = React.forwardRef(function FilterDrawer({
   sections, values, onChange, label = "Filters", clearLabel = "Clear all", doneLabel = "Done", anyLabel = "Any",
-  countLabel = (n) => n + " selected", removeLabel = (l) => "Remove " + l, className,
+  countLabel = (n) => n + " selected", removeLabel = (l) => "Remove " + l, onOpenChange, className,
 }, ref) {
   const phone = usePhone();
   const tv = onTelevision();
@@ -176,6 +208,7 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
   const [railOn, setRailOn] = React.useState(/** @type {string | null} */ (null));
   const [drafts, setDrafts] = React.useState(/** @type {Record<string, number>} */ ({}));
   const [room, setRoom] = React.useState(/** @type {number | null} */ (null));
+  const [host, setHost] = React.useState(/** @type {Element | null} */ (null));
   const rootRef = React.useRef(/** @type {HTMLDivElement | null} */ (null));
   const triggerRef = React.useRef(/** @type {HTMLButtonElement | null} */ (null));
   const panelRef = React.useRef(/** @type {HTMLDivElement | null} */ (null));
@@ -230,6 +263,34 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
       return true;
     },
   }), [open, close, railSection]);
+
+  // The page hears every opening and closing, not the first render.
+  const told = React.useRef(open);
+  const tell = React.useRef(onOpenChange);
+  tell.current = onOpenChange;
+  React.useEffect(() => {
+    if (told.current === open) return;
+    told.current = open;
+    if (tell.current) tell.current(open);
+  }, [open]);
+
+  // While it is open the field stands over the dimming, which is drawn in the field's parent.
+  React.useLayoutEffect(() => {
+    if (!open || !rootRef.current) { setHost(null); return undefined; }
+    const field = rootRef.current.closest("form");
+    if (!(field instanceof HTMLElement)) { setHost(document.body); return undefined; }
+    const before = field.style.zIndex;
+    field.style.zIndex = FieldLayer;
+    setHost(field.parentElement || document.body);
+    return () => { field.style.zIndex = before; };
+  }, [open]);
+
+  // On a television the cells of the section the rail is on are as wide as its longest name.
+  React.useLayoutEffect(() => {
+    if (!open || surface !== "tv" || !panelRef.current) return;
+    panelRef.current.querySelectorAll(".k-filters__pane .k-filters__targets, .k-filters__pane .k-filters__token-list")
+      .forEach((grid) => sizeCells(/** @type {HTMLElement} */ (grid)));
+  });
 
   // The drawer ends above the bottom of the screen and a phone's tab bar, and scrolls inside itself.
   React.useLayoutEffect(() => {
@@ -433,7 +494,11 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
         {railSection && railSection.kind !== "toggle" && (
           <>
             <span className="k-filters__heading">{railSection.label}</span>
-            {isList(railSection) && <div className="k-filters__targets">{(railSection.options || []).map((o) => optionButton(railSection, o, "k-filters__target"))}</div>}
+            {isList(railSection) && (
+              <div className="k-filters__targets">
+                {(railSection.options || []).map((o) => optionButton(railSection, o, "k-filters__target"))}
+              </div>
+            )}
             {railSection.kind === "range" && rangeControl(railSection)}
             {railSection.kind === "tokens" && tokensControl(railSection, "k-filters__target")}
           </>
@@ -451,7 +516,7 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
         <Icon name="sliders-horizontal" size={surface === "desk" ? 18 : 20} />
         {picks.length > 0 && <span className="k-filters__badge" aria-hidden="true">{picks.length}</span>}
       </button>
-      {open && typeof document !== "undefined" && createPortal(<div className="k-filters__scrim" aria-hidden="true" />, document.body)}
+      {open && host && createPortal(<div className="k-filters__scrim" aria-hidden="true" />, host)}
       {open && (
         <div ref={panelRef} id={panelId} className="k-filters__panel" role="group" aria-label={label}
           style={room != null ? { maxHeight: room } : undefined}>
