@@ -52,6 +52,7 @@ export { CopyField } from "./components/CopyField.jsx";
 export { ProviderButton, ProviderMark, providerLabel } from "./components/ProviderMark.jsx";
 export { OptionList } from "./components/OptionList.jsx";
 export { PageHeader } from "./components/PageHeader.jsx";
+export { PosterCard } from "./components/PosterCard.jsx";
 export { Pagination, paginationWindow, useDebouncedValue } from "./components/Pagination.jsx";
 export { RadioGroup } from "./components/RadioGroup.jsx";
 export { Rail } from "./components/Rail.jsx";

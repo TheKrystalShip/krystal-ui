@@ -1,0 +1,447 @@
+/* ============================================================================
+   poster.css — <PosterCard>: a title with no frame, the poster and under it the name, a line of facts
+   and one status line. The name's button is stretched over the whole card; every control on the
+   poster stands above it.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+.k-poster {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-width: 0;
+  transition: transform var(--d-base) var(--ease-out);
+}
+
+.k-poster__art {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: linear-gradient(160deg, var(--surface-2), var(--surface-1) 70%);
+  background-size: cover;
+  background-position: center;
+  transition: box-shadow var(--d-base) var(--ease-out);
+}
+
+/* The card lifts as a whole, so the poster's controls stay in one stacking context with the name's
+   stretched button under them. */
+@media (hover: hover) and (pointer: fine) {
+  .k-poster:hover {
+    transform: translateY(-3px);
+  }
+
+  .k-poster:hover .k-poster__art {
+    box-shadow: var(--shadow-2);
+  }
+}
+
+.k-poster:has(.k-poster__pick:focus-visible) .k-poster__art {
+  box-shadow: 0 0 0 2px var(--fg-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-poster,
+  .k-poster__art {
+    transition: none;
+  }
+
+  .k-poster:hover {
+    transform: none;
+  }
+}
+
+/* ---- under the poster --------------------------------------------------- */
+
+.k-poster__caption {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.k-poster__name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--w-semibold);
+  line-height: 1.3;
+  color: var(--fg-1);
+}
+
+.k-poster__pick {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* The whole card is the name's button. */
+.k-poster__pick::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.k-poster__pick:focus-visible {
+  outline: none;
+}
+
+.k-poster__facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 12px;
+  color: var(--fg-3);
+}
+
+.k-poster__fact {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+/* The fact's own gap follows the dot, so the dot's margin takes only the space before it. */
+.k-poster__fact + .k-poster__fact::before {
+  content: "·";
+  margin: 0 1px 0 5px;
+}
+
+.k-poster__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  min-height: 1.35em;
+  font-size: 12px;
+  color: var(--fg-3);
+  white-space: nowrap;
+}
+
+.k-poster__status-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.k-poster__status--active {
+  color: var(--krystal-teal);
+}
+
+.k-poster__status--warning,
+.k-poster__status--warning svg,
+.k-poster__status--notice svg {
+  color: var(--warning-fg);
+}
+
+.k-poster__status--success svg {
+  color: var(--success-fg);
+}
+
+/* ---- on the poster ------------------------------------------------------- */
+
+/* The card's shortcut: a desktop pointer finds it on the card it is over, and keyboard focus anywhere
+   in the card shows it. A touch screen opens the thing and acts from there. */
+.k-poster__play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  display: none;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  padding: 0;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--art-line-strong);
+  background: color-mix(in srgb, var(--canvas) 70%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: var(--art-fg-white);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--d-base) var(--ease-out), background var(--d-base) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .k-poster__play {
+    display: grid;
+  }
+
+  .k-poster:hover .k-poster__play,
+  .k-poster:focus-within .k-poster__play {
+    opacity: 1;
+  }
+}
+
+.k-poster__play:hover {
+  background: var(--krystal-teal);
+  border-color: transparent;
+  color: var(--on-accent);
+}
+
+.k-poster__play:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+  opacity: 1;
+}
+
+.k-poster__corner {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--canvas) 55%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid color-mix(in srgb, var(--warning) 34%, transparent);
+  color: var(--warning-fg);
+  font-size: 11px;
+  font-weight: 600;
+  max-width: calc(100% - 20px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.k-poster__corner--neutral {
+  border-color: var(--border-strong);
+  color: var(--fg-1);
+}
+
+.k-poster__corner--accent {
+  border-color: var(--border-accent);
+  color: var(--krystal-teal);
+}
+
+.k-poster__corner--mono {
+  font-family: var(--font-mono);
+}
+
+.k-poster__art--ribbon .k-poster__corner {
+  left: 50px;
+  max-width: calc(100% - 60px);
+}
+
+.k-poster__badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+
+.k-poster__badge--accent {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.k-poster__badge--info {
+  background: color-mix(in srgb, var(--canvas) 72%, var(--info-bg));
+  border: 1px solid color-mix(in srgb, var(--info-fg) 32%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* What is done to the thing besides opening it. A hovering pointer finds them on the card it is over;
+   a touch screen has no hover, so they stay. */
+.k-poster__tools {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.k-poster__tools--under {
+  top: 42px;
+}
+
+.k-poster__tool {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--art-line-strong);
+  background: color-mix(in srgb, var(--canvas) 62%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: var(--art-fg-white);
+  cursor: pointer;
+  transition: background var(--d-base) var(--ease-out), opacity var(--d-base) var(--ease-out);
+}
+
+.k-poster__tool:hover {
+  background: color-mix(in srgb, var(--canvas) 82%, transparent);
+}
+
+.k-poster__tool:focus-visible {
+  box-shadow: var(--ring-focus);
+}
+
+.k-poster__tool.k-is-on {
+  background: var(--krystal-teal);
+  border-color: transparent;
+  color: var(--on-accent);
+}
+
+.k-poster__tool--danger:hover {
+  color: var(--danger-fg);
+}
+
+@media (hover: hover) {
+  .k-poster__tool {
+    opacity: 0;
+  }
+
+  .k-poster:hover .k-poster__tool,
+  .k-poster:focus-within .k-poster__tool,
+  .k-poster__tool.k-is-on {
+    opacity: 1;
+  }
+}
+
+/* A switch for keeping the thing, hanging from the poster's top edge like a bookmark's ribbon. On, it
+   is filled and always shown; off, a hovering pointer finds it on the card it is over, and a touch
+   screen always shows it. */
+.k-poster__ribbon {
+  position: absolute;
+  top: 0;
+  left: 4px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  width: 44px;
+  height: 50px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+  transition: opacity var(--d-base) var(--ease-out);
+}
+
+.k-poster__ribbon-tab {
+  display: flex;
+  justify-content: center;
+  padding-top: 9px;
+  width: 28px;
+  height: 40px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+  background: color-mix(in srgb, var(--canvas) 62%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: var(--art-fg-white);
+  transition: background var(--d-base) var(--ease-out), height var(--d-base) var(--ease-out);
+}
+
+.k-poster__ribbon:hover .k-poster__ribbon-tab {
+  background: color-mix(in srgb, var(--canvas) 82%, transparent);
+  height: 44px;
+}
+
+.k-poster__ribbon.k-is-on .k-poster__ribbon-tab {
+  background: var(--krystal-teal);
+  color: var(--on-accent);
+}
+
+.k-poster__ribbon:focus-visible {
+  outline: none;
+}
+
+.k-poster__ribbon:focus-visible .k-poster__ribbon-tab {
+  box-shadow: inset 0 0 0 2px var(--fg-1);
+}
+
+.k-poster__ribbon:disabled {
+  cursor: default;
+}
+
+.k-poster__ribbon:disabled .k-poster__ribbon-tab {
+  opacity: 0.55;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .k-poster__ribbon {
+    opacity: 0;
+  }
+
+  .k-poster:hover .k-poster__ribbon,
+  .k-poster:focus-within .k-poster__ribbon,
+  .k-poster__ribbon.k-is-on {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-poster__ribbon,
+  .k-poster__ribbon-tab,
+  .k-poster__play {
+    transition: none;
+  }
+}
+
+/* How far through the thing somebody is, along the poster's foot. */
+.k-poster__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: 4px;
+  background: var(--k-poster-progress-track, var(--art-line-strong));
+}
+
+.k-poster__progress > span {
+  display: block;
+  height: 100%;
+  background: var(--krystal-teal);
+}
+
+.k-poster__progress.k-is-done > span {
+  background: var(--success);
+}
+
+/* The thing's parts along the poster's foot, a short bar each, filled as far as somebody got. */
+.k-poster__segments {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  gap: 2px;
+  height: 4px;
+}
+
+.k-poster__segments > span {
+  flex: 1;
+  background: var(--art-line-strong);
+}
+
+.k-poster__segments > span > span {
+  display: block;
+  height: 100%;
+  background: var(--krystal-teal);
+}
+}

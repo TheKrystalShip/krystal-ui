@@ -41,6 +41,7 @@ export const EXAMPLES = {
   brief: fromSection("brief"),
   "brief-card-count": E.BriefCardCountExamples,
   "showcase-card": E.ShowcaseCardExamples,
+  "poster-card": E.PosterCardExamples,
   forms: fromSection("forms"),
   toolbar: E.ToolbarExamples,
   "page-header": E.PageHeaderExamples,

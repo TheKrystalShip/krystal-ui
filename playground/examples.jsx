@@ -4,7 +4,7 @@
 import React from "react";
 import {
   AccountAvatar, AppShell, Footer, BriefItem, BriefList, Container, Breadcrumbs, BriefCard, Button, Card, CardScreen, Checkbox, CopyField, Dialog, EmptyState, Field, IconButton, Input,
-  Icon, List, ListRow, Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, Shelf, ShowcaseCard,
+  Icon, List, ListRow, Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, PosterCard, Shelf, ShowcaseCard,
   Sidebar, SidebarGroup, Skeleton, Spinner, StatusDot, SubTabs, Textarea, Toggle, Toolbar,
   ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
 } from "@thekrystalship/krystal";
@@ -329,6 +329,32 @@ export function ShowcaseCardExamples() {
               status={{ label: "Running", tone: "success" }} action={{ label: "Open" }} />
           ))}
         </div>
+      </Sub>
+    </>
+  );
+}
+
+export function PosterCardExamples() {
+  const [kept, setKept] = React.useState(true);
+  const art = (a, b) => `linear-gradient(160deg, ${a}, ${b})`;
+  return (
+    <>
+      <Sub title="PosterCard on a shelf: at rest, part watched, a series by its parts, kept">
+        <Shelf title="Recently added" sub="4 titles" perView={{ 0: 1.7, 560: 3.2, 900: 4.3 }}>
+          <PosterCard name="Stamppot" art={art("var(--surface-3)", "var(--surface-1)")} onPick={() => {}}
+            facts={[{ icon: "star", value: "8.4", label: "Rating" }, { value: 1981, label: "Year" }, { value: "1h 55m", label: "Length" }]}
+            status={{ label: "Adventure · Action" }} action={{ label: "Watch", onClick: () => {} }} />
+          <PosterCard name="Gado-gado" art={art("var(--surface-2)", "var(--surface-0)")} onPick={() => {}} badge={{ label: "New", tone: "info" }}
+            corner={{ icon: "circle-check", label: "Downloaded", tone: "accent" }} progress={0.35}
+            facts={[{ icon: "star", value: "8.3", label: "Rating" }, { value: 1968, label: "Year" }, { value: "2h 29m", label: "Length" }]}
+            status={{ label: "1h 36m left", tone: "active", icon: "history" }} action={{ label: "Resume", onClick: () => {} }} />
+          <PosterCard name="Hachee" art={art("var(--surface-3)", "var(--surface-0)")} onPick={() => {}} segments={[1, 1, 0.6, 0, 0, 0]}
+            ribbon={{ icon: "bookmark", iconOn: "bookmark-check", on: kept, label: kept ? "Kept" : "Keep", onClick: () => setKept(!kept) }}
+            facts={[{ icon: "star", value: "7.8", label: "Rating" }, { value: "6 seasons", label: "Seasons" }, { value: "113 episodes", label: "Episodes" }]}
+            status={{ label: "S3 · E9", tone: "active" }} action={{ label: "Resume", onClick: () => {} }} />
+          <PosterCard name="Erwtensoep, a name long enough to take two lines" art={art("var(--surface-2)", "var(--surface-1)")} onPick={() => {}}
+            facts={[{ value: 2026, label: "Year" }]} status={{ label: "Still preparing", tone: "notice", icon: "loader" }} />
+        </Shelf>
       </Sub>
     </>
   );

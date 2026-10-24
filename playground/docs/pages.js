@@ -191,6 +191,12 @@ export const PAGES = [
   {
     id: "showcase-card", name: "ShowcaseCard", group: "Cards and lists", exports: ["ShowcaseCard"], examples: ["showcase-card"],
     summary: "A catalogue tile: key art, three facts, a status and an action.",
+    versus: "PosterCard for a title on a shelf without a frame.",
+  },
+  {
+    id: "poster-card", name: "PosterCard", group: "Cards and lists", exports: ["PosterCard"], examples: ["poster-card"],
+    summary: "A title with no frame: the poster, and under it the name, a line of facts and a status, with a play button over the poster.",
+    versus: "ShowcaseCard for a framed tile with its facts in a row and its action in a foot.",
   },
   {
     id: "collection-tile", name: "CollectionTile", group: "Cards and lists", exports: ["CollectionTile"], examples: [],

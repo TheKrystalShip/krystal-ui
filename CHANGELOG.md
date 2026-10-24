@@ -1,5 +1,15 @@
 # Changelog
 
+## [9.1.0]
+
+### Added
+- **`PosterCard`**, a title with no frame: the poster, and under it the name, a line of `facts` and a
+  `status`. The name is the card's one button to open it (`onPick`), stretched over the whole card.
+  `action` is a play button over the poster, shown on a desktop pointer's hover and on keyboard focus
+  and named by the action and the title; a touch screen opens the title instead. The poster carries a
+  `badge`, a `corner` chip, a `ribbon`, `tools`, and a `progress` bar or `segments`, as
+  `ShowcaseCard`'s art does.
+
 ## [9.0.0]
 
 ### Changed

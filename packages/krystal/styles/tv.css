@@ -32,7 +32,8 @@
 }
 
 :root[data-tv] .k-rail__arrow,
-:root[data-tv] .k-shelf__arrow {
+:root[data-tv] .k-shelf__arrow,
+:root[data-tv] .k-poster__play {
   display: none;
 }
 

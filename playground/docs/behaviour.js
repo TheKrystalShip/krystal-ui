@@ -195,6 +195,16 @@ export const BEHAVIOUR = {
     ],
     semantics: ["A labelled `role=\"group\"`; the arrows are buttons that call `scrollBy`."],
   },
+  "poster-card": {
+    keys: [
+      ["Tab", "Moves to the name, which opens the thing, then to the play button and the controls on the poster"],
+      ["Enter, Space", "Opens the thing from the name; plays from the play button"],
+    ],
+    semantics: [
+      "An `article` whose heading holds the one button that opens the thing, stretched over the whole card; the poster's controls stand above it.",
+      "The play button is named by the action and the thing (\"Resume Superstore\"), shown on a desktop pointer's hover and on keyboard focus anywhere in the card.",
+    ],
+  },
   shelf: {
     keys: [
       ["Tab", "Tabbing to an off-screen item scrolls it into view"],
