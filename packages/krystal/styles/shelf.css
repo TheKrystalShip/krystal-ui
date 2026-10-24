@@ -1,8 +1,16 @@
 /* ============================================================================
-   shelf.css — a titled section laying its items out in a grid (<Shelf>): the heading, a line under
-   it and an action opposite, a controls row, then the grid. Items in a row are
-   --k-shelf-columns, and --k-shelf-narrow-columns once the shelf itself is narrower than 560px:
-   the shelf is the container its grid measures.
+   shelf.css — a titled section whose items stand in one row that scrolls sideways (<Shelf>): the
+   heading, a line under it, the arrows and an action opposite, a controls row, then the row.
+
+   The shelf is the container its items measure: each is the shelf's width shared by
+   --k-shelf-per-view, a fraction, so the next item is cut off at the edge. The track reads the
+   property and declares none of its own, so a value set on the shelf or an ancestor applies;
+   `perView` writes it on the track.
+
+   The row lines its first item up with the heading and runs out by --k-shelf-bleed past the shelf's
+   sides, so on a phone it scrolls to the screen's edge; in an AppShell's main column at phone width
+   that is the page gutter. A few pixels of room around the items keep a focus ring or a lifted card
+   from being cut by the scroll container, taken back by a negative margin so the layout is unmoved.
    ============================================================================ */
 @layer krystal.tokens, krystal.base, krystal.components;
 
@@ -17,7 +25,7 @@
 
 .k-shelf__head {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   justify-content: space-between;
   gap: var(--s-3);
 }
@@ -41,8 +49,57 @@
   color: var(--fg-3);
 }
 
+.k-shelf__nav {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
 .k-shelf__action {
   flex: none;
+}
+
+/* The arrows are for a desktop pointer: a touch screen swipes the row. */
+.k-shelf__arrow {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--r-sm);
+  color: var(--fg-2);
+  cursor: pointer;
+  transition: background-color var(--d-fast) var(--ease-out),
+              color var(--d-fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .k-shelf__arrow {
+    display: inline-flex;
+  }
+
+  .k-shelf__arrow + .k-shelf__action {
+    margin-left: var(--s-3);
+  }
+}
+
+.k-shelf__arrow:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--fg-1);
+}
+
+.k-shelf__arrow:disabled {
+  color: var(--fg-4);
+  cursor: default;
+}
+
+.k-shelf__arrow:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--krystal-teal);
 }
 
 .k-shelf__controls {
@@ -51,10 +108,63 @@
   gap: var(--s-2);
 }
 
-.k-shelf__grid {
-  display: grid;
-  grid-template-columns: repeat(var(--k-shelf-columns, 4), minmax(0, 1fr));
-  gap: var(--s-4);
+.k-shelf__track {
+  --k-shelf-gap: var(--s-4);
+  --k-shelf-room: 4px;
+  --k-shelf-out: calc(var(--k-shelf-bleed, 0px) + var(--k-shelf-room));
+  --k-shelf-fade: 32px;
+  /* An edge fades only where there is content past it. */
+  --k-shelf-fade-l: var(--k-shelf-fade);
+  --k-shelf-fade-r: var(--k-shelf-fade);
+  display: flex;
+  /* stretch levels every item against the tallest, so a name that wraps to a second line leaves no
+     ragged bottoms. */
+  align-items: stretch;
+  gap: var(--k-shelf-gap);
+  margin: calc(-1 * var(--k-shelf-room)) calc(-1 * var(--k-shelf-out));
+  padding: var(--k-shelf-room) var(--k-shelf-out);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--k-shelf-out);
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--k-shelf-fade-l), #000 calc(100% - var(--k-shelf-fade-r)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--k-shelf-fade-l), #000 calc(100% - var(--k-shelf-fade-r)), transparent 100%);
+}
+
+.k-shelf__track::-webkit-scrollbar {
+  display: none;
+}
+
+.k-shelf__track[data-start] {
+  --k-shelf-fade-l: 0px;
+}
+
+.k-shelf__track[data-end] {
+  --k-shelf-fade-r: 0px;
+}
+
+.k-shelf__track:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--krystal-teal);
+  border-radius: var(--r-sm);
+}
+
+.k-shelf__item {
+  flex: 0 0 auto;
+  width: calc((100cqi - (var(--k-shelf-per-view, 4.3) - 1) * var(--k-shelf-gap)) / var(--k-shelf-per-view, 4.3));
+  min-width: 0;
+  scroll-snap-align: start;
+  /* The item is stretched by the row; a nested flex hands that height to the card without a
+     percentage height, which resolves against a flex-derived box in Chromium and collapses in
+     Firefox. */
+  display: flex;
+}
+
+.k-shelf__item > * {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .k-shelf__empty {
@@ -63,9 +173,18 @@
 }
 
 @container (max-width: 560px) {
-  .k-shelf__grid {
-    grid-template-columns: repeat(var(--k-shelf-narrow-columns, 2), minmax(0, 1fr));
-    gap: var(--s-3);
+  .k-shelf__track {
+    --k-shelf-gap: var(--s-3);
+  }
+
+  .k-shelf__item {
+    width: calc((100cqi - (var(--k-shelf-per-view, 2.2) - 1) * var(--k-shelf-gap)) / var(--k-shelf-per-view, 2.2));
+  }
+}
+
+@media (max-width: 768px) {
+  .k-app__main {
+    --k-shelf-bleed: var(--k-page-gutter);
   }
 }
 }

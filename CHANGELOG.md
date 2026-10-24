@@ -1,5 +1,21 @@
 # Changelog
 
+## [9.0.0]
+
+### Changed
+- **`Shelf` is one row that scrolls sideways**, sitting on the page without a frame: the heading, the
+  line under it and the action opposite as before, then the items in a scroll-snapped row with the
+  next one cut off at the edge. On a desktop pointer, while the row overflows, borderless arrows
+  beside the action page it; a touch screen swipes it and a television scrolls it to focus, drawing
+  none. `perView` sets how many items stand in view, as a count or as stops keyed by the shelf's own
+  width (4.3, and 2.2 once the shelf is under 560px). In an AppShell's main column at phone width the
+  row runs to the screen's edge, by `--k-shelf-bleed`.
+
+### Removed
+- `Shelf`'s `columns` and `narrowColumns`, the `--k-shelf-columns` and `--k-shelf-narrow-columns`
+  properties and the `k-shelf__grid` class. A page that shows every item at once lays them out in a
+  `Grid` under its own heading.
+
 ## [8.5.0]
 
 ### Added

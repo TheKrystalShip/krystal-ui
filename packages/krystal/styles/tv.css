@@ -31,7 +31,8 @@
   --tv-dim: 0.65;
 }
 
-:root[data-tv] .k-rail__arrow {
+:root[data-tv] .k-rail__arrow,
+:root[data-tv] .k-shelf__arrow {
   display: none;
 }
 

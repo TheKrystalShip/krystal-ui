@@ -122,12 +122,13 @@ export const PAGES = [
   },
   {
     id: "rail", name: "Rail", group: "Choices and navigation", exports: ["Rail"], examples: [],
-    summary: "A horizontal, scroll-snapped shelf inside a card, so one row reaches a whole collection.",
+    summary: "A horizontal, scroll-snapped row inside a card, so one row reaches a whole collection.",
+    versus: "Shelf for the same row on the page itself, without a frame.",
   },
   {
     id: "shelf", name: "Shelf", group: "Choices and navigation", exports: ["Shelf"], examples: ["shelf"],
-    summary: "A titled section of a page laying its items out in a grid: a heading, a line under it, an action opposite and a row of controls.",
-    versus: "Rail for one row that scrolls through a whole collection inside a card.",
+    summary: "A titled section of a page whose items stand in one row that scrolls sideways: a heading, a line under it, arrows and an action opposite, and a row of controls.",
+    versus: "Rail for the same row inside a card; Grid under a heading for a page that shows every item at once.",
   },
   {
     id: "carousel", name: "useCarousel and CarouselPager", group: "Choices and navigation", exports: ["useCarousel", "CarouselPager"], examples: [],

@@ -397,7 +397,7 @@ function ShelfItem({ name }) {
 
 export function ShelfExamples() {
   const [picked, setPicked] = React.useState("quick");
-  const names = ["Stamppot", "Gado-gado", "Hachee", "Erwtensoep", "Pad thai", "Shakshuka", "Dal", "Bigos"];
+  const names = ["Stamppot", "Gado-gado", "Hachee", "Erwtensoep", "Pad thai", "Shakshuka", "Dal", "Bigos", "Pho", "Jollof"];
   return (
     <>
       <Sub title="Shelf">
@@ -410,11 +410,16 @@ export function ShelfExamples() {
           controls={["quick", "protein", "vegan"].map((k) => (
             <Button key={k} variant="outline" size="sm" pressed={picked === k} onClick={() => setPicked(k)}>{k}</Button>
           ))}>
-          {names.slice(0, picked === "vegan" ? 3 : 8).map((n) => <ShelfItem key={n} name={n} />)}
+          {names.slice(0, picked === "vegan" ? 3 : 10).map((n) => <ShelfItem key={n} name={n} />)}
         </Shelf>
       </Sub>
-      <Sub title="Shelf, three across, with nothing in it">
-        <Shelf title="Saved this week" columns={3} empty="Nothing saved yet." />
+      <Sub title="Shelf with stops keyed by its own width">
+        <Shelf title="Regions" perView={{ 0: 1.4, 560: 2.4, 900: 3.3 }}>
+          {names.slice(0, 6).map((n) => <ShelfItem key={n} name={n} />)}
+        </Shelf>
+      </Sub>
+      <Sub title="Shelf with nothing in it">
+        <Shelf title="Saved this week" empty="Nothing saved yet." />
       </Sub>
     </>
   );

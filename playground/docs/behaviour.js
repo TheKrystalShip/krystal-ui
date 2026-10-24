@@ -195,6 +195,16 @@ export const BEHAVIOUR = {
     ],
     semantics: ["A labelled `role=\"group\"`; the arrows are buttons that call `scrollBy`."],
   },
+  shelf: {
+    keys: [
+      ["Tab", "Tabbing to an off-screen item scrolls it into view"],
+      ["Shift+wheel, trackpad, swipe", "Scroll the row sideways"],
+    ],
+    semantics: [
+      "A `region` named by its heading; the row is a `role=\"group\"` named by the same heading.",
+      "The arrows are buttons that call `scrollBy`, drawn for a desktop pointer while the row overflows; the one at the end the row stands at is disabled.",
+    ],
+  },
   table: {
     keys: [
       ["Tab", "Moves through sortable headers, interactive cells and row actions"],
