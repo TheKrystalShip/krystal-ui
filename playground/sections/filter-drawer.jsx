@@ -15,7 +15,7 @@ const films = [
   { id: "kind", label: "Kind", kind: "one", base: "all", options: opts("All", "Movies", "TV shows", "Anime") },
   { id: "genre", label: "Genre", kind: "many", options: opts("Action", "Action & Adventure", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Mystery", "Romance", "Sci-Fi & Fantasy", "Science Fiction", "TV Movie", "Thriller", "War", "War & Politics", "Western") },
   { id: "decade", label: "Decade", kind: "many", options: opts("2020s", "2010s", "2000s", "1990s", "1980s", "1970s", "1960s", "1950s", "1940s") },
-  { id: "length", label: "Length", kind: "many", options: opts("Under 90 min", "90 to 150 min", "Over 150 min") },
+  { id: "length", label: "Length", kind: "many", options: opts("Under 90 min", "90 to 150 min", "Over 150 min").map((o, i) => (i === 2 ? { ...o, disabled: true } : o)) },
   { id: "rating", label: "Rating", kind: "optional", options: opts("8 and up", "7 and up", "6 and up") },
   { id: "language", label: "Language", kind: "many", options: opts("English", "Chinese", "Danish", "French", "German", "Hindi", "Italian", "Japanese", "Korean", "Norwegian", "Portuguese", "Spanish", "Swedish", "Thai", "Turkish") },
   { id: "watched", label: "Watched", kind: "toggle", option: "Hide watched" },

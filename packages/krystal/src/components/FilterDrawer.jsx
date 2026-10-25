@@ -33,7 +33,8 @@ import { onTelevision } from "../lib/television.js";
 // and it is drawn first wherever the page passes it, each option a ring that is filled on the order in
 // force.
 //
-// A picked option is shown by colour alone. The drawer is drawn three ways:
+// A picked option is shown by colour alone, and an option the page marks `disabled` is drawn in its place,
+// dimmed, and cannot be picked. The drawer is drawn three ways:
 // - on a desktop, in columns: each section a heading over its options, a list longer than ten
 //   wrapping into balanced sub-columns, a short section joining the first earlier column with room
 //   under it, the columns sharing the width and wrapping onto another line when they do not fit; a
@@ -58,6 +59,9 @@ import { onTelevision } from "../lib/television.js";
  * @typedef {object} FilterOption
  * @property {string} value The option's value.
  * @property {string} label Its words, on the option and on its chip.
+ * @property {boolean} [disabled] Whether it can be picked: an option the page shows but has nothing under
+ *   at the other sections' picks, kept in its place so the drawer does not move. A picked option can always
+ *   be taken off.
  */
 /**
  * @typedef {object} FilterSection
@@ -350,7 +354,7 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
 
   const optionButton = (/** @type {FilterSection} */ s, /** @type {FilterOption} */ o, /** @type {string} */ cls) => (
     <button key={o.value} type="button" className={cls + (isOn(s, o.value) ? " k-is-on" : "")} aria-pressed={isOn(s, o.value)}
-      onClick={() => choose(s, o.value)}>{o.label}</button>
+      disabled={!!o.disabled && !isOn(s, o.value)} onClick={() => choose(s, o.value)}>{o.label}</button>
   );
 
   const rangeControl = (/** @type {FilterSection} */ s) => (
@@ -507,7 +511,7 @@ const FilterDrawer = React.forwardRef(function FilterDrawer({
               if (s.kind === "toggle") { set(s.id, !valueOf(s, values)); return; }
               setRailOn(s.id);
               const target = panelRef.current && (panelRef.current.querySelector(".k-filters__pane .k-is-on")
-                || panelRef.current.querySelector(".k-filters__pane button, .k-filters__pane input, .k-filters__pane [role='slider']"));
+                || panelRef.current.querySelector(".k-filters__pane button:not(:disabled), .k-filters__pane input, .k-filters__pane [role='slider']"));
               if (target instanceof HTMLElement) target.focus();
             }}>
             <span className="k-filters__rail-label">{s.kind === "toggle" ? (s.option || s.label) : s.label}</span>

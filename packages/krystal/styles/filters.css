@@ -246,7 +246,7 @@
   cursor: pointer;
 }
 
-.k-filters__option:hover {
+.k-filters__option:hover:not(:disabled) {
   color: var(--fg-1);
 }
 
@@ -576,6 +576,16 @@
 
 .k-filters--tv .k-filters__range {
   max-width: 480px;
+}
+
+/* An option with nothing under it at the other picks keeps its place, dimmed. */
+:is(.k-filters__option, .k-filters__segment, .k-filters__tag, .k-filters__target):disabled {
+  color: var(--fg-4);
+  cursor: default;
+}
+
+:is(.k-filters__segment, .k-filters__tag, .k-filters__target):disabled {
+  border: var(--edge);
 }
 
 /* Focus on a television turns a rail item or a target into the light pill every control becomes. */

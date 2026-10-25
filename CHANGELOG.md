@@ -1,5 +1,14 @@
 # Changelog
 
+## [9.3.0]
+
+### Added
+- **A `FilterDrawer` option takes `disabled`**: it is drawn in its place, dimmed, and cannot be picked,
+  so a page can keep every option it offers on screen and mark the ones with nothing under them at the
+  other picks, and the drawer holds still while somebody picks. A picked option can always be taken
+  off. On a television the navigator passes over a disabled option, and the rail's press lands on the
+  section's first option that can be picked.
+
 ## [9.2.0]
 
 ### Added

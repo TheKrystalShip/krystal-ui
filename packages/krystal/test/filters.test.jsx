@@ -67,6 +67,26 @@ describe("FilterDrawer", () => {
     expect(trigger().getAttribute("aria-expanded")).toBe("true");
   });
 
+  it("keeps a disabled option in its place, unpickable, and a picked one can still be taken off", async () => {
+    const user = userEvent.setup();
+    const onValues = vi.fn();
+    const list = [{ id: "genre", label: "Genre", kind: "many", options: [
+      { value: "comedy", label: "Comedy" }, { value: "drama", label: "Drama", disabled: true }, { value: "horror", label: "Horror", disabled: true },
+    ] }];
+    render(<Page list={list} onValues={onValues} start={{ genre: ["horror"] }} />);
+    await user.click(trigger());
+    const panel = screen.getByRole("group", { name: "Filters" });
+    expect(within(panel).getAllByRole("button").map((b) => b.textContent)).toEqual(expect.arrayContaining(["Comedy", "Drama", "Horror"]));
+    const drama = within(panel).getByRole("button", { name: "Drama" });
+    expect(drama.disabled).toBe(true);
+    await user.click(drama);
+    expect(onValues).not.toHaveBeenCalled();
+    const horror = within(panel).getByRole("button", { name: "Horror" });
+    expect(horror.disabled).toBe(false);
+    await user.click(horror);
+    expect(onValues).toHaveBeenLastCalledWith(expect.objectContaining({ genre: [] }));
+  });
+
   it("adds a typed word without submitting the search", async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();
