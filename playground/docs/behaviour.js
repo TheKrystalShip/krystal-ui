@@ -283,6 +283,21 @@ export const BEHAVIOUR = {
       "`onOpenChange(open)` tells the page each time it opens and closes; the page needs nothing else to know it is open.",
     ],
   },
+  "tab-dock": {
+    keys: [
+      ["Enter / Space", "On the handle, opens and closes the sheet; on a tab or a tile, goes to its page, or in edit mode chooses the slot or puts the page there"],
+      ["Escape", "Closes the sheet and returns focus to the handle"],
+      ["Tab", "Moves through the bar, then the sheet's head and tiles while it is open"],
+    ],
+    semantics: [
+      "The bar is a `<nav>` named by `label` holding one native button per tab; the current page's tab has `aria-current=\"page\"`, and on a page that is not on the bar no tab has it.",
+      "The handle names the sheet and says whether it is open (`aria-expanded`, `aria-controls`).",
+      "The sheet is a `dialog` named by its title; each section is a `group` named by its heading. Opened, focus goes to the current page's tile, else the first; closed, focus returns to the handle.",
+      "In edit mode Home carries a lock named by `strings.locked` and its tile is disabled; a page on the bar carries a dot named by `strings.onBar`.",
+      "A drag from the bar, a long-press on a tab and a drag down on the sheet's head are touch, pen and mouse gestures with no key of their own; the handle, Edit and the tiles do everything they do.",
+      "While the sheet is drawn `document.body` carries `data-tabdock-open`.",
+    ],
+  },
   "confirm-dialog": {
     keys: [["Escape", "Cancels; held while the confirmation is working"]],
     semantics: ["A Dialog: the confirm is a danger Button with the dialog's icon, and `busyLabel` replaces its label while it works."],

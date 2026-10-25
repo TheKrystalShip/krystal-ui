@@ -66,11 +66,12 @@ export { Skeleton } from "./components/Skeleton.jsx";
 export { Slider } from "./components/Slider.jsx";
 export { Spinner } from "./components/Spinner.jsx";
 export { StatusDot } from "./components/StatusDot.jsx";
-export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, TabBar, useSidebarCollapsed } from "./components/Shell.jsx";
+export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, useSidebarCollapsed } from "./components/Shell.jsx";
 export { StatTile, StatTiles } from "./components/StatTile.jsx";
 export { Steps } from "./components/Steps.jsx";
 export { SubTabs } from "./components/SubTabs.jsx";
 export { Table, sortRows } from "./components/Table.jsx";
+export { TabDock } from "./components/TabDock.jsx";
 export { Tab, TabList, TabPanel, Tabs } from "./components/Tabs.jsx";
 export { TimeGrid } from "./components/TimeGrid.jsx";
 export { TimeInput } from "./components/TimeInput.jsx";
@@ -84,6 +85,7 @@ export {
 } from "./components/Toolbar.jsx";
 
 export { useCarousel } from "./hooks/useCarousel.js";
+export { useDockDrag } from "./hooks/useDockDrag.js";
 export { useEdgeSwipe } from "./hooks/useEdgeSwipe.js";
 export { useFollowTail } from "./hooks/useFollowTail.js";
 export { useForm } from "./hooks/useForm.js";

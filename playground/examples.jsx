@@ -6,7 +6,7 @@ import {
   AccountAvatar, AppShell, Footer, BriefItem, BriefList, Container, Breadcrumbs, BriefCard, Button, Card, CardScreen, Checkbox, CopyField, Dialog, EmptyState, Field, IconButton, Input,
   Icon, List, ListRow, Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, PosterCard, Shelf, ShowcaseCard,
   Sidebar, SidebarGroup, Skeleton, Spinner, StatusDot, SubTabs, Textarea, Toggle, Toolbar,
-  ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer, TabBar,
+  ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer,
 } from "@thekrystalship/krystal";
 import { AssistantPage, ChatCard, ChatCardRow, ChatCardRows, ChatEvidence } from "@thekrystalship/krystal-chat";
 import tksMark from "../packages/krystal/assets/tks-mark.png";
@@ -355,20 +355,6 @@ export function PosterCardExamples() {
           <PosterCard name="Erwtensoep, a name long enough to take two lines" art={art("var(--surface-2)", "var(--surface-1)")} onPick={() => {}}
             facts={[{ value: 2026, label: "Year" }]} status={{ label: "Still preparing", tone: "notice", icon: "loader" }} />
         </Shelf>
-      </Sub>
-    </>
-  );
-}
-
-export function TabBarExamples() {
-  return (
-    <>
-      <Sub title="TabBar badge (phone width only; info, warn, danger)">
-        <TabBar items={[
-          { id: "a", icon: "server", label: "Info", badge: 3, tone: "info" },
-          { id: "b", icon: "bell", label: "Warn", badge: 12, tone: "warn", active: true },
-          { id: "c", icon: "shield", label: "Danger", badge: 1, tone: "danger" },
-        ]} />
       </Sub>
     </>
   );

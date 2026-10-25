@@ -2,7 +2,7 @@ import React from "react";
 import {
   Avatar, BriefCard, BriefItem, BriefList, Button, Dialog, Disclosure, Drawer, EmptyState, HeroBar, HeroBody, HeroButton, HeroGroup,
   Hero, Input, Meter, Rail, RadioGroup, SettingsRow, SettingsSection, ShowcaseCard, StatTile, StatTiles, StatusDot,
-  SubTabs, TabBar, ToolbarFilters, TvCard, TvSpotlight, Toggle, Select,
+  SubTabs, ToolbarFilters, TvCard, TvSpotlight, Toggle, Select,
 } from "@thekrystalship/krystal";
 import { ChatCardRow, ChatCardRows, ChatCard } from "@thekrystalship/krystal-chat";
 import { Section, Sub, row } from "../kit.jsx";
@@ -81,7 +81,7 @@ export default function VariantsSection() {
             foot={<><Button variant="primary" onClick={() => setDlg(null)}>Keep</Button><Button onClick={() => setDlg(null)}>Stop</Button></>} />
         )}
       </Sub>
-      <Sub title="HeroButton iconTone and armed; Disclosure flush; SubTabs / TabBar disabled and fill; ToolbarFilters framed and compact">
+      <Sub title="HeroButton iconTone and armed; Disclosure flush; SubTabs disabled and fill; ToolbarFilters framed and compact">
         <Hero art={ART}>
           <HeroBody>
             <HeroBar><HeroGroup>
@@ -95,7 +95,6 @@ export default function VariantsSection() {
         <div style={{ display: "grid", gap: 12, maxWidth: 520, marginTop: 12 }}>
           <Disclosure flush defaultOpen summary={<><Avatar name="G" size="xs" />Group with a tile and a name</>}><div style={{ paddingTop: 12 }}>Flush body</div></Disclosure>
           <SubTabs fill active={tab} onChange={setTab} tabs={[{ id: "a", label: "Profile", icon: "user" }, { id: "b", label: "Locked", icon: "lock", disabled: true }]} />
-          <TabBar items={[{ id: "a", label: "Home", icon: "home", active: true }, { id: "b", label: "Off", icon: "lock", disabled: true }]} />
           <div style={{ display: "flex", alignItems: "stretch", gap: 10 }}>
             <Input wide placeholder="Search" size="lg" />
             <ToolbarFilters framed compact="phone" fields={filters} />

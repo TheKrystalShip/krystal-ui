@@ -30,7 +30,7 @@ import { Menu, MenuItem, MenuSeparator } from "./Menu.jsx";
  * @param {(open: boolean) => void} [props.onDrawer] Called with true when the edge handle opens the phone drawer and with false when the scrim closes it.
  * @param {number} [props.dockPush] Pixels a pinned dock takes from the page.
  * @param {import("react").ReactNode} [props.aside] A node drawn after the main column, such as a dock.
- * @param {import("react").ReactNode} [props.tabBar] A TabBar for phones; when given, the bar replaces the drawer and its handle.
+ * @param {import("react").ReactNode} [props.tabBar] A TabDock for phones; when given, the bar replaces the drawer and its handle.
  * @param {import("react").Ref<HTMLElement>} [props.mainRef] Ref to the scrolling main column.
  * @param {string} [props.mainClassName] Extra class names on the main column.
  * @param {import("react").ReactNode} [props.children] The page, drawn in the main column.
@@ -48,49 +48,6 @@ function AppShell({ sidebar, collapsed, drawerOpen, onDrawer, dockPush = 0, asid
       {aside}
       {tabBar}
     </div>
-  );
-}
-
-// The phone's way around a site: a row of tabs along the bottom edge, each an icon over its label,
-// the current one in the accent. Drawn only on phones; on a wide screen the sidebar is the way
-// around. Each item is `{ id, icon, label, active, onClick, badge, tone }`, where `badge` is a count
-// drawn on the icon when it is above zero, in a `tone` of info, warn or danger. The bar clears the
-// home indicator of a phone that has one.
-/**
- * @typedef {object} TabBarItem
- * @property {string} [id] The tab's key; the label when left out.
- * @property {string} icon A Lucide name.
- * @property {string} label The words under the icon.
- * @property {boolean} [active] Marks the current tab (`aria-current`).
- * @property {() => void} [onClick] Called when the tab is pressed.
- * @property {boolean} [disabled] Dims the tab and blocks it.
- * @property {number} [badge] Drawn on the icon when above zero.
- * @property {"info" | "warn" | "danger"} [tone] `info`, `warn` or `danger`; colours the badge.
- */
-/**
- * @param {object} props
- * @param {TabBarItem[]} props.items The tabs, left to right.
- * @param {string} [props.label] The bar's accessible name.
- */
-function TabBar({ items, label = "Main" }) {
-  return (
-    <nav className="k-tabbar" aria-label={label}>
-      {items.map((item) => (
-        <button
-          key={item.id || item.label}
-          type="button"
-          className={"k-tabbar__tab" + (item.active ? " k-tabbar__tab--active" : "")}
-          aria-current={item.active ? "page" : undefined}
-          disabled={item.disabled}
-          onClick={item.onClick}>
-          <span className="k-tabbar__icon">
-            <Icon name={item.icon} size={22} />
-            {item.badge > 0 && <Pill size="sm" tone={item.tone || "warn"} className={"k-tabbar__badge k-tabbar__badge--" + (item.tone || "warn")}>{item.badge}</Pill>}
-          </span>
-          <span className="k-tabbar__label">{item.label}</span>
-        </button>
-      ))}
-    </nav>
   );
 }
 
@@ -287,4 +244,4 @@ function MobileNavToggle({ onOpen }) {
   );
 }
 
-export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, TabBar, useSidebarCollapsed };
+export { AppShell, MobileNavToggle, NavItem, Sidebar, SidebarAccount, SidebarGroup, useSidebarCollapsed };

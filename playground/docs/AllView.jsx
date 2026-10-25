@@ -12,7 +12,7 @@ const FILES = Object.entries(import.meta.glob("../sections/*.jsx", { eager: true
 const BUILT_IN = [
   ["controls", "Controls", [E.ButtonExamples, E.IconButtonExamples, E.InputExamples, E.FieldExamples, E.PasswordInputExamples,
     E.ProviderButtonExamples, E.CheckboxExamples, E.SelectExamples, E.OptionListExamples, E.MeterExamples]],
-  ["badges", "Badges", [E.PillExamples, E.NavItemBadgeExamples, E.SubTabsExamples, E.ShowcaseCardExamples, E.TabBarExamples, E.BriefCardCountExamples]],
+  ["badges", "Badges", [E.PillExamples, E.NavItemBadgeExamples, E.SubTabsExamples, E.ShowcaseCardExamples, E.BriefCardCountExamples]],
   ["page", "Page", [E.PageHeaderExamples, E.ShelfExamples, E.PosterCardExamples, E.NoticeExamples, E.EmptyStateExamples, E.BreadcrumbsExamples, E.ToolbarExamples]],
   ["settings", "Settings", [E.SettingsExamples]],
   ["dialogs", "Dialogs", [E.DialogExamples]],

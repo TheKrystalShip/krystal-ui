@@ -1,0 +1,374 @@
+/* ============================================================================
+   tabdock.css — the phone's tab dock (<TabDock>): the bar, drawn with the
+   tabbar.css classes, and the sheet that grows from its top edge into every
+   page of the site. Drawn only at 768px and narrower, where the tab bar is.
+   Sits after tabbar.css, whose tab rules it adds to.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+/* How far the sheet is open, 0 to 1, which its height and its scrim move with (useDockDrag sets both). */
+@property --dock-p { syntax: "<number>"; inherits: true; initial-value: 0; }
+
+@layer krystal.components {
+
+.k-tabdock {
+  display: contents;
+}
+
+.k-tabdock__sheet,
+.k-tabdock__scrim {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* A press on the bar is a drag or a long-press, never a text selection or a browser menu. */
+  .k-tabdock__bar,
+  .k-tabdock__head {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .k-tabdock__bar {
+    column-gap: 4px;
+  }
+
+  .k-tabdock__bar .k-tabbar__tab {
+    position: relative;
+    min-width: 0;
+    border: 1.5px solid transparent;
+  }
+
+  .k-tabdock__bar .k-tabbar__label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* An empty free slot keeps its column. */
+  .k-tabdock__gap {
+    height: 50px;
+  }
+
+  /* Edit mode: the four free slots outlined, the chosen one solid in the accent, Home dimmed under a lock. */
+  .k-tabdock__bar .k-tabdock__tab--slot {
+    border: 1.5px dashed var(--border-strong);
+  }
+
+  .k-tabdock__bar .k-tabdock__tab--chosen {
+    border: 1.5px solid var(--krystal-teal);
+    background: var(--krystal-teal-dim);
+  }
+
+  .k-tabdock__bar .k-tabdock__tab--locked {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .k-tabdock__lock {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    display: inline-flex;
+    color: var(--fg-3);
+    pointer-events: none;
+  }
+
+  /* The handle: the angled tab on the top edge, inside it. The button is the hit area; its mark is the tab. */
+  .k-tabdock__handle {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 1;
+    width: 72px;
+    height: 12px;
+    margin-left: -36px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity var(--d-fast) var(--ease-out);
+  }
+
+  .k-tabdock__handle:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-focus);
+  }
+
+  .k-tabdock__mark {
+    position: absolute;
+    top: 0;
+    left: 16px;
+    width: 40px;
+    height: 6px;
+    background: var(--border-strong);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 6px 100%);
+    transition: background var(--d-fast);
+  }
+
+  .k-tabdock__handle:focus-visible .k-tabdock__mark,
+  .k-tabdock:has(.k-tabdock__sheet.k-is-held) .k-tabdock__mark {
+    background: var(--krystal-teal);
+  }
+
+  @media (hover: hover) {
+    .k-tabdock__handle:hover .k-tabdock__mark {
+      background: var(--krystal-teal);
+    }
+  }
+
+  /* The bar's handle gives way to the sheet's while the sheet is drawn. */
+  .k-tabdock__handle.k-is-covered {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Over the page above the bar, darker the further the sheet is open; it takes a tap only while the sheet is open. */
+  .k-tabdock__scrim {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: var(--k-tabdock-bar, calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)));
+    z-index: 62;
+    background: color-mix(in srgb, var(--scrim-base) 60%, transparent);
+    opacity: var(--dock-p);
+    pointer-events: none;
+    touch-action: none;
+  }
+
+  .k-tabdock__scrim.k-is-open {
+    pointer-events: auto;
+  }
+
+  /* The sheet: its bottom edge on the bar's top, its height set by useDockDrag. Its pane is as tall as the sheet open,
+     so growing the sheet uncovers the pane from the head down. */
+  .k-tabdock__sheet {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: var(--k-tabdock-bar, calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)));
+    z-index: 63;
+    box-sizing: border-box;
+    height: 0;
+    overflow: hidden;
+    background: var(--surface-1);
+    border-top: var(--edge-strong);
+    box-shadow: var(--shadow-pop);
+    color: var(--fg-1);
+    font-family: var(--font-ui);
+  }
+
+  .k-tabdock__sheet,
+  .k-tabdock__sheet * {
+    overscroll-behavior: contain;
+  }
+
+  /* Closed, the sheet is neither seen, reached by Tab nor named to a screen reader. */
+  .k-tabdock__sheet.k-is-idle {
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .k-tabdock__pane {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--dock-open-h, 0px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .k-tabdock__head {
+    position: relative;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px 10px;
+    cursor: grab;
+  }
+
+  .k-tabdock__head .k-tabdock__handle {
+    height: 16px;
+  }
+
+  .k-tabdock__title,
+  .k-tabdock__heading {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+
+  .k-tabdock__actions {
+    margin-left: auto;
+    display: flex;
+    gap: 4px;
+  }
+
+  .k-tabdock__btn {
+    min-height: 36px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: var(--r-sm);
+    background: none;
+    color: var(--fg-2);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .k-tabdock__btn--edit {
+    border-color: var(--border-strong);
+    color: var(--fg-1);
+    font-weight: 600;
+  }
+
+  .k-tabdock__btn--on {
+    border-color: var(--krystal-teal);
+    background: var(--krystal-teal);
+    color: var(--on-accent);
+  }
+
+  .k-tabdock__btn:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-focus);
+  }
+
+  .k-tabdock__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    touch-action: pan-x pan-y;
+  }
+
+  .k-tabdock__content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 4px 16px 16px;
+  }
+
+  .k-tabdock__section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .k-tabdock__grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .k-tabdock__tile {
+    position: relative;
+    height: 72px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 6px 2px;
+    border: 1.5px solid transparent;
+    border-radius: var(--r-sm);
+    background: var(--surface-2);
+    color: var(--fg-1);
+    font-family: var(--font-ui);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--d-fast) var(--ease-out), background var(--d-fast) var(--ease-out);
+  }
+
+  .k-tabdock__tile:active {
+    background: var(--surface-3);
+  }
+
+  .k-tabdock__tile:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .k-tabdock__tile--active,
+  .k-tabdock__tile--chosen {
+    background: var(--krystal-teal-dim);
+    color: var(--krystal-teal);
+  }
+
+  .k-tabdock__tile--chosen {
+    border-color: var(--krystal-teal);
+  }
+
+  .k-tabdock__tile:focus-visible {
+    outline: none;
+    box-shadow: var(--ring-focus);
+  }
+
+  .k-tabdock__tile-icon {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .k-tabdock__tile-label {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    line-height: 1.2;
+  }
+
+  .k-tabdock__tile-badge {
+    position: absolute;
+    top: -4px;
+    left: calc(50% + 6px);
+    min-width: 18px;
+  }
+
+  .k-tabdock__tile-badge--warn {
+    background: var(--warning);
+    color: var(--on-warning);
+  }
+
+  .k-tabdock__tile-badge--danger {
+    background: var(--danger);
+    color: var(--on-danger);
+  }
+
+  .k-tabdock__tile-badge--info {
+    background: var(--info);
+    color: var(--on-info);
+  }
+
+  /* A page that is on the bar carries a dot in its corner. */
+  .k-tabdock__dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 7px;
+    height: 7px;
+    border-radius: var(--r-pill);
+    background: var(--krystal-teal);
+  }
+
+  .k-tabdock__tile .k-tabdock__lock {
+    top: 5px;
+    right: 5px;
+  }
+
+  /* While a person writes in a chat that is the page, the keyboard takes the bar's room, and the sheet's. */
+  body.k-chat-typing .k-tabdock__sheet,
+  body.k-chat-typing .k-tabdock__scrim {
+    display: none;
+  }
+}
+}

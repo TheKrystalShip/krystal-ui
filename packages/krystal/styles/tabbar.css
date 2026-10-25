@@ -2,8 +2,8 @@
    tabbar.css — the phone's row of tabs along the bottom edge, and what the
    frame does around it: the drawer and its handle give way to it, the main
    column and the dock end above it, and the dock's launcher is left to the
-   site's own tab. Drawn by TabBar inside AppShell's `tabBar`. Sits after
-   dock.css and footer.css, whose phone rules it adjusts.
+   site's own tab. The row is drawn by TabDock inside AppShell's `tabBar`.
+   Sits after dock.css and footer.css, whose phone rules it adjusts.
    ============================================================================ */
 @layer krystal.tokens, krystal.base, krystal.components;
 

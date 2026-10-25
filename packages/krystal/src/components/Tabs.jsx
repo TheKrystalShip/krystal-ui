@@ -5,7 +5,7 @@ import { Pill } from "./Pill.jsx";
 
 // Tabs — panels that share one place in a page, one shown at a time (WAI-ARIA tabs). The tabs are
 // buttons that switch what is drawn below them; nothing navigates. Tabs that go to another page are
-// SubTabs (a link strip) or TabBar (the phone's main navigation).
+// SubTabs (a link strip) or TabDock (the phone's main navigation).
 //
 //   <Tabs defaultValue="a">
 //     <TabList label="Sections">

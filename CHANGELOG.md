@@ -1,5 +1,30 @@
 # Changelog
 
+## [10.0.0-dev.1]
+
+### Added
+- **`TabDock`**, the phone's way around a site: a bar of five tabs along the bottom edge that grows
+  upward into a sheet of every page. Home is the middle tab and the only locked slot; the other four
+  are the person's, filled with any page. The bar is drawn with the `k-tabbar` classes; the sheet holds
+  the site's `sections` of tiles, five to a row, each tile a page with an `onClick`, so a section of
+  actions is one more section of the same tiles. A drag from anywhere on the bar moves the sheet with
+  the finger; a drag down on its head, or on its body scrolled to the top, closes it; a tap on the
+  handle toggles it; a long-press on a tab (or Edit in the head) enters edit mode, where a tap on a free
+  slot chooses it and a tap on a page puts that page there, swapping with the one it replaces, each
+  change reported at once through `onSlotsChange`. Reset puts `defaultSlots` back. An id in `slots`
+  that no section holds, a repeated id or a missing entry takes that position's default. `open` and
+  `onOpenChange` control the sheet, `strings` carries every word it draws, and while it is drawn
+  `document.body` carries `data-tabdock-open`. Styles are `styles/tabdock.css` (`k-tabdock*`).
+- **`useDockDrag`**: the drag of a dock or sheet standing on an edge, between its closed and open
+  heights, as one hook: the 0 to 1 progress (`--dock-p` on the panel and its scrim), the slop, the
+  commit by distance or flick, the overdrag, the settle, the pull-down from a scrolled body's top, the
+  long-press, the sideways swipe of a closed panel and the vibration. The caller reports the heights at
+  rest through `measure`.
+
+### Removed
+- **`TabBar`**. A phone's tab bar is a `TabDock`, which `AppShell`'s `tabBar` takes as it took
+  `TabBar`; the `k-tabbar*` classes and the frame rules around the bar in `styles/tabbar.css` remain.
+
 ## [9.3.0]
 
 ### Added

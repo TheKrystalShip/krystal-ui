@@ -1,6 +1,6 @@
 {
   "name": "@thekrystalship/krystal",
-  "version": "9.3.0",
+  "version": "10.0.0-dev.1",
   "description": "The Krystal design system as React components, stores and stylesheets, shared by every TheKrystalShip web surface.",
   "license": "GPL-3.0-only",
   "type": "module",

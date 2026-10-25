@@ -320,8 +320,13 @@ export const PAGES = [
 
   // The frame
   {
-    id: "app-shell", name: "AppShell and Sidebar", group: "The frame", exports: ["AppShell", "Sidebar", "SidebarGroup", "NavItem", "SidebarAccount", "MobileNavToggle", "TabBar", "useStoredFlag", "useEdgeSwipe", "usePhone"], examples: ["frame", "navitem-badge", "tabbar"],
-    summary: "A sidebar beside a scrolling main column, an icon rail when collapsed, an off-canvas drawer on a phone or a bottom tab bar.",
+    id: "app-shell", name: "AppShell and Sidebar", group: "The frame", exports: ["AppShell", "Sidebar", "SidebarGroup", "NavItem", "SidebarAccount", "MobileNavToggle", "useStoredFlag", "useEdgeSwipe", "usePhone"], examples: ["frame", "navitem-badge"],
+    summary: "A sidebar beside a scrolling main column, an icon rail when collapsed, an off-canvas drawer on a phone or a bottom tab dock.",
+  },
+  {
+    id: "tab-dock", name: "TabDock", group: "The frame", exports: ["TabDock", "useDockDrag"], examples: ["tab-dock"],
+    summary: "The phone's bar of five tabs, Home in the middle and four slots the person chooses, that grows upward into a sheet of every page.",
+    versus: "SubTabs for the sections of one page; AppShell's sidebar on a wide screen.",
   },
   {
     id: "dock", name: "Dock", group: "The frame", exports: ["Dock", "DockFab", "useDock"], examples: [],

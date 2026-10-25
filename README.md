@@ -34,7 +34,7 @@ screen-reader behaviour, the token reference, and the guides. The guides are `do
 
 | Kind | Exports |
 |---|---|
-| The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem` (`badge`, `tone`, and `compact` with an `aside` node for the sub-rows under a group: the icon on a tile, a smaller label, the tile alone on the rail), `SidebarAccount` (the person's avatar and name, opening the account menu every site shares: Profile, Settings, the site's own `items`, a rule and Sign out), `MobileNavToggle`, `TabBar`, `useStoredFlag`, `useEdgeSwipe` |
+| The frame | `AppShell`, `Sidebar`, `SidebarGroup`, `NavItem` (`badge`, `tone`, and `compact` with an `aside` node for the sub-rows under a group: the icon on a tile, a smaller label, the tile alone on the rail), `SidebarAccount` (the person's avatar and name, opening the account menu every site shares: Profile, Settings, the site's own `items`, a rule and Sign out), `MobileNavToggle`, `TabDock` (the phone's bar of five tabs that grows into a sheet of every page, the four free slots the person's to choose), `useDockDrag` (the drag that moves it, and the remote dock's), `useStoredFlag`, `useEdgeSwipe` |
 | The dock | `Dock`, `DockFab`, `useDock` |
 | Banners | `Hero` (`cinematic`, or `variant="card"`: the bordered veil card), and the parts its content is drawn from: `HeroStatus`, `HeroBody`, `HeroHeading`, `HeroName`, `HeroTags`, `HeroTag` (`glass`, `verbatim`, `icon`), `HeroBar`, `HeroGroup`, `HeroDivider`, `HeroNote` (a line on the art), `HeroButton` |
 | The footer | `Footer` (brand block, link groups, bar), `GithubMark` |
@@ -162,7 +162,7 @@ tabs pattern: roving tabindex, arrow keys that move and choose (`activation="man
 only), Home and End. `variant` is `underline` or `segmented`; a `Tab` takes an `icon` and a `count`
 drawn as a `Pill`; a row wider than its column scrolls with the chosen tab in view. A panel is
 unmounted while hidden unless it has `keepMounted`. `Tabs` never navigates: tabs that are links
-between pages are `SubTabs` (a link strip, a native select on a phone) or `TabBar`.
+between pages are `SubTabs` (a link strip, a native select on a phone) or `TabDock`.
 
 ```jsx
 <Tabs defaultValue="overview">
@@ -268,7 +268,7 @@ grid. `busy` swaps the mark for the spinner.
 
 `Pill` is the label every badge is drawn with: `tone` neutral (default), accent, info, ok, warn,
 danger or muted; `size` md or sm; `icon` or `dot` (`"live"` for a running thing) before the text.
-`NavItem`, `SubTabs`, `TabBar`, `ShowcaseCard` and `BriefCard` draw their count or badge through it
+`NavItem`, `SubTabs`, `TabDock`, `ShowcaseCard` and `BriefCard` draw their count or badge through it
 and keep their own class names, so a site's rule on `.k-nav-item__badge--warn` still lands.
 
 ```jsx
@@ -570,7 +570,7 @@ classes (the Stylelint config reports them). What the components offer beyond th
   and a function as `children` that receives `{ fullscreen }`. **`Drawer`**: `footLayout`; no children draws
   no body.
 - **`HeroButton`**: `iconTone`, `armed`. **`ShowcaseCard`**: `corner.tone` and `corner.mono`, `compactFacts` (under 210px wide the facts drop their icons), the token
-  `--k-showcase-progress-track`. **`SubTabs`** and **`TabBar`**: a `disabled` item; `SubTabs` `fill`.
+  `--k-showcase-progress-track`. **`SubTabs`** and **`TabDock`**: a `disabled` item; `SubTabs` `fill`.
   **`ToolbarFilters`**: `framed`, `compact` (`true` or `"phone"`), `className`.
 - **`AppShell`**: `mainClassName`; `--k-app-bottom-inset` (room above the phone tab bar that the page, the
   dock and the toasts leave), `--k-toasts-bottom` and `--k-toasts-top`; `body[data-chat-typing]` while
@@ -820,24 +820,52 @@ Wide screens collapse the sidebar to an icon rail; phones get it as a drawer, op
 left-edge handle or a swipe. A pinned dock pushes the page over while the page keeps
 `contentFloor` pixels (1000 by default) and floats over it otherwise.
 
-A site can give phones a row of tabs along the bottom edge instead of the drawer, by passing
-`tabBar`. On a phone the sidebar, its handle and the dock's launcher are then not drawn, the main
-column scrolls clear of the bar, and an open dock ends above it, so the bar stays the way out of
-it; the site opens the dock from a tab of its own. Wide screens keep the sidebar and draw no bar.
+A site can give phones a bar of tabs along the bottom edge instead of the drawer, by passing
+`tabBar`, which takes a `TabDock`. On a phone the sidebar, its handle and the dock's launcher are
+then not drawn, the main column scrolls clear of the bar, and an open dock ends above it, so the bar
+stays the way out of it; the site opens the dock from a tab of its own. Wide screens keep the
+sidebar and draw no bar.
+
+The bar holds five tabs: Home in the middle, always, and four free slots the person fills with any
+page. A drag from anywhere on the bar grows it upward into a sheet of every page of the site, in the
+site's sections, five tiles to a row; the sheet follows the finger and settles open or closed by
+distance or flick, and a drag down on its head, or on its body scrolled to the top, closes it. A tap
+on the handle toggles the sheet, and a long-press on a tab (or Edit in the sheet's head) enters edit
+mode, where a tap on a free slot chooses it and a tap on a page puts that page there, swapping with
+the page it replaces. The dock knows nothing of routers, accounts or storage: the site hands it its
+pages and a setter, and keeps the person's choice wherever it keeps its preferences.
 
 ```jsx
 <AppShell
   …
   tabBar={
-    <TabBar items={[
-      { id: "home", icon: "house", label: "Home", active: page === "home" && !dock.open, onClick: … },
-      { id: "assistant", icon: "bot", label: "Assistant", active: dock.open, onClick: () => dock.setOpen(true) },
-      { id: "me", icon: "user", label: "Me", badge: 2, tone: "warn", onClick: … },
-    ]} />
+    <TabDock
+      home={{ id: "home", icon: "house", label: "Home", active: page === "home", onClick: … }}
+      sections={[
+        { id: "watch", label: "Watch", items: [
+          { id: "home", icon: "house", label: "Home", active: page === "home", onClick: … },
+          { id: "movies", icon: "film", label: "Movies", active: page === "movies", onClick: … },
+          { id: "me", icon: "user", label: "Me", badge: 2, tone: "warn", active: page === "me", onClick: … },
+        ] },
+      ]}
+      slots={saved}
+      defaultSlots={["movies", "discover", "assistant", "me"]}
+      onSlotsChange={(ids) => save(ids)} />
   }>
 ```
 
-`styles/tabbar.css` sits after `dock.css` and `footer.css`, whose phone rules it adjusts.
+An id in `slots` that no section holds, a repeated id or a missing entry takes that position's
+default; a default no section holds leaves the slot empty. `open` and `onOpenChange` control the
+sheet; without them the dock keeps its own state. While the sheet is drawn, `document.body` carries
+`data-tabdock-open`, so a site can give way to it. `strings` carries every word the dock draws.
+
+`useDockDrag` is the drag on its own: one height a finger moves between closed and open, with a 0 to
+1 progress (`--dock-p` on the panel and its scrim), the slop, the commit by distance or flick, the
+overdrag, the settle, the pull-down from a scrolled body's top, the long-press and the vibration.
+The caller reports the heights at rest through `measure`.
+
+`styles/tabbar.css` sits after `dock.css` and `footer.css`, whose phone rules it adjusts;
+`styles/tabdock.css` follows it.
 
 ## On a television
 
