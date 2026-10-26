@@ -30,6 +30,24 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllGlobals());
 
+describe("assistant client: the person's clock", () => {
+  it("names the browser's time zone on every call", async () => {
+    const client = createAssistantClient({ baseUrl: "/a", getToken: () => fresh() });
+    fetchMock.mockResolvedValue(json(200, { conversations: [] }));
+    await client.conversations();
+    expect(fetchMock.mock.calls[0][1].headers["X-Time-Zone"]).toBe(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  });
+
+  it("sends no zone where the browser names none", async () => {
+    vi.spyOn(Intl, "DateTimeFormat").mockImplementation(() => ({ resolvedOptions: () => ({}) }));
+    const client = createAssistantClient({ baseUrl: "/a", getToken: () => fresh() });
+    fetchMock.mockResolvedValue(json(200, { conversations: [] }));
+    await client.conversations();
+    expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty("X-Time-Zone");
+    vi.restoreAllMocks();
+  });
+});
+
 describe("assistant client: a call that may be sent twice", () => {
   it("renews once on a 401 and sends again with the new bearer", async () => {
     const renewToken = vi.fn().mockResolvedValue("renewed");

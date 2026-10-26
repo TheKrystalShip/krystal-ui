@@ -1,5 +1,13 @@
 # Changelog
 
+## [10.1.0]
+
+### Added
+- **The assistant client names the browser's time zone.** `createAssistantClient` sends
+  `X-Time-Zone` (an IANA id, as `Europe/Madrid`) on every call that carries the bearer, read on each
+  call, so an assistant reads and writes times in the person's clock. A browser that names no zone sends
+  none. An assistant reached across origins allows the header in its CORS policy.
+
 ## [10.0.1]
 
 ### Fixed

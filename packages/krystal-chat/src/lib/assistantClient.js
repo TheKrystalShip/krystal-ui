@@ -111,6 +111,15 @@ async function payloadOf(res) {
   try { return await res.json(); } catch { return null; }
 }
 
+/** The browser's IANA time zone, as `Europe/Madrid`; null where the browser names none. */
+function timeZone() {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * A browser client of one assistant over the assistant wire contract.
  *
@@ -147,9 +156,13 @@ function createAssistantClient({ baseUrl, getToken, renewToken, canRenew }) {
     return token;
   };
 
+  // The browser's time zone rides on every call, read each time so a person who travels is read in the
+  // zone they are in: a product's assistant reads and writes times in the person's clock, not its host's.
   const headersOf = (token, extra) => {
     const h = { ...extra, Authorization: "Bearer " + token };
     if (streamId) h["X-Assistant-Origin"] = streamId;
+    const zone = timeZone();
+    if (zone) h["X-Time-Zone"] = zone;
     return h;
   };
 
