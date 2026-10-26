@@ -377,6 +377,8 @@ function Chat({
   // `body[data-chat-typing]`.
   const [typing, setTyping]     = React.useState(false);
   const pressingRef = React.useRef(false);
+  const typingRef = React.useRef(false);
+  typingRef.current = typing;
   React.useEffect(() => {
     if (!asPage) return undefined;
     const down = () => { pressingRef.current = true; };
@@ -1683,6 +1685,44 @@ function Chat({
   const [commandMenu, setCommandMenu] = React.useState({ items: [], active: 0 });
   const [menuDismissed, setMenuDismissed] = React.useState(false);
   const composerRef = React.useRef(null);
+  // Where the textarea takes or loses focus, the page's typing state follows it; a button pressed
+  // inside the composer is not writing. A host that moves the chat's node between containers takes the
+  // focus away without an event React (or, in some browsers, the document) delivers, so while typing
+  // the focus is also checked on a short interval and typing never outlives it.
+  React.useEffect(() => {
+    if (!asPage) return undefined;
+    const inComposer = (t) => t instanceof HTMLTextAreaElement && !!composerRef.current?.contains(t);
+    let waiting = false;
+    const release = () => {
+      if (!pressingRef.current) { setTyping(false); return; }
+      // A press elsewhere is what usually takes the focus, and the tab bar coming back would move what it is
+      // pressing before it lets go: the page leaves typing once the press is over, and its click has landed.
+      if (waiting) return;
+      waiting = true;
+      const done = () => {
+        document.removeEventListener("pointerup", done, true);
+        document.removeEventListener("pointercancel", done, true);
+        waiting = false;
+        setTimeout(() => { if (!inComposer(document.activeElement)) setTyping(false); }, 0);
+      };
+      document.addEventListener("pointerup", done, true);
+      document.addEventListener("pointercancel", done, true);
+    };
+    const onIn = (e) => { if (inComposer(e.target)) setTyping(true); };
+    const onOut = (e) => { if (inComposer(e.target)) release(); };
+    document.addEventListener("focusin", onIn, true);
+    document.addEventListener("focusout", onOut, true);
+    const watch = setInterval(() => {
+      if (typingRef.current && !inComposer(document.activeElement)) release();
+    }, 200);
+    return () => {
+      document.removeEventListener("focusin", onIn, true);
+      document.removeEventListener("focusout", onOut, true);
+      clearInterval(watch);
+      setTyping(false);
+    };
+  }, [asPage]);
+
 
   const refreshMenu = React.useCallback((text, dismissed) => {
     const items = dismissed ? [] : suggestFor(text, commandCatalog);
@@ -1967,23 +2007,6 @@ function Chat({
     if (waiting) { setActiveId(waiting.id); setInput(""); }
     else newChat({ quiet: true });
   };
-  // Where the textarea takes or loses focus, the page's typing state follows it; a button pressed
-  // inside the composer is not writing.
-  const onComposerFocus = asPage ? (e) => { if (e.target.tagName === "TEXTAREA") setTyping(true); } : undefined;
-  // A press elsewhere is what usually takes the focus, and the tab bar coming back would move what it is
-  // pressing before it lets go: the page leaves typing once the press is over, and its click has landed.
-  const onComposerBlur = asPage ? (e) => {
-    if (e.target.tagName !== "TEXTAREA") return;
-    if (!pressingRef.current) { setTyping(false); return; }
-    const done = () => {
-      document.removeEventListener("pointerup", done, true);
-      document.removeEventListener("pointercancel", done, true);
-      setTimeout(() => setTyping(false), 0);
-    };
-    document.addEventListener("pointerup", done, true);
-    document.addEventListener("pointercancel", done, true);
-  } : undefined;
-
   return (
     <ChatContext.Provider value={chat}>
     <div className={"k-chat-page" + (docked ? " k-chat-page--docked" : "") + (railTarget ? " k-chat-page--railless" : "")
@@ -2197,7 +2220,7 @@ function Chat({
           {slots.aboveComposer != null ? renderSlot(slots.aboveComposer, chat) : <DefaultAboveComposer chat={chat} />}
           {voice.phase === "idle" ? (
             <div className={"k-chat-composer__box" + (dragging ? " k-chat-composer__box--drop" : "")} ref={composerRef}
-              onFocus={onComposerFocus} onBlur={onComposerBlur} onPaste={onComposerPaste}
+              onPaste={onComposerPaste}
               onDragOver={onComposerDragOver} onDragLeave={() => setDragging(false)} onDrop={onComposerDrop}>
               <ComposerAttachments items={attached} onRemove={removeAttached} />
               {attachTooLong && <p className="k-chat-composer__attach-note" role="alert">{attachTooLong}</p>}

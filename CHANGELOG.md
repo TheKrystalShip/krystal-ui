@@ -1,5 +1,14 @@
 # Changelog
 
+## [10.0.1]
+
+### Fixed
+- **The chat's typing state on a page never outlives the composer's focus.** `Chat` in `layout="page"`
+  reads focus from native `focusin` and `focusout` listeners and, while typing, checks
+  `document.activeElement` on a short interval, so a host that moves the chat's DOM node between
+  containers while the composer has focus no longer leaves `body.k-chat-typing` and
+  `body[data-chat-typing]` set, and the site's tab bar returns.
+
 ## [10.0.0]
 
 ### Added
