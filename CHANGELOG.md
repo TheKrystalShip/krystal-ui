@@ -1,6 +1,6 @@
 # Changelog
 
-## [10.0.0-dev.1]
+## [10.0.0]
 
 ### Added
 - **`TabDock`**, the phone's way around a site: a bar of five tabs along the bottom edge that grows
