@@ -1,5 +1,12 @@
 # Changelog
 
+## [10.2.0]
+
+### Added
+- **The chat takes back a reply on `text.reset`.** When the assistant rejects its own reply on review
+  and writes it again, the stream carries `text.reset`; the live answer is cleared there, and the text
+  that follows is the reply.
+
 ## [10.1.0]
 
 ### Added

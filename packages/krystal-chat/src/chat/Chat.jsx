@@ -70,7 +70,7 @@ import { useConversationStream } from "./useConversationStream.js";
 const HISTORY_REFETCH_DEBOUNCE_MS = 500;
 
 const TURN_FRAMES = new Set([
-  "text.delta", "thinking.delta", "tool.start", "tool.result", "progress",
+  "text.delta", "text.reset", "thinking.delta", "tool.start", "tool.result", "progress",
   "command.proposed", "proposal", "question", "context.compacting", "done", "error",
   // One sentence of the reply, spoken. Handled as a side effect rather than through the message
   // reducer: it is audio to play, not state to render, and nothing about the transcript changes.

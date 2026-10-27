@@ -23,6 +23,7 @@ export {};
 
 /** @typedef {{ type: "turn.started", seq?: number, turnId: string, conversationId: string, queuedBehind?: string, ahead?: number }} TurnStartedFrame */
 /** @typedef {{ type: "text.delta", seq?: number, text: string }} TextDeltaFrame */
+/** @typedef {{ type: "text.reset", seq?: number }} TextResetFrame */
 /** @typedef {{ type: "audio.delta", seq?: number, mime: string, data: string }} AudioDeltaFrame */
 /** @typedef {{ type: "thinking.delta", seq?: number, text: string }} ThinkingDeltaFrame */
 /** @typedef {{ type: "context.compacting", seq?: number, stage: "clearing" | "summarizing" }} ContextCompactingFrame */
@@ -69,7 +70,7 @@ export {};
 
 /**
  * Every frame a turn stream delivers to `onEvent`.
- * @typedef {TurnStartedFrame | TextDeltaFrame | AudioDeltaFrame | ThinkingDeltaFrame | ContextCompactingFrame
+ * @typedef {TurnStartedFrame | TextDeltaFrame | TextResetFrame | AudioDeltaFrame | ThinkingDeltaFrame | ContextCompactingFrame
  *   | ToolStartFrame | ProgressFrame | ToolResultFrame | ProposalFrame | QuestionFrame | LogGapFrame
  *   | ErrorFrame | DoneFrame | CommandProposedFrame | TurnAttachFrame | TurnQueueFrame} Frame
  */

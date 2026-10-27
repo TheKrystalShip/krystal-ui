@@ -17,6 +17,13 @@ describe("reduceTurnFrame", () => {
     expect(out[1]).toMatchObject({ content: "Hello", thinking: "hmm" });
   });
 
+  it("takes back the reply on a text reset, and the deltas that follow are the reply", () => {
+    const out = run([bubble()], [
+      { type: "text.delta", text: "I added it." }, { type: "text.reset" }, { type: "text.delta", text: "Proposed." },
+    ]);
+    expect(out[0].content).toBe("Proposed.");
+  });
+
   it("changes nothing when the last entry is not an assistant bubble", () => {
     const messages = [{ role: "user", content: "hi" }];
     expect(reduceTurnFrame(messages, { type: "text.delta", text: "x" })).toBe(messages);

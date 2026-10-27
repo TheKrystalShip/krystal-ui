@@ -3,7 +3,7 @@
 // reconciled with the assistant's. Pure functions, no React.
 //
 // The vocabulary is the assistant wire contract's (`tks-assistant/docs/wire-contract.md`): `text.delta`,
-// `tool.start`, `tool.result`, `proposal`, `question`, `done` and the rest. An assistant that
+// `text.reset`, `tool.start`, `tool.result`, `proposal`, `question`, `done` and the rest. An assistant that
 // proposes through `command.proposed` is read as well. What a product shows for a tool's result or
 // names a proposed action is the product's, passed in as a `profile`:
 //
@@ -253,6 +253,10 @@ function reduceTurnFrame(messages, ev, profile = NO_PROFILE) {
   switch (ev.type) {
     case "text.delta":
       msgs[lastIdx] = { ...withoutCompacting(bubble), content: (bubble.content || "") + (ev.text || "") };
+      break;
+    case "text.reset":
+      // The reply failed its review and is being written again: what it said so far is taken back.
+      msgs[lastIdx] = { ...withoutCompacting(bubble), content: "" };
       break;
     case "thinking.delta":
       msgs[lastIdx] = { ...withoutCompacting(bubble), thinking: (bubble.thinking || "") + (ev.text || "") };
