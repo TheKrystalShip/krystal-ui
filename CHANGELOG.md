@@ -1,5 +1,18 @@
 # Changelog
 
+## [10.3.0]
+
+### Added
+- **`Verdict`**, a frameless Like and Dislike pair. `value` is `1` (liked), `-1` (disliked), `0`
+  (neither) or `undefined` (not known: both options unlit and disabled); `onChange(next)` gets `0` when
+  the lit option is pressed and the pressed option's value otherwise. A lit option draws a filled icon
+  and no frame or fill, and keeps the focus ring and the television's light pill. `size` is Button's;
+  `label`, `likeLabel`, `likedLabel`, `dislikeLabel` and `dislikedLabel` carry the words. `grow`
+  fills the container and splits it between the options; `onArt` draws the pair in the on-art palette
+  (`--art-fg-*`, `--art-line`) over artwork.
+- **An icon-only Button in a television spotlight row is 40px square.** `.k-tv-spot__actions` gave every
+  button 18px of side padding, which stretched an icon-only one to 58px wide.
+
 ## [10.2.0]
 
 ### Added

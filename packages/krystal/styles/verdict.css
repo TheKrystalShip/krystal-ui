@@ -1,0 +1,51 @@
+/* ============================================================================
+   verdict.css — the Like / Dislike pair (Verdict): two frameless icon buttons. A lit option keeps no
+   frame and no fill, only a brighter, filled icon; the accent tint every pressed Button gets is not
+   drawn here. A focused option keeps the focus every button has: the ring, and on a television the
+   light pill from tv.css, which the lit look below never matches.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+
+.k-verdict {
+  display: inline-flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+/* grow — the pair fills its container and the two options split it equally, each as tall as its size. */
+.k-verdict--grow {
+  display: flex;
+  width: 100%;
+}
+
+.k-verdict--grow .k-verdict__option {
+  flex: 1 1 0;
+  min-width: 0;
+  aspect-ratio: auto;
+}
+
+/* on-art — over artwork the page's own ink does not read, so the options take the on-art palette, which
+   is the same in every theme: light ink at rest and lit, and the art's own veil under a hovered one. */
+.k-verdict--on-art {
+  --fg-1: var(--art-fg-1);
+  --fg-2: var(--art-fg-1);
+  --fg-3: var(--art-fg-soft);
+  --veil-2: var(--art-line);
+}
+
+/* Off a television the ring is an outline and the lit option stays frameless while focused; on one,
+   :not(:focus-visible) leaves the focused option to tv.css whatever the order of the sheets. */
+.k-verdict .k-btn[aria-pressed="true"]:not(:focus-visible),
+:root:not([data-tv]) .k-verdict .k-btn[aria-pressed="true"] {
+  background: transparent;
+  border-color: transparent;
+  color: var(--fg-1);
+}
+
+.k-verdict .k-is-on svg {
+  fill: currentColor;
+  fill-opacity: 0.35;
+}
+}

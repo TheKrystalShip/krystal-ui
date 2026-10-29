@@ -31,6 +31,7 @@ export const EXAMPLES = {
   disclosure: fromSection("disclosure"),
   pill: E.PillExamples,
   kbd: fromSection("kbd"),
+  verdict: fromSection("verdict"),
   table: TableExamples,
   "stat-tile": StatTileExamples,
   card: CardExamples,

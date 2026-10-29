@@ -69,6 +69,11 @@
   font-size: var(--text-md);
 }
 
+:root[data-tv] .k-tv-spot__actions .k-btn--icon {
+  width: 40px;
+  padding: 0;
+}
+
 :root[data-tv] .k-tv-spot__actions .k-btn svg {
   width: 16px;
   height: 16px;

@@ -78,6 +78,7 @@ export { TimeInput } from "./components/TimeInput.jsx";
 export { ThemePicker } from "./components/ThemePicker.jsx";
 export { Toasts } from "./components/Toasts.jsx";
 export { Toggle } from "./components/Toggle.jsx";
+export { Verdict } from "./components/Verdict.jsx";
 export { Tooltip } from "./components/Tooltip.jsx";
 export { TvBackdrop, TvBar, TvBarButton, TvCard, TvHeading, TvRow, TvSpotlight, TvTile } from "./components/Tv.jsx";
 export {

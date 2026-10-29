@@ -142,6 +142,11 @@ export const PAGES = [
     versus: "StatusDot for a state beside a name; a Button or Tab for anything that can be pressed.",
   },
   {
+    id: "verdict", name: "Verdict", group: "Controls", exports: ["Verdict"], examples: ["verdict"],
+    summary: "A frameless Like and Dislike pair: the lit option draws its icon filled, pressing it clears the verdict and pressing the other moves it.",
+    versus: "Toggle for one on/off setting; Verdict is two exclusive opinions the person can also withdraw.",
+  },
+  {
     id: "kbd", name: "Kbd", group: "Labels and data", exports: ["Kbd"], examples: ["kbd"],
     summary: "A keyboard key, or a chord with `keys`, set in mono.",
   },

@@ -376,6 +376,16 @@ export const BEHAVIOUR = {
     keys: [],
     semantics: ["Hidden from assistive technology unless `label` names it; `statusLabel` says what the status dot means."],
   },
+  verdict: {
+    keys: [
+      ["Tab", "Moves between the two options"],
+      ["Enter, Space", "Presses the focused option: the next value is its own, or 0 when it is the lit one"],
+    ],
+    semantics: [
+      "A `role=\"group\"` named by `label` holding two buttons, each `aria-pressed` while lit and named by its label (the lit form while pressed).",
+      "A `value` of `undefined` is a verdict not known: both buttons are disabled and unpressed.",
+    ],
+  },
   kbd: {
     keys: [],
     semantics: ["A chord is a `kbd` of `kbd` keys, so a screen reader announces each key and the separator as text."],
