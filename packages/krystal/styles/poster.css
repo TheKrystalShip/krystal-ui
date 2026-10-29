@@ -321,6 +321,14 @@
   }
 }
 
+/* A pointer's own tool: a screen with no hovering pointer offers it some other way, so it is not drawn
+   there at all, lit or not. */
+@media not ((hover: hover) and (pointer: fine)) {
+  .k-poster__tool--pointer {
+    display: none;
+  }
+}
+
 /* A switch for keeping the thing, hanging from the poster's top edge like a bookmark's ribbon. On, it
    is filled and always shown; off, a hovering pointer finds it on the card it is over, and a touch
    screen always shows it. */

@@ -51,4 +51,16 @@ describe("PosterCard", () => {
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onPick).not.toHaveBeenCalled();
   });
+
+  it("marks a pointer's own tool, and leaves the others as they are", () => {
+    const onClick = vi.fn();
+    render(<PosterCard name="Arrival" tools={[
+      { icon: "thumbs-up", label: "Like", on: true, pointer: true, onClick },
+      { icon: "x", label: "Remove", onClick },
+    ]} />);
+    const like = screen.getByRole("button", { name: "Like" });
+    expect(like.className).toContain("k-poster__tool--pointer");
+    expect(like.getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("button", { name: "Remove" }).className).not.toContain("k-poster__tool--pointer");
+  });
 });

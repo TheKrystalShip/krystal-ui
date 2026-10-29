@@ -54,7 +54,7 @@ import { useSheetPull } from "../hooks/useSheetPull.js";
  * @property {import("react").ReactNode} [action] Sits after the title, before the close button.
  * @property {import("react").ReactNode} [head] Replaces the title row: icon, back, title, action and close button.
  * @property {boolean} [contained] Draws inside the nearest positioned ancestor rather than over the viewport.
- * @property {"dialog" | "alertdialog" | "menu"} [role] `dialog`, `alertdialog`, or `menu` for a body that is a list of items.
+ * @property {"dialog" | "alertdialog" | "menu"} [role] `dialog`, `alertdialog`, or `menu` for a body that is a list of items, drawn at a finger's size.
  * @property {string} [theme] A palette name (`data-theme`) the sheet is drawn in, whatever the page's.
  * @property {"div" | "form"} [as] `form` makes the sheet a form, so Enter in a field submits it.
  * @property {import("react").FormEventHandler<HTMLElement>} [onSubmit] The form's submit handler when `as` is `form`.
@@ -103,7 +103,7 @@ function Drawer({
   useOpenMark();
   const pull = useSheetPull(side, () => { if (canClose && onClose) onClose(); }, canClose && !!onClose);
   const cls = "k-drawer k-drawer--" + side + " k-drawer--" + size + (fill ? " k-drawer--fill" : "")
-    + (contained ? " k-drawer--contained" : "") + (className ? " " + className : "");
+    + (contained ? " k-drawer--contained" : "") + (role === "menu" ? " k-drawer--menu" : "") + (className ? " " + className : "");
   const scrimClass = "k-drawer-scrim k-drawer-scrim--" + side + (contained ? " k-drawer-scrim--contained" : "");
   const sheet = (
     <Sheet {...rest} ref={pull.panel} className={cls} role={role} data-theme={theme}

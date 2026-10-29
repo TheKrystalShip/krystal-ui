@@ -181,6 +181,24 @@
 }
 
 
+/* A menu drawn as a sheet (a Drawer whose role is `menu`) is pressed with a finger and read at arm's
+   length: its rows are 48px targets with body-sized words and icons. */
+.k-drawer--menu .k-menu__item {
+  min-height: 48px;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  font-size: var(--text-md);
+}
+
+.k-drawer--menu .k-menu__item svg {
+  width: 18px;
+  height: 18px;
+}
+
+.k-drawer--menu .k-menu__group-label {
+  font-size: var(--text-sm);
+}
+
 /* A phone raises a menu row to a 40px target. */
 @media (max-width: 768px) {
   .k-menu__item {

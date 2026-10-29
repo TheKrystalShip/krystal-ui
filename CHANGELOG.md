@@ -1,5 +1,14 @@
 # Changelog
 
+## [10.4.0]
+
+### Added
+- **A poster card's tool can be a pointer's own.** A `PosterCard` tool marked `pointer` is drawn only
+  for a hovering fine pointer, lit or not; a screen without one does not draw it, for a site that
+  offers the same act on a touch screen another way.
+- **A menu drawn as a sheet is sized for a finger.** A `Drawer` whose `role` is `menu` carries
+  `k-drawer--menu`, and its menu rows are 48px targets with `--text-md` words and 18px icons.
+
 ## [10.3.0]
 
 ### Added

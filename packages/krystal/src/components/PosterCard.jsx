@@ -18,7 +18,7 @@ import { Pill } from "./Pill.jsx";
 //   corner   { label?, icon?, title?, tone?: "neutral" | "accent", mono? }   a chip on the poster's top-left,
 //            `mono` for figures
 //   ribbon   { icon, iconOn?, on, label, onClick, disabled? }   a keep switch hanging from the top-left edge
-//   tools    [{ icon, label, onClick, on?, tone?: "danger" }]   round buttons on the top-right
+//   tools    [{ icon, label, onClick, on?, tone?: "danger", pointer? }]   round buttons on the top-right
 //   progress a number from 0 to 1 along the poster's foot; segments one short bar per part in its place
 //
 // A status left out still keeps its line, so the cards of a row stand level.
@@ -33,7 +33,7 @@ import { Pill } from "./Pill.jsx";
  * @property {{ label: import("react").ReactNode, tone?: "accent" | "info", title?: string }} [badge] The poster's top-right.
  * @property {{ label?: import("react").ReactNode, icon?: string, title?: string, tone?: "neutral" | "accent", mono?: boolean }} [corner] A chip on the poster's top-left; `mono` sets it in the monospace face.
  * @property {{ icon: string, iconOn?: string, on?: boolean, label: string, onClick: (event: import("react").MouseEvent<HTMLButtonElement>) => void, disabled?: boolean }} [ribbon] A keep switch hanging from the poster's top-left edge.
- * @property {{ icon: string, label: string, onClick: () => void, on?: boolean, tone?: "danger" }[]} [tools] Round buttons on the poster's top-right.
+ * @property {{ icon: string, label: string, onClick: () => void, on?: boolean, tone?: "danger", pointer?: boolean }[]} [tools] Round buttons on the poster's top-right; `pointer` keeps one to a hovering pointer, for a site that offers it on a touch screen another way.
  * @property {number} [progress] 0 to 1, a bar along the poster's foot.
  * @property {number[]} [segments] Each 0 to 1, one short bar per part; takes the foot in place of `progress`.
  * @property {string} [className] Extra class names on the root element.
@@ -70,7 +70,7 @@ function PosterCard({ name, art, onPick, facts = [], status, action, badge, corn
           <div className={"k-poster__tools" + (badge ? " k-poster__tools--under" : "")}>
             {tools.map((t) => (
               <button key={t.label} type="button"
-                className={"k-poster__tool" + (t.on ? " k-is-on" : "") + (t.tone ? " k-poster__tool--" + t.tone : "")}
+                className={"k-poster__tool" + (t.on ? " k-is-on" : "") + (t.tone ? " k-poster__tool--" + t.tone : "") + (t.pointer ? " k-poster__tool--pointer" : "")}
                 aria-label={t.label} aria-pressed={t.on === undefined ? undefined : t.on} title={t.label}
                 onClick={() => t.onClick()}>
                 <Icon name={t.icon} size={15} strokeWidth={2} />
