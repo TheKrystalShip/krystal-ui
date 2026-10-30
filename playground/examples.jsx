@@ -5,7 +5,7 @@ import React from "react";
 import {
   AccountAvatar, AppShell, Footer, BriefItem, BriefList, Container, Breadcrumbs, BriefCard, Button, Card, CardScreen, Checkbox, CopyField, Dialog, EmptyState, Field, IconButton, Input,
   Icon, List, ListRow, Meter, NavItem, Notice, OptionList, PageHeader, PasswordInput, Pill, ProviderButton, providerLabel, Select, SettingsRow, SettingsSection, PosterCard, Shelf, ShowcaseCard,
-  Sidebar, SidebarGroup, Skeleton, Spinner, StatusDot, SubTabs, Textarea, Toggle, Toolbar,
+  Sidebar, SidebarGroup, Skeleton, Spinner, StatusDot, SubTabs, PersonArea, definePerson, Textarea, Toggle, Toolbar,
   ToolbarButton, ToolbarCount, ToolbarFilters, ToolbarSearch, ToolbarSort, ToolbarSpacer,
 } from "@thekrystalship/krystal";
 import { AssistantPage, ChatCard, ChatCardRow, ChatCardRows, ChatEvidence } from "@thekrystalship/krystal-chat";
@@ -307,6 +307,33 @@ export function SubTabsExamples() {
           { id: "c", icon: "shield", label: "Danger", badge: 1, badgeTone: "danger" },
           { id: "d", icon: "settings", label: "None" },
         ]} />
+      </Sub>
+    </>
+  );
+}
+
+export function PersonAreaExamples() {
+  const person = React.useMemo(() => definePerson({
+    account: { href: "https://auth.example/account" },
+    profile: [
+      { id: "history", label: "History", icon: "history", place: true, page: () => <p>What was watched.</p> },
+      { id: "taste", label: "Taste", icon: "thumbs-up", page: () => <p>What was liked.</p> },
+    ],
+    settings: [
+      { id: "appearance", standard: "appearance" },
+      { id: "playback", label: "Playback", icon: "play", page: () => <p>How playback starts.</p> },
+      { id: "notifications", standard: "notifications", page: () => <p>What is sent.</p> },
+    ],
+  }), []);
+  const [profile, setProfile] = React.useState("history");
+  const [settings, setSettings] = React.useState("playback");
+  return (
+    <>
+      <Sub title="Profile: what the site knows about the person">
+        <PersonArea person={person} area="profile" tab={profile} onTabChange={setProfile} title="Profile" />
+      </Sub>
+      <Sub title="Settings: how the person wants the site to behave">
+        <PersonArea person={person} area="settings" tab={settings} onTabChange={setSettings} title="Settings" />
       </Sub>
     </>
   );

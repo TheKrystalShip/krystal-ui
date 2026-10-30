@@ -182,39 +182,52 @@ describe("Menu container, sub and readOnly", () => {
 });
 
 describe("SidebarAccount", () => {
-  it("offers Profile, Settings, a rule and Sign out, each calling its handler", async () => {
+  it("offers Profile, Settings, Account, a rule and Sign out, each calling its handler", async () => {
     const user = userEvent.setup();
     const calls = [];
     render(<SidebarAccount user={{ display: "Marta" }} onProfile={() => calls.push("profile")}
-      onSettings={() => calls.push("settings")} onSignOut={() => calls.push("out")} />);
+      onSettings={() => calls.push("settings")} onAccount={() => calls.push("account")} onSignOut={() => calls.push("out")} />);
     await user.click(screen.getByRole("button", { name: "Marta" }));
     await screen.findByRole("menu");
-    expect(screen.getAllByRole("menuitem").map((i) => i.textContent)).toEqual(["Profile", "Settings", "Sign out"]);
+    expect(screen.getAllByRole("menuitem").map((i) => i.textContent)).toEqual(["Profile", "Settings", "Account", "Sign out"]);
     expect(screen.getByRole("separator")).toBeTruthy();
     await user.click(screen.getByRole("menuitem", { name: "Settings" }));
     expect(calls).toEqual(["settings"]);
   });
 
-  it("puts a site's own entries after Settings and before the rule", async () => {
+  it("marks Account as opening elsewhere and calls onAccount", async () => {
     const user = userEvent.setup();
-    render(<SidebarAccount user={{ display: "Marta" }} onProfile={() => {}} onSettings={() => {}} onSignOut={() => {}}
+    const onAccount = vi.fn();
+    render(<SidebarAccount user={{ display: "Marta" }} onProfile={() => {}} onSettings={() => {}} onAccount={onAccount} />);
+    await user.click(screen.getByRole("button", { name: "Marta" }));
+    await screen.findByRole("menu");
+    const account = screen.getByRole("menuitem", { name: "Account" });
+    expect(account.querySelector(".lucide-external-link")).toBeTruthy();
+    await user.click(account);
+    expect(onAccount).toHaveBeenCalled();
+  });
+
+  it("puts a site's own entries after Account and before the rule", async () => {
+    const user = userEvent.setup();
+    render(<SidebarAccount user={{ display: "Marta" }} onProfile={() => {}} onSettings={() => {}} onAccount={() => {}} onSignOut={() => {}}
       items={[{ icon: "flag", label: "Report queue", aside: 17 }]} />);
     await user.click(screen.getByRole("button", { name: "Marta" }));
     await screen.findByRole("menu");
     const items = screen.getAllByRole("menuitem").map((i) => i.textContent);
     expect(items[0]).toBe("Profile");
     expect(items[1]).toBe("Settings");
-    expect(items[2]).toContain("Report queue");
-    expect(items[2]).toContain("17");
-    expect(items[3]).toBe("Sign out");
+    expect(items[2]).toBe("Account");
+    expect(items[3]).toContain("Report queue");
+    expect(items[3]).toContain("17");
+    expect(items[4]).toBe("Sign out");
   });
 
   it("leaves out the rule and Sign out without onSignOut", async () => {
     const user = userEvent.setup();
-    render(<SidebarAccount user={{ display: "Marta" }} onProfile={() => {}} onSettings={() => {}} />);
+    render(<SidebarAccount user={{ display: "Marta" }} onProfile={() => {}} onSettings={() => {}} onAccount={() => {}} />);
     await user.click(screen.getByRole("button", { name: "Marta" }));
     await screen.findByRole("menu");
-    expect(screen.getAllByRole("menuitem").map((i) => i.textContent)).toEqual(["Profile", "Settings"]);
+    expect(screen.getAllByRole("menuitem").map((i) => i.textContent)).toEqual(["Profile", "Settings", "Account"]);
     expect(screen.queryByRole("separator")).toBeNull();
   });
 });

@@ -1,0 +1,14 @@
+/* ============================================================================
+   person.css — Profile or Settings drawn by <PersonArea>: the page's header,
+   the strip of tabs and the active tab's page, one under the other.
+   ============================================================================ */
+@layer krystal.tokens, krystal.base, krystal.components;
+
+@layer krystal.components {
+.k-person {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-width: 0;
+}
+}

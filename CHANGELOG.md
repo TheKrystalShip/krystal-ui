@@ -1,5 +1,28 @@
 # Changelog
 
+## [10.5.0]
+
+### Added
+- **`PersonArea`, `definePerson` and the `person` table.** A site declares Profile and Settings once, as
+  `{ account, profile, settings }` of tabs (`{ id, label, icon, page }`), and `PersonArea` draws either
+  area from it: the header, a `SubTabs` strip (none for a single tab) and the page of the tab the address
+  names, the first when it names none the area has. `hidden`, `disabled` and `badges` shape the strip for
+  this person or device, `pageProps` reach every page and `stage` draws the page inside a site's own
+  transition.
+- **Standard Settings tabs.** `{ standard: "appearance" }` draws the theme picker and
+  `{ standard: "notifications" }` takes its id, name and icon from the system; every site's Settings has
+  both.
+- **`PersonArea` is a column** (`.k-person`, a `--s-4` gap) so the header, the strip and the page stand apart on every site.
+- **`checkPerson`** says every way a table breaks the rules: a repeated id, a tab without a page, the
+  sign-in provider's pages (`account`, `sign-in`, `devices`, `sessions`, `password`, `security`) as tabs,
+  a setting (`appearance`, `notifications`, `theme`) on Profile, a Settings tab that is a place, a page of
+  a site's own for the theme. `definePerson` throws on any of them and fills the standard tabs in.
+- **`personPlaces` and `placesLit`.** The table's places for a site's router: Profile, Settings and each
+  Profile tab marked `place: true`, which the sidebar and the dock's sheet list as pages of their own.
+  `placesLit` names the places a route on these pages lights.
+- **`SidebarAccount` takes `onAccount`.** The menu is Profile, Settings, Account, a rule and Sign out;
+  Account carries an external-link mark because it opens the sign-in provider's site in a new tab.
+
 ## [10.4.0]
 
 ### Added

@@ -27,6 +27,7 @@ export const EXAMPLES = {
   "provider-button": E.ProviderButtonExamples,
   tabs: fromSection("tabs"),
   "sub-tabs": E.SubTabsExamples,
+  "person-area": E.PersonAreaExamples,
   breadcrumbs: E.BreadcrumbsExamples,
   disclosure: fromSection("disclosure"),
   pill: E.PillExamples,

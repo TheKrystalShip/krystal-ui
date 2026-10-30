@@ -334,6 +334,11 @@ export const PAGES = [
     versus: "SubTabs for the sections of one page; AppShell's sidebar on a wide screen.",
   },
   {
+    id: "person-area", name: "PersonArea", group: "The frame", exports: ["PersonArea", "definePerson", "checkPerson", "personPlaces", "placesLit", "activeTab", "SidebarAccount"], examples: ["person-area"],
+    summary: "Profile and Settings drawn from one table per site: a header, a strip of tabs, the active tab's page; the same table feeds the account menu and the router's places.",
+    versus: "SubTabs when a page draws its own sections and no table says where they live.",
+  },
+  {
     id: "dock", name: "Dock", group: "The frame", exports: ["Dock", "DockFab", "useDock"], examples: [],
     summary: "A panel docked beside the page or floating over it, with its launcher and its remembered width, pin and open state.",
   },

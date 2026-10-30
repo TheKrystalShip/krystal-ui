@@ -107,9 +107,10 @@ function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, close
 }
 
 // The signed-in person, at the bottom of the sidebar's foot: their avatar and their name, opening a
-// menu upward headed by the name. Every site's menu has Profile, Settings, a rule, and Sign out:
-// Profile is the person's account, Settings this site's own settings. A site's own entries (`items`)
-// come after Settings and before the rule. A site that cannot end
+// menu upward headed by the name. Every site's menu has Profile, Settings, Account, a rule, and Sign
+// out: Profile is what this site knows about the person, Settings how the person wants this site to
+// behave, Account the sign-in provider's own site, which opens in a new tab and is marked so. A site's
+// own entries (`items`) come after Account and before the rule. A site that cannot end
 // the session (one embedded where only leaving ends it) passes no `onSignOut`, and the rule and Sign out
 // are left out. On the collapsed rail the row is the avatar alone.
 /**
@@ -117,11 +118,12 @@ function Sidebar({ mark, wordmark, open, collapsed, onToggleCollapse, top, close
  * @param {{ display?: string, name?: string }} props.user The signed-in person: `display` is the name shown, `name` the fallback.
  * @param {() => void} props.onProfile Opens the person's profile.
  * @param {() => void} props.onSettings Opens this site's settings.
+ * @param {() => void} props.onAccount Opens the sign-in provider's account site in a new tab.
  * @param {() => void} [props.onSignOut] Ends the session; without it the menu has no Sign out.
  * @param {{ icon?: string, label?: string, onClick?: () => void, danger?: boolean, aside?: import("react").ReactNode, separator?: boolean }[]} [props.items] The site's own entries after Settings, each `{ icon, label, onClick, danger, aside }` (`aside` a quiet value at its end, such as a count), or `{ separator: true }` for a rule between them.
  * @param {boolean} [props.collapsed] Draws the avatar alone, as on the collapsed rail.
  */
-function SidebarAccount({ user, onProfile, onSettings, onSignOut, items = [], collapsed }) {
+function SidebarAccount({ user, onProfile, onSettings, onAccount, onSignOut, items = [], collapsed }) {
   const [open, setOpen] = React.useState(false);
   const name = user.display || user.name;
   return (
@@ -146,6 +148,7 @@ function SidebarAccount({ user, onProfile, onSettings, onSignOut, items = [], co
         )}>
         <MenuItem icon="user" onSelect={() => onProfile && onProfile()}>Profile</MenuItem>
         <MenuItem icon="settings" onSelect={() => onSettings && onSettings()}>Settings</MenuItem>
+        <MenuItem icon="user-cog" aside={<Icon name="external-link" size={14} />} onSelect={() => onAccount && onAccount()}>Account</MenuItem>
         {items.map((item, i) => (item.separator
           ? <MenuSeparator key={"sep-" + i} />
           : (

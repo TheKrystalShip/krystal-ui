@@ -51,6 +51,8 @@ export { Combobox } from "./components/Combobox.jsx";
 export { CopyField } from "./components/CopyField.jsx";
 export { ProviderButton, ProviderMark, providerLabel } from "./components/ProviderMark.jsx";
 export { OptionList } from "./components/OptionList.jsx";
+export { PersonArea } from "./components/PersonArea.jsx";
+export { accountHref, activeTab, checkPerson, definePerson, personPlaces, placesLit, STANDARD_TABS } from "./lib/person.js";
 export { PageHeader } from "./components/PageHeader.jsx";
 export { PosterCard } from "./components/PosterCard.jsx";
 export { Pagination, paginationWindow, useDebouncedValue } from "./components/Pagination.jsx";
